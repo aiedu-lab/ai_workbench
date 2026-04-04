@@ -1,4 +1,4 @@
 Each project gets its own folder with:
-* Claude generated code
-* plan.md - source of truth
+* AI generated code - if applicable
+* plan.md - source of truth if applicable
 * prompt history - curated, not raw dump
