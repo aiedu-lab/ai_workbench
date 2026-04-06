@@ -1,19 +1,25 @@
-## GitHub (15 mins)
+# GitHub (15 mins)
 
-### Objective
+## Objective
 Learn how to save, track, and share your work safely
 
-### Tools
+---
+
+## Tools
 - GitHub
 
-### Concept
+---
+
+## Concept
 GitHub is like:
 - Google Docs version history
 - + backup
 - + collaboration
 
-### Activity (Hands-on)
-#### GitHub Web
+---
+
+## Activity (Hands-on)
+### GitHub Web
 - Open your repo
   - Go to your GitHub repository in browser
   - Edit README.md
@@ -26,7 +32,7 @@ GitHub is like:
   - Good: "Add GitHub Web section completed"
   - Bad: "update"
 
-#### Git Command Line (Local)
+### Git Command Line (Local)
 - Clone repo if not already cloned
 ```bash
 git clone <repo_url>
@@ -49,13 +55,16 @@ git add .
 git commit -m "Add GitHub Command Line section completed"
 git push
 ```
+---
 
-#### Reflection
+### Reflection
 - What changed after commit?
 - Can you go back to old version?
 - Why is this safer than local files?
 
-### Output
+---
+
+## Output
 - At least 1 commit per participant
 - Clear commit messages
 - [Notes](../learnings/session_notes/github.md)

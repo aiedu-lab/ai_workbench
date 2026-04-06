@@ -1,4 +1,4 @@
-## Lovable - Web Site (45 mins)
+## Web Site on Server
 
 ### Tools
 - Lovable 
@@ -15,5 +15,5 @@ Hello World Web Site
 - Areas where generated content is poor?
 
 ### Output
-- Plan: `/projects/ai_demo/web_site/plan.md`
+- Plan: `/projects/web_site/plan.md`
 - Notes: `/learnings/session-notes/web_site.md`

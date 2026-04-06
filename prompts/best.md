@@ -1,10 +1,6 @@
-## Curated high quality prompts from sessions
+# Curated high quality prompts from sessions
 
-### Prompting
-
-#### CreditCard 
-
-##### Prompt
+## Prompting - CreditCard - Better
 ```bash
 Context:
 Audience is a 12-year-old with no financial domain knowledge.
@@ -23,7 +19,7 @@ Output:
 - 1 simple example
 ```
 
-##### NegativePrompt
+## Prompting - CreditCard - Negative
 ```bash
 Do NOT: 
 - use financial jargon eg APR, interest rate, credit score
@@ -32,9 +28,25 @@ Do NOT:
 - exceed 150 words
 ```
 
-### Stocks
+## Prompting - Rewrite - Better
+```bash
+Context:
+This is a professional email to a colleague.
 
-#### Prompt
+Task:
+Rewrite the message.
+
+Constraints:
+- Polite tone
+- Clear ask
+- No slang
+- Max 2 sentences
+
+Output:
+Formal email message
+```
+
+## Stocks - Better
 ```bash
 Context:
 Audience is a 12-year-old with no financial domain knowledge.
@@ -52,9 +64,8 @@ Output:
 - 1 short paragraph
 - 1 simple example
 ```
-### Slides
 
-#### Prompt
+## Slides - Better
 ```bash
 Convert the below plan to a presentation.
 ---

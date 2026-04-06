@@ -1,4 +1,4 @@
-## Server Application
+## Application on Server
 
 ### Project
 - Flight tracker with notification

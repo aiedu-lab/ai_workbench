@@ -1,4 +1,4 @@
-## Client Application
+## Application on Laptop
 
 ### Setup
 - Install Claude Code (API mode)

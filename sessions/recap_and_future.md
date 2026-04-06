@@ -1,6 +1,6 @@
-## Summary
+# Recap and Future
 
-### Tools
+## Tools
 - Web Tool: Lovable (High magic, easy export).
 - CLI Tool: Claude Code
   - API-based

@@ -1,22 +1,26 @@
-## Poor prompts
+# Poor prompts
 
-### Prompting
-#### Basic 
+## Prompting - CreditCard - Basic
 ```bash
 Explain how a credit card works
 ```
 
-#### Improved 
+## Prompting - CreditCard - Improved
 ```bash
 Explain how a credit card works to a 12 year old
 ```
 
-### Slides
-#### Basic
+## Prompting - Rewrite - Basic
+```bash
+Rewrite the message better.
+```
+
+## Slides - Basic
 ```bash
 Make slides about AI agents
 ```
-#### Improved
+
+## Slides - Improved
 ```bash
 Make it more engaging:
 - Add analogies

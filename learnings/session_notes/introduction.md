@@ -1,1 +1,3 @@
-## Introduction Notes
+# Notes and Learnings
+
+## Attendee - Objectives
