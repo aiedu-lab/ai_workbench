@@ -86,7 +86,7 @@ and two different AI "personalities" to ensure the code is good.
 
 Generate code 
 ```bash
-# Task: Create a  script to sort files in a folder by type.
+# Task: Create a python script to sort files in a folder by type.
 CODE_PROMPT="Write a Python script that 
   - moves files into folders based on the month they were created
   - do not delete files

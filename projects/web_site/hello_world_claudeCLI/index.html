@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- viewport meta ensures the layout scales correctly on mobile devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello World</title>
+  <style>
+    /* Center everything vertically and horizontally so the app feels
+       intentional rather than left-aligned by default */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: sans-serif;
+      background: #f0f4f8;
+    }
+
+    /* Card wrapper gives the form a contained, legible surface */
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      padding: 2rem 2.5rem;
+      text-align: center;
+      max-width: 360px;
+      width: 100%;
+    }
+
+    /* Large greeting text is the primary visual element */
+    #greeting {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #1a202c;
+    }
+
+    /* Input and button share the same width so the form looks cohesive */
+    #name-input,
+    #submit-btn {
+      width: 100%;
+      box-sizing: border-box; /* include padding in the stated width */
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #cbd5e0;
+      padding: 0.5rem 0.75rem;
+    }
+
+    #name-input {
+      margin-bottom: 0.75rem;
+      outline-offset: 2px;
+    }
+
+    /* Button gets a distinct background so it reads as the primary action */
+    #submit-btn {
+      background: #3182ce;
+      color: #fff;
+      border-color: #3182ce;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    #submit-btn:hover {
+      background: #2b6cb0;
+      border-color: #2b6cb0;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <!-- greeting is updated by JS; the default text satisfies the
+         "display Hello, World! on load" requirement without any JS running -->
+    <div id="greeting">Hello, World!</div>
+
+    <!-- type="text" is explicit so behavior is unambiguous across browsers -->
+    <input id="name-input" type="text" placeholder="Enter a name…" aria-label="Name">
+
+    <!-- type="button" prevents accidental form submission if this element
+         is ever wrapped in a <form> tag during future edits -->
+    <button id="submit-btn" type="button">Submit</button>
+  </div>
+
+  <script>
+    // Grab references once so we don't query the DOM on every click
+    const greeting  = document.getElementById('greeting');
+    const nameInput = document.getElementById('name-input');
+    const submitBtn = document.getElementById('submit-btn');
+
+    submitBtn.addEventListener('click', function () {
+      // trim() treats whitespace-only input the same as empty,
+      // matching the intent of "revert to Hello, World! when blank"
+      const name = nameInput.value.trim();
+      greeting.textContent = name ? 'Hello, ' + name + '!' : 'Hello, World!';
+    });
+
+    // Allow pressing Enter inside the textbox to trigger the same action
+    // so keyboard users get the same experience as mouse users
+    nameInput.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        submitBtn.click();
+      }
+    });
+  </script>
+</body>
+</html>

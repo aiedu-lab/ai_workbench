@@ -1,4 +1,4 @@
-# Recap and Future
+# Future Advancements
 
 ## Tools
 - Web Tool: Lovable (High magic, easy export).
@@ -9,12 +9,9 @@
 - [AI Overview](https://www.youtube.com/watch?v=xSH4KQJjTos&vl=en)
 - AI Classes  
   - Types: Predictive, Generative
-  - Model Evolution
+  - Generative Model Evolution
     - Foundation
     - Reasoning
     - Tool use
     - Computer use
-  - Multimodal Models
-    - Visual Models
-  - World Knowledge
     

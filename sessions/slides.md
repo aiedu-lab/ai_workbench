@@ -8,7 +8,7 @@ Learn how to use AI to create compelling communication and storytelling artifact
 - visual storytelling
 
 ### Tool
-- Gamma: AI presentation tool
+- Gamma: AI presentation tool (login verified)
 
 ### Concept
 Prompting for communication:

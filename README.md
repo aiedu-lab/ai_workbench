@@ -1,14 +1,42 @@
 # AI Education Lab
 
-A hands-on, community-driven program to learn AI tooling and coding agents through real-world exercises.
+## Objective
+A hands-on, community-driven program to learn AI tooling and coding agents through real-world exercises. The program is structured as a series of sessions, each focusing on a specific tool or concept to learn about agents both general purpose and specialized in use cases, such as coding, automation and other examples using:
+* Prompting
+* Planning (plan.md)
+* Agent execution
+* Reflection and debugging
 
-[📖 Detailed Agenda](sessions/agenda.md)
+## Agenda
+### 📅 AI Education Lab: Course Agenda
 
-## Overview
-- [🎯 Objective](sessions/introduction#Objective)
-- [🧠 Learning Philosophy](sessions/introduction#Learning--Philosophy)
-- [🧰 Tools](sessions/introduction#Tools)
-- [📝 How We Work](sessions/planning#How--We--Work)
+| Topic of Lesson | Lesson Duration | Tool | Tool Duration |
+| :--- | :---: | :--- | :---: |
+| [**Introduction**](sessions/introduction.md) | 30 mins |  |  |
+| [**Prompting Techniques - Basics**](sessions/prompting_basics.md) | 30 mins | [Browser Chat](https://gemini.google.com) |  |
+| [**Research Stocks**](sessions/stocks.md) | 45 mins | [Browser Chat](https://gemini.google.com) |  |
+| [**Planning**](sessions/planning.md) | 45 mins | [Claude Desktop (Chat)](tools/claude/desktop.md) | 15 mins  |
+| [**Create Slides**](sessions/slides.md) | 45 mins | [Gamma](https://gamma.app/), [GitHub](tools/github.md) | 15 mins |
+| [**Build Web Site**](sessions/web_site.md) | 60 mins | [Lovable.dev](https://lovable.ai), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
+| [**Develop Laptop Applications**](sessions/client_application.md) | 45 mins | [VSCode/Python](https://code.visualstudio.com/docs/languages/python), [Claude Desktop (Code)](tools/claude/desktop.md) | 15 mins |
+| [**Build Workflows on Laptop**](sessions/client_work_automation.md) | 75 mins | [Claude Code (CoWork)](tools/claude/desktop.md) | 15 mins |
+| [**Build Multi-Agent Workflows on Laptop**](sessions/client_multiagent.md) | 60 mins | [Claude Code (CLI)](tools/claude/cli.md), [OpenAI Codex (CLI)](tools/openai/codex_cli.md) | 15 mins |
+| [**Prompting Techniques - Advanced**](sessions/prompting_advanced.md) | 60 mins | [Claude Desktop (Chat)](tools/claude/desktop.md) |  |
+| [**Develop Server Applications**](sessions/server_application.md) | 60 mins | [OpenClaw](tools/openclaw/cli.md) | 15 mins | 15 mins |
+| [**Build Multi-Agent Workflows on Server**](sessions/server_multiagent.md) | 60 mins | [Temporal](https://temporal.io/) | 15 mins |
+| [**Future Advancements**](sessions/future_advancements.md) | 30 mins |  |  |
+| [**Recap**](sessions/recap.md) | 30 mins |  |  |
+
+---
+
+## 🧭 Tools
+
+| Platform | Application | Tools |
+| :--- | :---: | :---: |
+| Browser | Chat | OpenAI, Gemini, Claude Chat | 
+| Browser | SaaS | Lovable.dev, Gamma |
+| Client | Desktop Application | Claude Chat, Code, CoWork |
+| Server | Server Application | OpenClaw, Claude |
 
 ---
 
@@ -32,34 +60,25 @@ ai-education-lab/
 | Best prompts      | `/prompts/best.md`            |
 | Failed prompts    | `/prompts/failures.md`        |
 | Project code      | `/projects/<project>/`        |
-| Plans             | `/plans/<project>/plan.md`    |
+| Plan frameworks   | `/plans/`                     |
 | Session notes     | `/learnings/session-notes/`   |
 
 ---
 
 ## 🤝 Contribution Guidelines
-
 After each session:
 1. Add/update:
-   - `plan.md`
-   - prompts (best + failures)
-   - learnings
-2. Commit:
+   * `plan.md`
+   * prompts (best + failures)
+   * learnings
+2. Commit to a separate branch:
 ```bash
 git add .
 git commit -m "Session X updates"
 git push
 ```
----
-
-## 🚀 Getting Started
-Clone repo
-Set up API key (for Claude Code sessions)
-Join a group (Driver / Prompt / Observer)
-Start Session 1
-
+3. Submit for Pull Request for merging into main branch
 ---
 
 ## 🙌 Credits
-
 Inspired by practical AI learning approaches and community collaboration.

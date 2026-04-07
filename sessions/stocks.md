@@ -1,4 +1,4 @@
-## Security Research
+## Stocks - Investment Research
 
 ### Concepts
 - Prompts as software

@@ -1,11 +1,11 @@
 # Introduction
 
 ## Objective
-Enable participants to **“learn how to fish”** — not just use AI, but understand how to:
-- Think in prompts
-- Design plans (spec-first thinking)
-- Debug AI outputs
-- Manage AI agents effectively
+Help participants learn use AI and understand how to:
+* Think in prompts
+* Design plans (spec-first thinking)
+* Validate AI outputs
+* Develop "feel" for tool fit to use case
 
 ## Learning - Philosophy
 Each session follows a simple structure:
@@ -13,16 +13,9 @@ Each session follows a simple structure:
 > **One Tool → One Concept → One Project → One Failure → One Reflection**
 
 We emphasize:
-- Planning over coding
-- Debugging specs, not just code
-- Learning from failures
-
-## Tools
-We'll go over following tools over sessions:
-- Browser Chat: OpenAI, Gemini, Claude Chat
-- Browser Tool: Lovable.dev, Gamma
-- Desktop: Claude Chat, Code, CoWork
-- CLI: OpenClaw, Claude
+* Planning over coding
+* Debugging specs, not just code
+* Learning from failures
 
 ## Activities
 - Claude Chat login verification
@@ -30,20 +23,11 @@ We'll go over following tools over sessions:
 - Roles: Driver, Prompt Engineer, Observer
 - Observer tracks hallucination drift
 
-## 📁 Repository - Structure
-
-ai-education-lab/
-│
-├── sessions/ # Session-wise exercises and materials
-├── prompts/ # Prompt library (best, failures, templates)
-├── projects/ # Generated apps and automation projects
-├── plans/ # plan.md templates and canonical examples
-├── learnings/ # Notes, reflections, and patterns
-└── tools/ # Setup guides and guardrails
-
+## Walk through of Repository
 
 ## References
-- [Ethan Mollick's "One Useful Thing" Blog](https://www.oneusefulthing.org/)
+* [Ethan Mollick's "One Useful Thing" Blog](https://www.oneusefulthing.org/)
+* [Attendee Objectives](../learnings/session_notes/introduction.md#Attendee--Objectives)
 
 ## Output
-- [Notes](../learnings/session_notes/intro.md)
+* [Notes](../learnings/session_notes/intro.md)
