@@ -338,8 +338,8 @@ Observe confusion and conflicting output.
 
 ## References
 
-* [Prompting Basics](../prompting_basics.md)
-* [Plan-first thinking](../planning.md)
+* [Prompting Basics](prompting_basics.md)
+* [Plan-first thinking](planning.md)
 
 ---
 

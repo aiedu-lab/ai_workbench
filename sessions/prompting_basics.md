@@ -49,6 +49,7 @@
 * Bad prompts don’t fail loudly—they fail subtly
 
 ## References
+* [Prompt Engineering Basics](https://www.youtube.com/watch?v=xSH4KQJjTos)
 * [Anthropic Prompt Library](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
 * [Anthropic System Prompting Guide](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/system-prompts)
 * [Anthropic Prompt Engineering Tutorial](https://github.com/anthropics/prompt-eng-interactive-tutorial)

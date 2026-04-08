@@ -4,10 +4,8 @@
 
 ## Objective
 Install and verify:
-- Claude Chat (Desktop)
-- Claude Code (CLI)
-- Claude CoWork
-
+- [Claude Desktop (Chat + Code + CoWork)](https://claude.com/download)
+ 
 Ensure:
 - subscription or API access works
 - Claude responds correctly
@@ -30,7 +28,6 @@ Ask:
 ```bash
 Explain how a credit card works in 3 simple sentences.
 ```
-
 ✅ Success if:
 - Claude responds quickly
 - Output is clear and structured

@@ -1,4 +1,4 @@
-# Claude CLI - API mode
+# Claude CLI
 
 ## CLI Setup
 
@@ -76,19 +76,11 @@ If a key is leaked:
 - Revoke immediately
 - Generate a new key
 
----
+## Guardrails & Tokenomics
 
-## ⚠️ Guardrails
+* Reference [⚠️ Guardrails - CLI Agents](../provider_cost_control.md#cli-agents)
+* Reference [💰 Cost Control - API](../provider_cost_control.md#pay-per-use)
 
-- Never run Claude on root directories
-- Always constrain file scope (e.g., `src/`)
-- Use a **Kill Switch** (`Ctrl + C`) for runaway agents
-- Set API spend limits (e.g., $5)
+## Documentation
 
----
-
-## 💰 Tokenomics (Cost Awareness)
-
-Two modes:
-- **Subscription (Netflix)** → easy, less control
-- **API (AWS)** → pay-per-use, precise, recommended for CLI
+[Claude Code (CLI)](https://code.claude.com/docs)

@@ -76,17 +76,7 @@ If a key is leaked:
 
 ---
 
-## ⚠️ Guardrails
+## Guardrails & Tokenomics
 
-- Never run Claude on root directories
-- Always constrain file scope (e.g., `src/`)
-- Use a **Kill Switch** (`Ctrl + C`) for runaway agents
-- Set API spend limits (e.g., $5)
-
----
-
-## 💰 Tokenomics (Cost Awareness)
-
-Two modes:
-- **Subscription (Netflix)** → easy, less control
-- **API (AWS)** → pay-per-use, precise, recommended for CLI
+* Reference [⚠️ Guardrails - CLI Agents](../provider_cost_control.md#cli-agents)
+* Reference [💰 Cost Control - API](../provider_cost_control.md#pay-per-use)
