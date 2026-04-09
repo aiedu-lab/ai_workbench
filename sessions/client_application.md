@@ -7,8 +7,7 @@
 
 ## Exercise - Event Organizer
 
-We'll create a simple event organizer application that can be used to organize 
-social events among friends. 
+Event organizer agent organize social events among friends using email. 
 
 [Sample Draft Plan](../plans/draft/event_organizer.md) is a starting template 
 of a plan. Use Claude Desktop (Chat) to build the plan. 
@@ -27,8 +26,6 @@ for executing the plan.
 2. Execution
 
 * **Plan: Analyze → Update prompt → Iterate**
-* IDE Tool: VSCode IDE
-* Agent Tool: Claude Desktop (Code)
 
 3. Fortify
 * Push agent to reveal and identify potential failure scenarios 
@@ -40,10 +37,13 @@ Initiate rescheduling when anyone cancels.
 Never reschedule once everyone agrees.
 ```
 
-4. Validate & Iterate
-* Use Claude Desktop (Chat) to validate and improve the plan if needed.
+4. Validate
+* Validate the output.
 
-5. Save on completion
+5. Iterate
+* Revisit Execution until the output is satisfactory.
+
+### Save on completion
 * Push to Github branch
 * Submit Pull Request from branch to mainline
 

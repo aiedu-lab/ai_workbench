@@ -18,16 +18,16 @@ for various use cases, such as coding, automation, etc. using:
 | :--- | :---: | :--- | :---: |
 | [**Introduction**](sessions/introduction.md) | 30 mins |  |  |
 | [**Prompting Techniques - Basics**](sessions/prompting_basics.md) | 30 mins | [Browser Chat](https://gemini.google.com) |  |
-| [**Research Stocks**](sessions/stocks.md) | 45 mins | [Browser Chat](https://gemini.google.com) |  |
+| [**Exercise: Research Stocks**](sessions/stocks.md) | 45 mins | [Browser Chat](https://gemini.google.com) |  |
 | [**Planning**](sessions/planning.md) | 45 mins | [Claude Desktop (Chat)](tools/claude/desktop.md) | 15 mins  |
-| [**Create Slides**](sessions/slides.md) | 45 mins | [Gamma](https://gamma.app/), [GitHub](tools/github.md) | 15 mins |
-| [**Create Web Site**](sessions/web_site.md) | 60 mins | [Lovable.dev](https://lovable.ai), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
-| [**Create Laptop Applications**](sessions/client_application.md) | 45 mins | [VSCode/Python](https://code.visualstudio.com/docs/languages/python), [Claude Desktop (Code)](tools/claude/desktop.md) | 15 mins |
-| [**Create Workflows on Laptop**](sessions/client_work_automation.md) | 75 mins | [Claude Code (CoWork)](tools/claude/desktop.md) | 15 mins |
-| [**Create Multi-Agent Workflows on Laptop**](sessions/client_multiagent.md) | 60 mins | [Claude Code (CLI)](tools/claude/cli.md), [OpenAI Codex (CLI)](tools/openai/codex_cli.md) | 15 mins |
+| [**Exercise: Create Presentation**](sessions/slides.md) | 45 mins | [Gamma](https://gamma.app/), [GitHub](tools/github.md) | 15 mins |
+| [**Exercise: Create/Run Web Site on Laptop/Lovable**](sessions/web_site.md) | 60 mins | [Lovable.dev](https://lovable.ai), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
+| [**Exercise: Create/Run Application on Laptop**](sessions/client_application.md) | 45 mins | [VSCode/Python](https://code.visualstudio.com/docs/languages/python), [Claude Desktop (Code)](tools/claude/desktop.md) | 15 mins |
+| [**Exercise: Create/Run Workflows on Laptop**](sessions/client_work_automation.md) | 75 mins | [Claude Code (CoWork)](tools/claude/desktop.md) | 15 mins |
+| [**Exercise: Create/Run Multi-Agent Workflows on Laptop**](sessions/client_multiagent.md) | 60 mins | [Claude Code (CLI)](tools/claude/cli.md), [OpenAI Codex (CLI)](tools/openai/codex_cli.md) | 15 mins |
 | [**Prompting Techniques - Advanced**](sessions/prompting_advanced.md) | 60 mins | [Claude Desktop (Chat)](tools/claude/desktop.md) |  |
-| [**Create Server Applications**](sessions/server_application.md) | 60 mins | [OpenClaw](tools/openclaw/cli.md) | 15 mins | 15 mins |
-| [**Create Multi-Agent Workflows on Server**](sessions/server_multiagent.md) | 60 mins | [Temporal](https://temporal.io/) | 15 mins |
+| [**Exercise: Run Applications on Server**](sessions/server_application.md) | 60 mins | [OpenClaw](tools/openclaw/cli.md) | 15 mins | 15 mins |
+| [**Exercise: Run Multi-Agent Workflows on Server**](sessions/server_multiagent.md) | 60 mins | [Temporal](https://temporal.io/) | 15 mins |
 | [**Future Advancements**](sessions/future_advancements.md) | 30 mins |  |  |
 | [**Recap**](sessions/recap.md) | 30 mins |  |  |
 
