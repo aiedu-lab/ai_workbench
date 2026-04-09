@@ -1,7 +1,5 @@
 # Future Advancements
 
 ## Tools
-* Visual Models
-* Multimodal Models
-* World Knowledge
-    
+* World Knowledge encoding AI    
+* Physical AI

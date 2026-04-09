@@ -17,6 +17,7 @@
 
 * Review [plan.md](https://github.com/asarcar/aiedulabhelloworld/blob/main/plan.md)
 * Use [Lovable](https://app.lovable.dev/dashboard) to execute plan.
+* Reference web site: [Hello, World!](https://hello-aiedu.lovable.app/)
 
 ### Use cases
 * Program Updates - Dynamic and on-demand reporting
@@ -62,8 +63,8 @@ Lovable or Claude CLI - which one to use? Why?
 
 Agree on a project that you'd like to execute, such as:
 ```bash
-Intent: Build a web site for 
-high school kids to learn about AI". 
+Intent: Build a web site for students that know basic 
+programming to learn about AI. 
 ```
 
 From thereon used Claude Desktop to plan and execute.
