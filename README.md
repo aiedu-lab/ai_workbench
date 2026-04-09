@@ -11,8 +11,7 @@ for various use cases, such as coding, automation, etc. using:
 * Agent execution
 * Reflection and debugging
 
-## Agenda
-### 📅 AI Education Lab: Course Agenda
+## 📅 AI Education Lab: Agenda
 
 | Topic of Lesson | Lesson Duration | Tool | Tool Duration |
 | :--- | :---: | :--- | :---: |
