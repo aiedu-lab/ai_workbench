@@ -1,7 +1,7 @@
 # Planning
 
 ## Tools
-- Claude Code
+- Claude Desktop (Code)
 
 ---
 
@@ -27,7 +27,8 @@ Build a social event organizer application
   - Fortify: Both manually and by querying agent
     - Examine edge cases
     - Push agent to reveal and identify potential failure scenarios eg “List 3 potential failure points”
-    - Cross question agent to justify the plan and its reasoning
+    - Cross question agent whether it can identify plan assumptions 
+    - Push agent to think step by step and reason about the plan
   - Validate: Cross check AI understood the plan
   - Iterate: Humans review and refine the plan
 - **Execute**: AI executes the plan

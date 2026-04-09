@@ -2,15 +2,15 @@
 
 ## Objective
 
-Learn how to move from “one-off prompts” to 
-**reusable, structured, and scalable prompting techniques**.
+Learn how to move from "one-off prompts" to **reusable, structured, and
+scalable prompting techniques**.
 
 ---
 
 ## Tools
 
-* Claude Desktop (Chat) → for drafting and refining prompts
-  * Feature: Highlight-to-Prompt → select text, iteratively improve prompts
+* Claude (Chat or Desktop) — for drafting and refining prompts
+* Highlight-to-Prompt — select text and iteratively improve prompts
 
 ---
 
@@ -24,19 +24,20 @@ A **skill** is a prompt you reuse again and again for a specific job.
 
 #### Analogy
 
-Like a **calculator function** (e.g., `sum()`), instead of doing math manually every time.
+Like a **calculator function** (e.g., `sum()`), instead of doing math
+manually every time.
 
 #### Example
 
 Instead of writing this every time:
 
-```bash
+```
 Rewrite this message to sound professional and polite.
 ```
 
 Define a reusable skill:
 
-```bash
+```
 Context:
 This is a professional email.
 
@@ -60,11 +61,7 @@ Now reuse it everywhere.
 * One-time tasks
 * Very simple queries
 
-Overkill example:
-
-```bash
-Summarize this article
-```
+Overkill example: `"Summarize this article"`
 
 ---
 
@@ -72,7 +69,7 @@ Summarize this article
 
 #### What it is
 
-Break a complex task into **small steps**, instead of asking everything 
+Break a complex task into **small steps**, instead of asking everything
 at once.
 
 #### Analogy
@@ -85,20 +82,18 @@ Like asking a teacher:
 
 #### Example
 
-* Bad (all at once):
-```bash
+Bad (all at once):
+
+```
 Build a full plan for organizing my files and execute it.
 ```
 
-* Better: step-by-step guide with each step laid out separately:
-```bash
-Propose a safe plan to organize my files.
+Better — step-by-step:
+
 ```
-```bash
-Explain why this plan is safe and reversible.
-```
-```bash
-Execute only Step 1.
+Step 1: Propose a safe plan to organize my files.
+Step 2: Explain why this plan is safe and reversible.
+Step 3: Execute only Step 1.
 ```
 
 #### Why it works
@@ -126,7 +121,7 @@ Like a **form** you fill out every time instead of writing from scratch.
 
 #### Template
 
-```bash
+```
 Context:
 ...
 
@@ -142,7 +137,7 @@ Output:
 
 #### Example
 
-```bash
+```
 Context:
 Audience is a 10-year-old.
 
@@ -172,16 +167,14 @@ Output:
 
 ### 4. Phased Template for Planning
 
-`plan.md` may bloat along with the scope of the project. This 
-becomes a "context boat anchor" that slows down your agent. 
-You need a structure that prioritizes active state over 
-historical record.
+`plan.md` may bloat along with the scope of the project. This becomes a
+"context boat anchor" that slows down your agent. You need a structure that
+prioritizes active state over historical record.
 
-[Phased Template](../plans/canonical/phased_template.md)
-offers a structure - sliding window approach- that 
-prioritizes active state over historical record. Detailed steps 
-only exist for the current phase; completed work is collapsed 
-and eventually evicted to a secondary file.
+[Phased Template](../plans/canonical/phased_template.md) offers a structure —
+a sliding window approach — that prioritizes active state over historical
+record. Detailed steps only exist for the current phase; completed work is
+collapsed and eventually evicted to a secondary file.
 
 ---
 
@@ -203,7 +196,7 @@ Like a **toolbox**: Hammer + Screwdriver + Wrench. Each tool = a skill.
 
 #### Example Prompt
 
-```bash
+```
 Use the writing plugin:
 * summarize the text
 * rewrite in simple language
@@ -221,17 +214,17 @@ Use the writing plugin:
 
 #### (A) System Prompt
 
-Defines behavior and personality
+Defines behavior and personality:
 
-```bash
+```
 You are a careful assistant who prioritizes safety and clarity.
 ```
 
 #### (B) Application / Agent Prompt
 
-Defines workflow and rules
+Defines workflow and rules:
 
-```bash
+```
 Only operate inside this directory.
 Do not delete files.
 Ask before executing.
@@ -239,30 +232,46 @@ Ask before executing.
 
 #### (C) User Prompt
 
-Defines the specific task
+Defines the specific task:
 
-```bash
+```
 Organize my downloads folder.
 ```
 
 #### When NOT useful
 
-* Beginners → too many layers can confuse; start with user prompts first
+* Beginners — too many layers can confuse; start with user prompts first
 
 ---
 
 ### 7. Chain of Thought (Reasoning)
 
-Chain of Thought (CoT) prompting asks the model to 
-**show its reasoning steps** before giving a final 
-answer, rather than jumping directly to a
-conclusion. 
+> **Where does this topic belong in the Agenda?**
+>
+> Chain of Thought is **introduced** in
+> [Prompting Basics](prompting_basics.md) — the concept, one simple
+> example, "show your work." By the time attendees reach Advanced
+> Prompting they have run real exercises across web sites, apps, and
+> multi-agent workflows. This section **formalizes** CoT as a reusable
+> skill, a plugin component, and a debugging tool — building on the
+> experience they already have.
+
+#### What it is
+
+Chain of Thought (CoT) prompting asks the model to **show its reasoning
+steps** before giving a final answer, rather than jumping directly to a
+conclusion.
+
+#### Analogy
+
+Like asking a student to **show their work** on a math test, not just
+write the answer. The steps reveal where the thinking went right or wrong.
 
 #### Basic vs CoT prompt
 
 Without CoT:
 
-```bash
+```
 Context:
 You are a financial advisor.
 
@@ -275,7 +284,7 @@ Yes or No with one sentence.
 
 With CoT:
 
-```bash
+```
 Context:
 You are a financial advisor advising a high school student.
 
@@ -300,14 +309,61 @@ Numbered reasoning steps, then a final recommendation
 | One-shot failure | Can fix the specific broken step |
 | Hard to improve | Easy to iterate on one step |
 
-#### CoT Examples: Template & Skill
+#### CoT + Template (combined)
 
-Reference:
-* [CoT + Template (combined)](../plans/canonical/cot_template.md#decision-prompt)
-* [Risk Evaluator](../plans/canonical/cot_template.md#risk-evaluator)
+```
+Context:
+[your situation]
+
+Task:
+[your question]
+
+Reasoning:
+Think step by step. List each assumption and inference explicitly.
+
+Constraints:
+[your constraints]
+
+Output:
+Numbered reasoning steps → Final answer
+```
+
+#### Advanced: CoT as part of a Skill
 
 Once you identify a high-value reasoning pattern, turn the CoT structure
 into a **reusable skill**:
+
+```
+# Skill: Risk Evaluator
+
+Context:
+You are evaluating a decision for potential risks.
+
+Task:
+Evaluate [DECISION].
+
+Reasoning:
+Step 1 — Identify what could go wrong
+Step 2 — Estimate likelihood (Low / Med / High)
+Step 3 — Estimate impact (Low / Med / High)
+Step 4 — Suggest mitigations for High x High items
+
+Output:
+Risk table + top 3 mitigations
+```
+
+Reuse this skill for code review, plan review, investment decisions,
+and project proposals.
+
+#### Relationship to the Agenda
+
+| Session | CoT Role |
+|---|---|
+| Prompting Basics | Introduced — "show your work" concept |
+| Planning | Applied — plan.md asks Claude to reason before acting |
+| Web Site / App exercises | Implicit — progressive disclosure forces step reasoning |
+| **Advanced Prompting (here)** | Formalized — CoT as a reusable skill and plugin component |
+| Multi-Agent Workflows | Extended — each agent in a chain has its own CoT step |
 
 ---
 
@@ -320,21 +376,23 @@ a Chain of Thought layer.
 
 ### Step 1 — Basic Prompt (Baseline)
 
-Observe the output of the following prompt:
+Paste this into Claude:
 
-```bash
+```
 Rewrite this message better:
 
 "hey can u send me the doc asap i need it"
 ```
 
+Observe the output. Note what changed and what did not.
+
 ---
 
 ### Step 2 — Structured Prompt (Template)
 
-Use the template structure:
+Now use the template structure:
 
-```bash
+```
 Context:
 This is a professional email to a colleague.
 
@@ -362,13 +420,13 @@ Formal email only — no explanation
 
 Name this prompt `professional-rewrite-skill` and reuse it for:
 
-* Emails to boss, professor, teacher
+* School emails to teachers
 * Internship outreach messages
 * Team Slack messages
 
 **Exercise:** Apply the skill to this message:
 
-```bash
+```
 hey prof can i get extension on the hw its been a lot this week
 ```
 
@@ -378,7 +436,7 @@ hey prof can i get extension on the hw its been a lot this week
 
 Extend the skill to explain its reasoning:
 
-```bash
+```
 Context:
 This is a professional email to a colleague.
 
@@ -405,7 +463,7 @@ Step-by-step reasoning → then the rewritten email
 ```
 
 **Reflection:** Did the reasoning steps match what you would have noticed
-manually? Were any steps surprising?
+manually? Were any surprising?
 
 ---
 
@@ -413,7 +471,7 @@ manually? Were any steps surprising?
 
 Create a **Writing Plugin** by chaining three skills in one prompt:
 
-```bash
+```
 Context:
 I am preparing a message for a professional audience.
 
@@ -444,7 +502,7 @@ could you drop for a faster workflow?
 
 ### Step 6 — Failure Injection (Break the Prompt)
 
-```bash
+```
 Context:
 Professional email.
 
@@ -468,20 +526,20 @@ Instead of one big prompt, break into turns:
 
 **Turn 1:**
 
-```bash
+```
 What are the problems with this message?
 "hey can u send me the doc asap i need it"
 ```
 
 **Turn 2:**
 
-```bash
+```
 Now rewrite it fixing only the tone problems you listed.
 ```
 
 **Turn 3:**
 
-```bash
+```
 Now tighten it to 2 sentences maximum without losing the ask.
 ```
 
