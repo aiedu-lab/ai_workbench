@@ -1,0 +1,15 @@
+Context:
+{{SITUATION}}
+
+Task:
+{{QUESTION}}
+
+Reasoning:
+Think step by step. List each assumption and inference explicitly.
+
+Constraints:
+{{CONSTRAINTS}}
+
+Output:
+Numbered reasoning steps → Final answer
+{{OUTPUT}}

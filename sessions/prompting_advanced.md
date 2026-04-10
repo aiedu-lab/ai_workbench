@@ -28,32 +28,16 @@ Like a **calculator function** (e.g., `sum()`), instead of doing math manually e
 
 #### Example
 
-Instead of writing this every time:
+Instead of writing the below prompt every time: 
 
 ```bash
 Rewrite this message to sound professional and polite.
 ```
 
-Define a reusable skill:
+Define the below "reusable" skill that is then reused 
+everywhere just as one uses functions in math.
 
-```bash
-Context:
-This is a professional email.
-
-Task:
-Rewrite the message.
-
-Constraints:
-* Polite tone
-* Clear ask
-* No slang
-* Max 2 sentences
-
-Output:
-Formal email
-```
-
-Now reuse it everywhere.
+[professional email rewriter skill](../projects/skill.md#professional-rewrite-skill) 
 
 #### When NOT useful
 
@@ -119,43 +103,26 @@ Execute only Step 1.
 #### What it is
 
 Create a **fixed structure** for prompts so they are consistent.
+It is like a **form** you fill out every time instead of writing 
+from scratch. 
+For example, this [Prompt Template](../prompts/template.md#prompt-template) can be used to realize the example [Prompt](../projects/prompting_advanced/prompt.md#invest-or-buy-laptop)
 
-#### Analogy
 
-Like a **form** you fill out every time instead of writing from scratch.
+#### Template substitution mechanisms
 
-#### Template
+1. Shell variable substitution:
+[var_sub.sh](../projects/prompting_advanced/var_sub.sh)
 
-```bash
-Context:
-...
+2. Python f-string:
+[cot_prompt.py](../projects/prompting_advanced/cot_prompt.py)
+can be reused across many calls where you want to call the same 
+template with different data in a loop or script. 
 
-Task:
-...
-
-Constraints:
-...
-
-Output:
-...
-```
-
-#### Example
-
-```bash
-Context:
-Audience is a 10-year-old.
-
-Task:
-Explain photosynthesis.
-
-Constraints:
-* Use simple words
-* Use an analogy
-
-Output:
-1 paragraph + 1 example
-```
+3. Reading data from a file: 
+[run.py](../projects/prompting_advanced/run.py) merges in runtime 
+the [template](../projects/prompting_advanced/template.txt) and
+the [data](../projects/prompting_advanced/data.json), where each 
+are stored separately.
 
 #### Benefits
 
@@ -177,7 +144,7 @@ becomes a "context boat anchor" that slows down your agent.
 You need a structure that prioritizes active state over 
 historical record.
 
-[Phased Template](../plans/canonical/phased_template.md)
+[Phased Plan Template](../plans/canonical/phased_plan_template.md)
 offers a structure - sliding window approach- that 
 prioritizes active state over historical record. Detailed steps 
 only exist for the current phase; completed work is collapsed 
@@ -333,26 +300,10 @@ Rewrite this message better:
 ### Step 2 — Structured Prompt (Template)
 
 Use the template structure:
+RECIPIENT="colleague"
+MESSAGE="hey can u send me the doc asap i need it"
 
-```bash
-Context:
-This is a professional email to a colleague.
-
-Task:
-Rewrite the message below.
-
-Message:
-"hey can u send me the doc asap i need it"
-
-Constraints:
-* Polite tone
-* Clear ask
-* No slang
-* Max 2 sentences
-
-Output:
-Formal email only — no explanation
-```
+[professional email rewriter skill](../projects/skill.md#professional-rewrite-skill)
 
 **Reflection:** What specifically improved vs Step 1?
 

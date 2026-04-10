@@ -1,4 +1,26 @@
-# CoT Templatew
+# Template
+
+## Prompt Template
+
+```bash
+Context:
+[context describing text]
+
+Task:
+[list of tasks to accomplish]
+
+Reasoning:
+Think step by step. List eash assumption and inference explicitly.
+
+Constraints:
+[list of constraints]
+
+Output:
+Numbered reasoning steps -> Final answer.
+[additional instructions on output format structure, length, ...]
+```
+
+## CoT Template
 
 # Decision Prompt
 
