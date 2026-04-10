@@ -5,7 +5,8 @@
 ## Objective
 Install and verify:
 - [Claude Desktop (Chat + Code + CoWork)](https://claude.com/download)
- 
+  - Choose your OS
+  
 Ensure:
 - subscription or API access works
 - Claude responds correctly

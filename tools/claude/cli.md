@@ -1,4 +1,4 @@
-# Claude CLI
+# Claude Code CLI
 
 ## CLI Setup
 

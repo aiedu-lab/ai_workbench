@@ -1,4 +1,4 @@
-# GitHub (15 mins)
+# GitHub
 
 ## Objective
 Learn how to save, track, and share your work safely

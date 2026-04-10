@@ -1,0 +1,6 @@
+{
+  "situation": "I am a high school student with $500 saved.",
+  "question": "Should I buy a used gaming laptop or invest the $500?",
+  "constraints": "Consider: immediate utility, long-term value, opportunity cost, liquidity.",
+  "output": "Prioritized ordered list of choice. Each explained in 3 lines or less with: price, reasons, description."
+}
