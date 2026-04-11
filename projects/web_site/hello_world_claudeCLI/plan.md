@@ -1,3 +1,9 @@
+# Hello World App Plan
+
+## Context
+Create a Hello World App
+
+## Task
 Create a minimal static webpage as a simple Hello World app.
 
 ## Files
