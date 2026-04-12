@@ -21,12 +21,14 @@ for various use cases, such as coding, automation, etc. using:
 | [**Concept: Planning**](sessions/planning.md) | 45 mins | [Claude Desktop (Chat)](tools/claude/desktop.md) | 15 mins  |
 | [**Exercise: Create Presentation**](sessions/slides.md) | 45 mins | [Gamma](https://gamma.app/), [GitHub](tools/github.md) | 15 mins |
 | [**Exercise: Create/Run Web Site on Laptop/Lovable**](sessions/web_site.md) | 60 mins | [Lovable.dev](https://lovable.ai), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
-| [**Exercise: Create/Run Application on Laptop**](sessions/client_application.md) | 45 mins | [VSCode/Python](https://code.visualstudio.com/docs/languages/python), [Claude Desktop (Code)](tools/claude/desktop.md) | 15 mins |
-| [**Exercise: Create/Run Workflows on Laptop**](sessions/client_work_automation.md) | 75 mins | [Claude Code (CoWork)](tools/claude/desktop.md) | 15 mins |
+| [**Exercise: Create/Run Application on Laptop**](sessions/client_application.md) | 45 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/),  | 15 mins |
+| [**Exercise: Create/Run Workflows on Laptop**](sessions/client_work_automation.md) | 75 mins | [Claude CoWork](tools/claude/desktop.md) | 15 mins |
 | [**Exercise: Create/Run Multi-Agent Workflows on Laptop**](sessions/client_multiagent.md) | 60 mins | [Claude Code (CLI)](tools/claude/cli.md), [OpenAI Codex (CLI)](tools/openai/codex_cli.md) | 15 mins |
-| [**Concept: Advanced Prompting Techniques**](sessions/prompting_advanced.md) | 60 mins | [Claude Desktop (Chat)](tools/claude/desktop.md) |  |
+| [**Concept: Advanced Prompting Techniques**](sessions/prompting_advanced.md) | 60 mins | [Claude Chat](tools/claude/desktop.md) |  |
+| [**Concept: Code Review**](sessions/code_review.md) | 30 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) |  |
 | [**Exercise: Run Applications on Server**](sessions/server_application.md) | 60 mins | [OpenClaw](tools/openclaw/cli.md) | 15 mins | 15 mins |
 | [**Exercise: Run Multi-Agent Workflows on Server**](sessions/server_multiagent.md) | 60 mins | [Temporal](https://temporal.io/) | 15 mins |
+| [**Concept: Software Enhancement**](sessions/software_enhancement.md) | 30 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) |  |
 | [**Future Advancements**](sessions/future_advancements.md) | 30 mins |  |  |
 | [**Recap**](sessions/recap.md) | 30 mins |  |  |
 

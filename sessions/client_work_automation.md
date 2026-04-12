@@ -9,22 +9,8 @@
 ## Tools & Setup
 
 * [Claude Desktop (CoWork)](../tools/claude/desktop.md)
-* Test with a test folder before using on real data
-```bash
-# Create a test directory
-mkdir -p test_dir
-cd test_dir
-
-# Create dummy files of different types and sizes
-truncate -s 1K very_small_file_tom.txt 
-truncate -s 1K very_small_file_alice.pdf 
-truncate -s 2K small_file_susan.jpg 
-truncate -s 2K small_file_charlie.mp4 
-truncate -s 4K medium_file_bob.pdf 
-truncate -s 4K medium_file_lisa.jpg 
-truncate -s 8K large_file_harry.txt 
-truncate -s 8K large_file_david.mp4
-```
+* Test with a test folder before using on real data. 
+  [create test_dir](../tests/test_dir.sh) to create the folder.
 * Grant folder access in `OS Settings` to move/edit files
 
 ## Exercise

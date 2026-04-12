@@ -1,15 +1,17 @@
-# Web Site on Server
+# Web Site
 
 ## Tools
 
-* [Lovable](https://lovable.dev/) - AI website builder (login verified)
-* [Claude Code CLI (API mode)](../tools/claude/cli.md) - AI coding assistant
+* [Lovable (SaaS)](https://lovable.dev/) - AI website builder (login verified)
+
+Reference links includes set up and installation instructions:
+* [Claude Code CLI (API mode)](../tools/claude/cli.md) - AI coding assistant:
 * [Claude Desktop (Code)](../tools/claude/desktop.md) - AI coding assistant
 
 ---
 
 ## Activities
-* Demo: Lovable
+* Demo: Lovable (SaaS)
 * Demo: Claude Code CLI (API mode)
 * Exercise: Build a web site using Lovable and Claude Code
 
@@ -93,17 +95,6 @@ head -1 index.html   # must be <!DOCTYPE html>
 python3 -m http.server 8888
 # open http://localhost:8888, submit names, verify page
 ```
-
----
-
-## Code Migration and Working on Existing 
-
-The methodology to generate new code (as laid out above) is
-very different than the methodolody for migration to: 
-* modernize legacy code  
-* modify hybrid code - part manually written vs part AI generated
-
-Reference [code migration methods](./modernize_legacy_or_modify_existing_code.md).
 
 ---
 
@@ -288,8 +279,12 @@ see and own every line of code — nothing is hidden behind a chat interface.
 
 ## Tokenomics and Cost Control
 
+For Lovable (SaaS), reference the student programs for cost control:
 * [Lovable Student Discount](https://lovable.dev/students)
   * “Learner” 50% Discount: for Pro subscription at $12.50/month. 
+
+For Claude and any LLM-Provider API calls, reference the links below
+for cost control:
 * [Claude Cost Control](../tools/claude/cost_control.md)
 * [Provider Cost Control](../tools/provider_cost_control.md)
 
