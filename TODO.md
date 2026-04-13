@@ -1,7 +1,9 @@
 # TODO
 
 ## Exercise: Create/Run Web Site on Laptop/Lovable
-* Test out code generation from web_site via Claude Code (Pro).
+* Test out plan.md driven code generation from web_site via Claude Code in 
+  projects/web_site/hello_world_claudeAI
+* Test generated code tagged 
 
 ## Concept: Code Review
 * Include Claude Code Review instructions and how to trigger it via Claude Code

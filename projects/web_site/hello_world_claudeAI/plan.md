@@ -51,22 +51,6 @@
 
 ---
 
-## 🟡 Phase 2: Multi-Agent Code Review Pipeline
-
-*Status: Proposed*
-
-* [ ] **Step 2.1: Claude Code generates organizer script**
-  * Produce `organizer.py` from prompt — file sorter by creation month
-* [ ] **Step 2.2: Codex reviews the script**
-  * `codex exec` reviews for bugs, safety, failure modes
-  * Output: `review_organizer.md`
-* [ ] **Step 2.3: Claude Code applies fixes**
-  * Read review, apply targeted fixes only, produce `organizer.v2.py`
-* [ ] **Step 2.4: Human diff review and acceptance**
-  * `diff organizer.py organizer.v2.py` → accept if appropriate
-
----
-
 ## ⚪ Phase 2: Server Deployment
 
 *Status: Backlog*
