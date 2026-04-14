@@ -12,37 +12,70 @@ Restart terminal after install.
 
 ## 🧭 Authenticate
 
-1. Provision Claude Platform
+1. Provision API_KEY via Claude Platform
 * [Login Claude Platform](https://platform.claude.com/)
 * [Purchase $5 Credits](https://platform.claude.com/billing)
 * [Generate and copy API key](https://platform.claude.com/settings/api-keys)
+* Save API KEY: 
+```bash
+export MY_ANTHROPIC_API_KEY="sk-ant-..."
+```
 
-2. Purge stale sessions just in case
+2. Provision OAuth Token via Claude CLI 
+```bash
+# Valid for one year
+claude setup-token
+```
 
 ```bash
+# fill in the right token value in place of ... below 
+export MY_CLAUDE_CODE_OAUTH_TOKEN="sk-any-..."
+```
+
+3. Login using REPL and use Browser flow to authorize
+
+```bash
+# purge any stale sessions just in case
 claude logout
+# login via REPL and browser based Authorization flow
+claude
 ```
 
-3. Set API Key
+4. Setup appropriate CLI mode authorization 
 
+* Subscription Mode  
 ```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
+# optional unset as CLAUDE_CODE_OAUTH_TOKEN has higher precedence
+export CLAUDE_CODE_OAUTH_TOKEN=$MY_CLAUDE_OAUTH_TOKEN && \
+unset ANTHROPIC_API_KEY
 ```
 
-4. Always run inside the repo
+* API Key Mode
+```bash
+# fill in the right API key value in place of ... below
+export ANTHROPIC_API_KEY=$MY_ANTHROPIC_API_KEY && \
+unset CLAUDE_CODE_OAUTH_TOKEN
+```
+
+* Validate Auth Status
+```bash
+claude auth status --text
+```
+
+5. Always run inside the repo
 
 ```bash
 cd ai-education-lab
 ```
 
-5. Verify environment
+6. Verify environment
 
 ```bash
 bash tools/claude/check_env.sh
 claude
 ```
 
-6. Install the VSCode Extension
+7. Install the VSCode Extension
 
 * Open VSCode
 * Press `Ctrl+Shift+X` (Windows/Linux) or `Cmd+Shift+X` (Mac) to open    Extensions
@@ -71,7 +104,7 @@ To keep the sidebar open across restarts, add to your VSCode `settings.json`:
 
 Or set a keyboard shortcut: `Cmd+Shift+I` (Mac) / `Ctrl+Shift+I` (Windows).
 
-7. Confirm the integrated terminal works
+8. Confirm the integrated terminal works
 
 In VSCode's integrated terminal (`Ctrl+\``):
 
@@ -86,20 +119,20 @@ authentication and settings.
 Hello! How can I help you today?
 ```
 
-8. Constrain scope in prompts
+9. Constrain scope in prompts
 
 Always include:
 
 "Only read files in this project directory. Do not access external folders."
 
-9. Avoid large directories
+10. Avoid large directories
 
 Never run on:
 * ~/
 * Downloads/
 * node_modules/
 
-10. Kill runaway processes
+11. Kill runaway processes
 
 Press:
 
