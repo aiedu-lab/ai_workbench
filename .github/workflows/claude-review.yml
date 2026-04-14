@@ -1,0 +1,33 @@
+# Triggered via `@claude review` to GitHub "Conversations" tab.
+# Reference the "Files Changes" GitHub tab to see inline (diff) comment blocks 
+# from "Claude" appear directly below code line. These comments are also 
+# mirrored in the bottom of "Converation" GitHub tab
+name: Claude PR Review
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  claude-review:
+    if: |
+      github.event.issue.pull_request &&
+      contains(github.event.comment.body, '@claude')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: "--max-turns 3"
+          prompt: |
+            Review the changes in this PR for:
+            - Logic errors and edge cases
+            - Security vulnerabilities
+            - Missing error handling
+            - CLAUDE.md rule violations
+            Post inline comments on specific lines.
+            Only flag high-confidence issues.

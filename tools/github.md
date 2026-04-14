@@ -12,10 +12,37 @@ Learn how to save, track, and share your work safely
 
 ## Concept
 GitHub is like:
-- Google Docs version history
-- + backup
-- + collaboration
+* Google Docs version history
+* + backup
+* + collaboration
 
+---
+
+## Set Up VSCode
+* Install extension': 
+  * [GitHub Pull Requests VSCode Extension](https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-pull-request-github)
+* Sign in to GitHub in VScode: 
+  * Click GitHub icon in the sidebar and "Sign In"
+
+## Set Up Command Line
+* Install `gh`:
+```bash
+# add official keyring:
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+
+# add repo to sources
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+
+# install package
+sudo apt update
+sudo apt install gh -y
+``` 
+
+* Verify installation of `gh`:
+```bash
+gh --version
+```
 ---
 
 ## Activity (Hands-on)
