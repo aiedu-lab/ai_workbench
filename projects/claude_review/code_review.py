@@ -1,8 +1,12 @@
 import math
 
 def divide(a: int | float, b: int | float) -> float:
-  """Divide a by b; raises ValueError if b is zero."""    
-  # If b = float('nan') or float('inf'), then b == 0 check fails
+  """
+  Divide a by b; raises ValueError if b is zero OR
+  if not a finite float number (e.g., NaN or infinity).
+  """
+  # Note b == 0 check fails
+  # if b = float('nan') or float('inf')
   # So we also check if b is not a number or not finite
   if b == 0 or (isinstance(b, float) and not math.isfinite(b)):
     raise ValueError(f"Invalid divisor: {b!r}")
