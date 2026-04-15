@@ -215,7 +215,6 @@ name: Claude PR Review
 on:
   issue_comment:
     types: [created]
-
 jobs:
   claude-review:
     if: |
@@ -225,10 +224,15 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      id-token: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: "--max-turns 10"
           prompt: |
             Review the changes in this PR for:
             - Logic errors and edge cases
