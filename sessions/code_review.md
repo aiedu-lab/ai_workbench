@@ -189,7 +189,21 @@ parallel subagents requiring full agentic loop, which `-p` may
 not support. Hence, triggering prompt based code-review may be 
 more reliable headless pattern.  
 
-### Level 2: GitHub Actions (Self-Hosted)
+### Level 2: GitHub Actions 
+
+#### Level 2a: Workflow triggered by GitHub Actions
+
+1. Authorize: 
+  * `gh secret list` shows that authorization token CLAUDE_CODE_AUTH_TOKEN (Subscription) or key ANTHROPIC_API_LEY (pay as you go) is uploaded to Repo
+  * GitHub Repo => Setting => Secrets  Variables => Actions. 
+  * Validate: `claude auth status --text` shows auth mode.
+
+3. Permit Workflows
+  * GitHub Repo => Settings => Actions => General: "Allow GiHub Actions to create and approve pull requests" is enabled.
+  * Validate: GitHub Repo => Actions => "Claude PR Review" listed on left. If it has an icon - yellow (queued) or green (in progress) - it is working.
+
+
+#### Level 2b: Self-Hosted GitHub Actions
 
 Add this workflow file to your repo to trigger Claude review on `@claude`
 mentions in PR comments:
