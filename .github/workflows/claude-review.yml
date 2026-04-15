@@ -26,14 +26,18 @@ jobs:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           show_full_output: true
-          claude_args: "--max-turns 10 --allowedTools 'Bash(gh pr diff*),Bash(gh pr view*),Bash(gh pr comment*),Bash(gh api*)'"
+          claude_args: "--max-turns 20 --allowedTools 'Bash(gh pr diff*),Bash(gh pr view*),Bash(gh api*),Bash(python3*),Write'"
           prompt: |
             Review PR #${{ github.event.issue.number }} in this repository.
-            Run: gh pr diff ${{ github.event.issue.number }}
-            Then review the changes for:
-            - Logic errors and edge cases
-            - Security vulnerabilities  
-            - Missing error handling
-            - CLAUDE.md rule violations
-            Post inline comments on specific lines using the GitHub API.
-            Only flag high-confidence issues.
+
+            Steps:
+            1. Run: gh pr diff ${{ github.event.issue.number }}
+            2. Then review the changes and analyze for:
+               - Logic errors, bugs, and edge cases
+               - Security issues and vulnerabilities  
+               - Missing error handling
+               - CLAUDE.md rule violations
+            3. Write your review as JSON to /tmp/review.json using the Write tool
+            4. Post using: gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}/reviews --input /tmp/review.json
+            
+            Only flag high-confidence issues. Use REQUEST_CHANGES event if bugs found.
