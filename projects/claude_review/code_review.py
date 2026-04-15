@@ -17,6 +17,7 @@ def divide(a: int | float, b: int | float) -> float:
   ):
     raise ValueError(f"Invalid dividend: {a!r}")
   if (
+    isinstance(b, bool) or
     (not isinstance(b, float) and not isinstance(b, int)) or
     not math.isfinite(b) or
     b == 0
@@ -29,12 +30,12 @@ def get_user(users: dict[int, str], user_id: int) -> str:
   Get a user by ID. 
   raises ValueError if
    - users is not a dict
-   - user_id is not an int 
+   - user_id is a boolean OR not an int 
    - user_id as Key is not found in dict.
   """
   if not isinstance(users, dict):
     raise ValueError(f"Invalid users map: {users!r}")
-  if not isinstance(user_id, int):
+  if isinstance(user_id, bool) or not isinstance(user_id, int):
     raise ValueError(f"Invalid user id: {user_id!r}")
   if user_id not in users:
     raise ValueError(f"User ID {user_id} not found")
