@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import math
 
 def divide(a: int | float, b: int | float) -> float:
