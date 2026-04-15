@@ -7,12 +7,12 @@ def divide(a: int | float, b: int | float) -> float:
   if b is zero.
   """
   if (
-    not isinstance(a, float) and not isinstance(a, int)) or
+    (not isinstance(a, float) and not isinstance(a, int)) or
     not math.isfinite(a)
   ):
     raise ValueError(f"Invalid dividend: {a!r}")
   if (
-    not isinstance(b, float) and not isinstance(b, int)) or
+    (not isinstance(b, float) and not isinstance(b, int)) or
     not math.isfinite(b) or
     b == 0
   ):
