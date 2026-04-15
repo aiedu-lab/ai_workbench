@@ -4,16 +4,15 @@ def divide(a: int | float, b: int | float) -> float:
     raise ValueError("Cannot divide by zero")
   return a / b
 
-def get_user(users, user_id):
+def get_user(users: dict[int, str], user_id: int) -> str:
   """Get a user by ID."""
-  if (user_id not in users):
+  if user_id not in users:
     raise ValueError(f"User ID {user_id} not found")
-  return users[user_id]
 
 def main():
   print(divide(10, 2))
   users = {1: "Alice", 2: "Bob"}
-  print(get_user(users, 3))
+  print(get_user(users, 2))
 
 if __name__ == "__main__":
   main()
