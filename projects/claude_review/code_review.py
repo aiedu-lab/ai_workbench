@@ -2,7 +2,7 @@ import math
 
 def divide(a: int | float, b: int | float) -> float:
   """Divide a by b; raises ValueError if b is zero."""    
-  # If b = flat('nan') or float('inf'), then b == 0 check fails
+  # If b = float('nan') or float('inf'), then b == 0 check fails
   # So we also check if b is not a number or not finite
   if b == 0 or (isinstance(b, float) and not math.isfinite(b)):
     raise ValueError(f"Invalid divisor: {b!r}")
