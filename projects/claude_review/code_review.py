@@ -1,12 +1,14 @@
-def divide(a, b):
+def divide(a: int | float, b: int | float) -> float:
   """Divide a by b."""
   if b == 0:
     raise ValueError("Cannot divide by zero")
   return a / b
 
-def get_user(users, id):
+def get_user(users, user_id):
   """Get a user by ID."""
-  return users.get(id)
+  if (user_id not in users):
+    raise ValueError(f"User ID {user_id} not found")
+  return users[user_id]
 
 def main():
   print(divide(10, 2))
