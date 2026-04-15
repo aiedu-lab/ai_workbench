@@ -3,10 +3,13 @@ import math
 def divide(a: int | float, b: int | float) -> float:
   """
   Divide a by b
-  raises ValueError if a or b is not a finite number OR
-  if b is zero.
+  raises ValueError if 
+  - a or b is a boolean (since bool is a subclass of int in Python)
+  - a or b is not a finite int/float number 
+  - b is zero.
   """
   if (
+    isinstance(a, bool) or
     (not isinstance(a, float) and not isinstance(a, int)) or
     not math.isfinite(a)
   ):
@@ -20,7 +23,17 @@ def divide(a: int | float, b: int | float) -> float:
   return a / b
 
 def get_user(users: dict[int, str], user_id: int) -> str:
-  """Get a user by ID. ValueError if user_id not found."""
+  """
+  Get a user by ID. 
+  raises ValueError if
+   - users is not a dict
+   - user_id is not an int 
+   - user_id as Key is not found in dict.
+  """
+  if not isinstance(users, dict):
+    raise ValueError(f"Invalid users map: {users!r}")
+  if not isinstance(user_id, int):
+    raise ValueError(f"Invalid user id: {user_id!r}")
   if user_id not in users:
     raise ValueError(f"User ID {user_id} not found")
   return users[user_id]
