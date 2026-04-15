@@ -215,7 +215,6 @@ name: Claude PR Review
 on:
   issue_comment:
     types: [created]
-
 jobs:
   claude-review:
     if: |
@@ -225,17 +224,35 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      id-token: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: anthropics/claude-code-action@v1
         with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          show_full_output: true
+          claude_args: "--max-turns 20 --allowedTools 'Bash(gh pr diff*),Bash(gh pr view*),Bash(gh api*),Bash(python3*),Write'"
           prompt: |
-            Review the changes in this PR for:
-            - Logic errors and edge cases
-            - Security vulnerabilities
-            - Missing error handling
-            - CLAUDE.md rule violations
-            Post inline comments on specific lines.
+            Review PR #${{ github.event.issue.number }} in this repository.
+
+            Steps:
+            1. Run: gh pr diff ${{ github.event.issue.number }}
+            2. Then review the changes and analyze for:
+               - Logic errors, bugs, and edge cases
+               - Security issues and vulnerabilities  
+               - Missing error handling
+               - CLAUDE.md rule violations
+            3. Write your review as JSON to /tmp/review.json using the Write tool
+            4. Post using: gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}/reviews --input /tmp/review.json
+
+            
+            Use event "REQUEST_CHANGES" if high-confidence bugs found.
+            Use event "APPROVE" if no high-confidence bugs found.
+            Use event "COMMENT" if observations only (not blocking).
             Only flag high-confidence issues.
 ```
 

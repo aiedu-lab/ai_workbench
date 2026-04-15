@@ -39,5 +39,9 @@ jobs:
                - CLAUDE.md rule violations
             3. Write your review as JSON to /tmp/review.json using the Write tool
             4. Post using: gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}/reviews --input /tmp/review.json
+
             
-            Only flag high-confidence issues. Use REQUEST_CHANGES event if bugs found.
+            Use event "REQUEST_CHANGES" if high-confidence bugs found.
+            Use event "APPROVE" if no high-confidence bugs found.
+            Use event "COMMENT" if observations only (not blocking).
+            Only flag high-confidence issues.
