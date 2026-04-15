@@ -2,13 +2,20 @@ import math
 
 def divide(a: int | float, b: int | float) -> float:
   """
-  Divide a by b; raises ValueError if b is zero OR
-  if not a finite float number (e.g., NaN or infinity).
+  Divide a by b
+  raises ValueError if a or b is not a finite number OR
+  if b is zero.
   """
-  # Note b == 0 check fails
-  # if b = float('nan') or float('inf')
-  # So we also check if b is not a number or not finite
-  if b == 0 or (isinstance(b, float) and not math.isfinite(b)):
+  if (
+    not isinstance(a, float) and not isinstance(a, int)) or
+    not math.isfinite(a)
+  ):
+    raise ValueError(f"Invalid dividend: {a!r}")
+  if (
+    not isinstance(b, float) and not isinstance(b, int)) or
+    not math.isfinite(b) or
+    b == 0
+  ):
     raise ValueError(f"Invalid divisor: {b!r}")
   return a / b
 
