@@ -25,15 +25,15 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # temporarily debug to see what Claude found and 
-          # whether Claude tried to post
           show_full_output: true
-          claude_args: "--max-turns 10"
+          claude_args: "--max-turns 10 --allowedTools 'Bash(gh pr diff*),Bash(gh pr view*),Bash(gh pr comment*),Bash(gh api*)'"
           prompt: |
-            Review the changes in this PR for:
+            Review PR #${{ github.event.issue.number }} in this repository.
+            Run: gh pr diff ${{ github.event.issue.number }}
+            Then review the changes for:
             - Logic errors and edge cases
-            - Security vulnerabilities
+            - Security vulnerabilities  
             - Missing error handling
             - CLAUDE.md rule violations
-            Post inline comments on specific lines.
+            Post inline comments on specific lines using the GitHub API.
             Only flag high-confidence issues.
