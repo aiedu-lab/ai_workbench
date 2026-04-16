@@ -25,6 +25,8 @@ ai_education_lab/
     client_*/        # Local app & workflow exercises
     server_*/        # Server-side exercises
   plans/             # Plan files (canonical + drafts)
+  sdcc/              # Spec Driven Content Creation
+    plan.md          # Creates contents for the lab and each session
   tools/             # Tool configuration guides
   learnings/         # Session notes and retrospectives
   docs/archive/      # Completed phase archives
@@ -42,12 +44,12 @@ follow them even if the user prompt does not mention them.
 Before modifying any existing file, read and summarize it first:
 
 ```
-Read [file]. Explain what it does. Do NOT write any code yet.
+Read [file]. Explain what it does. Do NOT write any file yet.
 ```
 
 Never assume the contents of a file. Always verify.
 
-### 2. Plan Before Coding
+### 2. Plan Before Coding or Creating Content
 
 For any change touching more than one file or one function, produce a
 written plan first. Use Plan Mode:
@@ -106,7 +108,19 @@ git push origin <output-branch> --tags
 Tags use the format: `vX.Y-brief-summary-step-completed`
 Example: `v1.2-add-history-list-step-completed`
 
-### 6. Never Touch These
+### 6. Branching and Merging
+
+NEVER make changes in the main branch - main remains locked. 
+NEVER create a `Pull Request` (PR), perform `Code Reviews`, or 
+`merge` the branch to main.
+
+All the below decisions are manual:
+* generate a pull request (PR) of the branch
+* trigger a code review request to agent and follow up content edits
+* merge of the branch to main or any other branch
+* creation of a branch
+
+### 7. Never Touch These
 
 Unless explicitly instructed by the user:
 
@@ -116,7 +130,7 @@ Unless explicitly instructed by the user:
 * Files outside the current working directory for a task
 * `.env` files, secrets, API keys — never read or write these
 
-### 7. Safety Rules
+### 8. Safety Rules
 
 * **NEVER** hardcode API keys, passwords, or tokens in any file
 * **NEVER** use `rm -rf` without explicit user confirmation
@@ -216,9 +230,10 @@ At the start of every new session, Claude must orient itself by
 reading these files in order before taking any action:
 
 1. `CLAUDE.md` (this file) — operating protocol
-2. `projects/[project_directory]/plan.md` — current phase, active step, 
+2. `sdcc/plan.md` - plan to create content for the lab
+3. `projects/[project_directory]/plan.md` — current phase, active step, 
    last completed step
-3. The specific file(s) targeted by the active step
+4. The specific file(s) targeted by the active step
 
 Then state:
 
@@ -277,6 +292,7 @@ git push origin feature/my-branch --tags
 
 ## PROJECT-SPECIFIC NOTES
 
+* **Content** creation plan lives in `sdcc/plan.md`.
 * **Projects** live in `projects/[project directory]/`. 
   Each sub-project has its own `CLAUDE.md` with file-level fencing rules.
 * **Plan template** follows the phased template in
