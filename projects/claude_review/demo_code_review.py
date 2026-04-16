@@ -4,25 +4,18 @@ import math
 
 def divide(a: int | float, b: int | float) -> float:
   """
-  Divide a by b
-  raises ValueError if 
-  - a or b is a boolean (since bool is a subclass of int in Python)
-  - a or b is not a finite int/float number 
-  - b is zero.
+  Divide a by b.
+  Raise ValueError for invalid inputs.
   """
-  if (
-    isinstance(a, bool) or
-    (not isinstance(a, float) and not isinstance(a, int)) or
-    not math.isfinite(a)
-  ):
-    raise ValueError(f"Invalid dividend: {a!r}")
-  if (
-    isinstance(b, bool) or
-    (not isinstance(b, float) and not isinstance(b, int)) or
+  if isinstance(a, bool) or 
+    not isinstance(a, (int, float)) or 
+    not math.isfinite(a):
+    raise ValueError(f"Dividend must be a number: {a!r}")
+  if isinstance(b, bool) or
+    not isinstance(b, (int, float)) or
     not math.isfinite(b) or
-    b == 0
-  ):
-    raise ValueError(f"Invalid divisor: {b!r}")
+    b == 0:
+    raise ValueError(f"Divisor must be a non-zero number: {b!r}")
   return a / b
 
 def get_user(users: dict[int, str], user_id: int) -> str:
@@ -38,7 +31,7 @@ def get_user(users: dict[int, str], user_id: int) -> str:
   if isinstance(user_id, bool) or not isinstance(user_id, int):
     raise ValueError(f"Invalid user id: {user_id!r}")
   if user_id not in users:
-    raise ValueError(f"User ID {user_id} not found")
+    raise ValueError(f"User ID not in dictionary: {user_id} not found")
   return users[user_id]
 
 def main():
