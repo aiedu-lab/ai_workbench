@@ -21,14 +21,17 @@ execute one step at a time.
   * Mark the slide session content ready for review.
 
 ## Phase 2: CLIENT WORKFLOW
-[ ] Review `client_work_automation.md` and add:
+[x] Review `client_work_automation.md` and add:
   * Claude CoWork install and try instructions
   * student/team discount guidance
   * guardrails for safe CoWork automation and file handling
   * tokenomics guidance for cost-conscious use
   * validation exercises that ensure students grok safe workflow execution
-[ ] Ensure `client_application.md` incorporates the SDD exercise narrative and clearly connects with the client workflow practice.
-[ ] Mark the client workflow session content ready for review.
+[x] Ensure `client_application.md` incorporates the SDD exercise narrative and clearly connects with the client workflow practice.
+  * SDD framing blockquote added; stack (React+TS+FastAPI+MongoDB) from sdd_basics.md adopted.
+  * event_organizer.md generalized for any meetup (study groups, social clubs).
+  * README.md agenda rows updated for consistency.
+[x] Mark the client workflow session content ready for review.
 
 ## Phase 3: SERVER WORKFLOW
 [ ] Review `server_multiagent.md` and add:
@@ -41,10 +44,11 @@ execute one step at a time.
 [ ] Mark the server workflow session content ready for review.
 
 ## Phase 4: SDD REFACTOR
-[ ] Review `sdd_basics.md` and refactor it to emphasize concept and methodology only.
-[ ] Consolidate the concrete SDD exercise narrative into client_application.md or a dedicated exercise file if needed.
-[ ] Ensure the SDD concept file links clearly to the client application exercise.
-[ ] Mark the SDD refactor ready for review.
+[x] Review `sdd_basics.md` and refactor it to emphasize concept and methodology only.
+[x] Consolidate the concrete SDD exercise narrative into client_application.md or a dedicated exercise file if needed.
+[x] Ensure the SDD concept file links clearly to the client application exercise.
+[x] Mark the SDD refactor ready for review.
+  * Absorbed into Phase 2 Step 3 (inseparable from client_application.md update).
 
 ## Phase 5: AGENDA UPDATE
 [ ] Update `README.md` Agenda to place:
