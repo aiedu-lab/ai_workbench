@@ -241,18 +241,21 @@ jobs:
 
             Steps:
             1. Run: gh pr diff ${{ github.event.issue.number }}
-            2. Then review the changes and analyze for:
+            2. Analyze for:
                - Logic errors, bugs, and edge cases
-               - Security issues and vulnerabilities  
+               - Security issues and vulnerabilities
                - Missing error handling
                - CLAUDE.md rule violations
             3. Write your review as JSON to /tmp/review.json using the Write tool
             4. Post using: gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}/reviews --input /tmp/review.json
 
-            
-            Use event "REQUEST_CHANGES" if high-confidence bugs found.
-            Use event "APPROVE" if no high-confidence bugs found.
-            Use event "COMMENT" if observations only (not blocking).
+            IMPORTANT: GitHub Actions CAN post APPROVE reviews. You are not
+            the PR author so the restriction does not apply to you.
+            You MUST use exactly one of these event values in the JSON:
+            - "REQUEST_CHANGES" if high-confidence bugs found
+            - "APPROVE" if no high-confidence bugs found  
+            - "COMMENT" only for observations that are neither blocking nor approving
+            Never downgrade APPROVE to COMMENT.
             Only flag high-confidence issues.
 ```
 
