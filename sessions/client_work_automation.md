@@ -56,6 +56,16 @@ Constraints:
 Output: Step-by-step checklist
 ```
 
+### Validation
+After completing the exercise, verify each item before moving on:
+- [ ] Agent presented a written plan before moving any files
+- [ ] You read and approved the plan explicitly before execution
+- [ ] First run used `test_dir`, not a real folder
+- [ ] No original files were deleted
+- [ ] Files are grouped by type as intended
+- [ ] You can explain why the agent made each grouping decision
+- [ ] You identified at least one edge case the agent did not handle
+
 ## Reflection
 * Shift focus from "writing code" to "writing guardrailed specs."
 * What did the AI get wrong? How did we fix it?
