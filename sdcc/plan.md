@@ -8,14 +8,16 @@ concrete steps for the specific session file targets, and we will
 execute one step at a time.
 
 ## Phase 1: SLIDES
-[ ] Review and expand `slides.md` to add:
+[x] Review and expand `slides.md` to add:
   * Gamma install and start instructions 
   * student/team discount guidance
   * guardrails for safe content generation
   * tokenomics guidance for cost control
   * validation exercises that prove students understand prompting and structure
-[ ] Confirm any supporting references in `introduction.md` and 
+[x] Confirm any supporting references in `introduction.md` and 
 `README.md` if needed.
+  * Login verification moved into slides.md Setup > Install/Start.
+  * README.md agenda entry already correct — no changes needed.
   * Mark the slide session content ready for review.
 
 ## Phase 2: CLIENT WORKFLOW
