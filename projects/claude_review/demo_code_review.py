@@ -7,13 +7,13 @@ def divide(a: int | float, b: int | float) -> float:
   Divide a by b.
   Raise ValueError for invalid inputs.
   """
-  if isinstance(a, bool) or 
-    not isinstance(a, (int, float)) or 
+  if isinstance(a, bool) or \
+    not isinstance(a, (int, float)) or \
     not math.isfinite(a):
     raise ValueError(f"Dividend must be a number: {a!r}")
-  if isinstance(b, bool) or
-    not isinstance(b, (int, float)) or
-    not math.isfinite(b) or
+  if isinstance(b, bool) or \
+    not isinstance(b, (int, float)) or \
+    not math.isfinite(b) or \
     b == 0:
     raise ValueError(f"Divisor must be a non-zero number: {b!r}")
   return a / b
@@ -21,17 +21,14 @@ def divide(a: int | float, b: int | float) -> float:
 def get_user(users: dict[int, str], user_id: int) -> str:
   """
   Get a user by ID. 
-  raises ValueError if
-   - users is not a dict
-   - user_id is a boolean OR not an int 
-   - user_id as Key is not found in dict.
+  raises ValueError for invalid inputs.
   """
   if not isinstance(users, dict):
     raise ValueError(f"Invalid users map: {users!r}")
   if isinstance(user_id, bool) or not isinstance(user_id, int):
     raise ValueError(f"Invalid user id: {user_id!r}")
   if user_id not in users:
-    raise ValueError(f"User ID not in dictionary: {user_id} not found")
+    raise ValueError(f"User ID {user_id} not in dictionary")
   return users[user_id]
 
 def main():
