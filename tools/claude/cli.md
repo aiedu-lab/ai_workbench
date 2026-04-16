@@ -12,7 +12,7 @@ Restart terminal after install.
 
 ## 🧭 Authenticate
 
-1. Provision API_KEY via Claude Platform
+### 1. Provision API_KEY via Claude Platform
 * [Login Claude Platform](https://platform.claude.com/)
 * [Purchase $5 Credits](https://platform.claude.com/billing)
 * [Generate and copy API key](https://platform.claude.com/settings/api-keys)
@@ -21,7 +21,7 @@ Restart terminal after install.
 export MY_ANTHROPIC_API_KEY="sk-ant-..."
 ```
 
-2. Provision OAuth Token via Claude CLI 
+### 2. Provision OAuth Token via Claude CLI 
 ```bash
 # Valid for one year
 claude setup-token
@@ -32,7 +32,7 @@ claude setup-token
 export MY_CLAUDE_CODE_OAUTH_TOKEN="sk-any-..."
 ```
 
-3. Login using REPL and use Browser flow to authorize
+### 3. Login using REPL and use Browser flow to authorize
 
 ```bash
 # purge any stale sessions just in case
@@ -41,41 +41,43 @@ claude logout
 claude
 ```
 
-4. Setup appropriate CLI mode authorization 
+### 4. Setup appropriate CLI mode authorization 
 
-* Subscription Mode  
+#### Subscription Mode
+
+Mandatory for REPL commands:
 ```bash
-# optional unset as CLAUDE_CODE_OAUTH_TOKEN has higher precedence
+# OAuth Token - CLAUDE_CODE_OAUTH_TOKEN - has higher precedence
+# than API - ANTHROPIC_API_KEY - if both are set
 export CLAUDE_CODE_OAUTH_TOKEN=$MY_CLAUDE_OAUTH_TOKEN && \
-unset ANTHROPIC_API_KEY
 ```
 
-* API Key Mode
+#### API Key Mode
 ```bash
 # fill in the right API key value in place of ... below
 export ANTHROPIC_API_KEY=$MY_ANTHROPIC_API_KEY && \
 unset CLAUDE_CODE_OAUTH_TOKEN
 ```
 
-* Validate Auth Status
+#### Validate Auth Status
 ```bash
 claude auth status --text
 ```
 
-5. Always run inside the repo
+### 5. Always run inside the repo
 
 ```bash
 cd ai-education-lab
 ```
 
-6. Verify environment
+### 6. Verify environment
 
 ```bash
 bash tools/claude/check_env.sh
 claude
 ```
 
-7. Install the VSCode Extension
+### 7. Install the VSCode Extension
 
 * Open VSCode
 * Press `Ctrl+Shift+X` (Windows/Linux) or `Cmd+Shift+X` (Mac) to open    Extensions
@@ -104,7 +106,7 @@ To keep the sidebar open across restarts, add to your VSCode `settings.json`:
 
 Or set a keyboard shortcut: `Cmd+Shift+I` (Mac) / `Ctrl+Shift+I` (Windows).
 
-8. Confirm the integrated terminal works
+### 8. Confirm the integrated terminal works
 
 In VSCode's integrated terminal (`Ctrl+\``):
 
@@ -119,25 +121,57 @@ authentication and settings.
 Hello! How can I help you today?
 ```
 
-9. Constrain scope in prompts
+### 9. Constrain scope in prompts
 
 Always include:
 
 "Only read files in this project directory. Do not access external folders."
 
-10. Avoid large directories
+### 10. Avoid large directories
 
 Never run on:
 * ~/
 * Downloads/
 * node_modules/
 
-11. Kill runaway processes
+### 11. Kill runaway processes
 
 Press:
 
 * Ctrl + C (Windows/Linux)
 * Cmd + . (Mac)
+
+---
+
+## Plugin Installs 
+
+```bash
+# Step 1 — Add the demo marketplace (one-time):
+claude plugin marketplace add anthropics/claude-code
+# Note: adds as "claude-code-plugins" (not "anthropics-claude-code")
+
+# Step 2 — Install code-review from demo marketplace:
+claude plugin install code-review@claude-code-plugins
+
+# Step 3 — Install pr-review-toolkit from official marketplace:
+claude plugin install pr-review-toolkit@claude-plugins-official
+
+# Step 4 - Verify all plugins installed
+# Should show the below two: 
+# - code-review@claude-code-plugins
+# - pr-review-toolkit@claude-plugins-official
+claude plugin list
+
+# Step 5 - Verify the marketplaces available
+# Should show the below two:
+# claude-code-plugins  
+# claude-plugins-official
+ls ~/.claude/plugins/marketplaces/
+
+# Step 6 - Update all plugins
+# Native plugins are auto-updated, 3rd party require manual updates
+claude plugin update
+```
 
 ---
 

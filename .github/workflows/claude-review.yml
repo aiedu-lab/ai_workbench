@@ -16,6 +16,7 @@ jobs:
       contents: read
       pull-requests: write
       id-token: write
+      # actions: read # add if Claude needs to read CI results
     steps:
       - uses: actions/checkout@v4
         with:
@@ -38,7 +39,12 @@ jobs:
                - Missing error handling
                - CLAUDE.md rule violations
             3. Write your review as JSON to /tmp/review.json using the Write tool
-            4. Post using: gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}/reviews --input /tmp/review.json
+            4. When posting inline comments, format code fixes using GitHub's
+               suggestion syntax so reveiwers can apply them with one click:
+               ```suggestion
+               # Your suggested corrected code here
+               ```
+            5. Post using: gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}/reviews --input /tmp/review.json
 
             IMPORTANT: GitHub Actions CAN post APPROVE reviews. You are not
             the PR author so the restriction does not apply to you.

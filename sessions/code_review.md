@@ -133,38 +133,9 @@ Output JSON with severity ratings.
 claude -p "$FILE_REVIEW_PROMPT" --allowedTools "Read"
 ```
 
-**Review the last commit**
-
-```bash
-# last commit piped in
-git diff HEAD~1 | claude -p "/code-review" --output-format json
-
-# specific aspect reviewed of PR: bugs or security
-git diff HEAD~1 | claude -p "/code-review bugs"
-
-claude -p "/code_review security"
-
-```
-
 **Install the native (built-in) plugins including code-review**
 
-```bash
-# Add the official Anthropic marketplace
-claude plugin marketplace add anthropics/claude-code 
-
-# Install code-review plugin
-claude install code-review@claude-code
-
-# Optional: Install PR review toolkit
-claude install pre-review-toolkit@claude-code
-
-# Validate - list installed plugins
-claude plugin list
-
-# Update all plugins
-# Native plugins are auto-updated, 3rd party require manual updates
-claude plugin update
-```
+[Reference **Install Claude Plugins**](../tools/claude/cli.md#plugin-installs)
 
 **Run code-review plugin:**
 
@@ -181,25 +152,68 @@ PR_NUM=... # replace with PR#
 gh pr diff $PR_NUM | claude -p "$REVIEW_DIFF_PROMPT"
 ```
 
-The plugin launches 4-5 agents in parallel, scores each finding, and only
-surfaces issues with ≥ 80 confidence. 
+**Review the last commit**
 
-Use REPL rather than headless mode as `/code-review` uses 
-parallel subagents requiring full agentic loop, which `-p` may 
-not support. Hence, triggering prompt based code-review may be 
-more reliable headless pattern.  
+```bash
+# last commit piped in
+REVIEW_DIFF_FORMAT="
+Review this diff for bugs, security issues, and CLAUDE.md compliance
+"
+git diff HEAD~1 | claude -p "$REVIEW_DIFF_FORMAT" --output-format json
+
+# specific aspect reviewed of PR: bugs
+BUGS_DIFF_FORMAT="
+Review this diff for bugs
+"
+git diff HEAD~1 | claude -p "$BUGS_DIFF_FORMAT"
+
+# specific aspect reviewed of PR: security
+SECURITY_DIFF_FORMAT="
+Review this diff for security issues and vulnerabilities
+"
+git diff HEAD~1 | claude -p "$SECURITY_DIFF_FORMAT"
+
+```
+
+**Using /code-review**
+The /code-review plugin launches 4-5 agents in parallel, scores each finding,
+and only surfaces issues with ≥ 80 confidence. 
+
+/code-review is only available insdie the interactive REPL. REPL command
+requires the [Subscription Mode](../tools/claude/cli.md#subscription-mode)
+to be active. Use claude -p only for simple prompt-based diff reviews. For 
+others, you need the /code-review plugin.  
+
+
+```bash
+claude
+# Inside REPL, on a branch with changes:
+/code-review
+
+# Post the review as a PR comment:
+/code-review --comment
+```
 
 ### Level 2: GitHub Actions 
 
 #### Level 2a: Workflow triggered by GitHub Actions
 
 1. Authorize: 
-  * `gh secret list` shows that authorization token CLAUDE_CODE_AUTH_TOKEN (Subscription) or key ANTHROPIC_API_LEY (pay as you go) is uploaded to Repo
+  * `gh secret list` shows that authorization token CLAUDE_CODE_OAUTH_TOKEN 
+  (Subscription) or key ANTHROPIC_API_LEY (pay as you go) is uploaded to Repo
   * GitHub Repo => Setting => Secrets  Variables => Actions. 
   * Validate: `claude auth status --text` shows auth mode.
 
 3. Permit Workflows
-  * GitHub Repo => Settings => Actions => General: "Allow GiHub Actions to create and approve pull requests" is enabled.
+  * GitHub Org => Settings => Actions => General: "Allow GiHub Actions to 
+  create and approve pull requests" is enabled.
+  * GitHub Repo => Settings => Actions => General: "Allow GiHub Actions to 
+  create and approve pull requests" is enabled. 
+  NOTE: The repo-level setting is greyed out until the same setting is
+  enabled at the org level first:
+  GitHub Org => Settings => Actions => General => "Allow GitHub Actions
+  to create and approve pull requests"
+
   * Validate: GitHub Repo => Actions => "Claude PR Review" listed on left. If it has an icon - yellow (queued) or green (in progress) - it is working.
 
 
@@ -225,6 +239,7 @@ jobs:
       contents: read
       pull-requests: write
       id-token: write
+      # actions: read # add if Claude needs to read CI results
     steps:
       - uses: actions/checkout@v4
         with:
@@ -247,7 +262,12 @@ jobs:
                - Missing error handling
                - CLAUDE.md rule violations
             3. Write your review as JSON to /tmp/review.json using the Write tool
-            4. Post using: gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}/reviews --input /tmp/review.json
+            4. When posting inline comments, format code fixes using GitHub's
+               suggestion syntax so reveiwers can apply them with one click:
+               ```suggestion
+               # Your suggested corrected code here
+               ```
+            5. Post using: gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}/reviews --input /tmp/review.json
 
             IMPORTANT: GitHub Actions CAN post APPROVE reviews. You are not
             the PR author so the restriction does not apply to you.
@@ -305,7 +325,15 @@ from "Claude" appear directly below code line. These comments are also
 mirrored in the bottom of "Converation" GitHub tab
 
 #### Terminal: 
-* `gh pr view --comments` # streams the comments to stdout of Terminal
+* Stream the comment metadata to stdout: `gh pr view --comments`
+
+* Stream the comment metadata AND inline diff comments: 
+```bash
+gh api repos/{owner}/{repo}/pulls/{pr}/reviews | \
+python3 -c "
+import sys,json; [print(r['body']) for r in json.load(sys.stdin)]
+"
+```
 
 #### VS Code
 * Open the GitHub Pull Requests panel (left sidebar)
