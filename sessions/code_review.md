@@ -341,9 +341,11 @@ import sys,json; [print(r['body']) for r in json.load(sys.stdin)]
 * Expand "Changes" to see inline comments
 * Claude's comments appear inline on the diff lines it flagged
 
-## Exercise: Local Code Review in Three Levels
+## Exercises on Code Review 
 
-### Setup
+### Exercise A: Local Code Review in Three Levels
+
+#### Setup
 
 ```bash
 # Navigate to the hello world project
@@ -353,7 +355,7 @@ cd $REPO_ROOT/projects/web_site/hello_world_claudeCLI
 git status
 ```
 
-### Step 1 — Introduce a deliberate bug
+#### Step 1 — Introduce a deliberate bug
 
 Add this broken function to `index.html` just before `</script>`:
 
@@ -370,7 +372,7 @@ Stage but do not commit:
 git add index.html
 ```
 
-### Step 2 — Level 1 review: CLI diff review
+#### Step 2 — Level 1 review: CLI diff review
 
 ```bash
 git diff --staged | claude -p "Review this JavaScript diff.
@@ -384,35 +386,39 @@ Be specific about line numbers if possible."
 **Expected finding:** `name.toUpperCase()` will throw if `name` is
 `null` or `undefined`. Claude should flag this as a bug.
 
-### Step 3 — Level 1 review: writer/reviewer pattern
+#### Step 3 — Level 1 review: writer/reviewer pattern
 
 Use a second Claude session to review the first Claude's own output — a
 core principle from the Claude Code best practices guide:
 
 ```bash
 # First session writes a fix
-claude -p "Fix the null handling bug in this JavaScript:
+claude -p "
+Fix the null handling bug in this JavaScript and write 
+the fixed version to projects/web_site/hello_world_claudeCLI/index.html:
 
 function formatName(name) {
   return 'Hello, ' + name.toUpperCase() + '!';
 }
 
-Return only the fixed function with a WHY comment." \
-  --allowedTools "Write" > /dev/null
+Return only the fixed function with a WHY comment.
+" --allowedTools "Write"
 
 # Second session reviews the fix (fresh context = unbiased review)
-git diff index.html | claude -p "A colleague fixed a null-handling bug.
+git diff index.html | claude -p "
+A colleague fixed a null-handling bug.
 Review their fix:
 1. Does it actually fix the null case?
 2. Are there other edge cases (undefined, empty string, whitespace)?
 3. Is the WHY comment accurate?
-Be direct."
+Be direct.
+"
 ```
 
 This is the **writer/reviewer pattern**: one Claude generates, another
 reviews. Fresh context avoids the bias of reviewing code you just wrote.
 
-### Step 4 — Apply the fix and validate
+#### Step 4 — Apply the fix and validate
 
 ```bash
 # Accept the fix
@@ -421,14 +427,14 @@ python3 -m http.server 8888
 # Test: submit empty name, submit a name with spaces, submit normally
 ```
 
-### Step 5 — Commit with a conventional message
+#### Step 5 — Commit with a conventional message
 
 ```bash
 git add index.html
 git commit -m "fix: Phase 1: Step 3 - handle null and empty name in formatName"
 ```
 
-### Step 6 — Simulate a CLAUDE.md rule violation
+#### Step 6 — Simulate a CLAUDE.md rule violation
 
 Add a 4-space-indented block to `index.html` (violates the 2-space rule
 in CLAUDE.md):
@@ -441,11 +447,13 @@ in CLAUDE.md):
 Run the review again:
 
 ```bash
-git diff | claude -p "Review this diff against the CLAUDE.md rules:
+git diff | claude -p "
+Review this diff against the CLAUDE.md rules:
 - 2-space indentation only
 - Max 80-column line length
 - WHY comments on non-obvious blocks
-Flag any violations with the exact rule being broken."
+Flag any violations with the exact rule being broken.
+"
 ```
 
 **Expected finding:** CLAUDE.md violation — 4-space indentation detected.
@@ -457,6 +465,262 @@ git checkout index.html
 ```
 
 ---
+
+### Exercise B: GitHub Actions Code Review
+
+This exercise validates the end-to-end GitHub Actions review workflow:
+introduce bugs in a PR, trigger `@claude review`, see inline comments,
+fix the issues, and get a clean approval.
+
+#### Prerequisites
+
+Confirm these are in place before starting:
+
+```bash
+# Auth token uploaded to GitHub repo secrets:
+gh secret list
+# Should show: CLAUDE_CODE_OAUTH_TOKEN and ANTHROPIC_API_KEY
+
+# Workflow file exists in main:
+cat .github/workflows/claude-review.yml
+
+# Org-level Actions approval setting enabled:
+# github.com/organizations/aiedu-lab/settings/actions
+# → "Allow GitHub Actions to create and approve pull requests" ✔
+
+# Plugins installed locally:
+claude plugin list
+# Should show: 
+# code-review@claude-code-plugins
+# pr-review-toolkit@claude-plugins-official
+```
+
+#### Step 1 — Create a branch with deliberate bugs
+
+```bash
+git checkout main && git pull
+git checkout -b fix/code-review-demo
+
+mkdir -p projects/claude_review
+
+cat > projects/claude_review/code_review.py << 'EOF'
+def divide(a, b):
+  """Divide a by b."""
+  return a / b
+
+
+def get_user(users, id):
+  """Get a user by ID."""
+  return users[id]
+
+
+def main():
+  print(divide(10, 0))
+  users = {1: "Alice", 2: "Bob"}
+  print(get_user(users, 3))
+
+
+if __name__ == "__main__":
+  main()
+EOF
+
+git add projects/claude_review/code_review.py
+git commit -m "feat: add demo utility functions with missing validation"
+git push origin fix/code-review-demo
+```
+
+#### Step 2 — Add a REVIEW.md to scope what Claude flags
+
+This tells Claude which violations to skip for demo/teaching code:
+
+```bash
+cat > projects/claude_review/REVIEW.md << 'EOF'
+# Review Guidance for claude_review/
+
+This directory is a **teaching demo** for the AI workbench course.
+
+## Do NOT flag:
+- Missing plan.md
+- Missing AI-generated annotations (# AI-GENERATED: Phase X Step Y)
+- SESSION REHYDRATION compliance
+- CLAUDE.md section 2 (Plan Before Coding) violations
+
+## DO flag:
+- Runtime bugs (division by zero, KeyError, etc.)
+- Security vulnerabilities
+- Missing input validation
+EOF
+
+git add projects/claude_review/REVIEW.md
+git commit -m "docs: add review guidance to suppress demo-irrelevant violations"
+git push origin fix/code-review-demo
+```
+
+#### Step 3 — Create a PR
+
+```bash
+gh pr create \
+  --title "feat: add demo utility functions" \
+  --body "Adding utility functions for the AI workbench demo." \
+  --base main
+
+# Save the PR number from the output (e.g. 22) in env variable
+gh pr list
+export PR_NUMBER=... # fill in the PR number (e.g. 22)
+```
+
+#### Step 4 — Trigger Claude review
+
+```bash
+gh pr comment $PR_NUMBER --body "@claude review"
+```
+
+Watch the Actions tab:
+
+```
+GitHub repo → Actions → Claude PR Review
+```
+
+Wait for the green checkmark (~2 minutes).
+
+**Expected findings** — Claude should flag:
+
+| Line | Bug | Severity |
+|---|---|---|
+| `return a / b` | No zero-division guard — `divide(10, 0)` crashes | High |
+| `return users[id]` | No key check — `get_user(users, 3)` raises `KeyError` | High |
+| `def get_user(users, id)` | Parameter `id` shadows Python built-in | Medium |
+
+#### Step 5 — View inline comments
+
+**In GitHub UI:**
+```
+PR → Files Changed tab
+→ Claude's comments appear as blocks below the flagged lines
+→ Each comment has 👍 👎 buttons for feedback
+```
+
+**In VS Code:**
+```
+GitHub Pull Requests panel (left sidebar)
+→ Find the PR → click it
+→ Expand "Changes"
+→ Claude's comments appear inline on the diff lines
+```
+
+**In terminal:**
+```bash
+gh pr view $PR_NUMBER --comments
+```
+
+#### Step 6 — Fix the bugs
+
+```bash
+cat > projects/claude_review/code_review.py << 'EOF'
+import math
+
+def divide(a, b):
+  """
+  Divide a by b. 
+  Raises ValueError for invalid inputs.
+  """
+  if isinstance(a, bool) or not isinstance(a, (int, float)):
+    raise ValueError("Dividend must be a number")
+  if not math.isfinite(a):
+    raise ValueError("Dividend must be finite")
+  if isinstance(b, bool) or not isinstance(b, (int, float)):
+    raise ValueError("Divisor must be a number")
+  if not math.isfinite(b) or b == 0:
+    raise ValueError("Divisor must be non-zero and finite")
+  return a / b
+
+
+def get_user(users, user_id):
+  """
+  Return user for user_id. 
+  Raises ValueError if invalid inputs or value in dictionary not found.
+  """
+  if not isinstance(users, dict):
+    raise ValueError("users must be a dict")
+  if isinstance(user_id, bool) or not isinstance(user_id, int):
+    raise ValueError("user_id must be an integer")
+  if user_id not in users:
+    raise ValueError(f"User {user_id} not found")
+  return users[user_id]
+
+
+def main():
+  print(divide(10, 2))
+  users = {1: "Alice", 2: "Bob"}
+  print(get_user(users, 1))
+
+
+if __name__ == "__main__":
+  main()
+EOF
+
+git add projects/claude_review/code_review.py
+git commit -m "fix: add input validation to divide and get_user"
+git push origin fix/code-review-demo
+```
+
+#### Step 7 — Trigger a second review
+
+```bash
+gh pr comment $PR_NUMBER --body "@claude review"
+```
+
+**Expected outcome:** Claude posts `APPROVE` — 
+no high-confidence issues found. The merge block clears automatically.
+
+If merge is still blocked due to a prior `REQUEST_CHANGES` review:
+
+```bash
+# Option A — dismiss via GitHub UI:
+# PR → Conversation tab → find the blocking review
+# → "..." menu → "Dismiss review"
+
+# Option B — dismiss via CLI:
+gh api repos/aiedu-lab/ai_workbench/pulls/<PR_NUMBER>/reviews | python3 -c "
+import sys, json
+for r in json.load(sys.stdin):
+  print(r['id'], r['state'], r['submitted_at'])
+"
+
+# Save the REVIEW_ID in environment variable
+export REVIEW_ID=...
+
+# Then:
+gh api repos/aiedu-lab/ai_workbench/pulls/$PR_NUMBER/reviews/$REVIEW_ID/dismissals \
+  --method PUT \
+  --field message="All issues resolved"
+
+# Option C — admin merge bypass:
+gh pr merge $PR_NUMBER --admin --squash
+```
+
+#### Step 8 — Merge
+
+```bash
+gh pr merge $PR_NUMBER --squash \
+  --subject "feat: add validated demo utility functions"
+git checkout main && git pull
+```
+
+---
+
+### Reflection
+
+| Question | Your Observation |
+|---|---|
+| Which bugs did Claude catch that you might have missed under time pressure? | |
+| Did the `REVIEW.md` successfully suppress the plan.md violations? | |
+| How many turns did Claude use? (check Actions log) | |
+| Did Claude post `APPROVE` or did it downgrade to `COMMENT`? | |
+| What is the difference between `REQUEST_CHANGES` blocking merge vs `COMMENT` not blocking? | |
+
+---
+
 ## Code Review Best Practices
 
 ### The Core Question: Is Claude Reviewing Claude Safe?
