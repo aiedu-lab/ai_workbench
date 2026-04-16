@@ -65,6 +65,16 @@ Explain "How AI agents work"
   - Inundate data → slides become cluttered & violates "one idea per slide"
   - Over-specify → observe rigidity
 
+#### Validation
+After generating your deck, verify each item before moving on:
+- [ ] Exactly 5 slides generated (no more, no fewer)
+- [ ] Each slide has exactly one central idea
+- [ ] Title slide states the topic clearly
+- [ ] No slide exceeds 3 bullet points
+- [ ] Spot-checked 2 factual claims — no hallucinations found
+- [ ] Visual theme is consistent across all slides
+- [ ] You can explain every slide in your own words without reading it
+
 ### Reflection
   - What made the good version better?
   - Which constraint mattered most?
