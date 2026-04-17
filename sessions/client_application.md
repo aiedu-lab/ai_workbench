@@ -1,19 +1,31 @@
 # Application on Laptop
 
-## Tools & Setup
+## Tools
+
 * [Claude Desktop](../tools/claude/desktop.md)
 * [IDE - VSCode](https://code.visualstudio.com/)
 * [Python in VSCode](https://code.visualstudio.com/docs/languages/python)
 
-## Exercise - Event Organizer
+## Exercise - Group Meetup Organizer
 
-Event organizer agent organize social events among friends using email. 
+> This is the hands-on SDD exercise. Before starting, complete the
+> [Concept: Spec Driven Development](sdd_basics.md) session.
+> You are the *architect*; Claude Code is the *typist*.
 
-[Sample Draft Plan](../plans/draft/event_organizer.md) is a starting template 
-of a plan. Use Claude Desktop (Chat) to build the plan. 
-* Add important sections to the plan, such as the Email API structure
-  so that the agent can send emails to the members of the event. 
-* Make the plan more concrete, specific, failure-proof to edge cases, ...
+Build a web app that coordinates any recurring group meetup — a study
+group, a social club, a community gathering — using email for
+scheduling and consensus.
+
+**Stack:** React + TypeScript (Vite) · FastAPI (Python) · MongoDB
+
+[Sample Draft Plan](../plans/draft/event_organizer.md) is a starting
+template. Use Claude Desktop (Chat) to refine it into your own
+`plan.md`. Scope your execution to the **Implementation Checklist**
+(Steps 1–4 in the draft); the full spec is aspirational context for
+future iterations.
+* Add important sections, such as the Email API structure so the
+  agent can send notifications to members.
+* Make the plan concrete, specific, and failure-proof to edge cases.
 
 Follow the below-mentioned **Planning → Execution → Reflection** sequence 
 for executing the plan. 

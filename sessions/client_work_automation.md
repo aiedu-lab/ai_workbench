@@ -1,17 +1,41 @@
 # Workflow Automation on Laptop
 
-## Rules
-* Be VERY Cautious - Build heavy guardrails by SETTING RULES
-  * NO execution before plan approval
-* ASK Agent to explain/justify the plan
-  * CROSS QUESTION specific choices made 
-
-## Tools & Setup
+## Tools
 
 * [Claude Desktop (CoWork)](../tools/claude/desktop.md)
-* Test with a test folder before using on real data. 
+
+## Setup
+
+### Verify Tools
+* Test with a test folder before using on real data.
   [create test_dir](../tests/test_dir.sh) to create the folder.
-* Grant folder access in `OS Settings` to move/edit files
+* Grant folder access in `OS Settings` to move/edit files.
+* **Login verification:** confirm CoWork is reachable in Claude
+  Desktop before the exercise begins.
+
+### Student / Team Discount
+* Students: check `claude.ai/pricing` for current education
+  promotions; a Claude Pro plan includes CoWork.
+* Teams: Claude Team plan provides a shared workspace — one seat
+  is sufficient for classroom demos.
+
+### Guardrails
+* Always test on `test_dir` first — never run on a real folder
+  until the test run is clean.
+* No execution before plan approval — the agent must present the
+  full step-by-step plan before any file is moved.
+* Ask the agent to explain every decision; cross-question any
+  choice that is not immediately obvious.
+* Never grant write access to folders outside the exercise
+  directory.
+
+### Tokenomics
+* CoWork consumes Pro / Team plan tokens — long, iterative
+  automations cost more.
+* Keep prompts focused; a narrow task (one folder, one rule) uses
+  far fewer tokens than a broad one.
+* Iterate on the test folder; only run on real data once the
+  prompt is stable.
 
 ## Exercise
 
@@ -33,6 +57,16 @@ Constraints:
 
 Output: Step-by-step checklist
 ```
+
+### Validation
+After completing the exercise, verify each item before moving on:
+- [ ] Agent presented a written plan before moving any files
+- [ ] You read and approved the plan explicitly before execution
+- [ ] First run used `test_dir`, not a real folder
+- [ ] No original files were deleted
+- [ ] Files are grouped by type as intended
+- [ ] You can explain why the agent made each grouping decision
+- [ ] You identified at least one edge case the agent did not handle
 
 ## Reflection
 * Shift focus from "writing code" to "writing guardrailed specs."

@@ -7,8 +7,36 @@ Learn how to use AI to create compelling communication and storytelling artifact
 - structured narratives
 - visual storytelling
 
-### Tool
-- Gamma: AI presentation tool (login verified)
+### Tools
+- [Gamma](https://gamma.app) — AI presentation tool
+
+### Setup
+
+#### Install / Start
+- Gamma is browser-based — no local install required.
+- Navigate to [gamma.app](https://gamma.app) and sign in with Google
+  or your email.
+- First-time users: create a free account (no credit card needed).
+- **Login verification:** confirm you can reach your Gamma dashboard
+  before the exercise begins.
+
+#### Student / Team Discount
+- Students with a `.edu` email: apply for free Pro access at
+  `gamma.app/education`.
+- Teams: one shared Pro workspace is sufficient for classroom demos.
+
+#### Guardrails
+- Do not enter personal data, student names, or private school
+  information into prompts.
+- Treat all AI-generated content as a draft — verify facts before
+  presenting.
+- Gamma stores decks in the cloud; avoid uploading sensitive material.
+
+#### Tokenomics
+- Gamma uses an internal credit system (not API tokens).
+- Free tier: ~400 AI credits/month — sufficient for 2–3 full decks.
+- To conserve credits: iterate on one deck rather than regenerating
+  from scratch; prefer **Edit** over **Regenerate**.
 
 ### Concept
 Prompting for communication:
@@ -37,11 +65,21 @@ Explain "How AI agents work"
   - Inundate data → slides become cluttered & violates "one idea per slide"
   - Over-specify → observe rigidity
 
+#### Validation
+After generating your deck, verify each item before moving on:
+- [ ] Exactly 5 slides generated (no more, no fewer)
+- [ ] Each slide has exactly one central idea
+- [ ] Title slide states the topic clearly
+- [ ] No slide exceeds 3 bullet points
+- [ ] Spot-checked 2 factual claims — no hallucinations found
+- [ ] Visual theme is consistent across all slides
+- [ ] You can explain every slide in your own words without reading it
+
 ### Reflection
   - What made the good version better?
   - Which constraint mattered most?
-  - Where did AI overcomplicate?  
+  - Where did AI overcomplicate?
 
 ### Output
 - [Plan](../projects/slides/plan.md)
-- [Notes](../learnings/session-notes/slides.md)
+- [Notes](../learnings/session_notes/slides.md)
