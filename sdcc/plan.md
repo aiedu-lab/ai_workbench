@@ -56,11 +56,12 @@ execute one step at a time.
   * Absorbed into Phase 2 Step 3 (inseparable from client_application.md update).
 
 ## Phase 5: AGENDA UPDATE
-[ ] Update `README.md` Agenda to place:
+[x] Update `README.md` Agenda to place:
   * `code_review.md` immediately after the client application development exercise
   * `sdlc_ai.md` next, before server and advanced workflow sessions
-[ ] Clarify tool labels and session timings for the updated flow.
-[ ] Mark the agenda update ready for review.
+[x] Clarify tool labels and session timings for the updated flow.
+  * Tool labels and timings were already consistent — no changes needed.
+[x] Mark the agenda update ready for review.
 
 ## Phase 6: FINAL REVIEW
 [ ] Review all revised files for consistency and correct references.
