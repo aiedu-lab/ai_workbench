@@ -78,8 +78,8 @@ After generating your deck, verify each item before moving on:
 ### Reflection
   - What made the good version better?
   - Which constraint mattered most?
-  - Where did AI overcomplicate?  
+  - Where did AI overcomplicate?
 
 ### Output
 - [Plan](../projects/slides/plan.md)
-- [Notes](../learnings/session-notes/slides.md)
+- [Notes](../learnings/session_notes/slides.md)

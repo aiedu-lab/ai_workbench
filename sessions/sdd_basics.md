@@ -31,4 +31,4 @@ execution.
 
 ## 🏃 Exercise
 For the hands-on SDD project, see
-[Exercise: Create/Run Application on Laptop](client_application.md).
+[Exercise: Create Group Meetup Organizer using SDD](client_application.md).

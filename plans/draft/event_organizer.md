@@ -28,7 +28,7 @@ of scheduling, venue selection, and logistics.
 * Automate the weekly [Thursday] [evening]" social gathering coordination 
   among friends. Note that for another event, the [frequency],  
   [day], [region], and [time] is settable. For now, we will event 
-  coordination on this "Thursady evening social gathering" event.
+  coordination on this "Thursday evening social gathering" event.
 * The web site should offer the following features: 
   * Onboarding [Events]: 
     * [Event]: Existing members have privileges to create, read, 
@@ -95,9 +95,9 @@ of scheduling, venue selection, and logistics.
   * Availability: ["busy", "free"] - default "busy" 
 
 ### Implementation Checklist
-- [ ] Step 1: UI Scaffold—Create a simple dashboard based on user login 
-      with a "Meetup status" ie list of upcoming event meetups, meet up  
-      status - confirmed members, final location, chosen restaurant, etc. 
+- [ ] Step 1: UI Scaffold—Create a simple dashboard based on user login
+      with a "Meetup status" ie list of upcoming event meetups, meetup
+      status - confirmed members, final location, chosen venue, etc.
 - [ ] Step 2: Availability Logic—Enable users to toggle their status and 
       show a live "Count of Free Friends."
 - [ ] Step 3: Neighborhood Logic—Implement a simple round-robin for the 
