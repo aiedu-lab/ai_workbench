@@ -34,14 +34,19 @@ execute one step at a time.
 [x] Mark the client workflow session content ready for review.
 
 ## Phase 3: SERVER WORKFLOW
-[ ] Review `server_multiagent.md` and add:
+[x] Review `server_multiagent.md` and add:
   * OpenClaw install and try instructions
   * student/team discount guidance
   * guardrails for safe server-side workflow execution
   * tokenomics guidance for multi-agent server workflows
   * validation exercises that ensure students understand orchestration and failure handling
-[ ] Confirm the server workflow content aligns with `server_application.md` and `sdlc_ai.md`.
-[ ] Mark the server workflow session content ready for review.
+[x] Confirm the server workflow content aligns with `server_application.md` and `sdlc_ai.md`.
+  * server_application.md removed — content consolidated into server_multiagent.md
+    (Phase 1: single agent; Phase 4: server/Docker deployment).
+  * Flight Tracker preserved as alternative project note in server_multiagent.md.
+  * tools/temporal/cli.md created and linked. sdlc_ai.md confirmed aligned.
+  * README.md two server rows merged into one with OpenClaw + Temporal tool links.
+[x] Mark the server workflow session content ready for review.
 
 ## Phase 4: SDD REFACTOR
 [x] Review `sdd_basics.md` and refactor it to emphasize concept and methodology only.
