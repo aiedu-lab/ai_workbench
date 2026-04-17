@@ -3,7 +3,7 @@
 ## Tools
 
 * [OpenClaw CLI](../tools/openclaw/cli.md) — agent executor
-* [Temporal](https://temporal.io) — workflow orchestrator
+* [Temporal CLI](../tools/temporal/cli.md) — workflow orchestrator
 
 ## Setup
 
@@ -18,6 +18,7 @@ Success: version number printed; command list appears without errors.
 
 **Temporal (local dev mode):**
 ```bash
+temporal version            # prints installed version
 temporal server start-dev   # starts Temporal on localhost:8233
 ```
 Open `http://localhost:8233` — success if the Temporal UI loads and
