@@ -7,8 +7,8 @@ Learn how to use AI to create compelling communication and storytelling artifact
 - structured narratives
 - visual storytelling
 
-### Tool
-- Gamma: AI presentation tool
+### Tools
+- [Gamma](https://gamma.app) — AI presentation tool
 
 ### Setup
 

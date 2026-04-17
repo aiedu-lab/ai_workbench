@@ -1,15 +1,17 @@
 # Workflow Automation on Laptop
 
-## Tools & Setup
+## Tools
 
 * [Claude Desktop (CoWork)](../tools/claude/desktop.md)
+
+## Setup
+
+### Verify Tools
 * Test with a test folder before using on real data.
   [create test_dir](../tests/test_dir.sh) to create the folder.
 * Grant folder access in `OS Settings` to move/edit files.
 * **Login verification:** confirm CoWork is reachable in Claude
   Desktop before the exercise begins.
-
-## Setup
 
 ### Student / Team Discount
 * Students: check `claude.ai/pricing` for current education

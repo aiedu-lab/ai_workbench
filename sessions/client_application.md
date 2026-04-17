@@ -1,6 +1,6 @@
 # Application on Laptop
 
-## Tools & Setup
+## Tools
 * [Claude Desktop](../tools/claude/desktop.md)
 * [IDE - VSCode](https://code.visualstudio.com/)
 * [Python in VSCode](https://code.visualstudio.com/docs/languages/python)
