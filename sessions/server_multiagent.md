@@ -93,6 +93,11 @@ Three-agent pipeline using the
 
 Work through the phases in order. Phases 3 and 4 are stretch goals.
 
+> **Alternative project:** replace the Group Meetup Organizer with a
+> Flight Tracker — an agent that checks flight arrival times and
+> sends a WhatsApp notification when you should leave for the airport.
+> The same 4-phase progression applies.
+
 ### Phase 1 — Single Agent on Laptop
 Build one OpenClaw agent that performs all three steps sequentially:
 poll → select → notify. Goal: validate agent setup and domain logic
