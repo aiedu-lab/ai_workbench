@@ -232,7 +232,15 @@ Session: Multi-Agent Workflows
 arrive. Any CS graduate can run this checklist independently. Each
 step includes a validation test so the instructor knows it worked.
 
-- [ ] **Step -1.1: Create the `sessions/instructor.md` file**
+**Time required:** approximately 60 minutes total.
+
+> **Class ID convention:** choose a short unique identifier for this
+> class run (e.g. `2026-spring`, `2026-fall-hs`). Replace every
+> occurrence of `<CLASS_ID>` below with your chosen value. This
+> prevents name collisions when the same instructor runs multiple
+> cohorts.
+
+- [ ] **Step -1.1: Collect the student roster**
 
   The file must contain the following sections, in order:
 
@@ -240,15 +248,62 @@ step includes a validation test so the instructor knows it worked.
   ```
   # Instructor Preflight Checklist
   Complete every step and its validation before students arrive.
-  Time required: approximately 30 minutes.
+  Time required: approximately 60 minutes.
   ```
 
-  **Section 1 — Discord Setup (10 min)**
-  - Create a Discord server named `meetup-lab` (or use an existing one)
-  - Create a text channel `#meetup-notifications`
-  - Open Channel Settings → Integrations → Webhooks → New Webhook
-  - Name the webhook `Meetup Bot`
-  - Copy the webhook URL — this is `DISCORD_WEBHOOK_URL`
+  **Section 1 — Collect student roster (5 min)**
+
+  Before provisioning anything, collect one row per student in a
+  local roster file (never committed — contains personal info):
+
+  | Full name | GitHub username | Discord username | Laptop OS | Admin? | Server acct? |
+  |---|---|---|---|---|---|
+  | Alice Smith | `alicesmith` | `@alice` | Win11+WSL2 | yes | yes |
+  | Bob Jones   | `bobjones42` | `@bob`   | macOS 14   | yes | yes |
+
+  - **GitHub username** — validate each one resolves:
+    ```bash
+    # Replace USERNAME with each student's handle
+    curl -s https://api.github.com/users/USERNAME \
+      | python -c "import sys,json; d=json.load(sys.stdin); \
+        print('OK:', d['login']) if 'login' in d \
+        else print('NOT FOUND')"
+    ```
+  - **Discord username** — new-format handles are `@username`
+    (no discriminator). Old-format: `username#1234`. Confirm
+    each student has a Discord account before inviting (Step -1.2).
+  - **Laptop OS** — accept only `Win11+WSL2` or `macOS 13+`.
+    Students on older OS versions must upgrade before the lab.
+  - **Admin/sudo** — required for tool installation (Step -1.4).
+    Students without admin access cannot complete the exercises.
+  - **Server account** — required for Phase 6 Docker deployment.
+    Provision in Step -1.3; mark this column `yes` after that step.
+
+- [ ] **Step -1.2: Discord server setup and student invite**
+
+  **Section 2 — Discord server setup (15 min)**
+
+  Reference: https://support.discord.com/hc/en-us/articles/204849977
+
+  - Choose your `<CLASS_ID>` (e.g. `2026-spring`)
+  - Create a new Discord server named `meetup-lab-<CLASS_ID>`
+    - Server Settings → Overview → Server Name
+    - Do NOT reuse a previous class server — name collisions
+      corrupt webhook URLs from prior runs
+  - Create a text channel `#meetup-notifications` inside the server
+  - Invite each student by Discord username:
+    - Server Settings → Invites → Create Invite (no expiry)
+    - Or: right-click `#meetup-notifications` → Invite People
+    - Send the invite link to each student via a shared doc or
+      class chat before the lab day
+  - Confirm every student has joined and can read
+    `#meetup-notifications`:
+    - Each student posts a test message: "ready: <their name>"
+    - Do not proceed until all students appear in the member list
+  - Create the webhook (only after all students have joined):
+    - Channel Settings → Integrations → Webhooks → New Webhook
+    - Name: `Meetup Bot`
+    - Copy the webhook URL — this is `DISCORD_WEBHOOK_URL`
   - Validation:
     ```bash
     export DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..."
@@ -259,10 +314,116 @@ step includes a validation test so the instructor knows it worked.
     print('OK' if r.status_code == 204 else f'FAIL: {r.status_code}')
     "
     ```
-    Expected: `OK` and a message appears in `#meetup-notifications`.
+    Expected: `OK` and the message appears in `#meetup-notifications`
+    and is visible to all students who joined.
 
-  **Section 2 — Create `config.yaml` for the lab group (5 min)**
-  - Replace the member names with the actual students attending
+- [ ] **Step -1.3: Provision the shared server account**
+
+  **Section 3 — Shared server provisioning (15 min)**
+
+  The server is used in Phase 6 (Docker deployment). It must be
+  provisioned before the lab — students cannot do this themselves.
+
+  **Server requirements:**
+  - OS: Ubuntu 22.04 LTS (recommended) or 24.04
+  - Reachable from student laptops (public IP or VPN-accessible)
+  - Inbound ports open: 22 (SSH), 8080 (Temporal UI), 8088 (app)
+  - Outbound internet access (to pull Docker images, reach Discord)
+
+  **Provision the shared account:**
+  ```bash
+  # On the server (as root or a user with sudo)
+  sudo useradd -m -s /bin/bash labuser
+  sudo usermod -aG docker labuser   # add to docker group
+
+  # Pre-install required tools
+  sudo apt-get update
+  sudo apt-get install -y docker.io docker-compose-v2 git python3 pip
+
+  # Pre-clone the lab repo
+  sudo -u labuser git clone \
+    https://github.com/<ORG>/ai_education_lab \
+    /home/labuser/ai_education_lab
+  ```
+
+  **Add each student's SSH public key:**
+  ```bash
+  sudo -u labuser mkdir -p /home/labuser/.ssh
+  # Repeat for each student's public key:
+  echo "ssh-ed25519 AAAA... alice@laptop" \
+    | sudo tee -a /home/labuser/.ssh/authorized_keys
+  sudo chmod 700 /home/labuser/.ssh
+  sudo chmod 600 /home/labuser/.ssh/authorized_keys
+  sudo chown -R labuser:labuser /home/labuser/.ssh
+  ```
+
+  **Validation — run from each student laptop:**
+  ```bash
+  ssh labuser@<SERVER_IP> docker ps
+  ```
+  Expected: empty table header (no error). If any student gets
+  `Permission denied`, re-check their public key was added correctly.
+
+  Mark the `Server acct?` column `yes` in the roster (Step -1.1)
+  once every student passes this check.
+
+- [ ] **Step -1.4: Student laptop preflight**
+
+  **Section 4 — Student laptop preflight (10 min per student)**
+
+  Students run this themselves before the lab. The instructor
+  validates by reviewing the output of `preflight_check.py`
+  (located at `projects/group_meetup/preflight_check.py`).
+
+  **Win11 + WSL2 setup:**
+  - Confirm WSL2 is enabled: `wsl --status` → `Default Version: 2`
+  - Confirm Ubuntu 22.04 distro: `wsl -l -v` → `Ubuntu-22.04`
+  - If missing: `wsl --install -d Ubuntu-22.04` (requires admin,
+    then reboot)
+
+  **macOS setup:**
+  - Xcode CLI tools: `xcode-select --install`
+  - Homebrew: `/bin/bash -c "$(curl -fsSL
+    https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+  - Python + Git: `brew install python git`
+
+  **Both platforms — required tools:**
+  ```bash
+  # Python 3.10+
+  python3 --version          # must be >= 3.10
+
+  # Git identity (required for commits)
+  git config --global user.name "Your Name"
+  git config --global user.email "you@example.com"
+
+  # GitHub CLI (required for code review session)
+  # Install: https://cli.github.com
+  gh auth login              # authenticate with GitHub account
+
+  # Claude Code CLI (required from SDD session onward)
+  npm install -g @anthropic-ai/claude-code
+  claude --version
+
+  # Python dependencies for the meetup project
+  pip install requests pyyaml
+  ```
+
+  **Validation script — run and share output with instructor:**
+  ```bash
+  python3 projects/group_meetup/preflight_check.py
+  ```
+  The script checks each dependency and prints `PASS` or `FAIL`
+  per item. Every item must show `PASS` before the lab begins.
+
+  > **Note:** `preflight_check.py` is created in Phase 4
+  > (Step 4.4) when the project scripts are written. The instructor
+  > must run Phase 4 before distributing the preflight script
+  > to students.
+
+- [ ] **Step -1.5: Create `config.yaml` and `.env.example`**
+
+  **Section 5 — Create `config.yaml` for the lab group (5 min)**
+  - Replace member names with the actual students (from roster)
   - Replace venue options with locally relevant options
   - Save as `config.yaml` in the project directory
   - Template:
@@ -283,50 +444,46 @@ step includes a validation test so the instructor knows it worked.
         - "Coffee Lab"
         - "Online / Video Call"
     ```
-  - Validation: `python -c "import yaml; print(yaml.safe_load(open('config.yaml')))"` — no errors.
+  - Validation: `python -c "import yaml;
+    print(yaml.safe_load(open('config.yaml')))"` — no errors.
 
-  **Section 3 — Create `.env.example` for students (2 min)**
+  **Section 6 — Create `.env.example` for students (2 min)**
   - Create `.env.example` in the project root:
     ```
     DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/REPLACE_ME
     ```
   - Do NOT commit the real URL — `.env` must be in `.gitignore`
-  - Share the real URL with students verbally or via a shared doc
+  - Share the real `DISCORD_WEBHOOK_URL` with students verbally
+    or via a shared doc on lab day
 
-  **Section 4 — Verify Python environment (5 min)**
-  - Ensure Python 3.10+ is installed: `python --version`
-  - Install dependencies: `pip install requests pyyaml`
-  - Validation: `python -c "import requests, yaml; print('OK')`
+- [ ] **Step -1.6: Run the non-agentic version end-to-end**
 
-  **Section 5 — Run the non-agentic version end-to-end (10 min)**
-  - This is the full smoke test. Run all three scripts in sequence
-    using the `config.yaml` you just created:
-    ```bash
-    python poller.py    # enter responses for each member manually
-    python selector.py  # check decision.json output
-    python notifier.py  # confirm Discord message arrives
-    ```
-  - Expected: `#meetup-notifications` receives a message like:
-    ```
-    📅 Meetup confirmed!
-    Date: Thu Apr 24 7pm
-    Venue: Library Room A
-    Attending: Alice, Bob, David
-    ```
-  - If this works, the lab is ready.
+  **Section 7 — Full smoke test (10 min)**
 
-  **Section 6 — README.md agenda reference**
-  - Confirm `README.md` lists `sessions/instructor.md` as the
-    first entry, before Planning, with label "Instructor Preflight"
-  - Students should not need to read this file, but it must be
-    discoverable if they are teaching the lab themselves
+  Run all three scripts in sequence using the `config.yaml` you
+  just created:
+  ```bash
+  python poller.py    # enter responses for each member manually
+  python selector.py  # check decision.json output
+  python notifier.py  # confirm Discord message arrives
+  ```
+  Expected: `#meetup-notifications` in `meetup-lab-<CLASS_ID>`
+  receives a message like:
+  ```
+  📅 Meetup confirmed!
+  Date: Thu Apr 24 7pm
+  Venue: Library Room A
+  Attending: Alice, Bob, David
+  ```
+  If this works, the lab is ready.
 
-- [ ] **Step -1.2: Add `sessions/instructor.md` to `README.md` agenda**
-  - Add as the first row, before all session rows:
+- [ ] **Step -1.7: Add `sessions/instructor.md` to `README.md` agenda**
 
-    ```markdown
-    | [**Instructor Preflight**](sessions/instructor.md) | Before lab | Discord, config.yaml, Python env | 30 mins |
-    ```
+  Add as the first row, before all session rows:
+
+  ```markdown
+  | [**Instructor Preflight**](sessions/instructor.md) | Before lab | Roster, Discord, server, student laptops | 60 mins |
+  ```
 
 ---
 
