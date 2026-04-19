@@ -456,7 +456,7 @@ step includes a validation test so the instructor knows it worked.
   - Share the real `DISCORD_WEBHOOK_URL` with students verbally
     or via a shared doc on lab day
 
-- [ ] **Step -1.6: Run the non-agentic version end-to-end**
+- [x] **Step -1.6: Run the non-agentic version end-to-end** **COMPLETED**
 
   **Section 7 — Full smoke test (10 min)**
 
@@ -477,7 +477,7 @@ step includes a validation test so the instructor knows it worked.
   ```
   If this works, the lab is ready.
 
-- [ ] **Step -1.7: Add `sessions/instructor.md` to `README.md` agenda**
+- [x] **Step -1.7: Add `sessions/instructor.md` to `README.md` agenda** **COMPLETED**
 
   Add as the first row, before all session rows:
 

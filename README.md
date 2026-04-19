@@ -15,6 +15,7 @@ for various use cases, such as coding, automation, etc. using:
 
 | Topic of Lesson | Lesson Duration | Tool | Tool Duration |
 | :--- | :---: | :--- | :---: |
+| [**Instructor Preflight**](sessions/instructor.md) | Before lab | Roster, Discord, server, student laptops | 60 mins |
 | [**Introduction**](sessions/introduction.md) | 30 mins |  |  |
 | [**Concept: Basic Prompting Techniques**](sessions/prompting_basics.md) | 30 mins | [Browser Chat](https://gemini.google.com) |  |
 | [**Exercise: Problem Solving**](sessions/problem_solving.md) | 45 mins | [Browser Chat](https://gemini.google.com) |  |
