@@ -367,7 +367,7 @@ step includes a validation test so the instructor knows it worked.
   Mark the `Server acct?` column `yes` in the roster (Step -1.1)
   once every student passes this check.
 
-- [ ] **Step -1.4: Student laptop preflight**
+- [x] **Step -1.4: Student laptop preflight** **COMPLETED**
 
   **Section 4 — Student laptop preflight (10 min per student)**
 

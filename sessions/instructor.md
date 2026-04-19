@@ -196,3 +196,50 @@ python3 projects/group_meetup/preflight_check.py
 ```
 
 Every item must show `PASS` before the lab begins.
+
+---
+
+## Section 5 — Create config.yaml for the Lab Group (5 min)
+
+Replace member names with the actual students from the roster
+and venue options with locally relevant choices.
+
+```yaml
+group: "Thursday Study Squad"
+members:
+  - name: "Alice"    # replace with actual student names
+  - name: "Bob"
+  - name: "Carol"
+  - name: "David"
+options:
+  dates:
+    - "Thu Apr 24 7pm"   # replace with upcoming Thursdays
+    - "Thu May 1 7pm"
+    - "Thu May 8 7pm"
+  venues:
+    - "Library Room A"   # replace with local venues
+    - "Coffee Lab"
+    - "Online / Video Call"
+```
+
+Save as `config.yaml` in the project directory. Validation:
+
+```bash
+python -c "import yaml; print(yaml.safe_load(open('config.yaml')))"
+```
+
+No errors means the file is valid YAML.
+
+---
+
+## Section 6 — Create .env.example for Students (2 min)
+
+Create `.env.example` in the project root:
+
+```
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/REPLACE_ME
+```
+
+- Do NOT commit the real URL — `.env` must be in `.gitignore`
+- Share the real `DISCORD_WEBHOOK_URL` with students verbally
+  or via a shared doc on lab day
