@@ -137,3 +137,62 @@ Expected: empty table header (no error). If any student gets
 
 Mark the `Server acct?` column `yes` in the roster (Section 1)
 once every student passes this check.
+
+---
+
+## Section 4 — Student Laptop Preflight (10 min per student)
+
+Students run this themselves before the lab. The instructor
+validates by reviewing the output of `preflight_check.py`
+(located at `projects/group_meetup/preflight_check.py`).
+
+> **Note:** `preflight_check.py` is created in Phase 4 (Step 4.4).
+> Run Phase 4 before distributing this script to students.
+
+**Win11 + WSL2 setup:**
+
+```bash
+wsl --status          # Default Version: 2
+wsl -l -v             # Ubuntu-22.04 must appear
+# If missing:
+wsl --install -d Ubuntu-22.04   # requires admin + reboot
+```
+
+**macOS setup:**
+
+```bash
+xcode-select --install
+/bin/bash -c "$(curl -fsSL \
+  https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+brew install python git
+```
+
+**Both platforms — required tools:**
+
+```bash
+# Python 3.10+
+python3 --version           # must be >= 3.10
+
+# Git identity
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+
+# GitHub CLI
+# Install: https://cli.github.com
+gh auth login               # authenticate with GitHub account
+
+# Claude Code CLI
+npm install -g @anthropic-ai/claude-code
+claude --version
+
+# Python dependencies for the meetup project
+pip install requests pyyaml
+```
+
+**Validation — run and share output with instructor:**
+
+```bash
+python3 projects/group_meetup/preflight_check.py
+```
+
+Every item must show `PASS` before the lab begins.

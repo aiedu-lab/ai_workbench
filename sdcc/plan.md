@@ -317,7 +317,7 @@ step includes a validation test so the instructor knows it worked.
     Expected: `OK` and the message appears in `#meetup-notifications`
     and is visible to all students who joined.
 
-- [ ] **Step -1.3: Provision the shared server account**
+- [x] **Step -1.3: Provision the shared server account** **COMPLETED**
 
   **Section 3 — Shared server provisioning (15 min)**
 
