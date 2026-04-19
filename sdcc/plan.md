@@ -530,14 +530,14 @@ step includes a validation test so the instructor knows it worked.
 
 **Target file:** `sessions/planning.md`
 
-- [ ] **Step 1.1: Audit `sessions/planning.md`**
+- [x] **Step 1.1: Audit `sessions/planning.md`** **COMPLETED**
   - Confirm the exercise references the `Group Meetup Organizer`
   - Confirm framing is concept-only (no code, no framework specifics)
   - Confirm it points to `plans/draft/event_organizer.md`
   - Flag any wording from the over-specified draft (recurring events,
     self-onboarding, cancellation) — remove it
 
-- [ ] **Step 1.2: Update `sessions/planning.md` if needed**
+- [x] **Step 1.2: Update `sessions/planning.md` if needed** **COMPLETED**
   - Exercise: name the project, describe it as a one-shot coordinator,
     state the three components at concept level, ask students to
     produce a plan (not code)
