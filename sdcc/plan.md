@@ -557,13 +557,15 @@ step includes a validation test so the instructor knows it worked.
 
 **Target file:** `sessions/slides.md`
 
-- [ ] **Step 2.1: Audit `sessions/slides.md`**
+- [x] **Step 2.1: Audit `sessions/slides.md`** **COMPLETED**
   - Confirm the session has a demo section and an exercise section
   - Confirm any reference to the organizer is scoped as one-shot
     (not recurring, not SaaS)
 
 - [ ] **Step 2.2: Confirm or add Demo (AI Education Lab deck)**
-  - 5-slide deck, instructor builds it live in Gamma:
+  - Create a `projects/slides/demo/plan.md` that will be used 
+    a demo by instructor to create a 5-slide deck using `gamma.app` 
+    to present an overview of `AI_education_lab`. The five slides are:
     1. Who runs the lab and who attends
     2. Why the lab exists
     3. What the exercises are (the progressive arc)
