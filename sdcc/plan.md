@@ -572,7 +572,7 @@ step includes a validation test so the instructor knows it worked.
     4. How to contribute to the lab
     5. Call to action
 
-- [ ] **Step 2.3: Add `Group Meetup Organizer` exercise (toy version 0)**
+- [x] **Step 2.3: Add `Group Meetup Organizer` exercise (toy version 0)** **COMPLETED**
   - Frame: "Build a stakeholder pitch deck. Audience: a student
     club committee deciding whether to adopt this system."
   - Slide content: problem, three-component solution at concept
@@ -584,7 +584,7 @@ step includes a validation test so the instructor knows it worked.
     > what is still missing."
   - No implementation details of any kind
 
-- [ ] **Step 2.4: Confirm Gamma install/start instructions present**
+- [x] **Step 2.4: Confirm Gamma install/start instructions present** **COMPLETED**
 
 ---
 
