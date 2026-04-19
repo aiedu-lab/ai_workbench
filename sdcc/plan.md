@@ -240,7 +240,7 @@ step includes a validation test so the instructor knows it worked.
 > prevents name collisions when the same instructor runs multiple
 > cohorts.
 
-- [ ] **Step -1.1: Collect the student roster**
+- [x] **Step -1.1: Collect the student roster** **COMPLETED**
 
   The file must contain the following sections, in order:
 

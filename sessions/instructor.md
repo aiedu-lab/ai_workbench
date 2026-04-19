@@ -43,3 +43,43 @@ Students without admin access cannot complete the exercises.
 
 **Server account** — required for Phase 6 Docker deployment.
 Provision in Section 3; mark this column `yes` after that step.
+
+---
+
+## Section 2 — Discord Server Setup and Student Invite (15 min)
+
+Reference: https://support.discord.com/hc/en-us/articles/204849977
+
+- Choose your `<CLASS_ID>` (e.g. `2026-spring`)
+- Create a new Discord server named `meetup-lab-<CLASS_ID>`
+  - Server Settings → Overview → Server Name
+  - Do NOT reuse a previous class server — name collisions corrupt
+    webhook URLs from prior runs
+- Create a text channel `#meetup-notifications` inside the server
+- Invite each student by Discord username:
+  - Server Settings → Invites → Create Invite (no expiry)
+  - Or: right-click `#meetup-notifications` → Invite People
+  - Send the invite link to each student via a shared doc or
+    class chat before the lab day
+- Confirm every student has joined and can read
+  `#meetup-notifications`:
+  - Each student posts a test message: "ready: <their name>"
+  - Do not proceed until all students appear in the member list
+- Create the webhook (only after all students have joined):
+  - Channel Settings → Integrations → Webhooks → New Webhook
+  - Name: `Meetup Bot`
+  - Copy the webhook URL — this is `DISCORD_WEBHOOK_URL`
+- Validation:
+
+```bash
+export DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..."
+python -c "
+import requests, os
+r = requests.post(os.environ['DISCORD_WEBHOOK_URL'],
+                  json={'content': '✅ Instructor preflight test'})
+print('OK' if r.status_code == 204 else f'FAIL: {r.status_code}')
+"
+```
+
+Expected: `OK` and the message appears in `#meetup-notifications`
+visible to all students who joined.
