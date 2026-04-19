@@ -279,7 +279,7 @@ step includes a validation test so the instructor knows it worked.
   - **Server account** — required for Phase 6 Docker deployment.
     Provision in Step -1.3; mark this column `yes` after that step.
 
-- [ ] **Step -1.2: Discord server setup and student invite**
+- [x] **Step -1.2: Discord server setup and student invite** **COMPLETED**
 
   **Section 2 — Discord server setup (15 min)**
 

@@ -83,3 +83,57 @@ print('OK' if r.status_code == 204 else f'FAIL: {r.status_code}')
 
 Expected: `OK` and the message appears in `#meetup-notifications`
 visible to all students who joined.
+
+---
+
+## Section 3 — Shared Server Provisioning (15 min)
+
+The server is used in Phase 6 (Docker deployment). Provision it
+before the lab — students cannot do this themselves.
+
+**Server requirements:**
+- OS: Ubuntu 22.04 LTS (recommended) or 24.04
+- Reachable from student laptops (public IP or VPN-accessible)
+- Inbound ports open: 22 (SSH), 8080 (Temporal UI), 8088 (app)
+- Outbound internet access (to pull Docker images, reach Discord)
+
+**Provision the shared account:**
+
+```bash
+# On the server (as root or a user with sudo)
+sudo useradd -m -s /bin/bash labuser
+sudo usermod -aG docker labuser
+
+# Pre-install required tools
+sudo apt-get update
+sudo apt-get install -y docker.io docker-compose-v2 git python3 pip
+
+# Pre-clone the lab repo
+sudo -u labuser git clone \
+  https://github.com/<ORG>/ai_education_lab \
+  /home/labuser/ai_education_lab
+```
+
+**Add each student's SSH public key:**
+
+```bash
+sudo -u labuser mkdir -p /home/labuser/.ssh
+# Repeat for each student's public key:
+echo "ssh-ed25519 AAAA... alice@laptop" \
+  | sudo tee -a /home/labuser/.ssh/authorized_keys
+sudo chmod 700 /home/labuser/.ssh
+sudo chmod 600 /home/labuser/.ssh/authorized_keys
+sudo chown -R labuser:labuser /home/labuser/.ssh
+```
+
+**Validation — run from each student laptop:**
+
+```bash
+ssh labuser@<SERVER_IP> docker ps
+```
+
+Expected: empty table header (no error). If any student gets
+`Permission denied`, re-check their public key was added correctly.
+
+Mark the `Server acct?` column `yes` in the roster (Section 1)
+once every student passes this check.
