@@ -82,6 +82,17 @@ options:
 
 ---
 
+## Component Contract (Locked)
+
+This contract is identical across every session that references the
+project. No session redefines these interfaces inline.
+
+| Component | Input | Output |
+|-----------|-------|--------|
+| **Poller** | `config.yaml` | `responses.json` |
+| **Selector** | `responses.json` | `decision.json` |
+| **Notifier** | `decision.json` + `DISCORD_WEBHOOK_URL` | Discord message |
+
 ## The Three Scripts
 
 ```

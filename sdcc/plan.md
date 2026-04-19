@@ -491,7 +491,7 @@ step includes a validation test so the instructor knows it worked.
 
 **Target file:** `plans/draft/event_organizer.md`
 
-- [ ] **Step 0.1: Audit current `event_organizer.md`**
+- [x] **Step 0.1: Audit current `event_organizer.md`** **COMPLETED**
   - Read the file end to end
   - The current draft describes a full SaaS product (recurring
     events, self-onboarding, region rotation, cancellation flows,
@@ -500,7 +500,7 @@ step includes a validation test so the instructor knows it worked.
   - Do NOT edit yet — produce a written audit listing what to
     keep, what to remove, and what to add
 
-- [ ] **Step 0.2: Rewrite `event_organizer.md` to correct scope**
+- [x] **Step 0.2: Rewrite `event_organizer.md` to correct scope** **COMPLETED**
   - Keep: project description, the three-component model, the data
     model (config.yaml / responses.json / decision.json), the
     session arc mapping
@@ -517,7 +517,7 @@ step includes a validation test so the instructor knows it worked.
     building and why" — not "how"; no feature that cannot be
     implemented in a 90-minute lab session
 
-- [ ] **Step 0.3: Lock the three-component contract**
+- [x] **Step 0.3: Lock the three-component contract** **COMPLETED**
   - Poller: input `config.yaml` → output `responses.json`
   - Selector: input `responses.json` → output `decision.json`
   - Notifier: input `decision.json` + `DISCORD_WEBHOOK_URL` →
