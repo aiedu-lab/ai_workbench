@@ -21,15 +21,15 @@ for various use cases, such as coding, automation, etc. using:
 | [**Concept: Planning**](sessions/planning.md) | 45 mins | [Claude Desktop (Chat)](tools/claude/desktop.md) | 15 mins  |
 | [**Exercise: Create Presentation**](sessions/slides.md) | 45 mins | [Gamma](https://gamma.app/), [GitHub](tools/github.md) | 15 mins |
 | [**Exercise: Create/Run Web Site on Laptop/Lovable**](sessions/web_site.md) | 60 mins | [Lovable.dev](https://lovable.ai), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
+| [**Concept: Advanced Prompting Techniques**](sessions/prompting_advanced.md) | 60 mins | [Claude Chat](tools/claude/desktop.md) |  |
 | [**Concept: Spec Driven Development (SDD)**](sessions/sdd_basics.md) | 45 mins | | |
 | [**Exercise: Create Group Meetup Organizer using SDD, App runs on Laptop**](sessions/client_application.md) | 45 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) | 15 mins |
 | [**Concept: Code Review**](sessions/code_review.md) | 30 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) |  |
 | [**Concept: AI Across the SDLC**](sessions/sdlc_ai.md) | 45 mins | [Claude Code (CLI)](tools/claude/cli.md), GitHub Actions |  |
 | [**Exercise: Create/Run Workflows on Laptop**](sessions/client_work_automation.md) | 75 mins | [Claude CoWork](tools/claude/desktop.md) | 15 mins |
 | [**Exercise: Create/Run Multi-Agent Workflows on Laptop**](sessions/client_multiagent.md) | 60 mins | [Claude Code (CLI)](tools/claude/cli.md), [OpenAI Codex (CLI)](tools/openai/codex_cli.md) | 15 mins |
-| [**Concept: Advanced Prompting Techniques**](sessions/prompting_advanced.md) | 60 mins | [Claude Chat](tools/claude/desktop.md) |  |
 | [**Exercise: Run Multi-Agent Workflows on Server**](sessions/server_multiagent.md) | 60 mins | [OpenClaw](tools/openclaw/cli.md), [Temporal](tools/temporal/cli.md) | 15 mins |
-| [**Concept: Software Enhancement**](sessions/software_enhancement.md) | 30 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) |  |
+| [**Concept: Solution Architecture**](sessions/solution.md) | 45 mins | [Claude Chat](tools/claude/desktop.md), Python |  |
 | [**Future Advancements**](sessions/future_advancements.md) | 30 mins |  |  |
 | [**Recap**](sessions/recap.md) | 30 mins |  |  |
 
