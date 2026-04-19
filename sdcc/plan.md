@@ -797,3 +797,317 @@ transition before the exercise.
 * `event_organizer.md` answers "what and why"; session files answer
   "how and in what order"
 * No session contains implementation details from a different scope
+
+---
+
+## Phase 8: AGENDA REVIEW AND SESSION ENHANCEMENT
+
+**Addresses:** `sdcc/review_agenda.md` — all objectives, tasks,
+and constraints.
+
+**Target files:** `README.md`, `sessions/prompting_advanced.md`,
+`sessions/solution.md` (new), `sessions/future_advancements.md`,
+`sessions/recap.md`, `sessions/sdlc_ai.md`
+
+**What NOT to add:**
+- Full Predictive AI course (Linear Regression through Neural
+  Networks) — semester-long material; scope drift; not the lab's focus
+- SLM/HuggingFace as a dedicated exercise — tool-stack mismatch;
+  mention in future_advancements only
+- BERT as a standalone session — fold the intuition into
+  prompting_advanced (embeddings segment in Step 8.2)
+- RAG as a standalone session — fold into Step 8.2 as Part 2 of
+  the Embeddings arc; the two topics are one continuous concept
+
+---
+
+### Step 8.1: Reorder README.md Agenda
+
+**Problem:** "Advanced Prompting Techniques" sits at row 13, after
+multi-agent deployment. Advanced prompting (templatization, reusable
+skills, structured prompting) is the conceptual foundation for
+Spec-Driven Development and must precede it.
+
+**Changes:**
+
+Move "Advanced Prompting Techniques" from row 13 to row 7
+(after Website session, before SDD). Remove "Software Enhancement"
+as a standalone row (fold into `sdlc_ai.md` in Step 8.6). Add
+"Solution Architecture" session before "Future Advancements".
+
+**Resulting order (17 sessions, net unchanged):**
+
+| Row | Session |
+|-----|---------|
+| 0   | Instructor Preflight |
+| 1   | Introduction |
+| 2   | Concept: Basic Prompting Techniques |
+| 3   | Exercise: Problem Solving |
+| 4   | Concept: Planning |
+| 5   | Exercise: Create Presentation |
+| 6   | Exercise: Create/Run Web Site |
+| 7   | **Concept: Advanced Prompting Techniques** (moved from row 13) |
+| 8   | Concept: Spec Driven Development (SDD) |
+| 9   | Exercise: Group Meetup Organizer |
+| 10  | Concept: Code Review |
+| 11  | Concept: AI Across the SDLC |
+| 12  | Exercise: Create/Run Workflows |
+| 13  | Exercise: Create/Run Multi-Agent on Laptop |
+| 14  | Exercise: Run Multi-Agent on Server |
+| 15  | **Concept: Solution Architecture** (new) |
+| 16  | Future Advancements |
+| 17  | Recap |
+
+- [x] **Step 8.1:** Edit the agenda table in `README.md` to
+  reflect this order. Remove the "Software Enhancement" row.
+  Add the "Solution Architecture" row with a link to
+  `sessions/solution.md`. **COMPLETED**
+
+---
+
+### Step 8.2: Add Embeddings + RAG to prompting_advanced.md
+
+**Why:** Students learn context engineering but have no intuition
+for why semantic relevance filtering works. A 20–25 min two-part
+block gives the mental model and shows the practical payoff:
+embeddings explain the WHY; RAG is the immediate SO WHAT. Both run
+in the same Google Colab notebook — no local install required.
+
+**Part 1 — Embeddings & Semantic Similarity (10 min):**
+
+Every word or sentence maps to a vector of numbers. Words with
+similar meaning cluster nearby. Classic visualization:
+`King − Man + Woman ≈ Queen` — the arithmetic works geometrically.
+
+Why it matters for context engineering: cosine similarity between
+query and context embeddings is how relevance filtering works.
+High similarity → context stays; low → dropped. This is why
+"meeting at 3pm" is relevant to "what time is my next event?"
+
+Exercise:
+```python
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+sentences = [
+  "The meeting is at 3pm",
+  "What time is my next event?",
+  "I enjoy hiking on weekends",
+]
+embeddings = model.encode(sentences)
+scores = cosine_similarity(embeddings)
+for i, s in enumerate(sentences):
+  for j, t in enumerate(sentences):
+    if i < j:
+      print(f"{scores[i][j]:.2f} | {s[:30]} vs {t[:30]}")
+```
+Expected: sentences 0–1 score ~0.6–0.8; either vs. sentence 2
+scores ~0.1–0.2.
+
+**Part 2 — RAG: Retrieval Augmented Generation (15 min):**
+
+Before calling the LLM, retrieve the most relevant chunks from a
+document corpus using embedding similarity, then inject them into
+the prompt as context. The LLM answers grounded in your documents —
+not just its training data.
+
+Exercise (same Colab, same model):
+```python
+docs = [
+  "Meetings are held every Thursday at 7pm.",
+  "The venue is Library Room A unless notified.",
+  "To RSVP, reply to the Discord notification.",
+  "Bring a laptop — exercises require Claude Code.",
+]
+query = "What time do meetings start?"
+
+doc_embeddings = model.encode(docs)
+query_embedding = model.encode([query])
+scores = cosine_similarity(query_embedding, doc_embeddings)[0]
+top_chunk = docs[scores.argmax()]
+
+# Inject into Claude prompt
+prompt = f"Context: {top_chunk}\n\nQuestion: {query}"
+print(f"Retrieved: {top_chunk}")
+# → call Claude API with `prompt`
+```
+
+Reflection: "What happens if the corpus has 10,000 documents? What
+changes?" (Answer: need a vector database — Pinecone, pgvector,
+ChromaDB. Same concept, scaled.)
+
+- [ ] **Step 8.2:** Add the two-part Embeddings + RAG section to
+  `sessions/prompting_advanced.md` at the end of the concepts block,
+  before existing exercises. Use a single Colab notebook. Do NOT
+  add a standalone RAG session — the two topics are one arc.
+
+---
+
+### Step 8.3: Create sessions/solution.md
+
+**Why:** No session shows how a real AI solution combines multiple
+disciplines. Students finish the lab knowing how to build agents
+but not how those agents fit into a complete system. This is the
+capstone "how it all fits together" session.
+
+**Session structure (45 mins):**
+
+**Concept (15 min):** Modern AI Solution Architecture
+
+| Layer | Role | Example |
+|-------|------|---------|
+| Predictive AI | Classify, rank, score | Spam classifier, intent detector |
+| Generative AI | Draft, reason, decide | LLM writes the reply |
+| Non-AI algorithms | Route, filter, enforce | Priority queue, regex guard |
+| Systems engineering | Persist, deliver, scale | Database, API, containers |
+
+None of these layers is optional in a real solution. Remove any one
+and the system either fails or becomes brittle.
+
+**Visual anchor — MNIST demo (5 min):** Pre-trained digit classifier
+predicts handwritten digits. This is Predictive AI at its simplest —
+pattern → label. Contrast with an LLM describing what it sees.
+Classifier: fast, cheap, narrow. LLM: slow, expensive, general.
+A real system uses both.
+
+**Toy Exercise (25 min): Email Triage System**
+
+```
+Email arrives
+     |
+     v
+[Predictive: spam classifier] ── spam? → discard
+     |
+     v (not spam)
+[Generative: LLM drafts reply]
+     |
+     v
+[Non-AI: rule-based priority router]
+  urgent? → send immediately
+  normal? → queue for digest
+  unclear? → flag for human
+     |
+     v
+[Systems: Discord webhook — same one from Group Meetup project]
+```
+
+Students call a pre-trained classifier via HuggingFace Inference
+API (one line, free tier). LLM draft uses Claude API. Router is
+plain Python conditionals. Delivery reuses the Group Meetup Discord
+webhook — no new infrastructure.
+
+Reflection: "Which part would you replace with a generative model?
+Which should stay algorithmic, and why?"
+
+- [ ] **Step 8.3:** Create `sessions/solution.md` with the above
+  structure. Reuse the Group Meetup Discord webhook — no new infra.
+  Test the HuggingFace classifier call end-to-end before publishing.
+
+---
+
+### Step 8.4: Update future_advancements.md
+
+Add four sections after the existing World Models section.
+
+**Reasoning / Thinking Models:** Some models (OpenAI o1, o3; Claude
+Extended Thinking) perform chain-of-thought at inference time —
+they "think" silently before answering. Dramatically more accurate
+on complex multi-step problems at the cost of higher latency.
+When to use: the problem requires deliberate step-by-step reasoning,
+not just recall.
+
+**Multimodal AI:** Modern models accept images, audio, and video
+alongside text (Claude Vision, GPT-4o, Gemini). CoWork agents
+reading the screen already use multimodal capabilities. Trend:
+models that perceive the full digital environment, not just text.
+
+**Small Language Models (SLMs):** Open-source models (Llama, Mistral,
+Phi) run locally via Ollama or LM Studio. Smaller, cheaper, private,
+zero latency — at the cost of capability. When to use: private data
+that cannot leave the device, offline scenarios, high-volume
+classification. HuggingFace Model Hub: thousands of fine-tuned
+task-specific models.
+
+**Autonomous AI Agents:** Today's agents respond to a prompt and
+stop. The next generation monitors, watches, responds to events,
+learns from feedback — without a human trigger per action. Claude
+Managed Agents (Apr 2026) is an early example. Trajectory: from
+"agent you invoke" to "agent that works alongside you."
+
+- [ ] **Step 8.4:** Add all four sections to
+  `sessions/future_advancements.md` after the World Models section.
+  Each: 3–5 sentences, one concrete example, one "when to use" line.
+
+---
+
+### Step 8.5: Update recap.md
+
+**Problem:** recap.md omits the Group Meetup Organizer arc, SDD,
+code review, and multi-agent patterns — the practical content
+students spent 80% of the lab on.
+
+**Add "What We Built" section** (before existing Summary):
+
+| Session | Version | What it could do | What was missing |
+|---------|---------|------------------|-----------------|
+| Slides | Pitch deck | Describe the system | Everything else |
+| Web Site | Toy UI | Show a form + result | Real logic, real data |
+| Client App | 3 Python scripts | Poll → Select → Notify | Concurrency, failure recovery |
+| Client Workflow | Single agent | One agent, all 3 steps | Parallel execution |
+| Multi-Agent | 3 agents + Temporal | Durable, retryable pipeline | Cloud deployment |
+| Server Deploy | Docker stack | Runs on a real server | You decide what's next |
+
+**Add "Key Patterns" section** (after existing Summary):
+
+1. **SDD loop:** Spec → plan.md → Generate → Run → Reflect.
+   If the code breaks, the plan is wrong. Fix the plan.
+2. **Code Review pipeline:** Local CLI → GitHub Actions →
+   Multi-agent (5 specialized agents). Each level catches what
+   the previous missed.
+3. **Agent architecture:** Use multiple agents when tasks are
+   independent and failures must be isolated. Use one agent when
+   steps are sequential and shared state is cheap.
+4. **Embeddings + RAG:** Similar meaning → similar vectors → high
+   cosine similarity → retrieved context. This is why context
+   relevance filtering works and how RAG grounds LLM answers in
+   your data.
+
+- [ ] **Step 8.5:** Add both sections to `sessions/recap.md`.
+  Place "What We Built" before the existing Summary section;
+  place "Key Patterns" after it.
+
+---
+
+### Step 8.6: Fold Software Enhancement into sdlc_ai.md
+
+"Software Enhancement" covers the Strangler Fig pattern and AI-
+assisted hybrid enhancement. These belong in the SDLC session.
+Keep `sessions/software_enhancement.md` as supplemental reading;
+remove from main agenda only.
+
+- [ ] **Step 8.6:** Add a "Legacy and Hybrid Enhancement" subsection
+  to `sessions/sdlc_ai.md`: Strangler Fig pattern, when to enhance
+  vs. rewrite, CLAUDE.md guardrails for fencing AI access to legacy
+  code. ~10 lines. No new exercises.
+
+---
+
+### Step 8.7: Consistency Check for Phase 8
+
+- [ ] **Step 8.7.1:** `README.md` — Advanced Prompting at row 7,
+  Solution Architecture at row 15, Software Enhancement absent,
+  all 17 rows link to existing files.
+- [ ] **Step 8.7.2:** `prompting_advanced.md` — Embeddings + RAG
+  section present, both Colab snippets runnable, King-Queen analogy
+  cited, RAG reflection question included.
+- [ ] **Step 8.7.3:** `solution.md` — all four layers in the toy
+  exercise, MNIST demo present, Discord webhook reused (no new
+  infra).
+- [ ] **Step 8.7.4:** `future_advancements.md` — four new sections
+  present (Reasoning, Multimodal, SLMs, Autonomous Agents).
+- [ ] **Step 8.7.5:** `recap.md` — "What We Built" arc table and
+  "Key Patterns" present, referencing all major sessions.
+- [ ] **Step 8.7.6:** `sdlc_ai.md` — Strangler Fig subsection
+  present; `software_enhancement.md` cross-referenced as
+  supplemental reading only.
