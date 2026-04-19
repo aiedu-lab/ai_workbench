@@ -1,111 +1,138 @@
-# Draft - Plan
+# Group Meetup Organizer — Project Spec
 
-## Drafting Process
-Crafting a plan (plan.md) generally follows the **Intent → Plan → Iterate** 
-process where Plan part follows the following sequence: 
-* Context → 
-* Features → 
-* Data Schema → 
-* Implementation Checklist → 
-* Technical Blockers
+## What This Is
 
-## Intent
-Social coordination application
+A **one-shot meetup coordinator** for a fixed group. Given a list of
+members, available dates, and venue options, it:
 
-## Plan
-- Context
-- Task
-- Constraints
-- Output format
+1. Polls each member: "Are you free? What venue do you prefer?"
+2. Selects the venue that the most free members prefer
+3. Notifies the group via a Discord message
 
-### Context
-Creating a lightweight web dashboard that automates the coordination 
-of any recurring group meetup — a study group, a social gathering, a
-community club — eliminating messy group chat threads and the overhead
-of scheduling, venue selection, and logistics.
+The application runs once per meetup. A human (the organizer)
+triggers it when they want to schedule a meetup.
 
-### Task
-* Automate the weekly [Thursday] [evening]" social gathering coordination 
-  among friends. Note that for another event, the [frequency],  
-  [day], [region], and [time] is settable. For now, we will event 
-  coordination on this "Thursday evening social gathering" event.
-* The web site should offer the following features: 
-  * Onboarding [Events]: 
-    * [Event]: Existing members have privileges to create, read, 
-      update, or unsubscribe) to [Event].
-    * Note: 
-      * The [Event] is auto subscribed to the [Member], 
-        who created the event.
-      * [Event] Deletion: If an [Event] is not subscribed by any member 
-        for [DeleteAfterWeeks] weeks, it is removed from system.
-  * Onboarding [Member]: 
-    * Members have privilege to self onboard. 
-    * Note: Region is auto-selected based on the nearest one to the
-      member's city.
-    * Members have privileges to subscribe to and unsubscribe from 
-      list of [events].
-  * Meet Up Scheduling:
-    * Consensus Poll: Automatically initiated [ConsensusByDays] days
-      before the next [Event] by sending a Consensus Poll email to 
-      all subscribed members of the event. 
-    * [Availability] and [Venue Preference] Selection: Members mark
-      "free" (or "busy") for the coming event and choose a preferred
-      venue type: "Library", "Coffee Shop", "Online/Video Call",
-      "Study Room", "Restaurant", "Bar", or other.
-    * Consensus to meet is realized when at least ConsensusThreshold 
-      (default All) of the members mark themselves "available" to meet 
-      for the upcoming meetup.
-    * Meet up Location and Venue Selection: The City of the meetup is
-      chosen based on rotation of the City of each attending member.
-      The venue is chosen from options in the selected city that match
-      the preference of the majority of attendees and are available for
-      the meetup date.
-    * Final Confirmation: An email with calendar invite with the final location 
-      and meet-up time is sent to all "free" members. If the meet up is cancelled
-      due to lack of consensus, that email is sent as well.
-    * Cancellation: A member may cancel the meet up by sending 
-      an email after full confirmation. The cancellation may lead to event 
-      cancellation if ConsensusThreshold is not met. Nonetheless, the 
-      cancellation is notified to other confirmed attendees receiving which 
-      other attendees may also request cancelation via email. 
+## What This Is NOT
 
-### Data Schema
-* [Event] attributes:
-  * Name: "[Group] Meetup" e.g. "Study Squad", "Chess Club" - required
-  * Description: "Regular meetup for [group description]" - optional
-  * Frequency: Week - DropDown [Week, BiWk, Month, Qtr, HalfYr, Yr]
-  * WeekDay: Thu - DropDown [Mon, Tue, Wed, Thu, Fri, Sat, Sun] 
-    When Frequency is Month (or Qtr, ...) we choose the first 
-    occurrence of WeekDay on that Month (or Qtr, ...)
-  * Time: Evening - DropDown [Morning, Noon, Evening]
-  * ConsensusByDays: 4 - DropDown [1, 2, 4, 8, 16] 
-    Unless consensus is realized within ConsensusByDays, the next event 
-    is automatically cancelled and another scheduling round is initiated.
-  * ConsensusThreshold: All - DropDown [All, ButOne, ...] - default All
-  * Region: e.g. "SFO-SouthBay" - DropDown [configurable per deployment]
-  * Subscribers: List of Subscribed Members for the event - default []
-  * DeleteAfterWeeks: 2 - DropDown [1, 2, 4, 8, 16] - default 2
-    for [DeleteAfterWeeks] weeks, it is garbage collected and removed.
-* [Member] attributes:
-  * Name: e.g. "Alex Kim"
-  * Email: e.g. alex@email.com - used as unique identity
-  * City: e.g. "Palo Alto" - DropDown [configurable per deployment]
-  * Cell: "123-456-7890" - used for notifications
-  * Events: [Events] - List of events selected from DropDown.
-  * Availability: ["busy", "free"] - default "busy" 
+- Not a recurring scheduler or cron job
+- Not a SaaS product with user registration or authentication
+- Not a multi-tenant system with events, subscriptions, or regions
+- Not an email sender or calendar invite system
+- Not a cancellation or rescheduling workflow
 
-### Implementation Checklist
-- [ ] Step 1: UI Scaffold—Create a simple dashboard based on user login
-      with a "Meetup status" ie list of upcoming event meetups, meetup
-      status - confirmed members, final location, chosen venue, etc.
-- [ ] Step 2: Availability Logic—Enable users to toggle their status and 
-      show a live "Count of Free Friends."
-- [ ] Step 3: Neighborhood Logic—Implement a simple round-robin for the 
-      City associated with the event.
-- [ ] Step 4: Cancellation Toggle that marks a user "Busy" for that week
-      and turns the dashboard red for that week.
+These are real product features that would be built on top of this
+architecture. They are not part of the lab.
 
-### Constraints
-- Authentication: Need a user login and onboarding.
-- Database: Ensure the state (who is free) resets after each event 
-  so old data doesn't clutter the dashboard.
+---
+
+## Data Model
+
+**`config.yaml`** — the only configuration interface. Set by the
+instructor before the lab; students receive it ready to use.
+
+```yaml
+group: "Thursday Study Squad"
+members:
+  - name: "Alice"
+  - name: "Bob"
+  - name: "Carol"
+  - name: "David"
+options:
+  dates:
+    - "Thu Apr 24 7pm"
+    - "Thu May 1 7pm"
+    - "Thu May 8 7pm"
+  venues:
+    - "Library Room A"
+    - "Coffee Lab on Castro"
+    - "Online / Video Call"
+```
+
+**`responses.json`** — written by the Poller, read by the Selector.
+
+```json
+{
+  "Alice":  {"available": true,  "venue": "Library Room A"},
+  "Bob":    {"available": true,  "venue": "Coffee Lab on Castro"},
+  "Carol":  {"available": false, "venue": null},
+  "David":  {"available": true,  "venue": "Library Room A"}
+}
+```
+
+**`decision.json`** — written by the Selector, read by the Notifier.
+
+```json
+{
+  "date": "Thu Apr 24 7pm",
+  "venue": "Library Room A",
+  "attendees": ["Alice", "Bob", "David"]
+}
+```
+
+---
+
+## Selection Logic
+
+- **Date:** the date where the most members are available
+- **Venue:** the venue preferred by the most available members
+- **Tie-breaking:** alphabetical order (deterministic, no randomness)
+- **Cancelled:** if zero members are available, write
+  `{"cancelled": true}` to `decision.json`; the Notifier sends a
+  cancellation message
+
+---
+
+## The Three Scripts
+
+```
+python poller.py    # reads config.yaml, collects responses,
+                    # writes responses.json
+python selector.py  # reads responses.json, picks date + venue,
+                    # writes decision.json
+python notifier.py  # reads decision.json, POSTs to Discord webhook
+```
+
+---
+
+## Scope Decisions (Locked)
+
+| Decision | Choice | Reason |
+|----------|--------|--------|
+| Group size | Fixed, from `config.yaml` | No auth needed; instructor sets roster |
+| Notification | Discord webhook only | Minimal setup — no token, no bot, just a URL |
+| Storage | Flat files (non-agentic) | Architecture visible, zero framework noise |
+| Stack growth | Only when complexity earns it | See session arc below |
+
+---
+
+## Notification Platform
+
+**Discord via Webhook. No alternatives.**
+
+| Platform | Setup cost | Lab-viable? |
+|----------|------------|-------------|
+| Email (SMTP) | Medium — app passwords, spam filters | ⚠️ Borderline |
+| WhatsApp (Twilio) | High — WABA, template approval | ❌ No |
+| Discord Bot | Medium — token, Intents, async | ⚠️ Borderline |
+| **Discord Webhook** | **Minimal — just a URL** | **✅ Yes** |
+
+The Notifier is a pluggable component. Swapping Discord for email
+(SendGrid), SMS (Twilio), or Slack (Slack webhooks) requires
+changing only `notifier.py`. The Poller and Selector are unaffected.
+
+---
+
+## Session Arc
+
+| Session | Version | What it demonstrates |
+|---------|---------|----------------------|
+| Planning | Concept only | Plan the app in plain language |
+| Slides (Gamma) | Pitch deck (toy v0) | Stakeholder presentation — no code |
+| Web Site (Lovable) | Poll UI (toy v1) | Real UI, fake backend, hardcoded result |
+| Client Application | 3 Python scripts | Real system — real Discord notification |
+| Client Workflow | Single agent (OpenClaw) | One agent runs all three steps |
+| Multi-Agent | 3 agents + Temporal | Durable, retryable pipeline |
+| Server Deploy | Docker stack | Deployed on a real server |
+
+Each version is visibly incomplete; the gap is named explicitly so
+students understand why the next session's technology is needed.
