@@ -562,7 +562,7 @@ step includes a validation test so the instructor knows it worked.
   - Confirm any reference to the organizer is scoped as one-shot
     (not recurring, not SaaS)
 
-- [ ] **Step 2.2: Confirm or add Demo (AI Education Lab deck)**
+- [x] **Step 2.2: Confirm or add Demo (AI Education Lab deck)** **COMPLETED**
   - Create a `projects/slides/demo/plan.md` that will be used 
     a demo by instructor to create a 5-slide deck using `gamma.app` 
     to present an overview of `AI_education_lab`. The five slides are:
