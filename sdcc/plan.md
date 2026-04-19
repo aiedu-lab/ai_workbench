@@ -420,7 +420,7 @@ step includes a validation test so the instructor knows it worked.
   > must run Phase 4 before distributing the preflight script
   > to students.
 
-- [ ] **Step -1.5: Create `config.yaml` and `.env.example`**
+- [x] **Step -1.5: Create `config.yaml` and `.env.example`** **COMPLETED**
 
   **Section 5 — Create `config.yaml` for the lab group (5 min)**
   - Replace member names with the actual students (from roster)
@@ -674,6 +674,42 @@ script in sequence in the terminal.
   - Reflection: "What would need to change to make this agentic?"
 
 - [ ] **Step 4.5: Confirm `sdd_basics.md` link resolves**
+
+- [ ] **Step 4.6: Create `projects/group_meetup/` and run smoke test**
+
+  Create the project directory and populate all five files:
+
+  1. **`config.yaml`** — sample roster using the template from
+     `sessions/instructor.md` Section 5. Replace placeholder names
+     with the actual class roster before distributing to students.
+
+  2. **`poller.py`** — reads `config.yaml`, prompts for each
+     member's availability and venue preference, writes
+     `responses.json`.
+
+  3. **`selector.py`** — reads `responses.json`, applies simple
+     majority + alphabetical tie-breaking, writes `decision.json`.
+
+  4. **`notifier.py`** — reads `decision.json`, POSTs to
+     `DISCORD_WEBHOOK_URL`. Uses the canonical implementation
+     from the Project Description section of this plan.
+
+  5. **`preflight_check.py`** — checks each dependency listed in
+     `sessions/instructor.md` Section 4 and prints `PASS` or
+     `FAIL` per item.
+
+  **Validation (back-reference to instructor.md Section 7):**
+  ```bash
+  cd projects/group_meetup
+  export DISCORD_WEBHOOK_URL="<webhook from Section 2>"
+  python poller.py    # enter test responses
+  python selector.py  # verify decision.json is correct
+  python notifier.py  # confirm Discord message arrives
+  python preflight_check.py  # all items must show PASS
+  ```
+  This is the same smoke test as `sessions/instructor.md`
+  Section 7. If all four commands succeed, mark this step
+  complete and Section 7 is ready for instructors to run.
 
 ---
 

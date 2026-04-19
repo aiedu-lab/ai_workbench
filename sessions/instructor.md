@@ -243,3 +243,38 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/REPLACE_ME
 - Do NOT commit the real URL — `.env` must be in `.gitignore`
 - Share the real `DISCORD_WEBHOOK_URL` with students verbally
   or via a shared doc on lab day
+
+---
+
+## Section 7 — Full End-to-End Smoke Test (10 min)
+
+> **Prerequisite:** Complete Phase 4 (Step 4.6) first.
+> That step creates `projects/group_meetup/` with `config.yaml`,
+> `poller.py`, `selector.py`, `notifier.py`, and
+> `preflight_check.py`. Do not run this section until all five
+> files exist and Step 4.6 is marked complete.
+
+Run all three scripts in sequence using the `config.yaml` from
+`projects/group_meetup/`:
+
+```bash
+cd projects/group_meetup
+python poller.py    # enter responses for each member manually
+python selector.py  # check decision.json output
+python notifier.py  # confirm Discord message arrives
+```
+
+Expected: `#meetup-notifications` in `meetup-lab-<CLASS_ID>`
+receives a message like:
+
+```
+📅 Meetup confirmed!
+Date: Thu Apr 24 7pm
+Venue: Library Room A
+Attending: Alice, Bob, David
+```
+
+If this works, the lab is ready. If not, check:
+- `responses.json` — did `poller.py` write valid JSON?
+- `decision.json` — did `selector.py` pick a date and venue?
+- Discord channel — is `DISCORD_WEBHOOK_URL` exported correctly?
