@@ -629,13 +629,13 @@ step includes a validation test so the instructor knows it worked.
 two JSON files**. No web framework, no database. Students run each
 script in sequence in the terminal.
 
-- [ ] **Step 4.1: Audit `sessions/client_application.md`**
+- [x] **Step 4.1: Audit `sessions/client_application.md`** **COMPLETED**
   - If the exercise specifies React + FastAPI + MongoDB: update to
     pure Python + flat files for the non-agentic version. The full
     web stack moves to Phase 5 where agents earn it.
   - The Hello World SDD demo must remain intact
 
-- [ ] **Step 4.2: Add opening backward reference**
+- [x] **Step 4.2: Add opening backward reference** **COMPLETED**
   - Open with:
     > "In the Slides session you pitched a one-shot meetup
     > coordinator. In the Web Site session you built a toy UI
@@ -643,7 +643,7 @@ script in sequence in the terminal.
     > three Python scripts that run, with a Discord message you
     > can see arrive in the channel the instructor provisioned."
 
-- [ ] **Step 4.3: Add instructor-provisioned Discord setup block**
+- [x] **Step 4.3: Add instructor-provisioned Discord setup block** **COMPLETED**
   - Students do not create the Discord channel — the instructor
     already did this (see `sessions/instructor.md`)
   - Students only need to set the env var and run the test:
@@ -660,7 +660,7 @@ script in sequence in the terminal.
     "
     ```
 
-- [ ] **Step 4.4: Write the exercise section**
+- [x] **Step 4.4: Write the exercise section** **COMPLETED**
   - SDD workflow for each of the three scripts:
     1. Write spec (Claude Code interviews you via plan.md)
     2. Review spec
@@ -675,7 +675,7 @@ script in sequence in the terminal.
   - Pluggability note (appears here only)
   - Reflection: "What would need to change to make this agentic?"
 
-- [ ] **Step 4.5: Confirm `sdd_basics.md` link resolves**
+- [x] **Step 4.5: Confirm `sdd_basics.md` link resolves** **COMPLETED**
 
 - [ ] **Step 4.6: Create `projects/group_meetup/` and run smoke test**
 
