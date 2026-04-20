@@ -677,7 +677,7 @@ script in sequence in the terminal.
 
 - [x] **Step 4.5: Confirm `sdd_basics.md` link resolves** **COMPLETED**
 
-- [ ] **Step 4.6: Create `projects/group_meetup/` and run smoke test**
+- [x] **Step 4.6: Create `projects/group_meetup/` and run smoke test** **COMPLETED**
 
   Create the project directory and populate all five files:
 
