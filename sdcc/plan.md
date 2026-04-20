@@ -736,7 +736,7 @@ transition before the exercise.
 
 ### Step 5B: Multi-Agent Version
 
-- [ ] **Step 5.2: Add multi-agent exercise**
+- [x] **Step 5.2: Add multi-agent exercise** ✅ COMPLETED
   - Three agents: Poller Agent, Selector Agent, Notifier Agent
   - Shared state via MongoDB
   - Failure injection: stop Selector Agent mid-run; Notifier must
