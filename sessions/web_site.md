@@ -98,6 +98,58 @@ python3 -m http.server 8888
 
 ---
 
+## Exercise B — Group Meetup Organizer Poll UI (toy version 1)
+
+Build a poll UI for the Group Meetup Organizer in Lovable. This is
+a toy version — real UI, fake backend.
+
+### What to build
+
+**Poll form:**
+- Member name (text input)
+- 3 date checkboxes (use dates from `config.yaml`)
+- Venue preference (radio buttons: Library Room A, Coffee Lab, Online)
+- Submit button
+
+**Result page (hardcoded — no real logic):**
+- Display: "📅 Meetup confirmed! Thu Apr 24 7pm — Library Room A"
+- Display: "✓ Notification sent to Discord"
+- No actual webhook call — this is display only
+
+### Lovable prompt
+
+```
+Build a one-page meetup poll app.
+
+Page 1 — Poll form:
+- Text input: "Your name"
+- 3 checkboxes: "Thu Apr 24 7pm", "Thu May 1 7pm", "Thu May 8 7pm"
+- Radio buttons: "Library Room A", "Coffee Lab", "Online / Video Call"
+- Submit button: "Submit Response"
+
+Page 2 — Result (shown after submit, hardcoded):
+- Heading: "📅 Meetup confirmed!"
+- Line: "Date: Thu Apr 24 7pm"
+- Line: "Venue: Library Room A"
+- Line: "✓ Notification sent to Discord"
+
+Constraint: no backend, no database, no API calls.
+Style: clean, mobile-friendly.
+```
+
+### Explicit omissions (state these to students)
+
+- No Selector algorithm — the result is hardcoded
+- No Discord webhook call — "✓ Notification sent" is a lie
+- No persistence — data disappears on refresh
+
+> **Gap statement:** The Selector has no logic. The Notifier sends
+> nothing. Data disappears on refresh. We have a UI but not an
+> application. In the Client Application session we build the real
+> system — three Python scripts that actually run.
+
+---
+
 ## Key Takeaways
 
 * Compare "writing code" vs "managing specs"

@@ -592,12 +592,12 @@ step includes a validation test so the instructor knows it worked.
 
 **Target file:** `sessions/web_site.md`
 
-- [ ] **Step 3.1: Audit `sessions/web_site.md`**
+- [x] **Step 3.1: Audit `sessions/web_site.md`** **COMPLETED**
   - Hello World demo and Exercise A must remain intact
   - Confirm `Group Meetup Organizer` exercise does not exist yet
     (or confirm it is scoped as toy version only)
 
-- [ ] **Step 3.2: Add `Group Meetup Organizer` toy UI exercise (Exercise B)**
+- [x] **Step 3.2: Add `Group Meetup Organizer` toy UI exercise (Exercise B)** **COMPLETED**
   - Position: after Exercise A
   - What to build in Lovable:
     - Poll form: member name, 3 date checkboxes, venue preference
@@ -614,7 +614,7 @@ step includes a validation test so the instructor knows it worked.
     > application. In the Client Application session we build
     > the real system."
 
-- [ ] **Step 3.3: Confirm session structure:**
+- [x] **Step 3.3: Confirm session structure:** **COMPLETED**
   1. Demo: Hello World (Lovable vs Claude Code CLI)
   2. Exercise A: Hello World with Claude Code
   3. Exercise B: Group Meetup Organizer toy UI (new)
