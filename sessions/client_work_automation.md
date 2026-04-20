@@ -37,7 +37,7 @@
 * Iterate on the test folder; only run on real data once the
   prompt is stable.
 
-## Exercise
+## Exercise A — File Organizer (CoWork)
 
 * Intent: Organize files in folder - group by file type
 
@@ -79,3 +79,58 @@ After completing the exercise, verify each item before moving on:
 ## Output
 * [Plan](../projects/client_automation/plan.md)
 * [Notes](../learnings/session_notes/client_work_automation.md)
+
+---
+
+## Exercise B — Group Meetup Organizer: Single-Agent Version
+
+**Previous version:** Phase 4 produced three scripts run in
+sequence (`poller.py → selector.py → notifier.py`). Each was a
+standalone program. This exercise replaces all three with one
+Claude Code agent.
+
+**Stack upgrade:** Scripts hold no state — a crash loses nothing.
+Agents are long-running; a crash mid-run risks losing partial
+work. FastAPI exposes an HTTP interface so the agent's progress
+can be inspected. MongoDB persists response data between restarts
+so no work is lost if the agent is interrupted.
+
+### Step 0 — Reuse the Spec
+
+Open `plans/draft/event_organizer.md`. The component contract is
+unchanged — the agent must produce the same `responses.json`,
+`decision.json`, and Discord notification as the scripts did.
+
+### Step 1 — SDD Loop
+
+**Spec prompt (paste into Claude Code):**
+
+```
+Context: plans/draft/event_organizer.md — Component Contract table.
+Task: Build a single Claude Code agent (agent_meetup.py) that
+  executes all three steps in sequence:
+  1. Poll each member (read config.yaml, write responses.json)
+  2. Select date/venue (read responses.json, write decision.json)
+  3. Notify Discord (read decision.json, POST DISCORD_WEBHOOK_URL)
+Constraints:
+- Same input/output files as the three-script version
+- Agent must present a plan before executing any step
+- No step executes if the previous step failed
+Output: agent_meetup.py
+```
+
+### Validation
+
+- [ ] `agent_meetup.py` presents a plan before polling begins
+- [ ] `responses.json` matches the format from Phase 4 scripts
+- [ ] `decision.json` written before notifier step fires
+- [ ] Discord `#meetup-notifications` receives the same message
+  as Phase 4 (`📅 Meetup confirmed! ...`)
+- [ ] Stopping agent after Step 1 leaves `responses.json`
+  intact; re-running picks up from Step 2
+
+### Reflection
+
+- What did the agent do that three separate scripts could not?
+- What happens if the agent crashes between Step 2 and Step 3?
+  How would you detect and recover?

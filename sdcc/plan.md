@@ -726,7 +726,7 @@ transition before the exercise.
 
 ### Step 5A: Single-Agent Version
 
-- [ ] **Step 5.1: Add single-agent exercise**
+- [x] **Step 5.1: Add single-agent exercise** ✅ COMPLETED
   - Opening: "You ran three scripts sequentially. Now one OpenClaw
     agent plans and executes all three steps."
   - Stack upgrade paragraph (as above)
