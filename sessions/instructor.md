@@ -26,7 +26,7 @@ local roster file (never committed — contains personal info):
 ```bash
 # Replace USERNAME with each student's handle
 curl -s https://api.github.com/users/USERNAME \
-  | python -c "import sys,json; d=json.load(sys.stdin); \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); \
     print('OK:', d['login']) if 'login' in d \
     else print('NOT FOUND')"
 ```
@@ -52,6 +52,7 @@ Reference: https://support.discord.com/hc/en-us/articles/204849977
 
 - Choose your `<CLASS_ID>` (e.g. `2026-spring`)
 - Create a new Discord server named `meetup-lab-<CLASS_ID>`
+  > export MY_DISCORD_SERVER="meetup-lab-2026-spring"
   - Server Settings → Overview → Server Name
   - Do NOT reuse a previous class server — name collisions corrupt
     webhook URLs from prior runs
@@ -69,11 +70,12 @@ Reference: https://support.discord.com/hc/en-us/articles/204849977
   - Channel Settings → Integrations → Webhooks → New Webhook
   - Name: `Meetup Bot`
   - Copy the webhook URL — this is `DISCORD_WEBHOOK_URL`
+  > export MY_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1495636237577486386/OqgczlyKt3eeBGQcmIJtLxH8_9tk6li-H6y8E6K9-LfIB9R2wuYrvAXmhDDjH6fF5hKl"
 - Validation:
 
 ```bash
-export DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..."
-python -c "
+export DISCORD_WEBHOOK_URL="$MY_DISCORD_WEBHOOK_URL"
+python3 -c "
 import requests, os
 r = requests.post(os.environ['DISCORD_WEBHOOK_URL'],
                   json={'content': '✅ Instructor preflight test'})
@@ -164,7 +166,7 @@ wsl --install -d Ubuntu-22.04   # requires admin + reboot
 xcode-select --install
 /bin/bash -c "$(curl -fsSL \
   https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew install python git
+brew install python3 git
 ```
 
 **Both platforms — required tools:**
@@ -225,7 +227,7 @@ options:
 Save as `config.yaml` in the project directory. Validation:
 
 ```bash
-python -c "import yaml; print(yaml.safe_load(open('config.yaml')))"
+python3 -c "import yaml; print(yaml.safe_load(open('config.yaml')))"
 ```
 
 No errors means the file is valid YAML.
@@ -259,9 +261,9 @@ Run all three scripts in sequence using the `config.yaml` from
 
 ```bash
 cd projects/group_meetup
-python poller.py    # enter responses for each member manually
-python selector.py  # check decision.json output
-python notifier.py  # confirm Discord message arrives
+python3 poller.py    # enter responses for each member manually
+python3 selector.py  # check decision.json output
+python3 notifier.py  # confirm Discord message arrives
 ```
 
 Expected: `#meetup-notifications` in `meetup-lab-<CLASS_ID>`

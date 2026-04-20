@@ -27,7 +27,7 @@ for various use cases, such as coding, automation, etc. using:
 | [**Exercise: Create Group Meetup Organizer using SDD, App runs on Laptop**](sessions/client_application.md) | 45 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) | 15 mins |
 | [**Concept: Code Review**](sessions/code_review.md) | 30 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) |  |
 | [**Concept: AI Across the SDLC**](sessions/sdlc_ai.md) | 45 mins | [Claude Code (CLI)](tools/claude/cli.md), GitHub Actions |  |
-| [**Exercise: Create/Run Workflows on Laptop**](sessions/client_work_automation.md) | 75 mins | [Claude CoWork](tools/claude/desktop.md) | 15 mins |
+| [**Exercise: Create/Run Agent App on Laptop**](sessions/client_agent.md) | 75 mins | [Claude CoWork](tools/claude/desktop.md) | 15 mins |
 | [**Exercise: Create/Run Multi-Agent Workflows on Laptop**](sessions/client_multiagent.md) | 60 mins | [Claude Code (CLI)](tools/claude/cli.md), [OpenAI Codex (CLI)](tools/openai/codex_cli.md) | 15 mins |
 | [**Exercise: Run Multi-Agent Workflows on Server**](sessions/server_multiagent.md) | 60 mins | [OpenClaw](tools/openclaw/cli.md), [Temporal](tools/temporal/cli.md) | 15 mins |
 | [**Concept: Solution Architecture**](sessions/solution.md) | 45 mins | [Claude Chat](tools/claude/desktop.md), Python |  |

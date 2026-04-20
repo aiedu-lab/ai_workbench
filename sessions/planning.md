@@ -21,7 +21,7 @@
 > You write the code that runs those three steps.
 
 Your task: read 
-[`plans/draft/event_organizer.md`](../plans/draft/event_organizer.md)
+[`plans/specs/event_organizer.md`](../plans/specs/event_organizer.md)
 and produce a `plan.md` for the Group Meetup Organizer. Focus on:
 - What the three components do (concept level — no code)
 - What data flows between them
@@ -104,7 +104,7 @@ Use:
 ---
 
 ## References
-- [Project Spec](../plans/draft/event_organizer.md)
+- [Project Spec](../plans/specs/event_organizer.md)
 
 ---
 

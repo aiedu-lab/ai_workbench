@@ -352,7 +352,7 @@ for cost control:
 * [Claude Code Common Workflows](https://code.claude.com/docs/en/common-workflows)
 * [Claude Pricing](https://claude.com/pricing)
 * [Anthropic Education Program](https://www.anthropic.com/education)
-* [Plan Draft for Event Organizer](../plans/draft/event_organizer.md)
+* [Plan Draft for Event Organizer](../plans/specs/event_organizer.md)
 
 ---
 

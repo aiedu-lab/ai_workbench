@@ -489,7 +489,7 @@ step includes a validation test so the instructor knows it worked.
 
 ## Phase 0: VALIDATE AND LOCK THE PROJECT SPEC
 
-**Target file:** `plans/draft/event_organizer.md`
+**Target file:** `plans/specs/event_organizer.md`
 
 - [x] **Step 0.1: Audit current `event_organizer.md`** **COMPLETED**
   - Read the file end to end
@@ -533,7 +533,7 @@ step includes a validation test so the instructor knows it worked.
 - [x] **Step 1.1: Audit `sessions/planning.md`** **COMPLETED**
   - Confirm the exercise references the `Group Meetup Organizer`
   - Confirm framing is concept-only (no code, no framework specifics)
-  - Confirm it points to `plans/draft/event_organizer.md`
+  - Confirm it points to `plans/specs/event_organizer.md`
   - Flag any wording from the over-specified draft (recurring events,
     self-onboarding, cancellation) — remove it
 
@@ -717,7 +717,7 @@ script in sequence in the terminal.
 
 ## Phase 5: CLIENT WORKFLOW SESSION — AGENTIC VERSIONS
 
-**Target file:** `sessions/client_work_automation.md`
+**Target file:** `sessions/client_agent.md`
 
 **Stack upgrade note:** FastAPI + MongoDB are introduced here.
 Agents need an HTTP interface (async poll responses) and state that

@@ -61,7 +61,7 @@ Expected: `OK` and your message appears in `#meetup-notifications`.
 
 ### Step 1 — Read the Spec
 
-Open [`plans/draft/event_organizer.md`](../plans/draft/event_organizer.md).
+Open [`plans/specs/event_organizer.md`](../plans/specs/event_organizer.md).
 Read the Component Contract and Data Model sections. You will
 implement exactly those interfaces — nothing more.
 
@@ -135,5 +135,5 @@ Attending: Alice, Bob, David
 
 ## Output
 
-* [Project Spec](../plans/draft/event_organizer.md)
+* [Project Spec](../plans/specs/event_organizer.md)
 * [Notes](../learnings/session_notes/client_app.md)

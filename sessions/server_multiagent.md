@@ -83,7 +83,7 @@ Key properties:
 ## Exercise — Group Meetup Organizer Pipeline
 
 Three-agent pipeline using the
-[Group Meetup Organizer spec](../plans/draft/event_organizer.md):
+[Group Meetup Organizer spec](../plans/specs/event_organizer.md):
 
 | Agent | Responsibility |
 |---|---|

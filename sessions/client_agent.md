@@ -1,8 +1,9 @@
-# Workflow Automation on Laptop
+# Client Agent Application - runs on Laptop
 
 ## Tools
 
-* [Claude Desktop (CoWork)](../tools/claude/desktop.md)
+* [Claude Desktop (CoWork, Code)](../tools/claude/desktop.md)
+* [OpenClaw](../tools/openclaw/cli.md)
 
 ## Setup
 
@@ -78,7 +79,7 @@ After completing the exercise, verify each item before moving on:
 
 ## Output
 * [Plan](../projects/client_automation/plan.md)
-* [Notes](../learnings/session_notes/client_work_automation.md)
+* [Notes](../learnings/session_notes/client_agent.md)
 
 ---
 
@@ -97,7 +98,7 @@ so no work is lost if the agent is interrupted.
 
 ### Step 0 — Reuse the Spec
 
-Open `plans/draft/event_organizer.md`. The component contract is
+Open `plans/specs/event_organizer.md`. The component contract is
 unchanged — the agent must produce the same `responses.json`,
 `decision.json`, and Discord notification as the scripts did.
 
@@ -105,23 +106,30 @@ unchanged — the agent must produce the same `responses.json`,
 
 **Spec prompt (paste into Claude Code):**
 
+> Claude Code is the agent here — it reads your spec, plans its
+> work, and generates code. `agent_meetup.py` is the output, a
+> plain Python script, not an agent itself.
+
 ```
-Context: plans/draft/event_organizer.md — Component Contract table.
-Task: Build a single Claude Code agent (agent_meetup.py) that
-  executes all three steps in sequence:
+Show me a step-by-step plan and wait for my approval before
+writing any code or running any command.
+
+Context: plans/specs/event_organizer.md — Component Contract table.
+Task: Generate agent_meetup.py — a Python script that runs
+  all three steps in sequence:
   1. Poll each member (read config.yaml, write responses.json)
   2. Select date/venue (read responses.json, write decision.json)
   3. Notify Discord (read decision.json, POST DISCORD_WEBHOOK_URL)
-Constraints:
+Constraints on the generated script:
 - Same input/output files as the three-script version
-- Agent must present a plan before executing any step
-- No step executes if the previous step failed
+- Exit with a clear error if any step fails; do not proceed
 Output: agent_meetup.py
 ```
 
 ### Validation
 
-- [ ] `agent_meetup.py` presents a plan before polling begins
+- [ ] Claude Code showed a plan and you approved it before any
+  code was written
 - [ ] `responses.json` matches the format from Phase 4 scripts
 - [ ] `decision.json` written before notifier step fires
 - [ ] Discord `#meetup-notifications` receives the same message
@@ -160,19 +168,25 @@ atomically; a crash leaves the collection intact.
 
 **Spec prompt:**
 
+> As before, Claude Code is the agent — it plans and generates
+> the three Python scripts. Each script is a standalone program,
+> not an agent itself.
+
 ```
-Context: plans/draft/event_organizer.md — Component Contract.
-Task: Build three Claude Code agents:
+Show me a step-by-step plan and wait for my approval before
+writing any code or running any command.
+
+Context: plans/specs/event_organizer.md — Component Contract.
+Task: Generate three Python scripts:
   - poller_agent.py: reads config.yaml, stores responses
     in MongoDB collection `responses`
   - selector_agent.py: reads `responses`, writes decision
     doc to MongoDB collection `decision`
   - notifier_agent.py: reads `decision` doc, POSTs to
     DISCORD_WEBHOOK_URL
-Constraints:
-- Each agent checks its input data exists before running
-- Selector must not run if Poller has not completed
-- Notifier must not run if Selector has not completed
+Constraints on the generated scripts:
+- Each script must verify its input data exists; exit with
+  a clear error if not
 - MongoDB: mongodb://localhost:27017, db: meetup
 Output: Three runnable Python scripts
 ```
@@ -206,3 +220,6 @@ Fix the spec and regenerate.
 - What happens if two Poller Agents run simultaneously?
 - How would you guarantee exactly-once execution?
   (This seeds Phase 6: Temporal.)
+
+## References
+- [Specification Driven Development](sdd_basics.md)
