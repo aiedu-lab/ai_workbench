@@ -145,96 +145,15 @@ Output: agent_meetup.py
 
 ---
 
-## Exercise C — Group Meetup Organizer: Multi-Agent Version
+## What Is Missing → Multi-Agent Session
 
-Three specialized agents replace the single agent. Shared state
-via MongoDB ensures no agent can skip ahead or corrupt another's
-output.
+The single agent runs all three steps in one process. If it
+crashes between Step 2 and Step 3, you cannot tell which step
+failed or retry from the right point without restarting from
+the beginning. Splitting into three independent agents — one per
+step — makes failures diagnosable and retryable in isolation.
 
-| Agent | Input | Output |
-|-------|-------|--------|
-| Poller Agent | `config.yaml` | MongoDB `responses` collection |
-| Selector Agent | MongoDB `responses` | MongoDB `decision` doc |
-| Notifier Agent | MongoDB `decision` | Discord message |
-
-### Step 0 — Understand the Failure Mode
-
-Kill `agent_meetup.py` with Ctrl-C while it is midway through
-polling. Observe: `responses.json` may be partially written.
-That is the problem MongoDB solves — each agent writes
-atomically; a crash leaves the collection intact.
-
-### Step 1 — SDD Loop
-
-**Spec prompt:**
-
-> As before, Claude Code is the agent — it plans and generates
-> the three Python scripts. Each script is a standalone program,
-> not an agent itself.
-
-```
-Show me a step-by-step plan and wait for my approval before
-writing any code or running any command.
-
-Context: plans/specs/event_organizer.md — Component Contract.
-Task: Generate three Python scripts:
-  - poller_agent.py: reads config.yaml, stores responses
-    in MongoDB collection `responses`
-  - selector_agent.py: reads `responses`, writes decision
-    doc to MongoDB collection `decision`
-  - notifier_agent.py: reads `decision` doc, POSTs to
-    DISCORD_WEBHOOK_URL
-Constraints on the generated scripts:
-- Each script must verify its input data exists; exit with
-  a clear error if not
-- MongoDB: mongodb://localhost:27017, db: meetup
-Output: Three runnable Python scripts
-```
-
-### Failure Injection
-
-1. Run `poller_agent.py` — let it complete
-2. Run `selector_agent.py` — kill with Ctrl-C immediately
-3. Run `notifier_agent.py`
-
-**Expected:** Notifier detects no completed `decision` doc and
-exits with an error — it must NOT send a Discord message.
-
-**If Notifier fires:** the agents are not enforcing ordering.
-Fix the spec and regenerate.
-
-### Validation
-
-- [ ] Poller Agent writes to MongoDB, not a flat file
-- [ ] Selector Agent refuses to run if `responses` collection
-  is empty or incomplete
-- [ ] Notifier Agent refuses to run if no `decision` doc exists
-- [ ] Failure injection: killing Selector prevents Notifier
-  from firing
-- [ ] Full run produces the same Discord message as Phase 4
-
-### Reflection
-
-- What coordination problem did we create by splitting into
-  three agents?
-- What happens if two Poller Agents run simultaneously?
-- How would you guarantee exactly-once execution?
-  (This seeds Phase 6: Temporal.)
-
----
-
-## What Is Missing → Phase 6
-
-Each agent is independent. There is no coordinator that:
-- Retries a failed agent automatically
-- Prevents duplicate runs across parallel invocations
-- Reports workflow progress to a human
-
-That coordinator is Temporal. Phase 6 wraps the three agents in
-a durable Temporal workflow and deploys the entire stack to a
-shared server via Docker.
-
-**Next session:** [Multi-Agent Workflows](client_multiagent.md)
+**Next session:** [Multi-Agent Workflows — Exercise 3](client_multiagent.md)
 
 ## References
 - [Specification Driven Development](sdd_basics.md)

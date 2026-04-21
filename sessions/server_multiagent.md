@@ -108,7 +108,8 @@ before introducing decomposition.
 Split into three separate agents called in sequence, with shared
 state via MongoDB. Goal: test each agent independently before
 composing the pipeline.
-> **Already done?** See [client_agent.md — Exercise C](client_agent.md)
+> **Already done?** See
+> [client_multiagent.md — Exercise 3](client_multiagent.md)
 
 ### Phase 3 — Three Agents + Temporal on Laptop (Stretch)
 Wire the three agents into a Temporal workflow with `temporal server
