@@ -6,6 +6,25 @@ Software Development Life Cycle (SDLC) involves testing, reviewing,
 deploying, and maintaining. This session explores how AI agents can 
 automate the surrounding infrastructure.
 
+## SDLC Phases
+
+```mermaid
+flowchart LR
+  Plan --> Design --> Develop --> Test
+  Test --> Review --> Deploy --> Maintain
+  Maintain --> Plan
+
+  style Plan    fill:#d0e8ff
+  style Develop fill:#d0e8ff
+  style Test    fill:#d0ffd0
+  style Review  fill:#d0ffd0
+  style Deploy  fill:#ffd0d0
+```
+
+*AI agents operate across all phases — not just Develop.*
+
+---
+
 ## 🔄 Beyond Code Generation
 
 ### 1. Advanced Testing Strategies
@@ -13,6 +32,39 @@ automate the surrounding infrastructure.
 for edge cases (null inputs, boundary limits).
 * **Smoke Tests:** Quick scripts to ping APIs after deployment to 
 ensure nothing caught fire.
+
+* **Data-Dependent Tests:** Real applications read from databases.
+  Tests that copy production data create two problems: (1) the
+  copy goes stale; (2) production records leave the privileged
+  namespace. The solution is two read-only namespaces with tests
+  parameterized by a `DATA_ENV` variable.
+
+  | Namespace | Access | IAM control |
+  |-----------|--------|-------------|
+  | Production | Production jobs only | Strict — no developer read |
+  | Dev / Test | Developer laptops + CI | Read-only from anywhere |
+
+  **Techniques (no copy needed):**
+  - **BigQuery:** Authorized View — grant the view to the dev
+    project; the underlying prod table is never touched.
+  - **S3:** Bucket policy with a read-only IAM role for dev ARN.
+  - **Local / CI:** Public fixture dataset with identical schema.
+
+  **Exercise:**
+  ```bash
+  # Extend test_monitor.py with a fixture that reads from a
+  # public URL (use the raw GitHub URL for config.yaml in this
+  # repo as a stand-in). Parameterize with DATA_ENV:
+  #   DATA_ENV=dev  → read the fixture URL
+  #   DATA_ENV=prod → skip with pytest.mark.skip("prod only")
+  # Run with DATA_ENV=dev. Confirm fixture test passes and
+  # prod test is skipped.
+  DATA_ENV=dev pytest test_monitor.py -v
+  ```
+
+  *Reflection: What would you use instead of a URL for a real
+  database? Why does skipping — not failing — for prod keep
+  the dev test suite green?*
 
 ### 2. Code Review & Auditing
 * **Automated PR Reviews:** Having an AI automatically scan 

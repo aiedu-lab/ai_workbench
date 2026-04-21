@@ -107,6 +107,10 @@ before the lab — students cannot do this themselves.
 - Inbound ports open: 22 (SSH), 8080 (Temporal UI), 8088 (app)
 - Outbound internet access (to pull Docker images, reach Discord)
 
+> **labenv.yaml:** Record the server hostname as `DOCKER_SERVER`
+> in `projects/group_meetup/labenv.yaml` so students load it
+> automatically via `labsetup.py` (see Section 6).
+
 **Provision the shared account:**
 
 ```bash
@@ -231,6 +235,10 @@ options:
     - "Coffee Lab"
     - "Online / Video Call"
 ```
+
+> **labenv.yaml:** Also update `DISCORD_SERVER` in
+> `projects/group_meetup/labenv.yaml` to match the server name
+> set in Section 2 (e.g. `meetup-lab-2026-spring`).
 
 Save as `config.yaml` in the project directory. Validation:
 

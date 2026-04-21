@@ -1269,7 +1269,7 @@ Provisioning) noting that `DOCKER_SERVER` there matches the
 hostname in `labenv.yaml`. Add a note to Section 5 (config.yaml)
 cross-referencing `DISCORD_SERVER` in `labenv.yaml`.
 
-- [ ] **Step 9.4:** Insert cross-references to `labenv.yaml`
+- [x] **Step 9.4:** Insert cross-references to `labenv.yaml` ✅ COMPLETED
   into `sessions/instructor.md` Sections 3 and 5.
 
 ---
@@ -1294,7 +1294,7 @@ flowchart LR
 
 Caption: *AI agents operate across all phases — not just Develop.*
 
-- [ ] **Step 9.5:** Add Mermaid diagram + caption to
+- [x] **Step 9.5:** Add Mermaid diagram + caption to ✅ COMPLETED
   `sessions/sdlc_ai.md` after the Objective section.
 
 ---
@@ -1334,7 +1334,7 @@ Reflection: "What would you use instead of a URL for a real
 database? Why does skipping rather than failing for prod keep
 the dev test suite green?"
 
-- [ ] **Step 9.6:** Add data-dependent testing concept block,
+- [x] **Step 9.6:** Add data-dependent testing concept block, ✅ COMPLETED
   technique table, and exercise prompt to `sessions/sdlc_ai.md`
   as bullet 3 under "Advanced Testing Strategies".
 
@@ -1342,12 +1342,12 @@ the dev test suite green?"
 
 ### Step 9.7: Consistency check for Phase 9
 
-- [ ] **Step 9.7.1:** `instructor.md` — SECRET callout present;
+- [x] **Step 9.7.1:** `instructor.md` — SECRET callout present; ✅ COMPLETED
   validation `POST` sends URL as message body; Section 6
   references Section 2 retrieval; no real URL committed.
-- [ ] **Step 9.7.2:** `labenv.yaml` — exists; `DISCORD_SERVER`
+- [x] **Step 9.7.2:** `labenv.yaml` — exists; `DISCORD_SERVER` ✅ COMPLETED
   and `DOCKER_SERVER` present; no `DISCORD_WEBHOOK_URL` key.
-- [ ] **Step 9.7.3:** `labsetup.py` — parses YAML, sets env
+- [x] **Step 9.7.3:** `labsetup.py` — parses YAML, sets env ✅ COMPLETED
   vars, exits non-zero with clear message if secret absent.
-- [ ] **Step 9.7.4:** `sdlc_ai.md` — Mermaid diagram renders;
+- [x] **Step 9.7.4:** `sdlc_ai.md` — Mermaid diagram renders; ✅ COMPLETED
   data-dependent testing section present with exercise.
