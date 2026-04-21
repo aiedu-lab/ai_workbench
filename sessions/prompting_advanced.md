@@ -278,6 +278,85 @@ into a **reusable skill**:
 
 ---
 
+### 8. Embeddings & Retrieval Augmented Generation (RAG)
+
+#### Why context relevance works
+
+Every word or sentence maps to a vector of numbers. Words with
+similar meaning cluster nearby in that space. The classic example:
+`King − Man + Woman ≈ Queen` — the arithmetic works geometrically
+because meaning is geometry.
+
+This is how relevance filtering works in AI systems: cosine
+similarity between a query embedding and a context embedding
+measures semantic closeness. High similarity → context stays;
+low → dropped. This is why "meeting at 3pm" is relevant to
+"What time is my next event?" — shared meaning, not shared words.
+
+**Part 1 — Embeddings Exercise** (Google Colab — no local install):
+
+```python
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+
+model = SentenceTransformer("all-MiniLM-L6-v2")
+sentences = [
+  "The meeting is at 3pm",
+  "What time is my next event?",
+  "I enjoy hiking on weekends",
+]
+embeddings = model.encode(sentences)
+scores = cosine_similarity(embeddings)
+for i, s in enumerate(sentences):
+  for j, t in enumerate(sentences):
+    if i < j:
+      print(f"{scores[i][j]:.2f} | {s[:30]} vs {t[:30]}")
+```
+
+Expected: sentences 0–1 score ~0.6–0.8; either vs. sentence 2
+scores ~0.1–0.2.
+
+#### RAG: grounding the LLM in your documents
+
+Before calling the LLM, retrieve the most relevant chunks from
+a document corpus using embedding similarity, then inject them
+into the prompt as context. The LLM answers grounded in your
+documents — not just its training data.
+
+**Part 2 — RAG Exercise** (same Colab notebook, same model):
+
+```python
+docs = [
+  "Meetings are held every Thursday at 7pm.",
+  "The venue is Library Room A unless notified.",
+  "To RSVP, reply to the Discord notification.",
+  "Bring a laptop — exercises require Claude Code.",
+]
+query = "What time do meetings start?"
+
+doc_embeddings = model.encode(docs)
+query_embedding = model.encode([query])
+scores = cosine_similarity(query_embedding, doc_embeddings)[0]
+top_chunk = docs[scores.argmax()]
+
+prompt = f"Context: {top_chunk}\n\nQuestion: {query}"
+print(f"Retrieved: {top_chunk}")
+# → call Claude API with `prompt`
+```
+
+**Reflection:** What happens if the corpus has 10,000 documents?
+(Answer: need a vector database — Pinecone, pgvector, ChromaDB.
+Same concept, scaled.)
+
+#### When to use
+
+Use when the LLM needs to answer questions grounded in documents
+it was not trained on — internal wikis, product docs, real-time
+data. Skip when the LLM's training already covers the topic, or
+when the corpus fits in a single prompt as context.
+
+---
+
 ## Exercise: Smart Rewrite Assistant
 
 Build a reusable **writing skill** — then extend it with a plugin and

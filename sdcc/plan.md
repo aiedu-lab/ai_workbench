@@ -975,7 +975,7 @@ Reflection: "What happens if the corpus has 10,000 documents? What
 changes?" (Answer: need a vector database — Pinecone, pgvector,
 ChromaDB. Same concept, scaled.)
 
-- [ ] **Step 8.2:** Add the two-part Embeddings + RAG section to
+- [x] **Step 8.2:** Add the two-part Embeddings + RAG section to ✅ COMPLETED
   `sessions/prompting_advanced.md` at the end of the concepts block,
   before existing exercises. Use a single Colab notebook. Do NOT
   add a standalone RAG session — the two topics are one arc.
