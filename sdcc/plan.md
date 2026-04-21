@@ -1124,7 +1124,7 @@ assisted hybrid enhancement. These belong in the SDLC session.
 Keep `sessions/software_enhancement.md` as supplemental reading;
 remove from main agenda only.
 
-- [ ] **Step 8.6:** Add a "Legacy and Hybrid Enhancement" subsection
+- [x] **Step 8.6:** Add a "Legacy and Hybrid Enhancement" subsection ✅ COMPLETED
   to `sessions/sdlc_ai.md`: Strangler Fig pattern, when to enhance
   vs. rewrite, CLAUDE.md guardrails for fencing AI access to legacy
   code. ~10 lines. No new exercises.

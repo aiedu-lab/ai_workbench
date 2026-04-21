@@ -85,5 +85,34 @@ providing inline feedback on your code based on the GitHub Action
 we set up in previous labs.
 
 ## Key Takeaway
-You just acted as a Product Manager, QA Engineer, DevOps Engineer, and 
+You just acted as a Product Manager, QA Engineer, DevOps Engineer, and
 Lead Reviewer, all orchestrated through an AI CLI.
+
+---
+
+## Legacy and Hybrid Enhancement
+
+Most real software is not greenfield — it already exists, is in
+production, and cannot be rewritten overnight. AI can enhance
+legacy systems incrementally using the **Strangler Fig pattern**:
+new behavior grows around the old system until the old code can
+be safely retired, never requiring a risky big-bang rewrite.
+
+**When to enhance vs. rewrite:**
+
+| Situation | Approach |
+|-----------|----------|
+| Core logic is stable, interface is dated | Enhance — wrap with new API |
+| Logic is brittle and undocumented | Rewrite with AI-generated tests first |
+| Mixed: some modules good, some broken | Strangler Fig — migrate module by module |
+
+**CLAUDE.md guardrails for legacy work:** Add a `CLAUDE.md` in
+the legacy directory that explicitly fences AI access — list
+which files Claude may edit and which are off-limits. This
+prevents AI from "helpfully" refactoring code that is deliberately
+left untouched for regulatory or stability reasons.
+
+> **Supplemental reading:**
+> [Software Enhancement](software_enhancement.md) — covers the
+> Strangler Fig pattern and AI-assisted hybrid enhancement in
+> depth. Not on the main agenda; read at your own pace.
