@@ -1038,7 +1038,7 @@ webhook — no new infrastructure.
 Reflection: "Which part would you replace with a generative model?
 Which should stay algorithmic, and why?"
 
-- [ ] **Step 8.3:** Create `sessions/solution.md` with the above
+- [x] **Step 8.3:** Create `sessions/solution.md` with the above ✅ COMPLETED
   structure. Reuse the Group Meetup Discord webhook — no new infra.
   Test the HuggingFace classifier call end-to-end before publishing.
 
