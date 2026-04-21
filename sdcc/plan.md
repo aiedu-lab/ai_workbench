@@ -776,29 +776,29 @@ transition before the exercise.
 
 **Target files:** All modified files plus `README.md`.
 
-- [ ] **Step 7.1: Verify instructor.md is complete and accurate**
+- [x] **Step 7.1: Verify instructor.md is complete and accurate**
   - All six sections present with working validation commands
   - The smoke test (run all three scripts end-to-end) is the
     last step in the preflight checklist
   - `README.md` lists instructor.md as the first agenda entry
 
-- [ ] **Step 7.2: Verify project description is consistent**
+- [x] **Step 7.2: Verify project description is consistent**
   - "One-shot meetup coordinator" appears in every session that
     describes the project — no session calls it recurring, SaaS,
     or multi-tenant
   - No session mentions self-onboarding, recurring scheduling,
     calendar invites, or cancellation flows
 
-- [ ] **Step 7.3: Verify the arc is explicit end-to-end**
+- [x] **Step 7.3: Verify the arc is explicit end-to-end**
   - Every session states which version it builds and what was
     missing in the previous one
   - Every session (except the last) ends with a forward reference
 
-- [ ] **Step 7.4: Verify notification platform is consistent**
+- [x] **Step 7.4: Verify notification platform is consistent**
   - Discord webhook in every session from Phase 4 onward
   - Pluggability note appears once only (Phase 4)
 
-- [ ] **Step 7.5: Verify `README.md` agenda order:**
+- [x] **Step 7.5: Verify `README.md` agenda order:**
   0. Instructor Preflight (new, first row)
   1. Planning
   2. Slides / Gamma
@@ -807,14 +807,14 @@ transition before the exercise.
   5. Client Workflow Automation
   6. Multi-Agent Workflows
 
-- [ ] **Step 7.6: Verify `event_organizer.md` is single source**
+- [x] **Step 7.6: Verify `event_organizer.md` is single source**
   - No session redefines the component contracts inline
   - No SaaS features survive in the spec
 
-- [ ] **Step 7.7: Confirm all links resolve**
+- [x] **Step 7.7: Confirm all links resolve**
   - `grep -r "\[.*\](.*\.md)" sessions/ plans/` and spot-check
 
-- [ ] **Step 7.8: Save completion note**
+- [x] **Step 7.8: Save completion note**
 
 ---
 

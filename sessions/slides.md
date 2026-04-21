@@ -119,3 +119,13 @@ Group Meetup Organizer. Use this structure:
 ### Output
 - [Plan](../projects/slides/plan.md)
 - [Notes](../learnings/session_notes/slides.md)
+
+---
+
+## What Is Missing → Web Site Session
+
+The pitch deck describes the system but builds nothing. The next
+session creates a real UI in Lovable — a poll form and a result
+page — and makes explicit what a working backend would need to do.
+
+**Next session:** [Create/Run Web Site](web_site.md)

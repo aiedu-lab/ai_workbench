@@ -137,3 +137,15 @@ Attending: Alice, Bob, David
 
 * [Project Spec](../plans/specs/event_organizer.md)
 * [Notes](../learnings/session_notes/client_app.md)
+
+---
+
+## What Is Missing → Agent Session
+
+The three scripts run sequentially and hold no state. A crash
+between scripts loses partial work with no way to retry from
+the right point. The next session wraps all three steps in a
+single Claude Code agent — one process that plans, executes,
+and reports errors at each step.
+
+**Next session:** [Create/Run Agent App](client_agent.md)

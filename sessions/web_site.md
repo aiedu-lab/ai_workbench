@@ -359,3 +359,15 @@ for cost control:
 ## Output
 * [Plan](https://github.com/asarcar/aiedulabhelloworld/blob/main/plan.md)
 * [Notes](../learnings/session_notes/web_site.md)
+
+---
+
+## What Is Missing → Client Application Session
+
+The UI exists but the backend is hardcoded — the Discord webhook
+is never called and no data is written. The next session replaces
+the fake backend with three real Python scripts using SDD: a
+Poller that collects responses, a Selector that picks the best
+date and venue, and a Notifier that fires a real Discord message.
+
+**Next session:** [Client Application / SDD](client_application.md)
