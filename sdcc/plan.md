@@ -1133,19 +1133,19 @@ remove from main agenda only.
 
 ### Step 8.7: Consistency Check for Phase 8
 
-- [ ] **Step 8.7.1:** `README.md` — Advanced Prompting at row 7,
+- [x] **Step 8.7.1:** `README.md` — Advanced Prompting at row 7,
   Solution Architecture at row 15, Software Enhancement absent,
   all 17 rows link to existing files.
-- [ ] **Step 8.7.2:** `prompting_advanced.md` — Embeddings + RAG
+- [x] **Step 8.7.2:** `prompting_advanced.md` — Embeddings + RAG
   section present, both Colab snippets runnable, King-Queen analogy
   cited, RAG reflection question included.
-- [ ] **Step 8.7.3:** `solution.md` — all four layers in the toy
+- [x] **Step 8.7.3:** `solution.md` — all four layers in the toy
   exercise, MNIST demo present, Discord webhook reused (no new
   infra).
-- [ ] **Step 8.7.4:** `future_advancements.md` — four new sections
+- [x] **Step 8.7.4:** `future_advancements.md` — four new sections
   present (Reasoning, Multimodal, SLMs, Autonomous Agents).
-- [ ] **Step 8.7.5:** `recap.md` — "What We Built" arc table and
+- [x] **Step 8.7.5:** `recap.md` — "What We Built" arc table and
   "Key Patterns" present, referencing all major sessions.
-- [ ] **Step 8.7.6:** `sdlc_ai.md` — Strangler Fig subsection
+- [x] **Step 8.7.6:** `sdlc_ai.md` — Strangler Fig subsection
   present; `software_enhancement.md` cross-referenced as
   supplemental reading only.
