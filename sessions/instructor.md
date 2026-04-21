@@ -70,7 +70,6 @@ Reference: https://support.discord.com/hc/en-us/articles/204849977
   - Channel Settings → Integrations → Webhooks → New Webhook
   - Name: `Meetup Bot`
   - Copy the webhook URL — this is `DISCORD_WEBHOOK_URL`
-  > export MY_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1495636237577486386/OqgczlyKt3eeBGQcmIJtLxH8_9tk6li-H6y8E6K9-LfIB9R2wuYrvAXmhDDjH6fF5hKl"
 - Validation:
 
 ```bash
