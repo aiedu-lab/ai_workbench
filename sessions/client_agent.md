@@ -221,5 +221,20 @@ Fix the spec and regenerate.
 - How would you guarantee exactly-once execution?
   (This seeds Phase 6: Temporal.)
 
+---
+
+## What Is Missing → Phase 6
+
+Each agent is independent. There is no coordinator that:
+- Retries a failed agent automatically
+- Prevents duplicate runs across parallel invocations
+- Reports workflow progress to a human
+
+That coordinator is Temporal. Phase 6 wraps the three agents in
+a durable Temporal workflow and deploys the entire stack to a
+shared server via Docker.
+
+**Next session:** [Multi-Agent Workflows](client_multiagent.md)
+
 ## References
 - [Specification Driven Development](sdd_basics.md)
