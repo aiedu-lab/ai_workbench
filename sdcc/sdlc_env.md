@@ -15,10 +15,12 @@ NOTE that please validate that the few environment variables that must NOT be vi
 
 2. Add a python script `projects/group_meetup/labsetup.py` that parses `projects/group_meetup/labenv.yaml` and sets the environment variables based on the key/values in the YAML file. It also checks that the DISCORD_WEBHOOL_URL is set.
 
-3. Suggest how tests - specifically unit tests  in `sessions/sdlc_ai.md` - can be run with dependencies on test data i.e. are the data source of truth partitioned into two namespaces:
+3. Add a simple markdown picture that illustrates SDLC phases.
+
+4. Suggest how tests - specifically unit tests  in `sessions/sdlc_ai.md` - can be run with dependencies on test data i.e. are the data source of truth partitioned into two namespaces:
 * Production Data - highly privileged and access available only to production jobs with appropriate IAM controls.
 * Dev/Test Data - available in a separate namespace that is exposed for access even from developers running and testing software on their client laptop.
 * Exercise that illustrates how data dependent tests can be run without having to create a separate copy of data.
 
 OUTPUT:
-Please offer the changes to the plan in `sdcc/plan.md` using which we will make the appropriate adjustments to `sessions/intructor.md`, scripts in `projects/group_meetup`, and session content and/or exercises in `sessions/sdlc_ai.md` for testing section.
+Please offer the changes to the plan in `sdcc/plan.md` using which we will make the appropriate adjustments to `sessions/intructor.md`, scripts in `projects/group_meetup`, and session content and/or content/exercises in `sessions/sdlc_ai.md` for testing section.
