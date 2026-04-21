@@ -1111,7 +1111,7 @@ students spent 80% of the lab on.
    relevance filtering works and how RAG grounds LLM answers in
    your data.
 
-- [ ] **Step 8.5:** Add both sections to `sessions/recap.md`.
+- [x] **Step 8.5:** Add both sections to `sessions/recap.md`. ✅ COMPLETED
   Place "What We Built" before the existing Summary section;
   place "Key Patterns" after it.
 

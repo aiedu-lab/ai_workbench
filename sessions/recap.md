@@ -10,6 +10,23 @@
 * **Master Rule**: If the code breaks, the plan is wrong. Fix the Plan, not the Code.
 * [**YouTube: Basics of AI**](https://www.youtube.com/watch?v=xSH4KQJjTos&vl=en)
 
+## What We Built
+
+The Group Meetup Organizer started as a pitch deck and ended as a
+deployed Docker stack. Each version was deliberately incomplete so
+you could feel the gap and understand why the next layer was needed.
+
+| Session | Version | What it could do | What was missing |
+|---------|---------|------------------|------------------|
+| Slides | Pitch deck | Describe the system | Everything else |
+| Web Site | Toy UI | Show a form + result | Real logic, real data |
+| Client App | 3 Python scripts | Poll → Select → Notify | Concurrency, failure recovery |
+| Client Agent | Single agent | One agent, all 3 steps | Isolated retries |
+| Multi-Agent | 3 agents + Temporal | Durable, retryable pipeline | Cloud deployment |
+| Server Deploy | Docker stack | Runs on a real server | You decide what's next |
+
+---
+
 ## Summary
 
 ### **Evolution of AI**
@@ -50,6 +67,25 @@ Claude Code application agents that can natively call structured interfaces
 
 #### Computer Capability
 
-Claude CoWork agents that "acts" using any native "facility" available 
+Claude CoWork agents that "acts" using any native "facility" available
 on your machine
   * Example - Weather Analysis: open browser, search weather, read page, read screen, ...
+
+---
+
+## Key Patterns
+
+1. **SDD loop:** Spec → plan.md → Generate → Run → Reflect.
+   If the code breaks, the plan is wrong. Fix the plan.
+
+2. **Code Review pipeline:** Local CLI → GitHub Actions →
+   Multi-agent (5 specialized agents). Each level catches what
+   the previous missed.
+
+3. **Agent architecture:** Use multiple agents when tasks are
+   independent and failures must be isolated. Use one agent when
+   steps are sequential and shared state is cheap.
+
+4. **Embeddings + RAG:** Similar meaning → similar vectors → high
+   cosine similarity → retrieved context. This is why relevance
+   filtering works and how RAG grounds LLM answers in your data.
