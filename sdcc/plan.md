@@ -1206,7 +1206,7 @@ DOCKER_SERVER: "<hostname>"
 
 Instructor replaces `<CLASS_ID>` and `<hostname>` before lab.
 
-- [ ] **Step 9.2:** Create `projects/group_meetup/labenv.yaml`
+- [x] **Step 9.2:** Create `projects/group_meetup/labenv.yaml` ✅ COMPLETED
   with the above content and comments.
 
 ---
@@ -1214,14 +1214,14 @@ Instructor replaces `<CLASS_ID>` and `<hostname>` before lab.
 ### Step 9.3: Create `projects/group_meetup/labsetup.py`
 
 Parses `labenv.yaml`; sets each key as an environment variable;
-validates that `MY_DISCORD_WEBHOOK_URL` is already set
+validates that `DISCORD_WEBHOOK_URL` is already set
 out-of-band; exits with a clear error if absent.
 
 ```python
 #!/usr/bin/env python3
 """Parse labenv.yaml and export non-confidential env vars.
 
-Validates that MY_DISCORD_WEBHOOK_URL is set out-of-band;
+Validates that DISCORD_WEBHOOK_URL is set out-of-band;
 exits non-zero with a clear message if it is absent.
 """
 import os
@@ -1230,7 +1230,7 @@ import yaml
 from pathlib import Path
 
 LABENV = Path(__file__).parent / "labenv.yaml"
-SECRET_KEY = "MY_DISCORD_WEBHOOK_URL"
+SECRET_KEY = "DISCORD_WEBHOOK_URL"
 
 def main() -> None:
   with LABENV.open() as f:
@@ -1257,7 +1257,7 @@ if __name__ == "__main__":
   main()
 ```
 
-- [ ] **Step 9.3:** Create `projects/group_meetup/labsetup.py`
+- [x] **Step 9.3:** Create `projects/group_meetup/labsetup.py` ✅ COMPLETED
   with the above content.
 
 ---
@@ -1346,7 +1346,7 @@ the dev test suite green?"
   validation `POST` sends URL as message body; Section 6
   references Section 2 retrieval; no real URL committed.
 - [ ] **Step 9.7.2:** `labenv.yaml` — exists; `DISCORD_SERVER`
-  and `DOCKER_SERVER` present; no `MY_DISCORD_WEBHOOK_URL` key.
+  and `DOCKER_SERVER` present; no `DISCORD_WEBHOOK_URL` key.
 - [ ] **Step 9.7.3:** `labsetup.py` — parses YAML, sets env
   vars, exits non-zero with clear message if secret absent.
 - [ ] **Step 9.7.4:** `sdlc_ai.md` — Mermaid diagram renders;

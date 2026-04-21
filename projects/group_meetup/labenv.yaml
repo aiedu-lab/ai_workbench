@@ -1,0 +1,17 @@
+# Non-confidential lab environment variables.
+# Load with: python3 projects/group_meetup/labsetup.py
+#
+# Replace <CLASS_ID> and <hostname> with values for this run
+# before distributing to students.
+#
+# NEVER add MY_DISCORD_WEBHOOK_URL here — distribute it via the
+# #meetup-notifications channel message (instructor.md Section 2).
+
+# Discord server name created in instructor.md Section 2.
+# Format: meetup-lab-<CLASS_ID>  (e.g. meetup-lab-2026-spring)
+DISCORD_SERVER: "meetup-lab-<CLASS_ID>"
+
+# Lab server hostname reachable from student laptops.
+# Must resolve to an IP with a labuser account and Docker installed
+# (provisioned in instructor.md Section 3).
+DOCKER_SERVER: "<hostname>"
