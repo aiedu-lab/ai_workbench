@@ -52,7 +52,7 @@ Reference: https://support.discord.com/hc/en-us/articles/204849977
 
 - Choose your `<CLASS_ID>` (e.g. `2026-spring`)
 - Create a new Discord server named `meetup-lab-<CLASS_ID>`
-  > export MY_DISCORD_SERVER="meetup-lab-2026-spring"
+  > export DISCORD_SERVER="meetup-lab-2026-spring"
   - Server Settings → Overview → Server Name
   - Do NOT reuse a previous class server — name collisions corrupt
     webhook URLs from prior runs
@@ -69,21 +69,30 @@ Reference: https://support.discord.com/hc/en-us/articles/204849977
 - Create the webhook (only after all students have joined):
   - Channel Settings → Integrations → Webhooks → New Webhook
   - Name: `Meetup Bot`
-  - Copy the webhook URL — this is `DISCORD_WEBHOOK_URL`
+  - Copy the webhook URL — and export as `DISCORD_WEBHOOK_URL`
+  > **SECRET:** Never commit this URL to any file. The
+  > validation step below posts it directly to
+  > `#meetup-notifications`. Students join the channel to
+  > retrieve it — the channel membership IS the access control.
+  > See Section 6 for the student-side export step.
 - Validation:
 
 ```bash
-export DISCORD_WEBHOOK_URL="$MY_DISCORD_WEBHOOK_URL"
 python3 -c "
 import requests, os
-r = requests.post(os.environ['DISCORD_WEBHOOK_URL'],
-                  json={'content': '✅ Instructor preflight test'})
+url = os.environ['DISCORD_WEBHOOK_URL']
+msg = (
+  '🔑 Lab DISCORD_WEBHOOK_URL — see Section 6):\n'
+  + url
+)
+r = requests.post(url, json={'content': msg})
 print('OK' if r.status_code == 204 else f'FAIL: {r.status_code}')
 "
 ```
 
-Expected: `OK` and the message appears in `#meetup-notifications`
-visible to all students who joined.
+Expected: `OK` and a message containing the webhook URL appears
+in `#meetup-notifications`, visible only to students who joined.
+Students retrieve it from there in Section 6.
 
 ---
 
@@ -235,15 +244,23 @@ No errors means the file is valid YAML.
 
 ## Section 6 — Create .env.example for Students (2 min)
 
-Create `.env.example` in the project root:
+Create `.env.example` in the project root to document the
+required variable (placeholder only — never the real value):
 
 ```
+# Retrieve the real URL from #meetup-notifications (Section 2)
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/REPLACE_ME
 ```
 
 - Do NOT commit the real URL — `.env` must be in `.gitignore`
-- Share the real `DISCORD_WEBHOOK_URL` with students verbally
-  or via a shared doc on lab day
+- Students retrieve the real URL from the pinned message in
+  `#meetup-notifications` posted during Section 2 validation,
+  then export it before running `labsetup.py`:
+
+```bash
+export DISCORD_WEBHOOK_URL="<paste URL from #meetup-notifications>"
+python3 projects/group_meetup/labsetup.py
+```
 
 ---
 

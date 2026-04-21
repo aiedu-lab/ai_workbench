@@ -1149,3 +1149,205 @@ remove from main agenda only.
 - [x] **Step 8.7.6:** `sdlc_ai.md` — Strangler Fig subsection
   present; `software_enhancement.md` cross-referenced as
   supplemental reading only.
+
+---
+
+## Phase 9: LAB ENVIRONMENT SETUP AND SDLC TESTING ENHANCEMENT
+
+**Addresses:** `sdcc/sdlc_env.md` — all four tasks.
+
+**Target files:** `sessions/instructor.md`,
+`projects/group_meetup/labenv.yaml` (new),
+`projects/group_meetup/labsetup.py` (new),
+`sessions/sdlc_ai.md`
+
+---
+
+### Step 9.1: Security audit — instructor.md DISCORD_WEBHOOK_URL
+
+The Section 2 validation `POST` now sends the webhook URL as
+the message body. Students who have joined `#meetup-notifications`
+retrieve it from there; the channel membership is the access
+control. Section 6 updated to back-reference Section 2 and
+include the exact student export + `labsetup.py` command.
+
+Changes:
+- Section 2 webhook bullet: add SECRET callout; forward-ref
+  to Section 6.
+- Section 2 validation block: change message content from
+  `'✅ Instructor preflight test'` to the URL itself with
+  student retrieval instructions.
+- Section 6: replace "share verbally / shared doc" with
+  "retrieve from pinned message in #meetup-notifications".
+
+- [x] **Step 9.1:** Edit `sessions/instructor.md` — add SECRET ✅ COMPLETED
+  callout in Section 2; validation `POST` distributes URL via
+  the channel message; Section 6 back-references Section 2.
+
+---
+
+### Step 9.2: Create `projects/group_meetup/labenv.yaml`
+
+Non-confidential environment variables for the lab. Safe to
+commit — contains only server names and Discord server names,
+no credentials.
+
+```yaml
+# Non-confidential lab environment variables.
+# Load with: python3 projects/group_meetup/labsetup.py
+#
+# NEVER add DISCORD_WEBHOOK_URL here — share it via the
+# #meetup-notifications channel message (see instructor.md
+# Section 2 validation step).
+
+DISCORD_SERVER: "meetup-lab-<CLASS_ID>"
+DOCKER_SERVER: "<hostname>"
+```
+
+Instructor replaces `<CLASS_ID>` and `<hostname>` before lab.
+
+- [ ] **Step 9.2:** Create `projects/group_meetup/labenv.yaml`
+  with the above content and comments.
+
+---
+
+### Step 9.3: Create `projects/group_meetup/labsetup.py`
+
+Parses `labenv.yaml`; sets each key as an environment variable;
+validates that `MY_DISCORD_WEBHOOK_URL` is already set
+out-of-band; exits with a clear error if absent.
+
+```python
+#!/usr/bin/env python3
+"""Parse labenv.yaml and export non-confidential env vars.
+
+Validates that MY_DISCORD_WEBHOOK_URL is set out-of-band;
+exits non-zero with a clear message if it is absent.
+"""
+import os
+import sys
+import yaml
+from pathlib import Path
+
+LABENV = Path(__file__).parent / "labenv.yaml"
+SECRET_KEY = "MY_DISCORD_WEBHOOK_URL"
+
+def main() -> None:
+  with LABENV.open() as f:
+    env = yaml.safe_load(f)
+
+  for key, value in env.items():
+    os.environ[key] = str(value)
+    print(f"  SET  {key}={value}")
+
+  if not os.environ.get(SECRET_KEY):
+    print(
+      f"\nERROR: {SECRET_KEY} is not set.\n"
+      "Retrieve it from #meetup-notifications and run:\n"
+      f"  export {SECRET_KEY}=<webhook-url>\n"
+      "Never add this value to any committed file.",
+      file=sys.stderr,
+    )
+    sys.exit(1)
+
+  print(f"\n  OK   {SECRET_KEY} is set (value hidden)")
+  print("\nEnvironment ready.")
+
+if __name__ == "__main__":
+  main()
+```
+
+- [ ] **Step 9.3:** Create `projects/group_meetup/labsetup.py`
+  with the above content.
+
+---
+
+### Step 9.4: Update `sessions/instructor.md` — labenv.yaml ref
+
+Add a reference to `labenv.yaml` in Section 3 (Server
+Provisioning) noting that `DOCKER_SERVER` there matches the
+hostname in `labenv.yaml`. Add a note to Section 5 (config.yaml)
+cross-referencing `DISCORD_SERVER` in `labenv.yaml`.
+
+- [ ] **Step 9.4:** Insert cross-references to `labenv.yaml`
+  into `sessions/instructor.md` Sections 3 and 5.
+
+---
+
+### Step 9.5: Add SDLC phases diagram to `sessions/sdlc_ai.md`
+
+Mermaid flowchart placed after the Objective section. Shows
+the full SDLC cycle and marks where AI agents operate.
+
+```mermaid
+flowchart LR
+  Plan --> Design --> Develop --> Test
+  Test --> Review --> Deploy --> Maintain
+  Maintain --> Plan
+
+  style Plan    fill:#d0e8ff
+  style Develop fill:#d0e8ff
+  style Test    fill:#d0ffd0
+  style Review  fill:#d0ffd0
+  style Deploy  fill:#ffd0d0
+```
+
+Caption: *AI agents operate across all phases — not just Develop.*
+
+- [ ] **Step 9.5:** Add Mermaid diagram + caption to
+  `sessions/sdlc_ai.md` after the Objective section.
+
+---
+
+### Step 9.6: Add data-dependent testing to `sessions/sdlc_ai.md`
+
+Extend "Advanced Testing Strategies" with a third bullet:
+**Data-Dependent Tests**.
+
+**Concept:** Real apps read databases. Tests that copy prod data
+create staleness and privacy problems. Solution: two read-only
+namespaces with tests parameterized by `DATA_ENV`.
+
+| Namespace | Access | IAM control |
+|-----------|--------|-------------|
+| Production | Prod jobs only | Strict — no dev read |
+| Dev / Test | Developer laptops + CI | Read-only from anywhere |
+
+**Techniques:**
+- BigQuery: Authorized View grants the view to the dev project;
+  no copy of the underlying table.
+- S3: Bucket policy with read-only role for dev ARN.
+- Local / CI: Public fixture dataset with identical schema.
+
+**Exercise prompt:**
+```
+Extend test_monitor.py. Add a fixture that reads from a public
+URL (use the raw GitHub URL for config.yaml in this repo).
+Parameterize with DATA_ENV:
+- DATA_ENV=dev  → read the fixture URL
+- DATA_ENV=prod → skip with pytest.mark.skip("prod only")
+Run with DATA_ENV=dev. Confirm fixture test passes and
+prod test is skipped.
+```
+
+Reflection: "What would you use instead of a URL for a real
+database? Why does skipping rather than failing for prod keep
+the dev test suite green?"
+
+- [ ] **Step 9.6:** Add data-dependent testing concept block,
+  technique table, and exercise prompt to `sessions/sdlc_ai.md`
+  as bullet 3 under "Advanced Testing Strategies".
+
+---
+
+### Step 9.7: Consistency check for Phase 9
+
+- [ ] **Step 9.7.1:** `instructor.md` — SECRET callout present;
+  validation `POST` sends URL as message body; Section 6
+  references Section 2 retrieval; no real URL committed.
+- [ ] **Step 9.7.2:** `labenv.yaml` — exists; `DISCORD_SERVER`
+  and `DOCKER_SERVER` present; no `MY_DISCORD_WEBHOOK_URL` key.
+- [ ] **Step 9.7.3:** `labsetup.py` — parses YAML, sets env
+  vars, exits non-zero with clear message if secret absent.
+- [ ] **Step 9.7.4:** `sdlc_ai.md` — Mermaid diagram renders;
+  data-dependent testing section present with exercise.
