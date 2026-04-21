@@ -1073,7 +1073,7 @@ learns from feedback — without a human trigger per action. Claude
 Managed Agents (Apr 2026) is an early example. Trajectory: from
 "agent you invoke" to "agent that works alongside you."
 
-- [ ] **Step 8.4:** Add all four sections to
+- [x] **Step 8.4:** Add all four sections to ✅ COMPLETED
   `sessions/future_advancements.md` after the World Models section.
   Each: 3–5 sentences, one concrete example, one "when to use" line.
 

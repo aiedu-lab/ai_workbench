@@ -178,3 +178,83 @@ World models are not appropriate for:
 ## References
 * [World Models](https://www.youtube.com/watch?v=ECWC-YlAk1o)
 * [Physical AI](https://www.youtube.com/watch?v=ECWC-YlAk1o)
+
+---
+
+## Reasoning / Thinking Models
+
+Some models (OpenAI o1, o3; Claude Extended Thinking) perform
+chain-of-thought reasoning silently at inference time — they
+"think" before answering rather than generating a reply in one
+pass. This deliberate reasoning dramatically improves accuracy
+on complex multi-step problems: math, logic, code debugging,
+and legal analysis. The cost is higher latency and more tokens
+consumed per query.
+
+**Example:** Ask a standard LLM to solve a multi-step algebra
+problem and it may hallucinate an answer. Ask a thinking model
+the same question and it works through each step internally
+before committing to a final answer.
+
+**When to use:** The problem requires deliberate step-by-step
+reasoning, not fast recall. If speed matters more than precision,
+use a standard model.
+
+---
+
+## Multimodal AI
+
+Modern models accept images, audio, and video alongside text —
+not just text in and text out. Claude Vision, GPT-4o, and Gemini
+can describe images, read charts, transcribe audio, and reason
+about video frames. The CoWork agents you used in this lab
+already use multimodal capabilities when they read the screen.
+
+**Example:** A customer service agent that receives a photo of a
+broken product, identifies the model and damage type from the
+image, and drafts a replacement-request reply — all in one call.
+
+**When to use:** The task involves non-text input (images, audio,
+diagrams) or requires understanding visual context that cannot
+be described in words accurately enough.
+
+---
+
+## Small Language Models (SLMs)
+
+Open-source models (Llama, Mistral, Phi) run locally via Ollama
+or LM Studio on a laptop or edge device. They are smaller,
+cheaper, private, and zero-latency — at the cost of reduced
+capability compared to frontier models. HuggingFace Model Hub
+hosts thousands of fine-tuned task-specific models (spam
+classifiers, sentiment analyzers, code completers) that outperform
+general-purpose LLMs on their narrow target task.
+
+**Example:** A hospital runs a Phi-3 model locally to classify
+patient intake forms — no data leaves the building, no API key
+needed, response in under 100ms.
+
+**When to use:** Private data that cannot leave the device,
+offline or low-connectivity scenarios, high-volume narrow
+classification where a fine-tuned small model beats a large one.
+
+---
+
+## Autonomous AI Agents
+
+Today's agents respond to a prompt and stop. The next generation
+monitors the environment, responds to events, and takes action
+without a human trigger per task — they work alongside you
+rather than waiting to be invoked. Claude Managed Agents
+(released April 2026) is an early example: agents that can be
+subscribed to events and act on them continuously.
+
+**Example:** An agent that watches your calendar, detects
+conflicts automatically, drafts reschedule emails, and sends
+them after a brief human approval window — without you asking
+it to do anything.
+
+**When to use:** Repetitive monitoring tasks where human
+triggering per event is impractical. Not appropriate when human
+judgment is required before every action, or when the cost of a
+wrong autonomous action is high.
