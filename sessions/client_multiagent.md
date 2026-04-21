@@ -345,3 +345,20 @@ enforced. Fix the spec and regenerate.
 - What is the cost of adding Temporal?
   (added infra, latency, operational complexity)
 - When would you NOT use Temporal?
+
+---
+
+## What Is Missing → Server Session
+
+The laptop Temporal workflow uses a dev server and local MongoDB.
+For a real deployment:
+- Temporal and MongoDB must be always-on services, not dev mode
+- Multiple simultaneous poll submissions must be isolated
+- Logs, retry history, and Discord notifications must be
+  observable from a machine you are not sitting at
+
+The next session deploys the complete stack — Temporal, MongoDB,
+and all three worker containers — to a shared server via Docker
+Compose, addressing each of these gaps.
+
+**Next session:** [Multi-Agent Workflows on Server](server_multiagent.md)

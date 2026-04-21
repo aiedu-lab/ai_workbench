@@ -763,7 +763,7 @@ transition before the exercise.
 
 ### Step 6B: Deploy to Server via Docker
 
-- [ ] **Step 6.2: Add Docker deployment exercise**
+- [x] **Step 6.2: Add Docker deployment exercise** ✅ COMPLETED
   - Five containers: poller, selector, notifier, temporal, mongo
   - `DISCORD_WEBHOOK_URL` injected via docker-compose.yml
   - Claude Code generates all Dockerfiles and docker-compose.yml
