@@ -754,7 +754,7 @@ transition before the exercise.
 
 ### Step 6A: Three Agents + Temporal on Laptop
 
-- [ ] **Step 6.1: Add Temporal orchestration exercise**
+- [x] **Step 6.1: Add Temporal orchestration exercise** ✅ COMPLETED
   - PollActivity → SelectActivity → NotifyActivity
   - NotifyActivity calls same Discord webhook — no change
   - Failure injection: kill SelectActivity, observe Temporal retry
