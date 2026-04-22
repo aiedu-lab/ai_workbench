@@ -1351,3 +1351,177 @@ the dev test suite green?"
   vars, exits non-zero with clear message if secret absent.
 - [x] **Step 9.7.4:** `sdlc_ai.md` — Mermaid diagram renders; ✅ COMPLETED
   data-dependent testing section present with exercise.
+
+---
+
+## Phase 10: RENAME sdcc → sdw AND AI Education Lab → AI Workbench
+
+**Purpose:** Two cosmetic renames that update the project identity:
+
+1. Directory `sdcc/` (Spec Driven Content Creation) → `sdw/`
+   (Specification Driven Workbench)
+2. `AI Education Lab` → `AI Workbench` everywhere in content;
+   `ai_education_lab` → `ai_workbench` in paths and URLs
+
+**Note — instructor.md Section 3 already updated:** The git clone
+command in `sessions/instructor.md` Section 3 already uses the
+correct values:
+```bash
+sudo -u labuser git clone \
+  https://github.com/aiedu-lab/ai_workbench \
+  /home/labuser/ai_workbench
+```
+Step 10.5 validates this is correct and searches for any remaining
+`ai_education_lab` occurrences elsewhere.
+
+**Target files (primary):** `CLAUDE.md`, `README.md`,
+`sessions/instructor.md`, `sessions/slides.md`,
+`sessions/recap.md`, `sessions/future_advancements.md`,
+`sessions/solution.md`, `projects/slides/demo/plan.md`,
+`sdcc/plan.md` (this file — updated last)
+
+---
+
+### Step 10.1: Audit all occurrences
+
+- [x] **Step 10.1:** Search the entire repository for every string that ✅ COMPLETED
+  will change. Produce a table (file | line | old text | proposed new
+  text). Do NOT edit anything yet.
+
+  ```bash
+  # Occurrences of the directory name
+  grep -rn "sdcc" . \
+    --include="*.md" --include="*.py" \
+    --include="*.yaml" --include="*.sh" \
+    | grep -v "^Binary"
+
+  # Occurrences of the lab name (both forms)
+  grep -rn "AI Education Lab\|ai_education_lab" . \
+    --include="*.md" --include="*.py" \
+    --include="*.yaml" --include="*.sh"
+  ```
+
+  Expected findings (at minimum):
+
+  | File | String | New value |
+  |------|--------|-----------|
+  | `CLAUDE.md` | `sdcc/plan.md` | `sdw/plan.md` |
+  | `CLAUDE.md` | `sdcc/` (layout block) | `sdw/` |
+  | `CLAUDE.md` | `AI Education Lab` | `AI Workbench` |
+  | `sdcc/plan.md` | `AI Education Lab` (×2, steps 2.2 arc) | `AI Workbench` |
+  | `sessions/slides.md` | `AI Education Lab` | `AI Workbench` |
+  | `README.md` | `AI Education Lab` | `AI Workbench` |
+  | `projects/slides/demo/plan.md` | `AI_education_lab` | `AI Workbench` |
+
+  Flag any additional occurrences found during the audit.
+
+---
+
+### Step 10.2: Rename sdcc/ directory to sdw/
+
+- [ ] **Step 10.2:** Rename the directory with `git mv` so history is
+  preserved, then update `CLAUDE.md`.
+
+  ```bash
+  git mv sdcc/ sdw/
+  ```
+
+  In `CLAUDE.md`, replace every occurrence of `sdcc`:
+
+  | Old | New |
+  |-----|-----|
+  | `sdcc/          # Spec Driven Content Creation` | `sdw/           # Specification Driven Workbench` |
+  | `sdcc/plan.md` | `sdw/plan.md` |
+
+  Validation:
+  ```bash
+  ls sdw/plan.md          # must exist
+  test -d sdcc && echo FAIL || echo PASS   # sdcc/ must not exist
+  grep -n "sdcc" CLAUDE.md                 # must return no results
+  ```
+
+---
+
+### Step 10.3: Update remaining sdcc references
+
+- [ ] **Step 10.3:** Replace any surviving `sdcc/` reference in all
+  other Markdown, Python, YAML, and shell files with `sdw/`.
+
+  Validation:
+  ```bash
+  grep -rn "sdcc" . \
+    --include="*.md" --include="*.py" \
+    --include="*.yaml" --include="*.sh"
+  # Must return zero results
+  ```
+
+---
+
+### Step 10.4: Rename AI Education Lab → AI Workbench
+
+- [ ] **Step 10.4:** Replace `AI Education Lab` (and variant
+  `AI_education_lab`) with `AI Workbench` in all content files.
+
+  Locations confirmed by Step 10.1 audit (plus any additional):
+  - `CLAUDE.md` — project overview heading
+  - `sdw/plan.md` — architecture arc (Step 2.2 line) and
+    step 2.2 description body
+  - `README.md` — title and any intro paragraph
+  - `sessions/slides.md` — demo description referencing the deck
+  - `projects/slides/demo/plan.md` — deck title and slide 3 body
+  - `sessions/recap.md` — any summary reference
+  - `sessions/future_advancements.md` — any lab reference
+  - `sessions/solution.md` — any lab reference
+
+  Validation:
+  ```bash
+  grep -rn "AI Education Lab\|AI_education_lab\|AI_Education_Lab" . \
+    --include="*.md" --include="*.py"
+  # Must return zero results
+  ```
+
+---
+
+### Step 10.5: Confirm ai_education_lab is fully retired
+
+- [ ] **Step 10.5:** Verify no remaining occurrences of
+  `ai_education_lab` exist in any file. The primary location
+  (`sessions/instructor.md` Section 3) is already correct:
+  ```bash
+  sudo -u labuser git clone \
+    https://github.com/aiedu-lab/ai_workbench \
+    /home/labuser/ai_workbench
+  ```
+  Fix any additional occurrences found by the audit in Step 10.1.
+
+  Validation:
+  ```bash
+  grep -rn "ai_education_lab" . \
+    --include="*.md" --include="*.py" \
+    --include="*.yaml" --include="*.sh"
+  # Must return zero results
+  ```
+
+---
+
+### Step 10.6: Consistency check for Phase 10
+
+- [ ] **Step 10.6.1:** `sdw/` directory exists; `sdcc/` directory absent.
+- [ ] **Step 10.6.2:** `CLAUDE.md` references `sdw/plan.md` in the
+  Session Rehydration section and `sdw/` in the layout block;
+  no occurrence of `sdcc` or `AI Education Lab`.
+- [ ] **Step 10.6.3:** `README.md` title and all agenda rows reference
+  `AI Workbench`; no row links to a path containing `sdcc`.
+- [ ] **Step 10.6.4:** `sessions/instructor.md` Section 3 git clone
+  uses `https://github.com/aiedu-lab/ai_workbench` and
+  `/home/labuser/ai_workbench`.
+- [ ] **Step 10.6.5:** `sdw/plan.md` (this file) contains no
+  occurrences of `sdcc`, `AI Education Lab`, or `ai_education_lab`.
+- [ ] **Step 10.6.6:** Full-repo grep confirms zero remaining
+  occurrences of all three deprecated strings:
+  ```bash
+  grep -rn "sdcc\|AI Education Lab\|ai_education_lab" . \
+    --include="*.md" --include="*.py" \
+    --include="*.yaml" --include="*.sh"
+  # Must return zero results
+  ```
