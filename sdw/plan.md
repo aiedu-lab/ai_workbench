@@ -193,7 +193,7 @@ Session: Planning
   └── Output: plan.md for the Group Meetup Organizer
 
 Session: Create Presentation (Gamma)
-└── Demo: AI Education Lab pitch deck (5 slides, instructor-led)
+└── Demo: AI Workbench pitch deck (5 slides, instructor-led)
 └── Exercise: Group Meetup Organizer pitch deck (toy version 0)
   └── No functionality — stakeholder presentation only
   └── Gap: "We have a pitch but no working product."
@@ -562,10 +562,10 @@ step includes a validation test so the instructor knows it worked.
   - Confirm any reference to the organizer is scoped as one-shot
     (not recurring, not SaaS)
 
-- [x] **Step 2.2: Confirm or add Demo (AI Education Lab deck)** **COMPLETED**
+- [x] **Step 2.2: Confirm or add Demo (AI Workbench deck)** **COMPLETED**
   - Create a `projects/slides/demo/plan.md` that will be used 
     a demo by instructor to create a 5-slide deck using `gamma.app` 
-    to present an overview of `AI_education_lab`. The five slides are:
+    to present an overview of `AI Workbench`. The five slides are:
     1. Who runs the lab and who attends
     2. Why the lab exists
     3. What the exercises are (the progressive arc)
@@ -1459,7 +1459,7 @@ Step 10.5 validates this is correct and searches for any remaining
 
 ### Step 10.4: Rename AI Education Lab → AI Workbench
 
-- [ ] **Step 10.4:** Replace `AI Education Lab` (and variant
+- [x] **Step 10.4:** Replace `AI Education Lab` (and variant ✅ COMPLETED
   `AI_education_lab`) with `AI Workbench` in all content files.
 
   Locations confirmed by Step 10.1 audit (plus any additional):

@@ -1,4 +1,4 @@
-# Demo Plan: AI Education Lab — 5-Slide Pitch Deck
+# Demo Plan: AI Workbench — 5-Slide Pitch Deck
 
 Use this plan with [Gamma](https://gamma.app) to generate the
 instructor demo deck live during the Slides session. Paste the
@@ -9,7 +9,7 @@ prompt below directly into Gamma's "Generate" dialog.
 ## Gamma Prompt
 
 ```
-Create a 5-slide presentation titled "AI Education Lab".
+Create a 5-slide presentation titled "AI Workbench".
 Audience: high school and university students attending the lab.
 Tone: energetic, practical, jargon-free.
 Constraint: exactly 5 slides, one central idea per slide,

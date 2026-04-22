@@ -1,4 +1,4 @@
-# AI Education Lab
+# AI Workbench
 
 ## Objective
 A hands-on, community-driven program to learn about agentic solutions, 

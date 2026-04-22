@@ -45,7 +45,7 @@ Prompting for communication:
 
 ### Demo (Instructor-Led)
 
-The instructor builds the AI Education Lab pitch deck live in Gamma.
+The instructor builds the AI Workbench pitch deck live in Gamma.
 Students watch AI generate the deck in real time — that IS the demo.
 
 - Prompt plan: [`projects/slides/demo/plan.md`](../projects/slides/demo/plan.md)

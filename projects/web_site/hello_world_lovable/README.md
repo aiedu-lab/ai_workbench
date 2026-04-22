@@ -1,4 +1,4 @@
-# 🚀 AI Education Lab: Hello World Web Site
+# 🚀 AI Workbench: Hello World Web Site
 
 This project is built using Lovable. 
 
