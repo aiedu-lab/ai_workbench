@@ -139,7 +139,7 @@ isolation — nothing runs on your laptop.
 
 ```bash
 ssh labuser@<SERVER_IP>
-cd ai_education_lab/projects/group_meetup
+cd ai_workbench/projects/group_meetup
 export DISCORD_WEBHOOK_URL="<paste from instructor>"
 ```
 

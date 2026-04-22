@@ -342,8 +342,8 @@ step includes a validation test so the instructor knows it worked.
 
   # Pre-clone the lab repo
   sudo -u labuser git clone \
-    https://github.com/<ORG>/ai_education_lab \
-    /home/labuser/ai_education_lab
+    https://github.com/aiedu-lab/ai_workbench \
+    /home/labuser/ai_workbench
   ```
 
   **Add each student's SSH public key:**
@@ -1484,7 +1484,7 @@ Step 10.5 validates this is correct and searches for any remaining
 
 ### Step 10.5: Confirm ai_education_lab is fully retired
 
-- [ ] **Step 10.5:** Verify no remaining occurrences of
+- [x] **Step 10.5:** Verify no remaining occurrences of ✅ COMPLETED
   `ai_education_lab` exist in any file. The primary location
   (`sessions/instructor.md` Section 3) is already correct:
   ```bash
