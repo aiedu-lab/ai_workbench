@@ -1419,7 +1419,7 @@ Step 10.5 validates this is correct and searches for any remaining
 
 ### Step 10.2: Rename sdcc/ directory to sdw/
 
-- [ ] **Step 10.2:** Rename the directory with `git mv` so history is
+- [x] **Step 10.2:** Rename the directory with `git mv` so history is ✅ COMPLETED
   preserved, then update `CLAUDE.md`.
 
   ```bash
