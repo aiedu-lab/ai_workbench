@@ -840,7 +840,7 @@ transition before the exercise.
 
 ## Phase 8: AGENDA REVIEW AND SESSION ENHANCEMENT
 
-**Addresses:** `sdcc/review_agenda.md` — all objectives, tasks,
+**Addresses:** `sdw/review_agenda.md` — all objectives, tasks,
 and constraints.
 
 **Target files:** `README.md`, `sessions/prompting_advanced.md`,
@@ -1154,7 +1154,7 @@ remove from main agenda only.
 
 ## Phase 9: LAB ENVIRONMENT SETUP AND SDLC TESTING ENHANCEMENT
 
-**Addresses:** `sdcc/sdlc_env.md` — all four tasks.
+**Addresses:** `sdw/sdlc_env.md` — all four tasks.
 
 **Target files:** `sessions/instructor.md`,
 `projects/group_meetup/labenv.yaml` (new),
@@ -1444,7 +1444,7 @@ Step 10.5 validates this is correct and searches for any remaining
 
 ### Step 10.3: Update remaining sdcc references
 
-- [ ] **Step 10.3:** Replace any surviving `sdcc/` reference in all
+- [x] **Step 10.3:** Replace any surviving `sdcc/` reference in all ✅ COMPLETED
   other Markdown, Python, YAML, and shell files with `sdw/`.
 
   Validation:

@@ -1,6 +1,6 @@
 OBJECTIVES
-* Read `sdcc/plan.md` and `sessions/sdlc_ai.md`
-* Suggest an addition or amendment to `sdcc/plan.md` to incorporate the following tasks:
+* Read `sdw/plan.md` and `sessions/sdlc_ai.md`
+* Suggest an addition or amendment to `sdw/plan.md` to incorporate the following tasks:
 
 TASKS:
 1. Pass all the non confidential environment variable names and values (as mentioned in `sessions/intructor.md`) for setting up the AI Lab as a YAML file `projects/group_meetup/labenv.yaml`. 
@@ -23,4 +23,4 @@ NOTE that please validate that the few environment variables that must NOT be vi
 * Exercise that illustrates how data dependent tests can be run without having to create a separate copy of data.
 
 OUTPUT:
-Please offer the changes to the plan in `sdcc/plan.md` using which we will make the appropriate adjustments to `sessions/intructor.md`, scripts in `projects/group_meetup`, and session content and/or content/exercises in `sessions/sdlc_ai.md` for testing section.
+Please offer the changes to the plan in `sdw/plan.md` using which we will make the appropriate adjustments to `sessions/intructor.md`, scripts in `projects/group_meetup`, and session content and/or content/exercises in `sessions/sdlc_ai.md` for testing section.

@@ -1,4 +1,4 @@
-Reference `README.md` and `sdcc/plan.md`
+Reference `README.md` and `sdw/plan.md`
 
 OBJECTIVES
 * Review the agenda in `README.md` and suggest any topics that we've missed that we should add or remove sessions or topics that should not be a part of this lab.
@@ -33,4 +33,4 @@ CONSTRAINTS:
 * Conversely, add any session or topic that is vital but has been missed so far.
 
 OUTPUT:
-Suggest any changes as an update to the plan in `sdcc/plan.md` that meets the above OVJECTIVES, TASKS, and CONSTRAINTS.
+Suggest any changes as an update to the plan in `sdw/plan.md` that meets the above OVJECTIVES, TASKS, and CONSTRAINTS.
