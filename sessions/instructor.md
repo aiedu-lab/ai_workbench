@@ -124,8 +124,8 @@ sudo apt-get install -y docker.io docker-compose-v2 git python3 pip
 
 # Pre-clone the lab repo
 sudo -u labuser git clone \
-  https://github.com/<ORG>/ai_education_lab \
-  /home/labuser/ai_education_lab
+  https://github.com/aiedu-lab/ai_workbench \
+  /home/labuser/ai_workbench
 ```
 
 **Add each student's SSH public key:**
