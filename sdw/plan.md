@@ -1506,18 +1506,18 @@ Step 10.5 validates this is correct and searches for any remaining
 
 ### Step 10.6: Consistency check for Phase 10
 
-- [ ] **Step 10.6.1:** `sdw/` directory exists; `sdcc/` directory absent.
-- [ ] **Step 10.6.2:** `CLAUDE.md` references `sdw/plan.md` in the
+- [x] **Step 10.6.1:** `sdw/` directory exists; `sdcc/` directory absent. ✅ COMPLETED
+- [x] **Step 10.6.2:** `CLAUDE.md` references `sdw/plan.md` in the ✅ COMPLETED
   Session Rehydration section and `sdw/` in the layout block;
   no occurrence of `sdcc` or `AI Education Lab`.
-- [ ] **Step 10.6.3:** `README.md` title and all agenda rows reference
+- [x] **Step 10.6.3:** `README.md` title and all agenda rows reference ✅ COMPLETED
   `AI Workbench`; no row links to a path containing `sdcc`.
-- [ ] **Step 10.6.4:** `sessions/instructor.md` Section 3 git clone
+- [x] **Step 10.6.4:** `sessions/instructor.md` Section 3 git clone ✅ COMPLETED
   uses `https://github.com/aiedu-lab/ai_workbench` and
   `/home/labuser/ai_workbench`.
-- [ ] **Step 10.6.5:** `sdw/plan.md` (this file) contains no
+- [x] **Step 10.6.5:** `sdw/plan.md` (this file) contains no ✅ COMPLETED
   occurrences of `sdcc`, `AI Education Lab`, or `ai_education_lab`.
-- [ ] **Step 10.6.6:** Full-repo grep confirms zero remaining
+- [x] **Step 10.6.6:** Full-repo grep confirms zero remaining ✅ COMPLETED
   occurrences of all three deprecated strings:
   ```bash
   grep -rn "sdcc\|AI Education Lab\|ai_education_lab" . \
