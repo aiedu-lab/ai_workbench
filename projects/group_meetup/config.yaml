@@ -1,0 +1,18 @@
+# Replace member names with actual students from the roster.
+# Replace venue options with locally relevant choices.
+# See sessions/instructor.md Section 5 for setup instructions.
+group: "Thursday Study Squad"
+members:
+  - name: "Alice Dickman"
+  - name: "Bob Smith"
+  - name: "Carol Lee"
+  - name: "David Johnson"
+options:
+  dates:
+    - "Thu Apr 24 7pm"
+    - "Thu May 1 7pm"
+    - "Thu May 8 7pm"
+  venues:
+    - "Library Room A"
+    - "Coffee Lab on Castro"
+    - "Online / Video Call"

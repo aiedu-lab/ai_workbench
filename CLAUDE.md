@@ -1,4 +1,4 @@
-# CLAUDE.md — AI Education Lab
+# CLAUDE.md — AI Workbench
 
 > **Purpose:** This file is read by Claude Code at the start of every
 > session. It encodes project-wide operating protocol, guardrails,
@@ -10,7 +10,7 @@
 
 ## PROJECT OVERVIEW
 
-This repository is the **AI Education Lab** — a structured curriculum
+This repository is the **AI Workbench** — a structured curriculum
 teaching AI tools and prompting techniques to high school and university
 students. It contains session plans, exercises, web projects, CLI
 scripts, and multi-agent workflows.
@@ -18,14 +18,14 @@ scripts, and multi-agent workflows.
 **Repository root layout:**
 
 ```
-ai_education_lab/
+ai_workbench/
   sessions/          # Lesson markdown files
   projects/          # Hands-on student projects
     web_site/        # Lovable & Claude Code web exercises
     client_*/        # Local app & workflow exercises
     server_*/        # Server-side exercises
   plans/             # Plan files (canonical + drafts)
-  sdcc/              # Spec Driven Content Creation
+  sdw/               # Specification Driven Workbench
     plan.md          # Creates contents for the lab and each session
   tools/             # Tool configuration guides
   learnings/         # Session notes and retrospectives
@@ -230,7 +230,7 @@ At the start of every new session, Claude must orient itself by
 reading these files in order before taking any action:
 
 1. `CLAUDE.md` (this file) — operating protocol
-2. `sdcc/plan.md` - plan to create content for the lab
+2. `sdw/plan.md` - plan to create content for the lab
 3. `projects/[project_directory]/plan.md` — current phase, active step, 
    last completed step
 4. The specific file(s) targeted by the active step
@@ -292,7 +292,7 @@ git push origin feature/my-branch --tags
 
 ## PROJECT-SPECIFIC NOTES
 
-* **Content** creation plan lives in `sdcc/plan.md`.
+* **Content** creation plan lives in `sdw/plan.md`.
 * **Projects** live in `projects/[project directory]/`. 
   Each sub-project has its own `CLAUDE.md` with file-level fencing rules.
 * **Plan template** follows the phased template in

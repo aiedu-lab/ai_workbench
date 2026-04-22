@@ -83,13 +83,13 @@ Key properties:
 ## Exercise — Group Meetup Organizer Pipeline
 
 Three-agent pipeline using the
-[Group Meetup Organizer spec](../plans/draft/event_organizer.md):
+[Group Meetup Organizer spec](../plans/specs/event_organizer.md):
 
 | Agent | Responsibility |
 |---|---|
 | Poller | Sends availability poll; collects member responses |
 | Selector | Picks venue based on majority preference |
-| Notifier | Sends confirmation email with venue and time |
+| Notifier | Sends Discord confirmation message with venue and time |
 
 Work through the phases in order. Phases 3 and 4 are stretch goals.
 
@@ -99,25 +99,95 @@ Work through the phases in order. Phases 3 and 4 are stretch goals.
 > The same 4-phase progression applies.
 
 ### Phase 1 — Single Agent on Laptop
-Build one OpenClaw agent that performs all three steps sequentially:
+Build one agent that performs all three steps sequentially:
 poll → select → notify. Goal: validate agent setup and domain logic
 before introducing decomposition.
+> **Already done?** See [client_agent.md — Exercise B](client_agent.md)
 
 ### Phase 2 — Three Agents on Laptop
-Split into three separate OpenClaw agents called in sequence from a
-Python script. Goal: test each agent independently before composing
-the pipeline.
+Split into three separate agents called in sequence, with shared
+state via MongoDB. Goal: test each agent independently before
+composing the pipeline.
+> **Already done?** See
+> [client_multiagent.md — Exercise 3](client_multiagent.md)
 
 ### Phase 3 — Three Agents + Temporal on Laptop (Stretch)
 Wire the three agents into a Temporal workflow with `temporal server
 start-dev` running locally. Goal: experience orchestration and
 retry — simulate a Selector failure and observe Temporal retry it
 automatically.
+> **Already done?** See
+> [client_multiagent.md — Exercise 3](client_multiagent.md)
 
-### Phase 4 — Deploy to Server in Docker (Stretch)
-Package the Phase 3 workflow in a Docker container and deploy to a
+### Phase 4 — Deploy to Server in Docker
+
+Package the Phase 3 workflow and deploy it to the shared lab
 server. Goal: production-grade deployment with full container
-isolation.
+isolation — nothing runs on your laptop.
+
+**Five containers:**
+
+| Container   | Image                 | Role                        |
+|-------------|-----------------------|-----------------------------|
+| `poller`    | Python                | Runs PollActivity workers   |
+| `selector`  | Python                | Runs SelectActivity workers |
+| `notifier`  | Python                | Runs NotifyActivity workers |
+| `temporal`  | temporalio/auto-setup | Orchestrates the workflow   |
+| `mongo`     | mongo:7               | Shared state store          |
+
+#### Step 0 — Connect to the Lab Server
+
+```bash
+ssh labuser@<SERVER_IP>
+cd ai_workbench/projects/group_meetup
+export DISCORD_WEBHOOK_URL="<paste from instructor>"
+```
+
+#### Step 1 — SDD Loop
+
+> Claude Code generates all Dockerfiles and docker-compose.yml.
+> No application code changes — only packaging.
+
+```
+Show me a step-by-step plan and wait for my approval before
+writing any code or running any command.
+
+Context: plans/specs/event_organizer.md — Component Contract.
+Task: Generate Docker deployment files for the Group Meetup
+  Organizer Temporal stack:
+  - Dockerfile for each of the three worker services
+    (poller, selector, notifier)
+  - docker-compose.yml with five services: poller, selector,
+    notifier, temporal (temporalio/auto-setup), mongo (mongo:7)
+  - DISCORD_WEBHOOK_URL passed to notifier via environment
+  - Temporal server address: temporal:7233
+  - MongoDB address: mongo:27017
+Constraints:
+- No application code changes — only packaging
+- Temporal and MongoDB use official images, no custom Dockerfiles
+Output: Dockerfile.poller, Dockerfile.selector,
+  Dockerfile.notifier, docker-compose.yml
+```
+
+#### Step 2 — Deploy and Validate
+
+```bash
+docker compose up --build -d
+docker compose ps        # all five containers must show "Up"
+
+# Trigger a workflow run
+docker compose exec poller python starter.py
+```
+
+**Expected:** Discord `#meetup-notifications` receives the meetup
+confirmation message. All five containers remain running.
+
+#### Reflection (Phase 4)
+
+- What changed between running on your laptop and running on
+  the server?
+- What would need to change to handle 10 groups simultaneously?
+- What is still missing before this could run in production?
 
 ### Validation
 After completing your phase, verify each item:
@@ -126,6 +196,11 @@ After completing your phase, verify each item:
 - [ ] Phase 2: pipeline produced the correct notification output
 - [ ] Phase 3: Temporal UI shows all workflow steps as succeeded
 - [ ] Phase 3: you simulated an agent failure and observed retry
+- [ ] Phase 4: `docker compose ps` shows all five containers Up
+- [ ] Phase 4: Temporal UI at `http://<SERVER_IP>:8080` shows
+      workflow completed successfully
+- [ ] Phase 4: Discord `#meetup-notifications` receives the same
+      message as all previous phases
 - [ ] No agent was granted access beyond its one required API
 - [ ] You can explain what Temporal does if Notifier fails after
       Selector has already succeeded

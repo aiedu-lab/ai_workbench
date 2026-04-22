@@ -43,8 +43,19 @@ Prompting for communication:
 - clarity > verbosity
 - structure > raw ideas
 
-### Exercise
-```bash 
+### Demo (Instructor-Led)
+
+The instructor builds the AI Workbench pitch deck live in Gamma.
+Students watch AI generate the deck in real time — that IS the demo.
+
+- Prompt plan: [`projects/slides/demo/plan.md`](../projects/slides/demo/plan.md)
+- Time: 10 min generate + 5 min edit iteration
+- Key moment: show **Edit** (not Regenerate) to change one bullet —
+  demonstrates cost-efficient iteration
+
+### Exercise A — "How AI Agents Work" (Individual)
+
+```bash
 Explain "How AI agents work"
 ```
 
@@ -75,6 +86,31 @@ After generating your deck, verify each item before moving on:
 - [ ] Visual theme is consistent across all slides
 - [ ] You can explain every slide in your own words without reading it
 
+### Exercise B — Group Meetup Organizer Pitch Deck (toy version 0)
+
+**Audience:** a student club committee deciding whether to adopt
+this system.
+
+**Your task:** build a stakeholder pitch deck in Gamma for the
+Group Meetup Organizer. Use this structure:
+
+| Slide | Title | Content |
+|-------|-------|---------|
+| 1 | The Problem | Group coordination is painful — threads, no-shows, venue chaos |
+| 2 | The Solution | Three steps: Poll → Select → Notify via Discord |
+| 3 | How It Works | Poller asks each member; Selector picks best date + venue; Notifier sends Discord message |
+| 4 | What Success Looks Like | One message in Discord: date, venue, attendees — done |
+| 5 | What We Need From You | Approve the system so we can build it next session |
+
+**Constraints:**
+- Exactly 5 slides, one idea per slide, max 3 bullets per slide
+- No code, no implementation details — concept only
+- The Notifier sends a Discord message (not email, not calendar)
+
+> **Gap statement:** We have a pitch. We have no working system.
+> In the Web Site session we build a first version of the UI —
+> and see exactly what is still missing.
+
 ### Reflection
   - What made the good version better?
   - Which constraint mattered most?
@@ -83,3 +119,13 @@ After generating your deck, verify each item before moving on:
 ### Output
 - [Plan](../projects/slides/plan.md)
 - [Notes](../learnings/session_notes/slides.md)
+
+---
+
+## What Is Missing → Web Site Session
+
+The pitch deck describes the system but builds nothing. The next
+session creates a real UI in Lovable — a poll form and a result
+page — and makes explicit what a working backend would need to do.
+
+**Next session:** [Create/Run Web Site](web_site.md)

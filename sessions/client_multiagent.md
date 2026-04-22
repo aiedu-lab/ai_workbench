@@ -257,55 +257,184 @@ Example Prompt for Lovable:
 
 ---
 
-## Key Insight
+## Exercise 3 — Group Meetup Organizer: Three Agents + MongoDB
 
-> “The problem is not solved by more AI
-> It is solved by better coordination.”
+**Previous version:** Exercise B in [client_agent.md](client_agent.md)
+built a single agent that runs all three steps in one process.
+A crash between steps gives no way to isolate which step failed
+or retry from the right point. Splitting into three independent
+agents — one per step — makes failures diagnosable.
+
+| Agent | Input | Output |
+|-------|-------|--------|
+| Poller Agent | `config.yaml` | MongoDB `responses` collection |
+| Selector Agent | MongoDB `responses` | MongoDB `decision` doc |
+| Notifier Agent | MongoDB `decision` | Discord message |
+
+### Step 0 — Understand the Failure Mode
+
+Kill `agent_meetup.py` with Ctrl-C while it is midway through
+polling. Observe: `responses.json` may be partially written.
+That is the problem MongoDB solves — each agent writes
+atomically; a crash leaves the collection intact.
+
+### Step 1 — SDD Loop
+
+> Claude Code generates the three Python scripts. Each script
+> is a standalone program, not an agent itself.
+
+```
+Show me a step-by-step plan and wait for my approval before
+writing any code or running any command.
+
+Context: plans/specs/event_organizer.md — Component Contract.
+Task: Generate three Python scripts:
+  - poller_agent.py: reads config.yaml, stores responses
+    in MongoDB collection `responses`
+  - selector_agent.py: reads `responses`, writes decision
+    doc to MongoDB collection `decision`
+  - notifier_agent.py: reads `decision` doc, POSTs to
+    DISCORD_WEBHOOK_URL
+Constraints on the generated scripts:
+- Each script must verify its input data exists; exit with
+  a clear error if not
+- MongoDB: mongodb://localhost:27017, db: meetup
+Output: Three runnable Python scripts
+```
+
+### Failure Injection
+
+1. Run `poller_agent.py` — let it complete
+2. Run `selector_agent.py` — kill with Ctrl-C immediately
+3. Run `notifier_agent.py`
+
+**Expected:** Notifier detects no completed `decision` doc and
+exits with an error — it must NOT send a Discord message.
+
+**If Notifier fires:** the agents are not enforcing ordering.
+Fix the spec and regenerate.
+
+### Validation
+
+- [ ] Poller Agent writes to MongoDB, not a flat file
+- [ ] Selector Agent refuses to run if `responses` collection
+  is empty or incomplete
+- [ ] Notifier Agent refuses to run if no `decision` doc exists
+- [ ] Failure injection: killing Selector prevents Notifier
+  from firing
+- [ ] Full run produces the same Discord message as Phase 4
+
+### Reflection
+
+- What coordination problem did we create by splitting into
+  three agents?
+- What happens if two Poller Agents run simultaneously?
+- How would you guarantee exactly-once execution?
 
 ---
 
-## Tokenomics (Save Cost)
+## Exercise 4 — Group Meetup Organizer: Temporal Orchestration
 
-* Do planning in Chat (cheaper)
-* Use agents only for execution
-* Avoid repeating the same task
-* Keep files small
-* Avoid agents looping and retrying e.g review each other
+**Previous version:** Exercise 3 above built three agents with
+MongoDB shared state. The remaining problem: nothing prevents
+Notifier from firing before Selector completes, or being invoked
+twice if the coordinator crashes. Temporal solves this.
+
+**What Temporal adds:** Each agent becomes an Activity inside a
+durable Workflow. If SelectActivity crashes mid-run, Temporal
+retries it automatically. NotifyActivity never fires until
+SelectActivity succeeds — no coordination code needed in your
+agents.
+
+```
+Temporal Workflow: MeetupWorkflow
+  ├── PollActivity    (poll logic → responses to MongoDB)
+  ├── SelectActivity  (select logic → decision to MongoDB)
+  └── NotifyActivity  (notify logic → Discord webhook)
+```
+
+### Step 0 — Prerequisites
+
+```bash
+# macOS
+brew install temporal
+# Windows / WSL2
+winget install Temporal
+
+# Start Temporal dev server (keep running in a terminal)
+temporal server start-dev
+# UI: http://localhost:8080
+```
+
+### Step 1 — SDD Loop
+
+> Claude Code generates the Temporal workflow. The three activity
+> functions wrap your Phase 5 agent scripts.
+
+```
+Show me a step-by-step plan and wait for my approval before
+writing any code or running any command.
+
+Context: plans/specs/event_organizer.md — Component Contract.
+Task: Generate a Temporal workflow (Python SDK) with three
+  activities wrapping the Group Meetup Organizer agents:
+  - PollActivity: poll logic (config.yaml → MongoDB responses)
+  - SelectActivity: select logic (MongoDB responses → decision)
+  - NotifyActivity: notify logic (decision → DISCORD_WEBHOOK_URL)
+Constraints:
+- SelectActivity must not start until PollActivity completes
+- NotifyActivity must not start until SelectActivity completes
+- Use temporalio Python SDK
+- Temporal server: localhost:7233, MongoDB: localhost:27017
+Output: workflow.py, worker.py, starter.py
+```
+
+### Failure Injection
+
+1. `python worker.py` — start the worker
+2. `python starter.py` — trigger MeetupWorkflow
+3. Kill the worker with Ctrl-C while SelectActivity runs
+4. `python worker.py` — restart the worker
+
+**Expected:** Temporal replays from the last checkpoint.
+SelectActivity re-runs; NotifyActivity fires only after it
+succeeds. Verify sequence in the Temporal UI at
+`http://localhost:8080`.
+
+**If Notifier fires before Select completes:** ordering is not
+enforced. Fix the spec and regenerate.
+
+### Validation
+
+- [ ] Temporal dev server running; UI at localhost:8080 visible
+- [ ] `python starter.py` triggers MeetupWorkflow
+- [ ] Temporal UI shows PollActivity → SelectActivity →
+  NotifyActivity in order
+- [ ] Failure injection: restarting worker resumes from
+  SelectActivity; Notifier does not double-fire
+- [ ] Discord `#meetup-notifications` receives the same message
+  as Phase 4 and 5 runs
+
+### Reflection
+
+- What did Temporal give us that Phase 5 Exercise C could not?
+- What is the cost of adding Temporal?
+  (added infra, latency, operational complexity)
+- When would you NOT use Temporal?
 
 ---
 
-## When to Use Multi-Agent
+## What Is Missing → Server Session
 
-Use when:
+The laptop Temporal workflow uses a dev server and local MongoDB.
+For a real deployment:
+- Temporal and MongoDB must be always-on services, not dev mode
+- Multiple simultaneous poll submissions must be isolated
+- Logs, retry history, and Discord notifications must be
+  observable from a machine you are not sitting at
 
-* Task has clear stages (collect → clean → analyze)
-* Different tools have clear strengths
-* Output needs validation
+The next session deploys the complete stack — Temporal, MongoDB,
+and all three worker containers — to a shared server via Docker
+Compose, addressing each of these gaps.
 
----
-
-## When NOT to Use
-
-Avoid when:
-
-* Task is simple
-* One agent can handle it
-* You don’t yet understand the workflow
-
----
-
-## References
-
-* Session: Prompting Basics
-* Session: Plan-first Thinking
-* Claude Code Documentation
-* Internal repo `/prompts/`
-
----
-
-## Final Rule
-
-> “Start with one agent.
-> Only add more agents when you clearly see the need.”
-
----
+**Next session:** [Multi-Agent Workflows on Server](server_multiagent.md)

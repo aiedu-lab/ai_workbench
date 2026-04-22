@@ -13,9 +13,24 @@
 ---
 
 ## Exercise
-```bash
-Build a social event organizer application
-```
+
+**Project: Group Meetup Organizer**
+
+> One group. One meetup. Three steps: poll, select, notify.
+> The instructor sets up the group config before the lab.
+> You write the code that runs those three steps.
+
+Your task: read 
+[`plans/specs/event_organizer.md`](../plans/specs/event_organizer.md)
+and produce a `plan.md` for the Group Meetup Organizer. Focus on:
+- What the three components do (concept level — no code)
+- What data flows between them
+- What success looks like for each component
+
+> You will return to this project in every remaining session —
+> first as a pitch deck, then as a toy web site, then as three
+> Python scripts, then as an agentic system, then deployed on
+> a server.
 ---
 
 ## Process Workflow
@@ -26,7 +41,8 @@ Build a social event organizer application
   - Plan: AI and human collaboratively drafts a plan
   - Fortify: Both manually and by querying agent
     - Examine edge cases
-    - Push agent to reveal and identify potential failure scenarios eg “List 3 potential failure points”
+    - Push agent to reveal and identify potential failure scenarios 
+      eg “List 3 potential failure points”
     - Cross question agent whether it can identify plan assumptions 
     - Push agent to think step by step and reason about the plan
   - Validate: Cross check AI understood the plan
@@ -88,7 +104,7 @@ Use:
 ---
 
 ## References
-- [Draft Plan](project.md)
+- [Project Spec](../plans/specs/event_organizer.md)
 
 ---
 
