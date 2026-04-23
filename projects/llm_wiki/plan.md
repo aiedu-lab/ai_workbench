@@ -22,8 +22,9 @@ exists:
 
 ### Phase 1: Vault Initialization ✅ COMPLETED
 - [x] Verify or create the folder structure listed above.
-- [x] Create `Home.md`. It should contain a welcome message and empty
-sections for "Recent Additions," "Core Concepts," and "Technologies."
+- [x] Create `Home.md`. It should contain a welcome message and 
+empty sections for "Recent Additions," "Core Concepts," "People," 
+and "Technologies."
 - [x] Wait for the user to confirm that `raw_sources/` contains the
 first document (e.g., a text file about Moore's Law).
   — `raw_sources/moores_law.html` confirmed present.
@@ -46,11 +47,11 @@ first document (e.g., a text file about Moore's Law).
 - [ ] Wait for the user to confirm the second document 
 (e.g., History of AI) is in `raw_sources/`.
 - [ ] Read the new document.
-- [ ] Create new files for new concepts, people, and tech extracted from 
-this document.
-- [ ] **Crucial Synthesis Step:** Review *existing* files (like 
-"Moore's Law" or "Microprocessors"). Update them with new context from 
-the AI History document. Draw explicit connections using `[[wikilinks]]` 
+- [ ] Create new files for new concepts, people, and tech extracted 
+from this document.
+- [ ] **Crucial Synthesis Step:** Review *existing* files 
+(like "Moore's Law" or "Microprocessors"). Update them with new context 
+from the AI History document. Draw explicit connections using `[[wikilinks]]` 
 (e.g., how the scaling of transistors enabled the training of 
 deep neural networks).
 - [ ] Update `Home.md` to reflect the newly integrated knowledge graph.
