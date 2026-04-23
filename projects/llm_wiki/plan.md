@@ -28,16 +28,19 @@ sections for "Recent Additions," "Core Concepts," and "Technologies."
 first document (e.g., a text file about Moore's Law).
   — `raw_sources/moores_law.html` confirmed present.
 
-### Phase 2: First Ingestion (Moore's Law)
-- [ ] Read the provided document in `raw_sources/`.
-- [ ] Extract the core themes.
-- [ ] Create a new file in `concepts/` for "Moore's Law". 
-Summarize the definition and implications.
-- [ ] Create new files in `people/` (e.g., Gordon Moore) and `tech/` 
-(e.g., Transistors, Microprocessors) as mentioned in the text.
-- [ ] **Crucial:** Edit `concepts/Moore's Law.md` to ensure it uses 
-`[[wikilinks]]` to reference the newly created files in `people/` and `tech/`.
-- [ ] Update `Home.md` with links to the new files.
+### Phase 2: First Ingestion (Moore's Law) ✅ COMPLETED
+- [x] Read the provided document in `raw_sources/`.
+- [x] Extract the core themes.
+- [x] Create a new file in `concepts/` for "Moore's Law".
+  Summarize the definition and implications.
+- [x] Create new files in `people/` and `tech/` as mentioned in
+  the text.
+  - `people/`: Gordon Moore, Douglas Engelbart, Robert Dennard
+  - `tech/`: Transistors, Integrated Circuits, Microprocessors,
+    MOSFET, Dennard Scaling
+- [x] **Crucial:** `concepts/Moore's Law.md` uses `[[wikilinks]]`
+  to reference all created files in `people/` and `tech/`.
+- [x] Update `Home.md` with links to all new files.
 
 ### Phase 3: Second Ingestion & Synthesis (AI History)
 - [ ] Wait for the user to confirm the second document 
