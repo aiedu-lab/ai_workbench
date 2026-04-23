@@ -43,23 +43,30 @@ first document (e.g., a text file about Moore's Law).
   to reference all created files in `people/` and `tech/`.
 - [x] Update `Home.md` with links to all new files.
 
-### Phase 3: Second Ingestion & Synthesis (AI History)
-- [ ] Wait for the user to confirm the second document 
-(e.g., History of AI) is in `raw_sources/`.
-- [ ] Read the new document.
-- [ ] Create new files for new concepts, people, and tech extracted 
-from this document.
-- [ ] **Crucial Synthesis Step:** Review *existing* files 
-(like "Moore's Law" or "Microprocessors"). Update them with new context 
-from the AI History document. Draw explicit connections using `[[wikilinks]]` 
-(e.g., how the scaling of transistors enabled the training of 
-deep neural networks).
-- [ ] Update `Home.md` to reflect the newly integrated knowledge graph.
+### Phase 3: Second Ingestion & Synthesis (AI History) ✅ COMPLETED
+- [x] Wait for the user to confirm the second document
+  — `raw_sources/history_of_ai.html` confirmed present.
+- [x] Read the new document.
+- [x] Create new files for new concepts, people, and tech:
+  - `concepts/`: Artificial Intelligence, AI Winter, Neural Networks,
+    Deep Learning, Machine Learning, Transformer Architecture,
+    Large Language Models, Dartmouth Workshop, Symbolic AI, Turing Test
+  - `people/`: Alan Turing, John McCarthy, Marvin Minsky, Allen Newell,
+    Herbert Simon, Frank Rosenblatt, Claude Shannon
+  - `tech/`: Backpropagation, Expert Systems, Perceptron
+- [x] **Crucial Synthesis Step:** Updated Moore's Law, Microprocessors,
+  Transistors, and Dennard Scaling with AI history context and
+  `[[wikilinks]]` connecting hardware scaling to AI breakthroughs.
+- [x] Update `Home.md` to reflect the full knowledge graph.
 
-### Phase 4: Verification
-- [ ] Run a check across all markdown files in `concepts/`, `people/`, 
-and `tech/`. 
-- [ ] Identify any "Orphaned" notes (notes that do not have any 
-`[[links]]` pointing to them or out of them).
-- [ ] If orphans exist, logically connect them to existing concepts. 
-- [ ] Announce completion to the user.
+### Phase 4: Verification ✅ COMPLETED
+- [x] Run a check across all markdown files in `concepts/`, `people/`,
+  and `tech/`.
+- [x] Identified and fixed all issues:
+  - 7 multiline wikilinks repaired (Obsidian does not resolve
+    links broken across lines)
+  - Created `people/Claude Shannon.md` (genuinely missing note)
+  - Dewikilinked `Fairchild Semiconductor`, `Intel`, `John Searle`
+    (no note exists; plain text is correct)
+- [x] Final scan: 29 notes, 0 orphans, 0 broken links.
+- [x] Completion announced to user.
