@@ -2,3 +2,10 @@
 node_modules/
 .tmp/
 *.log
+# ignore Obsidian vault files except plan.md
+projects/llm_wiki/.obsidian
+projects/llm_wiki/Home.md
+projects/llm_wiki/raw_sources
+projects/llm_wiki/concepts
+projects/llm_wiki/people
+projects/llm_wiki/tech
