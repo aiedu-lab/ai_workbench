@@ -1,3 +1,5 @@
+# Embed RAG Plan Prompt
+
 Reference `README.md` and `sdw/plan.md`
 
 OBJECTIVES

@@ -1,3 +1,5 @@
+# SDLC Environment Plan Prompt
+
 OBJECTIVES
 * Read `sdw/plan.md` and `sessions/sdlc_ai.md`
 * Suggest an addition or amendment to `sdw/plan.md` to incorporate the following tasks:
@@ -7,7 +9,7 @@ TASKS:
 
 Examples of the environment variables whose values need to set are:
 * DISCORD_SERVER - Discord Server name for the class id
-* DOCKER_SERVER - Name of the server that is resolvable to a IP on which an account with username `labuser` is created. 
+* DOCKER_SERVER_ID - Name of the server that is resolvable to a IP on which an account with username `labuser` is created. 
 
 NOTE that please validate that the few environment variables that must NOT be visible in any git file and only set 'out of band':
 * DISCORD_WEBHOOK_URL  - this is a secret and should be removed from `sessions/intructor.md`. It is the webhook URL with name `Meetup Bot` in channel `#meetup-notifications`, where any post appears as message in `#meetup-notifications`.
