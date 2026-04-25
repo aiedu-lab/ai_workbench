@@ -107,7 +107,7 @@ before the lab — students cannot do this themselves.
 - Inbound ports open: 22 (SSH), 8080 (Temporal UI), 8088 (app)
 - Outbound internet access (to pull Docker images, reach Discord)
 
-> **labenv.yaml:** Record the server hostname as `DOCKER_SERVER`
+> **labenv.yaml:** Record the server hostname as `DOCKER_SERVER_ID`
 > in `projects/group_meetup/labenv.yaml` so students load it
 > automatically via `labsetup.py` (see Section 6).
 

@@ -11,7 +11,15 @@
 # Format: meetup-lab-<CLASS_ID>  (e.g. meetup-lab-2026-spring)
 DISCORD_SERVER: "meetup-lab-<CLASS_ID>"
 
+
 # Lab server hostname reachable from student laptops.
-# Must resolve to an IP with a labuser account and Docker installed
-# (provisioned in instructor.md Section 3).
-DOCKER_SERVER: "<hostname>"
+# Must resolve to an IP with a DOCKER_SERVER_USERNAME 
+# account and Docker installed 
+# as provisioned in instructor.md Section 3
+DOCKER_SERVER_ID: "<hostname>"
+
+# username for SSH on the lab server.
+DOCKER_SERVER_USERNAME: "<username>"
+
+# SSH port on the lab server
+DOCKER_SERVER_SSH_PORT: <sshport>

@@ -6,7 +6,7 @@ Checks for:
 - Python 3.10+
 - git, gh, and claude CLIs in PATH
 - requests and pyyaml packages installed
-- DISCORD_WEBHOOK_URL, DISCORD_SERVER, and DOCKER_SERVER env vars set
+- DISCORD_WEBHOOK_URL, DISCORD_SERVER, and DOCKER_SERVER_ID env vars set
   
   Exits non-zero with a clear message if any check fails.
 """
@@ -52,8 +52,8 @@ def check_discord_server():
     raise RuntimeError("DISCORD_SERVER not set")
 
 def check_docker_server():
-  if not os.environ.get("DOCKER_SERVER"):
-    raise RuntimeError("DOCKER_SERVER not set")
+  if not os.environ.get("DOCKER_SERVER_ID"):
+    raise RuntimeError("DOCKER_SERVER_ID not set")
 
 def main():
   print("=== Preflight Check ===\n")
@@ -65,7 +65,7 @@ def main():
   check("pyyaml package", lambda: pkg_exists("yaml"))
   check("DISCORD_WEBHOOK_URL set", check_webhook)
   check("DISCORD_SERVER set", check_discord_server)
-  check("DOCKER_SERVER set", check_docker_server)
+  check("DOCKER_SERVER_ID set", check_docker_server)
   print("\nAll items must show PASS before the lab begins.")
 
 if __name__ == "__main__":

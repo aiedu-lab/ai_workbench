@@ -1201,7 +1201,7 @@ no credentials.
 # Section 2 validation step).
 
 DISCORD_SERVER: "meetup-lab-<CLASS_ID>"
-DOCKER_SERVER: "<hostname>"
+DOCKER_SERVER_ID: "<hostname>"
 ```
 
 Instructor replaces `<CLASS_ID>` and `<hostname>` before lab.
@@ -1265,7 +1265,7 @@ if __name__ == "__main__":
 ### Step 9.4: Update `sessions/instructor.md` — labenv.yaml ref
 
 Add a reference to `labenv.yaml` in Section 3 (Server
-Provisioning) noting that `DOCKER_SERVER` there matches the
+Provisioning) noting that `DOCKER_SERVER_ID` there matches the
 hostname in `labenv.yaml`. Add a note to Section 5 (config.yaml)
 cross-referencing `DISCORD_SERVER` in `labenv.yaml`.
 
@@ -1346,7 +1346,7 @@ the dev test suite green?"
   validation `POST` sends URL as message body; Section 6
   references Section 2 retrieval; no real URL committed.
 - [x] **Step 9.7.2:** `labenv.yaml` — exists; `DISCORD_SERVER` ✅ COMPLETED
-  and `DOCKER_SERVER` present; no `DISCORD_WEBHOOK_URL` key.
+  and `DOCKER_SERVER_ID` present; no `DISCORD_WEBHOOK_URL` key.
 - [x] **Step 9.7.3:** `labsetup.py` — parses YAML, sets env ✅ COMPLETED
   vars, exits non-zero with clear message if secret absent.
 - [x] **Step 9.7.4:** `sdlc_ai.md` — Mermaid diagram renders; ✅ COMPLETED
