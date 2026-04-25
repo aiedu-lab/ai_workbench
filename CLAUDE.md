@@ -140,6 +140,22 @@ Unless explicitly instructed by the user:
 * **ALWAYS** run the validation command listed in the task's plan
   step before declaring the step complete
 
+### 9. Specification & Prompt Management
+
+To maintain a clean project lineage and ensure repeatability:
+
+* **Record Significant Prompts:** Whenever a significant new task, 
+  specification, or architectural change is initiated (especially if 
+  delivered via a `sdw/*_prompt.md` file), the prompt must be recorded 
+  in `sdw/prompt_history.md`.
+* **Sanitize & Summarize:** Prompts should be sanitized of any 
+  sensitive information and summarized if they are excessively 
+  long, while preserving all core objectives and constraints.
+* **Instructor Approval:** Propose the entry for `prompt_history.md` 
+  and wait for instructor approval before appending.
+* **Keep Ledger Chronological:** Maintain the chronological order 
+  in `sdw/prompt_history.md` using `## [Topic/Filename]` headers.
+
 ---
 
 ## DOCUMENTATION
