@@ -55,8 +55,13 @@ Moore's Law to the breakthroughs in AI—connections you didn't have
 to make yourself.
 
 ### Phase 3: The Synthesis
-1. **Prompt:** *"Based ONLY on my wiki, explain how hardware limitations 
-dictated the timeline of AI advancements."*
+1. **Prompt:** 
+```markdown
+Based ONLY on my wiki, explain how hardware limitations 
+dictated the timeline of AI advancements. Please generate 
+the response as a separate file hw_relation_to_ai_advancement.md 
+in the project/llm_wiki/ directory.
+```
 2. **Key Takeaway:** The AI isn't searching the open internet; it is 
 providing a synthesized answer based entirely on the curated knowledge 
 graph it built for you.
