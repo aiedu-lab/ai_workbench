@@ -1748,7 +1748,7 @@ cross-session exercise continuity, and a markdown hygiene pass.
 
 **Target files:** `sessions/presentation_n_design.md`, `README.md`
 
-- [ ] **Step 12.3.1: Merge Claude Design into `sessions/presentation_n_design.md`**
+- [x] **Step 12.3.1: Merge Claude Design into `sessions/presentation_n_design.md`** ✅ COMPLETED
   - Rename session title from "Slides" to "Presentation & Design"
   - Add "**Claude Design**" section after the existing Gamma exercises
   - Pull exercises from `sessions/claude_design.md` as:
@@ -1763,7 +1763,7 @@ cross-session exercise continuity, and a markdown hygiene pass.
     > "Gamma: content structure. Claude Design: visual design. A
     > production presentation benefits from both."
 
-- [ ] **Step 12.3.2: Update `README.md` agenda row**
+- [x] **Step 12.3.2: Update `README.md` agenda row** ✅ COMPLETED
   - Change "Exercise: Create Presentation" →
     "Exercise: Presentation & Design"
   - Link updated to `sessions/presentation_n_design.md`

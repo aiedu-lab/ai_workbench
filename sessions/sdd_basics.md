@@ -32,3 +32,25 @@ execution.
 ## 🏃 Exercise
 For the hands-on SDD project, see
 [Exercise: Create Group Meetup Organizer using SDD](client_application.md).
+
+## Specification Driven Beyond Code
+
+SDD applies a spec-first workflow to software — but the same pattern
+works across many creative and knowledge domains. The AI is always the
+typist; the human defines the spec and validates the output:
+
+| Domain | Name | Spec | AI generates |
+|--------|------|------|--------------|
+| Software | **SDD** | `CLAUDE.md` + `plan.md` | Code, tests, configs |
+| Presentation | **SDP** | Slide outline or brief | Decks, UI mockups |
+| Knowledge base | **SDPKM** | Topic list + vault structure | Cross-linked wiki notes |
+| Workbench | **SDW** | `sdw/plan.md` | Lab sessions, tools, exercises |
+
+> This workbench itself is built using Specifications.
+> See [`sdw/plan.md`](../sdw/plan.md) as a live example of SDW —
+> every session and exercise in the lab was generated from that plan.
+
+The SDD session teaches the pattern for code. The same mindset —
+write the spec first, generate from it, iterate — transfers directly
+to SDP ([Presentation & Design](presentation_n_design.md)) and
+SDPKM ([LLM Wiki / PKM](llm_wiki.md)).
