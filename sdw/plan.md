@@ -1670,7 +1670,7 @@ cross-session exercise continuity, and a markdown hygiene pass.
 `projects/group_meetup/labsetup.py`,
 `projects/group_meetup/preflight_check.py`
 
-- [ ] **Step 12.1.1: Add VM Setup section to `instructor.md`**
+- [x] **Step 12.1.1: Add VM Setup section to `instructor.md`** ✅ COMPLETED
   - Add Section 0 (before existing Section 1 — roster) titled
     "Provision Instructor VM" referencing `tools/VM/setup.md`
   - Minimum spec: Ubuntu 22.04, 8 GB RAM, Docker installed
