@@ -1676,7 +1676,7 @@ cross-session exercise continuity, and a markdown hygiene pass.
   - Minimum spec: Ubuntu 22.04, 8 GB RAM, Docker installed
   - Validation: `docker --version` from the VM
 
-- [ ] **Step 12.1.2: Add SSH Access section to `instructor.md`**
+- [x] **Step 12.1.2: Add SSH Access section to `instructor.md`** ✅ COMPLETED
   - New section: "Configure student SSH access to Docker server"
   - Introduce env vars: `DOCKER_SERVER_USERNAME`, `DOCKER_SERVER_PORT`
     (alongside existing `DOCKER_SERVER_ID`)
@@ -1690,7 +1690,7 @@ cross-session exercise continuity, and a markdown hygiene pass.
     ```
   - Validation: `ssh ai-lab docker ps` → empty table header
 
-- [ ] **Step 12.1.3: Update `projects/group_meetup/labenv.yaml`**
+- [x] **Step 12.1.3: Update `projects/group_meetup/labenv.yaml`** ✅ COMPLETED (pre-existing)
   - Add `DOCKER_SERVER_USERNAME` and `DOCKER_SERVER_PORT` keys
 
 - [ ] **Step 12.1.4: Update `projects/group_meetup/labsetup.py`**
