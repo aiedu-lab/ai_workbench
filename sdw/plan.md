@@ -1715,7 +1715,7 @@ cross-session exercise continuity, and a markdown hygiene pass.
 **Target files:** `tools/claude/cloud.md` (new), `tools/claude/cli.md`,
 `tools/claude/desktop.md`
 
-- [ ] **Step 12.2.1: Create `tools/claude/cloud.md`**
+- [x] **Step 12.2.1: Create `tools/claude/cloud.md`** ✅ COMPLETED
 
   Sections:
   - **Signup** — navigate to `claude.ai`, create account
@@ -1731,13 +1731,13 @@ cross-session exercise continuity, and a markdown hygiene pass.
     and "Allow Claude to use coarse location metadata"
   - **Validation:** one-line `curl` against the Claude Messages API
 
-- [ ] **Step 12.2.2: Update `tools/claude/cli.md`**
+- [x] **Step 12.2.2: Update `tools/claude/cli.md`** ✅ COMPLETED
   - Remove duplicated API key + account content
   - Replace with cross-reference: "See [Claude Cloud Setup](cloud.md)"
   - Keep CLI-specific content (npm install, `claude --version`,
     VSCode plugin)
 
-- [ ] **Step 12.2.3: Update `tools/claude/desktop.md`**
+- [x] **Step 12.2.3: Update `tools/claude/desktop.md`** ✅ COMPLETED
   - Remove duplicated sign-in content
   - Replace with cross-reference to `cloud.md`
   - Keep Desktop-specific install steps (download `.pkg`/`.exe`, launch)
