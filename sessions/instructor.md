@@ -189,12 +189,15 @@ Expected: empty table header (no error). If any student gets
 Mark the `Server acct?` column `yes` in the roster (Section 1)
 once every student passes this check.
 
-### SSH Convenience Setup (student laptops)
+### SSH Convenience Setup — Two-Phase Workflow
 
-Students who complete Section 4 (Laptop Preflight) will have
-`labsetup.py` write an SSH config entry automatically. Record
-the three server variables in `projects/group_meetup/labenv.yaml`
-before the lab:
+SSH setup requires a handoff between student and instructor.
+Complete **Phase A** before **Phase B**.
+
+#### Phase A — Student runs `labsetup.py` (before instructor installs keys)
+
+Before the lab, ensure `projects/group_meetup/labenv.yaml` has
+real values (not placeholders) for:
 
 | Variable | Value |
 |---|---|
@@ -202,35 +205,59 @@ before the lab:
 | `DOCKER_SERVER_USERNAME` | shared account name (e.g. `labuser`) |
 | `DOCKER_SERVER_SSH_PORT` | SSH port (default `22`) |
 
-`labsetup.py` writes the following entry to `~/.ssh/config` on
-each student's laptop:
-
-```
-Host ai-lab
-  HostName <DOCKER_SERVER_ID>
-  User     <DOCKER_SERVER_USERNAME>
-  Port     <DOCKER_SERVER_SSH_PORT>
-  IdentityFile ~/.ssh/id_ed25519
-```
-
-After running `labsetup.py`, students connect with:
+Students run:
 
 ```bash
-ssh ai-lab             # no flags needed
-ssh ai-lab docker ps   # full validation
+export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
+python3 projects/group_meetup/labsetup.py
 ```
 
-**macOS note:** SSH config and `~/.ssh/` behave identically to
+`labsetup.py` will:
+1. Generate `~/.ssh/<username>_id_ed25519` key pair (skipped if it
+   already exists)
+2. Post the public key to `#meetup-notifications` so the instructor
+   can install it
+3. Write a `Host ai-lab` entry to `~/.ssh/config` (skipped if
+   already present)
+4. Attempt SSH validation (will WARN — expected at this stage
+   because the key is not yet installed on the server)
+
+**macOS note:** `~/.ssh/` and SSH config behave identically to
 Linux — no extra steps required.
 
-**Windows/WSL2 note:** Run all SSH commands from the Ubuntu
-terminal (inside WSL2). The `~/.ssh/config` written by
-`labsetup.py` lives in the WSL2 filesystem (`~/.ssh/config`
-inside Ubuntu), not in Windows `%USERPROFILE%\.ssh`. Both
-locations work, but only the WSL2 location is used when running
-from the Ubuntu terminal.
+**Windows/WSL2 note:** Run `labsetup.py` from the Ubuntu terminal
+(inside WSL2). The generated `~/.ssh/config` lives in the WSL2
+filesystem, not in Windows `%USERPROFILE%\.ssh`. Use the Ubuntu
+terminal for all SSH commands.
 
-**Validation after `labsetup.py`:**
+#### Phase B — Instructor installs student public keys on the server
+
+Check `#meetup-notifications` for each student's public key message
+(posted automatically by `labsetup.py`). Install each key:
+
+```bash
+# On the server, for each student key posted to the channel:
+echo "<paste student public key>" \
+  | sudo tee -a /home/labuser/.ssh/authorized_keys
+```
+
+After all keys are installed, notify students to run Phase C.
+
+#### Phase C — Student runs `preflight_check.py` (after keys installed)
+
+> **Important:** Run `preflight_check.py` only after the instructor
+> confirms that all SSH public keys have been installed on the
+> server. SSH connectivity will FAIL until that step is complete.
+
+```bash
+python3 projects/group_meetup/preflight_check.py
+```
+
+`preflight_check.py` reads `labenv.yaml` directly for non-secret
+vars and checks SSH connectivity to `ai-lab`. Every item must show
+`PASS` before the lab begins.
+
+**Validation:**
 
 ```bash
 ssh ai-lab docker ps   # must return empty table header
@@ -246,6 +273,11 @@ validates by reviewing the output of `preflight_check.py`
 
 > **Note:** `preflight_check.py` is created in Phase 4 (Step 4.4).
 > Run Phase 4 before distributing this script to students.
+
+> **SSH prerequisite:** Students must complete Section 3 Phase A
+> (run `labsetup.py`) and the instructor must complete Section 3
+> Phase B (install public keys) before `preflight_check.py` will
+> show `PASS` for the SSH checks.
 
 **Win11 + WSL2 setup:**
 
