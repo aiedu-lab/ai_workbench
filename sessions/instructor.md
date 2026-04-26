@@ -143,9 +143,10 @@ before the lab — students cannot do this themselves.
 - Inbound ports open: 22 (SSH), 8080 (Temporal UI), 8088 (app)
 - Outbound internet access (to pull Docker images, reach Discord)
 
-> **labenv.yaml:** Record the server hostname as `DOCKER_SERVER_ID`
-> in `projects/group_meetup/labenv.yaml` so students load it
-> automatically via `labsetup.py` (see Section 6).
+> **labenv.yaml:** Record `DOCKER_SERVER_ID`, `DOCKER_SERVER_USERNAME`,
+> and `DOCKER_SERVER_SSH_PORT` in `projects/group_meetup/labenv.yaml`.
+> `labsetup.py` reads these and writes a student `.ssh/config` entry
+> automatically (see SSH Convenience Setup below and Section 6).
 
 **Provision the shared account:**
 
@@ -176,7 +177,7 @@ sudo chmod 600 /home/labuser/.ssh/authorized_keys
 sudo chown -R labuser:labuser /home/labuser/.ssh
 ```
 
-**Validation — run from each student laptop:**
+**Validation — basic SSH (run from each student laptop):**
 
 ```bash
 ssh labuser@<SERVER_IP> docker ps
@@ -187,6 +188,53 @@ Expected: empty table header (no error). If any student gets
 
 Mark the `Server acct?` column `yes` in the roster (Section 1)
 once every student passes this check.
+
+### SSH Convenience Setup (student laptops)
+
+Students who complete Section 4 (Laptop Preflight) will have
+`labsetup.py` write an SSH config entry automatically. Record
+the three server variables in `projects/group_meetup/labenv.yaml`
+before the lab:
+
+| Variable | Value |
+|---|---|
+| `DOCKER_SERVER_ID` | server hostname or IP |
+| `DOCKER_SERVER_USERNAME` | shared account name (e.g. `labuser`) |
+| `DOCKER_SERVER_SSH_PORT` | SSH port (default `22`) |
+
+`labsetup.py` writes the following entry to `~/.ssh/config` on
+each student's laptop:
+
+```
+Host ai-lab
+  HostName <DOCKER_SERVER_ID>
+  User     <DOCKER_SERVER_USERNAME>
+  Port     <DOCKER_SERVER_SSH_PORT>
+  IdentityFile ~/.ssh/id_ed25519
+```
+
+After running `labsetup.py`, students connect with:
+
+```bash
+ssh ai-lab             # no flags needed
+ssh ai-lab docker ps   # full validation
+```
+
+**macOS note:** SSH config and `~/.ssh/` behave identically to
+Linux — no extra steps required.
+
+**Windows/WSL2 note:** Run all SSH commands from the Ubuntu
+terminal (inside WSL2). The `~/.ssh/config` written by
+`labsetup.py` lives in the WSL2 filesystem (`~/.ssh/config`
+inside Ubuntu), not in Windows `%USERPROFILE%\.ssh`. Both
+locations work, but only the WSL2 location is used when running
+from the Ubuntu terminal.
+
+**Validation after `labsetup.py`:**
+
+```bash
+ssh ai-lab docker ps   # must return empty table header
+```
 
 ---
 
