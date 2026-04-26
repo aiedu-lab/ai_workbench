@@ -1,34 +1,27 @@
-## Claude Desktop
+# Claude Desktop
 
-# Claude Setup & Validation Guide
+> **Account setup:** Create your claude.ai account and configure
+> privacy settings before installing the Desktop app. See
+> [Claude Cloud Setup](cloud.md).
 
-## Objective
-Install and verify:
-- [Claude Desktop (Chat + Code + CoWork)](https://claude.com/download)
-  - Choose your OS
-  
-Ensure:
-- subscription or API access works
-- Claude responds correctly
+## Install
 
----
-
-## Install Claude Desktop (Chat + CoWork)
-
-Download and install:
-https://claude.com/download
+Download and install the app for your OS:
+[claude.com/download](https://claude.com/download)
 
 ### Steps
-1. Install the app
-2. Open Claude Desktop
-3. Sign in using your account
+
+1. Run the installer and follow the prompts.
+2. Open Claude Desktop.
+3. Sign in with your claude.ai account (created in
+   [Cloud Setup](cloud.md#1-sign-up)).
 
 ### Validate
 
-Ask:
-```bash
+Send this message in Claude Desktop:
+
+```markdown
 Explain how a credit card works in 3 simple sentences.
 ```
-✅ Success if:
-- Claude responds quickly
-- Output is clear and structured
+
+Success: Claude responds quickly with a clear, structured answer.

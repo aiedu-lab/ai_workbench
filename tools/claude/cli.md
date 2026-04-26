@@ -12,51 +12,25 @@ Restart terminal after install.
 
 ## 🧭 Authenticate
 
-### 1. Provision API_KEY via Claude Platform
-* [Login Claude Platform](https://platform.claude.com/)
-* [Purchase $5 Credits](https://platform.claude.com/billing)
-* [Generate and copy API key](https://platform.claude.com/settings/api-keys)
-* Save API KEY: 
+> **Account and API key setup:** See [Claude Cloud Setup](cloud.md)
+> for account creation, API key generation, `ANTHROPIC_API_KEY` env
+> var, and privacy settings. Complete that guide first.
+
+### 1. Choose CLI auth mode
+
+The CLI supports two modes. Use **API Key** for this lab.
+
+#### API Key Mode (recommended for lab)
 ```bash
-export MY_ANTHROPIC_API_KEY="sk-ant-..."
+export ANTHROPIC_API_KEY="sk-ant-..."   # set once per session
+unset CLAUDE_CODE_OAUTH_TOKEN           # ensure OAuth is not active
 ```
 
-### 2. Provision OAuth Token via Claude CLI 
+#### Subscription / OAuth Token Mode
 ```bash
-# Valid for one year
-claude setup-token
-```
-
-```bash
-# fill in the right token value in place of ... below 
-export MY_CLAUDE_CODE_OAUTH_TOKEN="sk-any-..."
-```
-
-### 3. Login using REPL and use Browser flow to authorize
-
-```bash
-# purge any stale sessions just in case
-claude logout
-# login via REPL and browser based Authorization flow
-claude
-```
-
-### 4. Setup appropriate CLI mode authorization 
-
-#### Subscription Mode
-
-Mandatory for REPL commands:
-```bash
-# OAuth Token - CLAUDE_CODE_OAUTH_TOKEN - has higher precedence
-# than API - ANTHROPIC_API_KEY - if both are set
-export CLAUDE_CODE_OAUTH_TOKEN=$MY_CLAUDE_OAUTH_TOKEN && \
-```
-
-#### API Key Mode
-```bash
-# fill in the right API key value in place of ... below
-export ANTHROPIC_API_KEY=$MY_ANTHROPIC_API_KEY && \
-unset CLAUDE_CODE_OAUTH_TOKEN
+# OAuth token takes precedence over API key when both are set.
+# Obtain via: claude setup-token  (valid for one year)
+export CLAUDE_CODE_OAUTH_TOKEN="sk-any-..."
 ```
 
 #### Validate Auth Status
@@ -64,20 +38,27 @@ unset CLAUDE_CODE_OAUTH_TOKEN
 claude auth status --text
 ```
 
-### 5. Always run inside the repo
+### 2. Login via browser (first time only)
 
 ```bash
-cd ai-education-lab
+claude logout   # clear any stale session
+claude          # opens browser auth flow on first run
 ```
 
-### 6. Verify environment
+### 3. Always run inside the repo
+
+```bash
+cd ai_workbench
+```
+
+### 4. Verify environment
 
 ```bash
 bash tools/claude/check_env.sh
 claude
 ```
 
-### 7. Install the VSCode Extension
+### 5. Install the VSCode Extension
 
 * Open VSCode
 * Press `Ctrl+Shift+X` (Windows/Linux) or `Cmd+Shift+X` (Mac) to open    Extensions
@@ -106,7 +87,7 @@ To keep the sidebar open across restarts, add to your VSCode `settings.json`:
 
 Or set a keyboard shortcut: `Cmd+Shift+I` (Mac) / `Ctrl+Shift+I` (Windows).
 
-### 8. Confirm the integrated terminal works
+### 6. Confirm the integrated terminal works
 
 In VSCode's integrated terminal (`Ctrl+\``):
 
@@ -121,20 +102,20 @@ authentication and settings.
 Hello! How can I help you today?
 ```
 
-### 9. Constrain scope in prompts
+### 7. Constrain scope in prompts
 
 Always include:
 
 "Only read files in this project directory. Do not access external folders."
 
-### 10. Avoid large directories
+### 8. Avoid large directories
 
 Never run on:
 * ~/
 * Downloads/
 * node_modules/
 
-### 11. Kill runaway processes
+### 9. Kill runaway processes
 
 Press:
 
@@ -196,15 +177,11 @@ claude plugin update
 
 ## 🔐 Security: API Keys
 
-- NEVER commit API keys to GitHub
-- DO NOT store keys in any tracked file
-- Use environment variables only:
-  - macOS/Linux: `export ANTHROPIC_API_KEY=...`
-  - Windows: `setx ANTHROPIC_API_KEY ...`
+> See [Claude Cloud Setup — API Key](cloud.md#2-generate-an-api-key)
+> for key creation, storage, and revocation instructions.
 
-If a key is leaked:
-- Revoke immediately
-- Generate a new key
+- NEVER commit API keys to GitHub
+- Use `ANTHROPIC_API_KEY` environment variable only
 
 ## Guardrails & Tokenomics
 
