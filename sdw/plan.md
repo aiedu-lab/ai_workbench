@@ -1746,9 +1746,9 @@ cross-session exercise continuity, and a markdown hygiene pass.
 
 ### Phase 12.3: Specification Driven Presentation (SDP)
 
-**Target files:** `sessions/slides.md`, `README.md`
+**Target files:** `sessions/presentation_n_design.md`, `README.md`
 
-- [ ] **Step 12.3.1: Merge Claude Design into `sessions/slides.md`**
+- [ ] **Step 12.3.1: Merge Claude Design into `sessions/presentation_n_design.md`**
   - Rename session title from "Slides" to "Presentation & Design"
   - Add "**Claude Design**" section after the existing Gamma exercises
   - Pull exercises from `sessions/claude_design.md` as:
@@ -1766,7 +1766,7 @@ cross-session exercise continuity, and a markdown hygiene pass.
 - [ ] **Step 12.3.2: Update `README.md` agenda row**
   - Change "Exercise: Create Presentation" →
     "Exercise: Presentation & Design"
-  - Link remains `sessions/slides.md`
+  - Link updated to `sessions/presentation_n_design.md`
 
 ---
 
@@ -1780,7 +1780,7 @@ cross-session exercise continuity, and a markdown hygiene pass.
     > write a spec, generate from it, iterate — applies across domains:"
   - List:
     - **SDW** — this workbench is built via `sdw/plan.md`
-    - **SDP** — slides and UI designs via `sessions/slides.md`
+    - **SDP** — slides and UI designs via `sessions/presentation_n_design.md`
     - **SDPKM** — personal knowledge base via `sessions/llm_wiki.md`
   - One sentence per entry: what the spec is, what Claude generates
 
@@ -1866,7 +1866,7 @@ cross-session exercise continuity, and a markdown hygiene pass.
   present (signup, API key, env var, privacy)
 - [ ] **Step 12.9.3:** `tools/claude/cli.md` and `desktop.md` —
   cross-reference cloud.md; duplicate account/key content removed
-- [ ] **Step 12.9.4:** `sessions/slides.md` — titled "Presentation &
+- [ ] **Step 12.9.4:** `sessions/presentation_n_design.md` — titled "Presentation &
   Design"; Exercise C and D present
 - [ ] **Step 12.9.5:** `sessions/sdd_basics.md` — "Specification Driven
   Beyond Code" subsection present with SDW, SDP, SDPKM links

@@ -20,7 +20,7 @@ for various use cases, such as coding, automation, etc. using:
 | [**Concept: Basic Prompting Techniques**](sessions/prompting_basics.md) | 30 mins | [Browser Chat](https://gemini.google.com) |  |
 | [**Exercise: Problem Solving**](sessions/problem_solving.md) | 45 mins | [Browser Chat](https://gemini.google.com) |  |
 | [**Concept: Planning**](sessions/planning.md) | 45 mins | [Claude Desktop (Chat)](tools/claude/desktop.md) | 15 mins  |
-| [**Exercise: Create Presentation**](sessions/slides.md) | 45 mins | [Gamma](https://gamma.app/), [GitHub](tools/github.md) | 15 mins |
+| [**Exercise: Presentation & Design**](sessions/presentation_n_design.md) | 60 mins | [Gamma](https://gamma.app/), [Claude Design](https://claude.ai/design) | 15 mins |
 | [**Exercise: Create/Run Web Site on Laptop/Lovable**](sessions/web_site.md) | 60 mins | [Lovable.dev](https://lovable.ai), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
 | [**Concept: Advanced Prompting Techniques**](sessions/prompting_advanced.md) | 90 mins | [Claude Chat](tools/claude/desktop.md) |  |
 | [**Concept: Spec Driven Development (SDD)**](sessions/sdd_basics.md) | 45 mins | | |
