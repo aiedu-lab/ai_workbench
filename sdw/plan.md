@@ -1626,7 +1626,7 @@ Step 10.5 validates this is correct and searches for any remaining
 
 ---
 
-## Phase 12: Documentation and Plan Consolidation
+## Phase 11: Documentation and Plan Consolidation
 
 ### Objective
 Clean up, consolidate, and establish best practices for the Specification Driven Workbench (SDW) prompts and plan files to ensure a clean lineage and proper state management.
@@ -1647,4 +1647,239 @@ Clean up, consolidate, and establish best practices for the Specification Driven
 - [x] **Establish Executed vs. Original Plan Convention:**
   - [x] Rename the original instructor template `projects/llm_wiki/llm_wiki_plan.md` to `projects/llm_wiki/plan_template.md`. This clearly designates it as the pristine, unexecuted version for students.
   - [x] Retain `projects/llm_wiki/plan.md` as the active, state-tracked file representing the instructor's executed plan.
+
+---
+
+## Phase 12: SPECIFICATION DRIVEN ACTIVITIES
+
+**Addresses:** `sdw/prompt_history.md` §
+`## Specification Driven Activities Plan Prompt`
+(originally `sdw/pkm_sdd_prompt.md`)
+
+**Purpose:** Extend the AI Workbench with improved instructor tooling,
+a dedicated Claude.ai account setup guide, four new Specification Driven
+session types (SDW, SDP, SDPKM, SDD cross-reference), an AI Local session,
+cross-session exercise continuity, and a markdown hygiene pass.
+
+---
+
+### Phase 12.1: Instructor Setup — VM and SSH Access
+
+**Target files:** `sessions/instructor.md`,
+`projects/group_meetup/labenv.yaml`,
+`projects/group_meetup/labsetup.py`,
+`projects/group_meetup/preflight_check.py`
+
+- [ ] **Step 12.1.1: Add VM Setup section to `instructor.md`**
+  - Add Section 0 (before existing Section 1 — roster) titled
+    "Provision Instructor VM" referencing `tools/VM/setup.md`
+  - Minimum spec: Ubuntu 22.04, 8 GB RAM, Docker installed
+  - Validation: `docker --version` from the VM
+
+- [ ] **Step 12.1.2: Add SSH Access section to `instructor.md`**
+  - New section: "Configure student SSH access to Docker server"
+  - Introduce env vars: `DOCKER_SERVER_USERNAME`, `DOCKER_SERVER_PORT`
+    (alongside existing `DOCKER_SERVER_ID`)
+  - Show `.ssh/config` snippet for macOS and Windows/WSL2:
+    ```
+    Host ai-lab
+      HostName $DOCKER_SERVER_ID
+      User     $DOCKER_SERVER_USERNAME
+      Port     $DOCKER_SERVER_PORT
+      IdentityFile ~/.ssh/your_private_key
+    ```
+  - Validation: `ssh ai-lab docker ps` → empty table header
+
+- [ ] **Step 12.1.3: Update `projects/group_meetup/labenv.yaml`**
+  - Add `DOCKER_SERVER_USERNAME` and `DOCKER_SERVER_PORT` keys
+
+- [ ] **Step 12.1.4: Update `projects/group_meetup/labsetup.py`**
+  - Parse new env vars from `labenv.yaml`
+  - Generate `~/.ssh/config` entry for `ai-lab`
+  - Validate SSH connectivity via `subprocess.run(["ssh", "ai-lab",
+    "echo ok"])`
+  - Exit non-zero with clear message if SSH fails
+
+- [ ] **Step 12.1.5: Update `projects/group_meetup/preflight_check.py`**
+  - Add SSH check: `ssh ai-lab echo ok` → PASS/FAIL
+  - Add checks that `DOCKER_SERVER_USERNAME` and `DOCKER_SERVER_PORT`
+    are set
+
+---
+
+### Phase 12.2: Claude.ai Account Setup
+
+**Target files:** `tools/claude/cloud.md` (new), `tools/claude/cli.md`,
+`tools/claude/desktop.md`
+
+- [ ] **Step 12.2.1: Create `tools/claude/cloud.md`**
+
+  Sections:
+  - **Signup** — navigate to `claude.ai`, create account
+  - **API Key** — claude.ai → Settings → API Keys → Create Key
+  - **Save key as env var:**
+    ```bash
+    export ANTHROPIC_API_KEY="sk-ant-..."
+    echo 'export ANTHROPIC_API_KEY="sk-ant-..."' >> ~/.bashrc
+    ```
+  - **Privacy** — disable data training and location:
+    claude.ai → User Logo → Settings → Privacy →
+    uncheck "Allow the use of your chats...to train...models"
+    and "Allow Claude to use coarse location metadata"
+  - **Validation:** one-line `curl` against the Claude Messages API
+
+- [ ] **Step 12.2.2: Update `tools/claude/cli.md`**
+  - Remove duplicated API key + account content
+  - Replace with cross-reference: "See [Claude Cloud Setup](cloud.md)"
+  - Keep CLI-specific content (npm install, `claude --version`,
+    VSCode plugin)
+
+- [ ] **Step 12.2.3: Update `tools/claude/desktop.md`**
+  - Remove duplicated sign-in content
+  - Replace with cross-reference to `cloud.md`
+  - Keep Desktop-specific install steps (download `.pkg`/`.exe`, launch)
+
+---
+
+### Phase 12.3: Specification Driven Presentation (SDP)
+
+**Target files:** `sessions/slides.md`, `README.md`
+
+- [ ] **Step 12.3.1: Merge Claude Design into `sessions/slides.md`**
+  - Rename session title from "Slides" to "Presentation & Design"
+  - Add "**Claude Design**" section after the existing Gamma exercises
+  - Pull exercises from `sessions/claude_design.md` as:
+    - Exercise C: Interactive UI mockup (Newton's Apple app)
+    - Exercise D: Branded pitch deck via Claude Design
+  - Add Claude Design setup note (Claude Pro — no local install)
+  - Arc framing:
+    > "Gamma creates decks from content prompts. Claude Design creates
+    > interactive UI mockups and branded decks. Both are Specification
+    > Driven Presentation."
+  - Gap statement:
+    > "Gamma: content structure. Claude Design: visual design. A
+    > production presentation benefits from both."
+
+- [ ] **Step 12.3.2: Update `README.md` agenda row**
+  - Change "Exercise: Create Presentation" →
+    "Exercise: Presentation & Design"
+  - Link remains `sessions/slides.md`
+
+---
+
+### Phase 12.4: Specification Driven Workbench (SDW) — SDD Cross-Ref
+
+**Target file:** `sessions/sdd_basics.md`
+
+- [ ] **Step 12.4.1: Add "Specification Driven Beyond Code" subsection**
+  - Add near the end of `sessions/sdd_basics.md`:
+    > "SDD is one instance of a broader pattern. The same workflow —
+    > write a spec, generate from it, iterate — applies across domains:"
+  - List:
+    - **SDW** — this workbench is built via `sdw/plan.md`
+    - **SDP** — slides and UI designs via `sessions/slides.md`
+    - **SDPKM** — personal knowledge base via `sessions/llm_wiki.md`
+  - One sentence per entry: what the spec is, what Claude generates
+
+---
+
+### Phase 12.5: Specification Driven PKM (SDPKM) Enhancement
+
+**Target file:** `sessions/llm_wiki.md`
+
+- [ ] **Step 12.5.1: Add Phase 4 and Home.md growth guidance**
+
+  **Phase 4 — Expand with a New Topic:**
+  - Student picks any topic (e.g., Quantum Computing, Climate Change)
+  - Creates 3–5 concept notes + 1–2 people notes
+  - Adds the topic to `Home.md` under the correct section
+  - Runs the orphan/broken-link scan; all checks must pass
+
+  **Coherent Home.md Growth section:**
+  > "Home.md is the index, not the encyclopaedia. Add only canonical
+  > entries. Use [[wikilinks]] for all cross-references. The Moore's
+  > Law and AI History topics (from Phases 2–3) are the model: each
+  > has its own concept notes, people notes, and Home.md entries."
+
+- [ ] **Step 12.5.2: Add `sessions/llm_wiki.md` to `README.md` agenda**
+  - Add row if absent
+  - Position: after Solution Architecture, before Future Advancements
+  - Tool: Obsidian + Claude Code
+
+---
+
+### Phase 12.6: AI Local Session — README Inclusion
+
+**Target files:** `sessions/ai_local.md`, `README.md`
+
+- [ ] **Step 12.6.1: Add `sessions/ai_local.md` to `README.md` agenda**
+  - Add row if absent
+  - Position: after LLM Wiki, before Future Advancements
+  - Tool: Ollama
+
+- [ ] **Step 12.6.2: Verify cross-references in `sessions/ai_local.md`**
+  - Confirm `tools/ollama/setup.md` link resolves
+  - Add cross-reference to `tools/claude/cloud.md` for
+    `ANTHROPIC_API_KEY` if the session uses the Claude API
+
+---
+
+### Phase 12.7: Cross-Session Exercise Continuity
+
+**Target files:** `sessions/llm_wiki.md`, `sessions/ai_local.md`
+
+- [ ] **Step 12.7.1: Add Group Meetup optional exercise to `llm_wiki.md`**
+  - Optional Exercise D: ingest `plans/specs/event_organizer.md` into
+    the vault — bridges the PKM session back to the main project arc
+
+- [ ] **Step 12.7.2: Add stretch goal to `sessions/ai_local.md`**
+  - Stretch: ask the Ollama Socratic Tutor "Explain the Poller →
+    Selector → Notifier pattern" — connects AI Local to the project arc
+
+---
+
+### Phase 12.8: Hygiene — Markdown Code Block Consistency
+
+**Target files:** All `sessions/*.md`, `tools/claude/*.md`
+
+- [ ] **Step 12.8.1: Audit untagged code blocks**
+  ```bash
+  grep -rn '^```$' sessions/ tools/claude/
+  ```
+
+- [ ] **Step 12.8.2: Tag each untagged block**
+  - `bash` for terminal commands
+  - `markdown` for special strings / prompt snippets
+  - `python` / `yaml` / `json` for their respective types
+  - Validation: re-run audit → zero results
+
+---
+
+### Phase 12.9: Consistency Check for Phase 12
+
+- [ ] **Step 12.9.1:** `README.md` — rows for Presentation & Design,
+  LLM Wiki, AI Local all present and linking to correct files
+- [ ] **Step 12.9.2:** `tools/claude/cloud.md` — all four sections
+  present (signup, API key, env var, privacy)
+- [ ] **Step 12.9.3:** `tools/claude/cli.md` and `desktop.md` —
+  cross-reference cloud.md; duplicate account/key content removed
+- [ ] **Step 12.9.4:** `sessions/slides.md` — titled "Presentation &
+  Design"; Exercise C and D present
+- [ ] **Step 12.9.5:** `sessions/sdd_basics.md` — "Specification Driven
+  Beyond Code" subsection present with SDW, SDP, SDPKM links
+- [ ] **Step 12.9.6:** `sessions/llm_wiki.md` — Phase 4 and Home.md
+  growth guidance present
+- [ ] **Step 12.9.7:** `sessions/ai_local.md` — `tools/ollama/setup.md`
+  link resolves; ANTHROPIC_API_KEY cross-ref present
+- [ ] **Step 12.9.8:** `sessions/instructor.md` — VM Setup section
+  (Section 0) and SSH Access section present; `.ssh/config` snippet
+- [ ] **Step 12.9.9:** `projects/group_meetup/labenv.yaml` —
+  `DOCKER_SERVER_USERNAME` and `DOCKER_SERVER_PORT` keys present
+- [ ] **Step 12.9.10:** `projects/group_meetup/labsetup.py` —
+  SSH config generation and connectivity validation present
+- [ ] **Step 12.9.11:** Full-repo untagged code block count = 0
+  ```bash
+  grep -rn '^```$' sessions/ tools/claude/
+  # Must return zero results
+  ```
 
