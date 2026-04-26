@@ -42,6 +42,8 @@ Content:
 - Add your best prompts to /prompts/best.md
 - Log what failed and why in /prompts/failures.md
 - Commit session notes to /learnings/session_notes/
+- Volunteer to add more sessions, content, and/or teach new tools.
+- Contribute by donating tokens for kids to learn AI tools
 
 Slide 5 — Call to Action
 Title: "Your Turn — Let's Build"
