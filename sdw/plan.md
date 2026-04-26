@@ -1693,17 +1693,20 @@ cross-session exercise continuity, and a markdown hygiene pass.
 - [x] **Step 12.1.3: Update `projects/group_meetup/labenv.yaml`** ✅ COMPLETED (pre-existing)
   - Add `DOCKER_SERVER_USERNAME` and `DOCKER_SERVER_PORT` keys
 
-- [ ] **Step 12.1.4: Update `projects/group_meetup/labsetup.py`**
+- [x] **Step 12.1.4: Update `projects/group_meetup/labsetup.py`** ✅ COMPLETED
   - Parse new env vars from `labenv.yaml`
-  - Generate `~/.ssh/config` entry for `ai-lab`
+  - Generate `~/.ssh/<username>_id_ed25519` key pair (idempotent)
+  - Post public key to `#meetup-notifications` for instructor install
+  - Generate `~/.ssh/config` entry for `ai-lab` (idempotent)
   - Validate SSH connectivity via `subprocess.run(["ssh", "ai-lab",
-    "echo ok"])`
-  - Exit non-zero with clear message if SSH fails
+    "echo ok"])` — WARN (not error) if key not yet installed
+  - Two-phase workflow documented in `instructor.md` Section 3
 
-- [ ] **Step 12.1.5: Update `projects/group_meetup/preflight_check.py`**
-  - Add SSH check: `ssh ai-lab echo ok` → PASS/FAIL
-  - Add checks that `DOCKER_SERVER_USERNAME` and `DOCKER_SERVER_PORT`
-    are set
+- [x] **Step 12.1.5: Update `projects/group_meetup/preflight_check.py`** ✅ COMPLETED
+  - Add SSH key existence check
+  - Add SSH connectivity check: `ssh ai-lab echo ok` → PASS/FAIL
+  - Reads labenv.yaml directly for DOCKER_SERVER_* and DISCORD_SERVER
+    (does not require caller to have run labsetup.py first)
 
 ---
 
