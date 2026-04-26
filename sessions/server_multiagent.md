@@ -148,7 +148,7 @@ export DISCORD_WEBHOOK_URL="<paste from instructor>"
 > Claude Code generates all Dockerfiles and docker-compose.yml.
 > No application code changes — only packaging.
 
-```
+```text
 Show me a step-by-step plan and wait for my approval before
 writing any code or running any command.
 

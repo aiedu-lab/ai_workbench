@@ -55,7 +55,7 @@ Observe how the AI responds without an internet connection, strictly following t
 Ask Professor Newton (or your own custom agent) a question that
 connects AI Local to the Group Meetup Organizer project arc:
 
-```markdown
+```text
 Explain the Poller → Selector → Notifier pattern used in a
 Group Meetup Organizer system. Treat me like a student who
 has just learned about Python functions for the first time.

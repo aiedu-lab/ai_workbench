@@ -118,7 +118,7 @@ a toy version — real UI, fake backend.
 
 ### Lovable prompt
 
-```
+```text
 Build a one-page meetup poll app.
 
 Page 1 — Poll form:

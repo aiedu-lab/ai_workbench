@@ -371,7 +371,7 @@ No errors means the file is valid YAML.
 Create `.env.example` in the project root to document the
 required variable (placeholder only — never the real value):
 
-```
+```bash
 # Retrieve the real URL from #meetup-notifications (Section 2)
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/REPLACE_ME
 ```
@@ -409,7 +409,7 @@ python3 notifier.py  # confirm Discord message arrives
 Expected: `#meetup-notifications` in `meetup-lab-<CLASS_ID>`
 receives a message like:
 
-```
+```text
 📅 Meetup confirmed!
 Date: Thu Apr 24 7pm
 Venue: Library Room A

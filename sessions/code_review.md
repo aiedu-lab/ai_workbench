@@ -31,7 +31,7 @@ The goal is **depth before speed** — catch the issues a skim misses.
 
 There are three places AI review can run, from cheapest to most thorough:
 
-```
+```text
 Level 1: Local (before commit)
   └── claude -p "review this diff" + git diff
   └── /code-review plugin (terminal, free with Claude Code)
@@ -577,7 +577,7 @@ gh pr comment $PR_NUMBER --body "@claude review"
 
 Watch the Actions tab:
 
-```
+```text
 GitHub repo → Actions → Claude PR Review
 ```
 
@@ -594,14 +594,14 @@ Wait for the green checkmark (~2 minutes).
 #### Step 5 — View inline comments
 
 **In GitHub UI:**
-```
+```text
 PR → Files Changed tab
 → Claude's comments appear as blocks below the flagged lines
 → Each comment has 👍 👎 buttons for feedback
 ```
 
 **In VS Code:**
-```
+```text
 GitHub Pull Requests panel (left sidebar)
 → Find the PR → click it
 → Expand "Changes"
@@ -931,7 +931,7 @@ The human reviewer's job after AI review has run:
    missed these)
 3. Make the final merge decision — the AI never does this
 
-```
+```text
 AI review → catches mechanical bugs, style, security patterns
 Human review → catches business logic, architecture, intent
 Both → needed for production-grade code
@@ -968,7 +968,7 @@ the plan without rewriting it. Step 3 (Implement): Claude Code executes
 phase by phase with test gates. Step 4 (Verify): Codex CLI verifies the
 implementation against the plan.
 
-```
+```text
 STEP 1: PLAN          → Claude Opus (plan mode)
 STEP 2: REVIEW PLAN   → Codex / GPT  (adversarial review)
 STEP 3: IMPLEMENT     → Claude Sonnet (execute phase by phase)
@@ -1010,7 +1010,7 @@ decisions — that lint cannot check.
 
 The full defensive stack is:
 
-```
+```text
 Commit hook  → linter + type checker + secret scanner (deterministic)
 Pre-PR       → AI review, fresh session or cross-model (semantic)
 PR open      → GitHub Actions / Claude Code Review (automated)
@@ -1087,7 +1087,7 @@ function formatName(name) {
 Review findings that surface recurring patterns should be added to
 `CLAUDE.md` so future sessions don't repeat the mistake:
 
-```markdown
+```text
 ## CLAUDE.md addition after review session:
 ## Lessons Learned
 - formatName and similar input handlers MUST guard against null,

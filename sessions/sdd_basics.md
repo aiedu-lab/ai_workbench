@@ -14,7 +14,7 @@ coding standards here.
 * **What it does:** Tells the agent what languages to use, how to
   format code, and what tools to run.
 * **Example Rule:**
-```markdown
+```text
 Always write tests before implementing the logic.
 Use Vite for the frontend.
 ```

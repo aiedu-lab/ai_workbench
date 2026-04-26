@@ -77,7 +77,7 @@ cheaply; the LLM reasons about what made it through the filter.
 Build a four-layer pipeline that processes an incoming email.
 Reuse the Group Meetup Discord webhook — no new infrastructure.
 
-```
+```text
 Email arrives
      |
      v

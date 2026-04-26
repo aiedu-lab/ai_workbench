@@ -22,7 +22,7 @@ decks (HTML, PPTX, or Canva exports) based on a simple outline.
 ---
 
 ## 🏃‍♂️ Exercise 1: The Physics App Prototype (UI/UX)
-```markdown
+```text
 You have written the backend logic for a physics calculator, 
 but you need a beautiful interface for students to use it.
 ```
@@ -30,7 +30,7 @@ but you need a beautiful interface for students to use it.
 ### Step 1: The Prompt
 Go to URL `claude.ai/design` and start a new project. 
 Use the following prompt to generate an interactive mockup:
-```markdown
+```text
 Scenario: I need a mobile app UI prototype for a high school physics 
 tool called 'Newton's Apple'. The main screen should have:
 1. A clean, dark-mode aesthetic with neon green accents.
@@ -47,7 +47,7 @@ feels tactile.
 Claude Design allows for "Point-and-Edit" refinement. 
 1. Click on the `Calculate Force` button in the generated preview.
 2. Ask Claude to change it: 
-```markdown
+```text
 Make this button look like a glowing 3D pill.
 ```
 3. Test the interactive elements—notice how the sliders actually work.
@@ -60,20 +60,20 @@ can inject it directly into your Git repository.
 ---
 
 ## 👨‍💼 Exercise 2: The Pitch Deck (Presentations)
-```markdown
+```text
 You need to pitch 'Newton's Apple' to a panel of judges in 10 minutes.
 ```
 
 ### Step 1: Structural Prompting
 Never ask an AI to "make a presentation" all at once. Build the skeleton first.
-```markdown
+```text
 I need a 5-slide pitch deck for my app 'Newton's Apple'. The audience is a 
 high school science department. Outline the 5 slides first.
 ```
 
 ### Step 2: Visual Generation
 Once Claude provides the outline, prompt it to build the deck:
-```markdown
+```text
 Perfect. Now build the full deck. Use a bold, high-contrast design: 
 dark navy backgrounds, white text, and orange accents. Add a subtle 
 fade transition between the slides. On the 'Market' slide, include an 

@@ -20,7 +20,7 @@ Download and install the app for your OS:
 
 Send this message in Claude Desktop:
 
-```markdown
+```text
 Explain how a credit card works in 3 simple sentences.
 ```
 

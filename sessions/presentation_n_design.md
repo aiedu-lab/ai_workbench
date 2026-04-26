@@ -95,7 +95,7 @@ Students watch AI generate the deck in real time — that IS the demo.
 
 ### Exercise A — "How AI Agents Work" (Individual, Gamma)
 
-```markdown
+```text
 Explain "How AI agents work"
 ```
 
@@ -163,7 +163,7 @@ calculator and need a beautiful interface.
 Go to [claude.ai/design](https://claude.ai/design) and start a new
 project. Use this prompt:
 
-```markdown
+```text
 Scenario: I need a mobile app UI prototype for a high school physics
 tool called 'Newton's Apple'. The main screen should have:
 1. A clean, dark-mode aesthetic with neon green accents.
@@ -202,7 +202,7 @@ the Claude Code CLI can inject it directly into a Git repo.
 
 Never ask AI to "make a presentation" all at once. Outline first:
 
-```markdown
+```text
 I need a 5-slide pitch deck for my app 'Newton's Apple'. The
 audience is a high school science department. Outline the 5 slides
 first.
@@ -212,7 +212,7 @@ first.
 
 Once Claude provides the outline:
 
-```markdown
+```text
 Perfect. Now build the full deck. Use a bold, high-contrast design:
 dark navy backgrounds, white text, and orange accents. Add a subtle
 fade transition between the slides. On the 'Market' slide, include

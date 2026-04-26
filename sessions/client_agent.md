@@ -110,7 +110,7 @@ unchanged — the agent must produce the same `responses.json`,
 > work, and generates code. `agent_meetup.py` is the output, a
 > plain Python script, not an agent itself.
 
-```
+```text
 Show me a step-by-step plan and wait for my approval before
 writing any code or running any command.
 

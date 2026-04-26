@@ -27,7 +27,7 @@ We will watch the AI connect two seemingly unrelated articles.
 ### Phase 1: The First Ingest
 1. **Source:** Download a Wikipedia PDF about "Moore's Law" and put it in 
 `raw_sources/`.
-```markdown
+```text
 curl -o raw_sources/moores_law.html \
 "https://en.wikipedia.org/wiki/Moore%27s_law"
 ```
@@ -41,7 +41,7 @@ small cluster of linked notes.
 ### Phase 2: The Compound Effect
 1. **Source:** Download an article about "The History of Artificial 
 Intelligence" and drop it into `raw_sources/`.
-```markdown
+```text
 curl -o raw_sources/history_of_ai.html \
 "https://en.wikipedia.org/wiki/History_of_artificial_intelligence"
 ```
@@ -58,7 +58,7 @@ to make yourself.
 
 1. **Prompt:**
 
-```markdown
+```text
 Based ONLY on my wiki, explain how hardware limitations
 dictated the timeline of AI advancements. Please generate
 the response as a separate file hw_relation_to_ai_advancement.md
@@ -94,7 +94,7 @@ curl -o raw_sources/gpu_computing.html \
 
 #### Step 2: Ingest and link
 
-```markdown
+```text
 Ingest raw_sources/gpu_computing.html. Create concept notes,
 people notes, and technology notes following the same pattern
 as the existing wiki. Cross-reference new notes with existing
@@ -120,7 +120,7 @@ your knowledge graph compounded.
 
 Then query your personal knowledge graph:
 
-```markdown
+```text
 Based ONLY on my wiki, explain how GPU computing transformed the
 pace of AI breakthroughs after Moore's Law began to plateau. 
 Please generate the response as a separate file 
@@ -166,7 +166,7 @@ a sub-bullet under an existing entry.
 
 Bridge this session back to the main project arc:
 
-```markdown
+```text
 Ingest plans/specs/event_organizer.md. Create concept notes for
 Poller, Selector, and Notifier. Create a technology note for
 Discord Webhooks. Cross-reference with existing AI and systems
