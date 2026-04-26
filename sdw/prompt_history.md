@@ -2,7 +2,7 @@
 
 This file maintains a chronological ledger of prompts that led to the creation and evolution of the Specification Driven Workbench (SDW).
 
-## Initial Unrecorded Prompts (Reverse Engineered)
+## Purpose
 
 **Prompt:** "Act as an expert computer science educator. I want to build a hands-on AI lab for high schoolers and non-CS undergrads. The lab should teach them how to build AI-powered applications, starting from basic prompting to multi-agent server workflows. Help me structure the initial agenda, the overarching 'Group Meetup Organizer' project, and the markdown files needed for the sessions. I want this to be a 'Specification Driven' project where we define the plan in markdown first."
 
@@ -10,9 +10,9 @@ This file maintains a chronological ledger of prompts that led to the creation a
 
 ---
 
-## add_embed_RAG_prompt.md
+## Embed RAG Plan Prompt
 
-# Embed RAG Plan Prompt
+### extracted from add_embed_RAG_prompt.md
 
 Reference `README.md` and `sdw/plan.md`
 
@@ -53,11 +53,11 @@ Suggest any changes as an update to the plan in `sdw/plan.md` that meets the abo
 
 ---
 
-## merge_plan_prompt.md
+## Merging various Prompts and Specification Plans Prompt
 
-# Merging various Prompts and Specification Plans Prompt
+## extracted from merge_plan_prompt.md
 
-## OBJECTIVE
+### OBJECTIVE
 I am creating an AI workbench for high schoolers and non-CS major 
 undergraduates. As part of that I've created a specification
 driven workbench (SDW) with the plan driving the creation of the
@@ -66,7 +66,7 @@ workbench in `sdw`.
 Please read markdown files in`sdw` and `projects/llm_wiki/` 
 directory.
 
-## CONTEXT
+### CONTEXT
 Unfortunately, I was not disciplined in collating all the
 prompts that led to the creation of the workbench and the 
 initial workbench content was not created via a structured 
@@ -77,9 +77,9 @@ first part available in `sdw/sdd_server_workflow_plan.md` and the
 second part in `sdw/plan.md`. The prompts that led tot the plan
 itself have a pattern of `sdw/*_prompt.md`.
 
-##TASK
+### TASK
 
-### Best Practices for Specification Plans
+#### Best Practices for Specification Plans
 * What are the **best practices** for saving the prompts that lead to the
 creation of the plan? That is are the prompts that lead to the creation
 of the specifications are to be git stored and versioned OR are they 
@@ -96,7 +96,7 @@ to be "treated as a scratch pads"?
 What would you recommend? Based on your recomendation, please suggest
 the plan of changes to `sdw/plan` or a new plan file as appropriate .
 
-#### Organization of Plan files:
+##### Organization of Plan files:
 Furthermore, even if they are to be stored in git, should they be 
 consolidated into a single file or should they be stored in separate files? 
 
@@ -117,7 +117,7 @@ files?
 What would you recommend? Based on your recomendation, please suggest
 the plan of changes to `sdw/plan` or a new plan file as appropriate .
 
-### Executed Project Plans vs Original Project Plans
+#### Executed Project Plans vs Original Project Plans
 
 * Reference an original project plan in `projects/llm_wiki/llm_wiki_plan.md`. 
 As an instructor, I executed the plan which resulted in an obsidian cross 
@@ -138,7 +138,7 @@ during execution?
 What would you recommend? Based on your recomendation, please suggest
 the plan of changes to `sdw/plan` or a new plan file as appropriate.
 
-## Trigger Prompt
+### Trigger Prompt
 ```markdown
 Reference the prompts in `sdw/merge_plan_prompt.md` and offer your 
 recommendations. Please offer the updates to specification plans 
@@ -147,15 +147,13 @@ file and git committed. Please do NOT make any changes to the files
 until you have my approval.
 ```
 
-
-
 ---
 
-## pkm_design_local_prompt.md
+##  PKM, Design, and Local Plan Prompt
 
-# PKM, Design, and Local Plan Prompt
+## extracted from pkm_design_local_prompt.md
 
-## PKM - Session Plan
+### PKM - Session Plan
 
 There is a lot of buzz around Obsedian-Claude use case. Can you shed 
 some light as to what is the use case that Claude integration with 
@@ -171,7 +169,7 @@ installation instructions, key take aways, references, etc and
 an accompanying exercise that is both simple and clearly 
 illustrates the benefit.
 
-## Claude Design - Session Plan
+### Claude Design - Session Plan
 
 Claude just released Claude Design released as part of `Pro` 
 subscription package. Is it a separate tab in `Claude Desktop` 
@@ -190,7 +188,7 @@ and an accompanied exercise that helps kids familiarize with the
 concepts, benefits, etc. of `Claude Design`?
 
 
-## AI Local
+### AI Local
 What is 'AI Local'? What is the dominant use case for 'AI Local'? 
 Does it require laptops with specialized hardware or can be run on 
 commodity laptop? May we add a session on the trend of `AI Local` 
@@ -198,90 +196,9 @@ with an accompanied exercise that be used to illustrate 'AI Local'?
 
 ---
 
-## pkm_sdd_prompt.md
+## SDLC Environment Plan Prompt
 
-# Specification Driven Activities Plan Prompt
-
-## OBJECTIVES
-
-* Read `sdw/plan.md`, `sessions/claude_design.md`, `sessions/llm_wiki.md`, 
-`sessions/instructor.md`, `tools/VM/setup.md`, `tools/ollama/setup.md`
-
-* Suggest an addition or amendment plan to `sdw/plan.md` to incorporate 
-the following tasks:
-
-## TASKS:
-
-### `tools/instructor.md`: 
-#### VM Setup
-Create a section on VM setup - reference `tools/VM/setup.md`
-#### SSH Access
-Create a section on remote ssh access from your Win/MAC laptop to Docker Server. 
-Note the server-IP/name, username, and server-PORT is available as environment
-variables passed via 
-* DOCKER_SERVER_ID
-* DOCKER_SERVER_USERNAME
-* DOCKER_SERVER_PORT
-* Instructions with snippet to add to .ssh/config as a convenience instead of 
-having to type all parameters everytime. 
-```bash
-ssh -p $DOCKER_SERVER_PORT -i ~/.ssh/your_private_key \
-$DOCKER_SERVER_USERNAME@DOCKER_SERVER_ID
-```
-* Update `projects/group_meetup/labsetup.py` to ensure the above setup for students 
-is automated and update `projects/group_meetup/preflight_check.py` to ensure the 
-setup is validated, such as SSH access is working as expected.
-#### Claude.ai Account Setup
-* Add a section or update section that sets up claude.ai account - link to 
-`tools/claude/cloud.md` that should have signup instructions for account, 
-provider account, provider key, etc. - some of that could be duplicated 
-in `tools/claude/cli.md` or `tools/claude/desktop.md` which we should 
-clean up.
-* Explicitly DISALLOW Claude.ai to learn from your data or use your 
-location services: claude.ai ⇒ User Logo ⇒ Settings ⇒ Privacy
-```markdown
-Allow Claude to use coarse location metadata (city/region) to improve 
-product experiences. Learn more.
-Help improve Claude
-Allow the use of your chats and coding sessions to train and improve Anthropic AI models.
-```
-
-### Update `sessions`
-#### Specification Driven Workbench
-
-
-#### Specification Driven Slides and Design - Claude Design
-
-
-#### Specification Driven Personal Knowledge Management
-
-Centralize the plan for validating the exercise
-Obsedian and Claude
-* Add a kid friendly exercise to LLM_Wiki - review PKM
-* How to update PKM when additional topics not related to Compute or AI is added to raw_sources? Is the idea to keep everything in a single home.md?
-Collate all the plans and consolidate into one plan and the prompts that generated the plan into one prompt. What about the prompts through which previous git version content was created - can it be reverse engineered?
-Note taking: Recall; Voice: 11labs; Persona: Anum
-Replace all ```bash with ```markdown
-AI local
-Centralize the plan for validating the exercise.
-Find appropriate places to graft these sessions in README.md agenda.git a
-
-
-OUTPUT:
-Please generate the changes proposed to the plan in `sdw/plan.md` that will drive the changes to
-course content in various folders - `sessions`, `tools`, `projects` etc.
-
-
-CONSTRAINTS:
-Do NOT change the plan in `sdw/plan.md` directly. I'd like to first review your proposes
-changes in phases/steps FIRST before we change the plan file.
-
-
----
-
-## sdlc_env_prompt.md
-
-# SDLC Environment Plan Prompt
+### extracted from sdlc_env_prompt.md
 
 OBJECTIVES
 * Read `sdw/plan.md` and `sessions/sdlc_ai.md`
@@ -311,3 +228,194 @@ OUTPUT:
 Please offer the changes to the plan in `sdw/plan.md` using which we will make the appropriate adjustments to `sessions/intructor.md`, scripts in `projects/group_meetup`, and session content and/or content/exercises in `sessions/sdlc_ai.md` for testing section.
 
 ---
+
+## Specification Driven Activities Plan Prompt
+
+### extracted from pkm_sdd_prompt.md
+
+### OBJECTIVES
+
+* Read section `#Purpose`
+
+* Reference `sdw/plan.md`
+
+* Suggest an amendment to `sdw/plan.md` to incorporate the below remaining 
+part of this section:
+
+### TASKS:
+
+#### Instructor & Group Meetup Setup
+
+This section covers updates to set up files:
+* [Instructor](../sessions/instructor.md)
+* [Lab](../projects/group_meetup/labsetup.py) 
+* [Preflight](../projects/group_meetup/preflight_check.py)
+
+##### VM Setup
+Create a section on instructions with Virtual Machine (VM) setup 
+and reference in it a link to `tools/VM/setup.md`
+
+##### SSH Access
+1. Create a section on instructions with remote ssh access from your laptop
+Windows or MacOS laptop to Docker Server. 
+
+Note the server-IP/name, username, and server-PORT is available as environment
+variables passed via 
+* DOCKER_SERVER_ID
+* DOCKER_SERVER_USERNAME
+* DOCKER_SERVER_PORT
+
+2. Add instructions with snippet to add to .ssh/config as a convenience 
+instead of having to type all parameters everytime. 
+```bash
+ssh -p $DOCKER_SERVER_PORT -i ~/.ssh/your_private_key \
+$DOCKER_SERVER_USERNAME@DOCKER_SERVER_ID
+```
+
+3. Modify Lab Setup file to ensure the SSH setup from students to Docker Server
+is updated, automated, and validated i.e. ssh config file is set, environment
+variable existence is validated, and ssh is working as expected.  
+
+#### Claude.ai Account Setup
+
+1. Create a file [Claude Cloud Setup](../tools/claude/cloud.md) that has 
+* Signup: instructions for every student's claude.ai account
+* API: Setting up API key
+* API Call Setup: Saving it in a local environment variable ANTHROPIC_API_KEY. 
+* Privacy: Explicitly DISALLOW Claude.ai to learn from your data or use your 
+location services: claude.ai ⇒ User Logo ⇒ Settings ⇒ Privacy
+```bash
+Allow Claude to use coarse location metadata (city/region) to improve 
+product experiences. Learn more.
+Help improve Claude
+Allow the use of your chats and coding sessions to train and improve 
+Anthropic AI models.
+```
+
+2. Reference this claude.ai account setup wherever appropriate.  
+Some instructions of `Claude Cloud Setup` maybe duplicated in few files, 
+such as:
+* [Claude CLI Setup](../tools/claude/cli.md) and 
+* [Claude Desktop Setup](../tools/claude/desktop.md)
+
+Ensure the duplications are removed and cross references are added so to 
+maintain DRY principle.
+
+#### Update `sessions`
+
+##### Specification Driven **XXX**
+
+Here **XXX** means any useful activity, such as:
+* `Workbench`, 
+* `Presentation` (`Slides and Design`) 
+* `Personal Knowledge Management (PKM)`
+* `Development`
+
+Consider adding the below sections as part of an existing session or 
+create new sessions as appropriate. Whenever you propose modifying an 
+existing session or adding new session, please update the agenda 
+in `README.md` so that the content is consistent.
+
+###### Specification Driven Workbench - SDW
+
+This `AI workbench` is itself built using Specifications. Add a 
+section referencing the `sdw/plan.md` as an illustration.
+
+###### Specification Driven Presentation - SDP
+
+`Claude Design` can create aesthetically pleasing Slides and Design 
+content. Expand the session on [Slides](../sessions/slides.md) 
+to include the content and exercises created in 
+[Claude Design](../sessions/claude_design.md), rename the 
+session on `Slides` to a session on `Presentation`, make the session 
+content coherent and consistent with other session by adding appropriate 
+sections ie do not just concatenating the session files, and update 
+all references as appropriate.
+
+###### Specification Driven Personal Knowledge Management - SDPKM
+
+Karpathy introduced a way for everyone to have their person LLM-Wiki 
+using Obsedian and IDE and LLM for cross referencing knowledge graph.
+
+Reference [LLM Wiki](../sessions/llm_wiki.md) and modify an existing
+session or create a new session as appropriate. Add a section within 
+the exercise section that consolidates content in `Home.md` 
+(currently has cross links between `Moore's Law` and `History of AI`) 
+clarifying how additonal topics unrelated to the above two 
+are coherently factored in `home.md`.
+
+
+###### Specification Driven Development - SDD
+
+We already have a full `Concept` and `Exercise` session on SDD 
+that is also referenced in `README.md` - add a section to links 
+other Specification Driven Work, such as SDW, SDP, SDPKM, just
+as illustration that SDD is just one field among many feasible via AI
+
+
+#### AI Local
+
+AI Local allows one to run LLM models locally on client laptops and 
+then build, test, and deliver intelligent local apps. 
+
+Reference [AI Local](../sessions/ai_local.md) and create a new session
+or modify an existing session as appropriate.
+
+#### Connect execises across sessions where feasible
+
+Explore whether it is feasbile to build over the exercise projects 
+proposed in SDP, SDPKM, SDP, AI Local, and optionally from other 
+session so that students have a sense of continuity and that they 
+are building one over another. 
+
+Of course, if the continuity forces tough or complex exercises or is NOT 
+feasible then let us craft exercises as common as possible across the 
+above sessions. Reasons we may not attempt a coherent arc for 
+exercises across certian sessions may be limitations - say if we find 
+that `AI Local` forces simple exercise or `SDPKM` does not easily lend 
+to other exercises, etc
+
+
+#### Hygiene
+
+Make references to all markdowns consistent. 
+
+1. If the markdown encapsulate a terminal command, use:
+```bash
+...
+```
+
+2. If the markdown encapsulates just a special string, use:
+```markdown
+...
+```
+
+#### Consistency
+
+Run a consistent check across content in AI Workbench. Example is 
+review README.md, all markdown file references across all subdirectories,
+such as `sessions/`, `projects/`, `tools/`, etc. are consistent including
+that all session content and project preferences are appropriately placed.
+
+### OUTPUT:
+Please generate the changes proposed to the plan in `sdw/plan.md` that 
+will drive the changes to workbench content in various folders, such 
+as `sessions`, `tools`, `projects` etc.
+
+### CONSTRAINTS:
+Propose the change to the plan in `sdw/plan.md` BUT do NOT change the 
+plan directly. Propose the change first as a separate markdown file
+`sdw/plan.v2.md` that can be reviewed in terms of changes in 
+phases/steps to the plan of record `sdw/plan.md` file. Once approved
+we can incorporate the changes to `sdw/plan.md` and start executing
+to amend the workbench content.
+
+---
+
+## Replan Trigger Prompt
+
+Read `sdw/plan.md`.
+Reference [Replan Prompt](#specification-driven-activities-plan-prompt).
+What is the title of the section and key contents?
+Once I confirm you have narrowed to the correct section, generate the 
+specification plan changes to meet the requirements of that section.
