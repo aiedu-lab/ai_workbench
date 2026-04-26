@@ -11,7 +11,7 @@ Time required: approximately 60 minutes.
 
 ---
 
-## Section 0 — Provision Instructor VM (15 min)
+## Section 0 — Provision Docker VM on Server - set up by Instructor (15 min)
 
 > **Reference:** [VM Setup Guide](../tools/VM/setup.md) — full
 > instructions for Windows (WSL2) and macOS (Parallels) VMs.

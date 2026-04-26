@@ -412,10 +412,125 @@ to amend the workbench content.
 
 ---
 
+## Improve Setup Skill RAG 
+
+### OBJECTIVES
+
+* Read section `#Purpose`
+
+* Reference `sdw/plan.md`
+
+* Suggest an amendment to `sdw/plan.md` to incorporate the below remaining 
+part of this section:
+
+### TASKS:
+
+#### Students **Development System** Setup
+
+Review and validate 
+[Development Workbench](../sessions/dev_workbench.md) as it is 
+what is used to help set up the development workbench 
+for learners. Reference this session as the session 
+in the agenda immediately after the one after `instructor` 
+in README.md. 
+
+#### Move Setup and Install Content to Development System
+
+1. Clean up the instructor.md of any references that are 
+meant for students. For example, [Instructor](../sessions/instructor.md)
+has Section 0 Provision Docker VM on Server that has a 
+reference to VM Setup Guide. That reference should be removed
+as [VM Setup Guide](../tools/VM/setup.md) is for provisioning VMs on
+student laptops - NOT for provisioning Docker VMs on server side.
+
+2. Review files and identify if we've any session that
+dedicates to help students set up the development system
+and associated environment. Move those sections to 
+[Development Workbench](../sessions/dev_workbench.md).
+
+For example, move sections in [Instructor](../sessions/Instructor.md) for 
+students into [Development System](../sessions/development_system.md) 
+that are meant for students.
+
+
+3. If there are files that reference the exact steps to setup and install 
+of the below commonly used tools for development into 
+[Develoment System](../tools/dev_system) directory.
+Specifically move the following files to ../tools/dev_system:
+* [GitHub](../tools/github.md)
+* [VS Code](../tools/vscode.md) 
+* [LLM Provider Cost Management](../tools/provider_cost_control.md)
+
+
+#### GitHub - Cloud Account and SSH Setup
+
+Review [GitHub](../tools/dev_system/github.md) - validate that 
+there is a section that students can reference on how to set up 
+github: account setup, provision ssh private/public 
+key (just as they did for SSH to DOCKER_SERVER), and upload the ssh 
+key to the GitHub account associated with the user. Add the 
+corresponding github access key to .ssh/config via 
+[Lab Setup](../projects/group_meetup/labsetup.py) and add a test in  
+[Preflight Check](../projects/group_meetup/preflight_check.py) 
+to ensure git commands are working for the user.
+
+#### MacOS Setup
+
+1. Replace the [VM Setup](../tools/VM/setup.md) for MacOS from 
+Parallels VM to Dev Container
+2. Add a section on [Instructor](../sessions/Instructor.md) 
+that lays out how a student should thinks about the platforms 
+used for different tools, VSCode frontend on Win11/MacOS, 
+Ubuntu for development, etc. 
+
+#### Update Embedding Skills RAG
+
+The current reference to Embedding, Skills, and RAG in 
+[advanced prompting](../sessions/prompting_advanced.md) is NOT 
+reinforced in later sessions or sections. 
+
+For example:
+1. Any exercises in sessions/ after the Advance Prompting session 
+do NOT build on Skills. Please revisit exercises in later sessions
+and find opportunities to build Skills. 
+
+2. The [LLM Wiki](../sessions/llm_wiki.md) technique completely 
+does away with the need to build RAG tooling. Reinforce this concept
+in the LLM Wiki session and reference link to `Advanced Prompting` 
+section on RAGs.
+
+3. Explore if there are student friendly exercise to use embeddings 
+(BERT?) for similarity to Ollama LLM in [AI Local](../sessions/ai_local.md) 
+session. Or scope to use lightweight RAG for an exercise in later sessions?
+
+#### Consistency
+
+Run a consistent check across content in AI Workbench. Example is 
+review README.md, all markdown file references across all subdirectories,
+such as `sessions/`, `projects/`, `tools/`, etc. are consistent including
+that all session content and project preferences are appropriately placed.
+
+### OUTPUT:
+Please generate the changes proposed to the plan in `sdw/plan.md` that 
+will drive the changes to workbench content in various folders, such 
+as `sessions`, `tools`, `projects` etc.
+
+### CONSTRAINTS:
+Propose the change to the plan in `sdw/plan.md` BUT do NOT change the 
+plan directly. Propose the change first as a separate markdown file
+`sdw/plan.v2.md` that can be reviewed in terms of changes in 
+phases/steps to the plan of record `sdw/plan.md` file. Once approved
+we can incorporate the changes to `sdw/plan.md` and start executing
+to amend the workbench content.
+
+---
+
 ## Replan Trigger Prompt
 
 Read `sdw/plan.md`.
-Reference [Replan Prompt](#specification-driven-activities-plan-prompt).
+Reference [Replan Prompt](./sdw/prompt_history.md#improve-setup-skill-rag).
 What is the title of the section and key contents?
 Once I confirm you have narrowed to the correct section, generate the 
-specification plan changes to meet the requirements of that section.
+specification plan changes to meet the requirements of that section 
+as a markdown file sdw/plan.v2.md. Once the plan change is approved
+add the sdw/plan.md starting from Phase 14 and Steps in the phase.
