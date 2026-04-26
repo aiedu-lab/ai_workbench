@@ -567,7 +567,7 @@ step includes a validation test so the instructor knows it worked.
   ```
   Expected: `#meetup-notifications` in `meetup-lab-<CLASS_ID>`
   receives a message like:
-  ```
+  ```text
   📅 Meetup confirmed!
   Date: Thu Apr 24 7pm
   Venue: Library Room A
@@ -579,7 +579,7 @@ step includes a validation test so the instructor knows it worked.
 
   Add as the first row, before all session rows:
 
-  ```markdown
+  ```text
   | [**Instructor Preflight**](sessions/instructor.md) | Before lab | Roster, Discord, server, student laptops | 60 mins |
   ```
 
@@ -1763,7 +1763,7 @@ cross-session exercise continuity, and a markdown hygiene pass.
     > "Gamma: content structure. Claude Design: visual design. A
     > production presentation benefits from both."
 
-- [x] **Step 12.3.2: Update `README.md` agenda row** ✅ COMPLETED
+- [ ] **Step 12.3.2: Update `README.md` agenda row**
   - Change "Exercise: Create Presentation" →
     "Exercise: Presentation & Design"
   - Link updated to `sessions/presentation_n_design.md`
@@ -1790,7 +1790,7 @@ cross-session exercise continuity, and a markdown hygiene pass.
 
 **Target file:** `sessions/llm_wiki.md`
 
-- [ ] **Step 12.5.1: Add Phase 4 and Home.md growth guidance**
+- [x] **Step 12.5.1: Add Phase 4 and Home.md growth guidance** **COMPLETED**
 
   **Phase 4 — Expand with a New Topic:**
   - Student picks any topic (e.g., Quantum Computing, Climate Change)
@@ -1804,7 +1804,7 @@ cross-session exercise continuity, and a markdown hygiene pass.
   > Law and AI History topics (from Phases 2–3) are the model: each
   > has its own concept notes, people notes, and Home.md entries."
 
-- [ ] **Step 12.5.2: Add `sessions/llm_wiki.md` to `README.md` agenda**
+- [x] **Step 12.5.2: Add `sessions/llm_wiki.md` to `README.md` agenda** **COMPLETED**
   - Add row if absent
   - Position: after Solution Architecture, before Future Advancements
   - Tool: Obsidian + Claude Code
@@ -1815,12 +1815,12 @@ cross-session exercise continuity, and a markdown hygiene pass.
 
 **Target files:** `sessions/ai_local.md`, `README.md`
 
-- [ ] **Step 12.6.1: Add `sessions/ai_local.md` to `README.md` agenda**
+- [x] **Step 12.6.1: Add `sessions/ai_local.md` to `README.md` agenda** **COMPLETED**
   - Add row if absent
   - Position: after LLM Wiki, before Future Advancements
   - Tool: Ollama
 
-- [ ] **Step 12.6.2: Verify cross-references in `sessions/ai_local.md`**
+- [x] **Step 12.6.2: Verify cross-references in `sessions/ai_local.md`** **COMPLETED**
   - Confirm `tools/ollama/setup.md` link resolves
   - Add cross-reference to `tools/claude/cloud.md` for
     `ANTHROPIC_API_KEY` if the session uses the Claude API
@@ -1831,11 +1831,11 @@ cross-session exercise continuity, and a markdown hygiene pass.
 
 **Target files:** `sessions/llm_wiki.md`, `sessions/ai_local.md`
 
-- [ ] **Step 12.7.1: Add Group Meetup optional exercise to `llm_wiki.md`**
+- [x] **Step 12.7.1: Add Group Meetup optional exercise to `llm_wiki.md`** **COMPLETED**
   - Optional Exercise D: ingest `plans/specs/event_organizer.md` into
     the vault — bridges the PKM session back to the main project arc
 
-- [ ] **Step 12.7.2: Add stretch goal to `sessions/ai_local.md`**
+- [x] **Step 12.7.2: Add stretch goal to `sessions/ai_local.md`** **COMPLETED**
   - Stretch: ask the Ollama Socratic Tutor "Explain the Poller →
     Selector → Notifier pattern" — connects AI Local to the project arc
 
@@ -1845,14 +1845,14 @@ cross-session exercise continuity, and a markdown hygiene pass.
 
 **Target files:** All `sessions/*.md`, `tools/claude/*.md`
 
-- [ ] **Step 12.8.1: Audit untagged code blocks**
+- [x] **Step 12.8.1: Audit untagged code blocks** **COMPLETED**
   ```bash
   grep -rn '^```$' sessions/ tools/claude/
   ```
 
-- [ ] **Step 12.8.2: Tag each untagged block**
+- [x] **Step 12.8.2: Tag each untagged block** **COMPLETED**
   - `bash` for terminal commands
-  - `markdown` for special strings / prompt snippets
+  - `text` for special strings, prompt snippets, ASCII diagrams
   - `python` / `yaml` / `json` for their respective types
   - Validation: re-run audit → zero results
 
