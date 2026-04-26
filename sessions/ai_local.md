@@ -50,6 +50,23 @@ Observe how the AI responds without an internet connection, strictly following t
 
 ---
 
+## 🔗 Stretch Goal — Connect to the Main Project
+
+Ask Professor Newton (or your own custom agent) a question that
+connects AI Local to the Group Meetup Organizer project arc:
+
+```markdown
+Explain the Poller → Selector → Notifier pattern used in a
+Group Meetup Organizer system. Treat me like a student who
+has just learned about Python functions for the first time.
+```
+
+Observe that the local model answers entirely offline — the same
+architectural concept taught throughout the lab, now explained by
+an AI you built yourself, running on your own hardware.
+
+---
+
 ## 🧹 Phase 3: Tear Down & Resource Recovery
 Local AI consumes significant RAM while active. To "clean up" your workbench so your other apps don't lag:
 

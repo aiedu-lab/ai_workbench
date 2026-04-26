@@ -55,13 +55,123 @@ Moore's Law to the breakthroughs in AI—connections you didn't have
 to make yourself.
 
 ### Phase 3: The Synthesis
-1. **Prompt:** 
+
+1. **Prompt:**
+
 ```markdown
-Based ONLY on my wiki, explain how hardware limitations 
-dictated the timeline of AI advancements. Please generate 
-the response as a separate file hw_relation_to_ai_advancement.md 
+Based ONLY on my wiki, explain how hardware limitations
+dictated the timeline of AI advancements. Please generate
+the response as a separate file hw_relation_to_ai_advancement.md
 in the project/llm_wiki/ directory.
 ```
-2. **Key Takeaway:** The AI isn't searching the open internet; it is 
-providing a synthesized answer based entirely on the curated knowledge 
+
+2. **Key Takeaway:** The AI isn't searching the open internet; it is
+providing a synthesized answer based entirely on the curated knowledge
 graph it built for you.
+
+---
+
+### Phase 4: Expand with a New Topic
+
+**Suggested topic: GPU Computing**
+> Why this topic? GPU Computing connects directly to both Moore's Law
+> (billions of transistors packed onto a single chip) and the History
+> of AI (the GPU-powered deep learning revolution of 2012 that ended
+> the second AI Winter). Ingesting it will generate many new cross-links
+> to existing notes — Dennard Scaling, Deep Learning, Transformer
+> Architecture, Gordon Moore, and more.
+
+You are free to choose any topic you find interesting. If you pick
+your own topic, follow the same four steps below and explore whatever
+connections emerge.
+
+#### Step 1: Download the source
+
+```bash
+curl -o raw_sources/gpu_computing.html \
+  "https://en.wikipedia.org/wiki/Graphics_processing_unit"
+```
+
+#### Step 2: Ingest and link
+
+```markdown
+Ingest raw_sources/gpu_computing.html. Create concept notes,
+people notes, and technology notes following the same pattern
+as the existing wiki. Cross-reference new notes with existing
+ones (especially Moore's Law, Dennard Scaling, Deep Learning,
+and Transformer Architecture) where the topics connect. Update
+Home.md to include the new topic under the appropriate sections.
+```
+
+#### Step 3: Verify
+
+```bash
+python3 projects/llm_wiki/verify_links.py
+```
+
+All checks must pass: zero orphans, zero broken wikilinks.
+
+#### Step 4: Explore the knowledge graph
+
+Open **Obsidian Graph View**. Navigate `Home.md` and look for
+connections between GPU Computing and the previous topics. Note
+which existing notes gained new incoming links — this is where
+your knowledge graph compounded.
+
+Then query your personal knowledge graph:
+
+```markdown
+Based ONLY on my wiki, explain how GPU computing transformed the
+pace of AI breakthroughs after Moore's Law began to plateau. 
+Please generate the response as a separate file 
+gpu_impact_on_ai_breakthrough.md in the project/llm_wiki/ 
+directory
+```
+
+A strong answer will pull from at least four topics: Moore's Law,
+Dennard Scaling, Deep Learning, and Transformer Architecture —
+showing that the knowledge graph is genuinely connected.
+
+> **If you chose your own topic:** navigate `Home.md` to discover
+> which previous topics your new topic relates to — the cross-links
+> reveal the connections. Then form your own synthesis question that
+> ties your new topic to at least two existing ones.
+
+---
+
+### Coherent Home.md Growth
+
+`Home.md` is the **index**, not the encyclopaedia. Each topic that
+enters the vault should add only a small number of canonical entries
+to `Home.md` — one line per major concept, person, or technology.
+The detail lives in the individual notes.
+
+**Model:** look at how Moore's Law and AI History were factored in
+(Phases 1–2). Each topic added:
+- A handful of entries under **Recent Additions**
+- Key concept titles under **Core Concepts**
+- Names under **People** (grouped by era or field)
+- Key technologies under **Technologies**
+
+Follow the same pattern for every new topic. A cluttered `Home.md`
+defeats the purpose — if a concept is niche, skip it or add it as
+a sub-bullet under an existing entry.
+
+> **Rule:** if removing a `Home.md` entry wouldn't confuse a future
+> reader of the vault, don't add it.
+
+---
+
+### Optional Extension — Group Meetup Organizer PKM
+
+Bridge this session back to the main project arc:
+
+```markdown
+Ingest plans/specs/event_organizer.md. Create concept notes for
+Poller, Selector, and Notifier. Create a technology note for
+Discord Webhooks. Cross-reference with existing AI and systems
+notes where they connect. Update Home.md.
+```
+
+This connects the PKM session to the Group Meetup Organizer project
+that runs through every other session in the lab.

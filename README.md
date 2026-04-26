@@ -31,6 +31,8 @@ for various use cases, such as coding, automation, etc. using:
 | [**Exercise: Create/Run Multi-Agent Workflows on Laptop**](sessions/client_multiagent.md) | 60 mins | [Claude Code (CLI)](tools/claude/cli.md), [OpenAI Codex (CLI)](tools/openai/codex_cli.md) | 15 mins |
 | [**Exercise: Run Multi-Agent Workflows on Server**](sessions/server_multiagent.md) | 60 mins | [OpenClaw](tools/openclaw/cli.md), [Temporal](tools/temporal/cli.md) | 15 mins |
 | [**Concept: Solution Architecture**](sessions/solution.md) | 45 mins | [Claude Chat](tools/claude/desktop.md), Python |  |
+| [**Exercise: Personal Knowledge Management (LLM Wiki)**](sessions/llm_wiki.md) | 60 mins | [Obsidian](https://obsidian.md), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
+| [**Exercise: AI Local**](sessions/ai_local.md) | 45 mins | [Ollama](tools/ollama/setup.md) | 15 mins |
 | [**Future Advancements**](sessions/future_advancements.md) | 30 mins |  |  |
 | [**Recap**](sessions/recap.md) | 30 mins |  |  |
 
