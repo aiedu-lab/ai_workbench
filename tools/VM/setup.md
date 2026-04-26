@@ -2,15 +2,106 @@
 
 ## Windows
 
-**WSL**
+**WSL (Windows Subsystem for Linux)** lets you run a full Linux
+environment directly on Windows — no separate VM software, no dual
+boot. WSL2 uses a real Linux kernel inside a lightweight managed VM,
+giving you a native Ubuntu terminal, file system, and networking
+alongside your Windows desktop.
 
-## Why WSL
+### Why WSL
+
+- **Native Linux toolchain** — Python, Git, Docker, and Claude Code
+  behave identically to a Linux server; no path or line-ending issues.
+- **Zero licence cost** — built into Windows 11 and Windows 10 (2004+);
+  no Parallels or VirtualBox licence required.
+- **VSCode integration** — the Remote-WSL extension opens any folder
+  inside WSL as if it were a local project; the terminal, debugger,
+  and extensions all run on Linux.
+- **Docker Desktop compatibility** — Docker Desktop for Windows uses
+  the WSL2 backend; containers run with near-native performance.
+- **Fast startup** — WSL2 starts in seconds; no boot sequence.
 
 ### Installation
 
+**Requirements:** Windows 11 (recommended) or Windows 10 version 2004+
+with admin rights.
+
+```bash
+# 1. Open PowerShell as Administrator and run:
+wsl --install
+
+# This installs WSL2 + Ubuntu (latest LTS) in one step.
+# Reboot when prompted.
+
+# 2. After reboot, Ubuntu opens automatically to finish setup.
+#    Create a UNIX username and password when prompted.
+
+# 3. Verify WSL2 is the default:
+wsl --status          # Default Version: 2
+
+# 4. Verify Ubuntu is running:
+wsl -l -v             # Ubuntu  Running  2
+```
+
+If Ubuntu does not appear after reboot, install it explicitly:
+
+```bash
+wsl --install -d Ubuntu-22.04
+```
+
 #### Create a Linux VM
 
+WSL2 creates and manages the VM automatically — there is no manual
+disk or CPU allocation. The VM starts when you open a WSL terminal
+and suspends when all terminals close.
+
+To adjust resource limits, create `%USERPROFILE%\.wslconfig`:
+
+```
+[wsl2]
+memory=8GB
+processors=4
+swap=2GB
+```
+
+Apply the new limits:
+
+```bash
+wsl --shutdown     # stops all WSL VMs
+wsl                # restarts with new limits
+```
+
+Verify resources inside Ubuntu:
+
+```bash
+nproc              # CPU cores available
+free -h            # RAM and swap
+df -h /            # disk space
+```
+
+Recommended minimums for this lab: 8 GB RAM, 4 cores, 40 GB disk.
+
 #### Suggested workflow
+
+1. Install WSL2 + Ubuntu-22.04 (steps above).
+2. Open VS Code on Windows; install the **Remote - WSL** extension.
+3. From the Ubuntu terminal:
+   ```bash
+   code .           # opens VS Code connected to WSL
+   ```
+4. Install Python, Git, and lab tools inside Ubuntu (not on Windows):
+   ```bash
+   sudo apt-get update
+   sudo apt-get install -y python3 python3-pip git
+   npm install -g @anthropic-ai/claude-code
+   ```
+5. Keep all project files under `~/` (inside WSL), not under
+   `/mnt/c/` — WSL I/O on Windows-mounted drives is significantly
+   slower.
+6. Use `git` inside Ubuntu for all commits; the Windows Git client
+   can cause line-ending conflicts with the lab repo.
+7. Use snapshots sparingly — WSL2 does not have built-in snapshot
+   support; commit frequently to Git instead.
 
 ## macOS
 

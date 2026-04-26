@@ -11,6 +11,42 @@ Time required: approximately 60 minutes.
 
 ---
 
+## Section 0 — Provision Instructor VM (15 min)
+
+> **Reference:** [VM Setup Guide](../tools/VM/setup.md) — full
+> instructions for Windows (WSL2) and macOS (Parallels) VMs.
+
+This section covers the server used in Phase 6 (Docker deployment).
+If you already have a provisioned Ubuntu server, skip to Section 1.
+
+**Minimum spec:**
+- OS: Ubuntu 22.04 LTS (or 24.04)
+- RAM: 8 GB minimum (16 GB recommended for concurrent Docker stacks)
+- Disk: 40 GB free
+- Docker Engine installed and running
+
+**Install Docker on the VM:**
+
+```bash
+sudo apt-get update
+sudo apt-get install -y docker.io docker-compose-v2
+sudo systemctl enable docker
+sudo usermod -aG docker $USER   # re-login for group to take effect
+```
+
+**Validation:**
+
+```bash
+docker --version          # e.g. Docker version 24.x.x
+docker compose version    # e.g. Docker Compose version v2.x.x
+docker run hello-world    # must print "Hello from Docker!"
+```
+
+All three commands must succeed before continuing to Section 3
+(server provisioning for students).
+
+---
+
 ## Section 1 — Collect Student Roster (5 min)
 
 Before provisioning anything, collect one row per student in a
