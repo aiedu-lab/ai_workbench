@@ -9,17 +9,20 @@
 
 # Discord server name created in instructor.md Section 2.
 # Format: meetup-lab-<CLASS_ID>  (e.g. meetup-lab-2026-spring)
-DISCORD_SERVER: "meetup-lab-<CLASS_ID>"
+DISCORD_SERVER: "meetup-lab-2026-spring"
 
 
 # Lab server hostname reachable from student laptops.
 # Must resolve to an IP with a DOCKER_SERVER_USERNAME 
 # account and Docker installed 
 # as provisioned in instructor.md Section 3
-DOCKER_SERVER_ID: "<hostname>"
+# Format: <hostname> (e.g. labserver.example.com or 70.10.5.10)
+DOCKER_SERVER_ID: "192.168.4.23"
 
 # username for SSH on the lab server.
-DOCKER_SERVER_USERNAME: "<username>"
+# Foramt: <username> (e.g. labuser)
+DOCKER_SERVER_USERNAME: "labuser"
 
 # SSH port on the lab server
-DOCKER_SERVER_SSH_PORT: <sshport>
+# Format: <sshport> (e.g. 22, 2222, etc.)
+DOCKER_SERVER_SSH_PORT: 22
