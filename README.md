@@ -15,8 +15,8 @@ for various use cases, such as coding, automation, etc. using:
 
 | Topic of Lesson | Lesson Duration | Tool | Tool Duration |
 | :--- | :---: | :--- | :---: |
-| [**Instructor Preflight**](sessions/instructor.md) | Before lab | Roster, Discord, server, student laptops | 60 mins |
 | [**Introduction**](sessions/introduction.md) | 30 mins |  |  |
+| [**Development Workbench Setup**](sessions/dev_workbench.md) | Before lab | [VM/WSL2/DevContainer](tools/VM/setup.md), [VSCode](tools/dev_workbench/vscode.md), [GitHub](tools/dev_workbench/github.md) | 30 mins |
 | [**Concept: Basic Prompting Techniques**](sessions/prompting_basics.md) | 30 mins | [Browser Chat](https://gemini.google.com) |  |
 | [**Exercise: Problem Solving**](sessions/problem_solving.md) | 45 mins | [Browser Chat](https://gemini.google.com) |  |
 | [**Concept: Planning**](sessions/planning.md) | 45 mins | [Claude Desktop (Chat)](tools/claude/desktop.md) | 15 mins  |
@@ -74,6 +74,14 @@ ai-education-lab/
 
 ---
 
+## 🧑‍🏫 Instructor Guidelines
+
+Execute [**Instructor Preflight**](sessions/instructor.md) before starting 
+the workbench lab sessions and check off on setting up the student roster, 
+discord server, docker server, student laptops, etc.
+
+---
+
 ## 🤝 Contribution Guidelines
 After each session:
 1. Add/update:
@@ -87,6 +95,7 @@ git commit -m "Session X updates"
 git push
 ```
 3. Submit for Pull Request for merging into main branch
+
 ---
 
 ## 🙌 Credits

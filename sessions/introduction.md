@@ -2,10 +2,10 @@
 
 ## Objective
 Help participants learn use AI and understand how to:
-* Think in prompts
 * Design plans (spec-first thinking)
+* Think in prompts
 * Validate AI outputs
-* Develop "feel" for tool fit to use case
+* Develop "feel" for "tool fit" to use case 
 
 ## Learning - Philosophy
 Each session follows a simple structure:
@@ -18,12 +18,12 @@ We emphasize:
 * Learning from failures
 
 ## Activities
-- Claude Chat login verification
-- Group formation 
-- Roles: Driver, Prompt Engineer, Observer
-- Observer tracks hallucination drift
-
-## Walk through of Repository
+* Repository walk through as overview of `AI Workbench` content
+* Next session - [Development Workbench Setup](./dev_workbench.md)
+* Group formation with roles in each group: 
+  * Driver, Prompt Engineer, Observer
+  * Observer tracks hallucination drift
+* Claude Chat login verification
 
 ## References
 * [Ethan Mollick's "One Useful Thing" Blog](https://www.oneusefulthing.org/)
