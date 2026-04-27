@@ -1904,17 +1904,17 @@ cross-session exercise continuity, and a markdown hygiene pass.
 
 ---
 
-# Plan: Phase 14 — Improve Setup, Skills, and RAG
+# Phase 14: Improve Setup-Skills-RAG
 
 ## Section Identified
 
-**File:** `sdw/prompt_history.md`, lines 415–510
+**File:** `sdw/prompt_history.md`, lines 415–562
 **Heading:** `## Improve Setup Skill RAG`
 
 **Key contents (five task areas):**
-1. **Student Development System Setup** — create `sessions/development_system.md`; add it to README.md after Instructor Preflight row
-2. **Move tool setup files** — `tools/github.md`, `tools/vscode.md`, `tools/provider_cost_control.md` → `tools/dev_system/`; migrate student-facing laptop setup content from `sessions/instructor.md` Section 4
-3. **GitHub SSH Setup** — expand `tools/dev_system/github.md` with account + SSH key instructions; add GitHub SSH key generation and `.ssh/config` entry to `labsetup.py`; add GitHub SSH + git identity checks to `preflight_check.py`
+1. **Student Development System Setup** — create `sessions/dev_workbench.md`; add it to README.md after Instructor Preflight row
+2. **Move tool setup files** — `tools/github.md`, `tools/vscode.md`, `tools/provider_cost_control.md` → `tools/dev_workbench/`; migrate student-facing laptop setup content from `sessions/instructor.md` Section 4
+3. **GitHub SSH Setup** — expand `tools/dev_workbench/github.md` with account + SSH key instructions; add GitHub SSH key generation and `.ssh/config` entry to `projects/group_meetup/labsetup.py`; add GitHub SSH + git identity checks to `projects/group_meetup/preflight_check.py`
 4. **macOS Dev Container** — replace Parallels VM section in `tools/VM/setup.md` with Dev Container (VSCode + Docker Desktop); add platform overview to `sessions/instructor.md`
 5. **Skills/RAG/Embeddings reinforcement** — add Skills callback in `sessions/client_agent.md`; add "Why Not Traditional RAG?" callout + cross-reference in `sessions/llm_wiki.md`; add local embedding stretch goal (`nomic-embed-text`) to `sessions/ai_local.md`
 6. **Consistency check** — cross-file link audit across all modified files
@@ -1923,8 +1923,8 @@ cross-session exercise continuity, and a markdown hygiene pass.
 
 ## Context
 
-Phase 14 implements `sdw/prompt_history.md §## Improve Setup Skill RAG`
-(lines 415–510). Phase 12 (the current highest phase) left `tools/dev_system/`
+Phase 14 implements `sdw/prompt_history.md §## Improve Setup Skill RAG`. 
+Phase 12 (the current highest phase) left `tools/dev_workbench/`
 as an empty directory; Phase 14 populates it. This phase also closes two
 conceptual gaps: (a) students had no dedicated session for laptop setup, and
 (b) Skills/Embeddings/RAG concepts introduced in Advanced Prompting were
@@ -1934,7 +1934,7 @@ never referenced in later sessions.
 
 | File | Status |
 |------|--------|
-| `tools/dev_system/` | EXISTS — empty |
+| `tools/dev_workbench/` | EXISTS — empty |
 | `tools/github.md` | EXISTS — source for move |
 | `tools/vscode.md` | EXISTS — source for move |
 | `tools/provider_cost_control.md` | EXISTS — source for move |
@@ -1954,7 +1954,46 @@ never referenced in later sessions.
 
 **Step 14.1.1 — Review `sessions/dev_workbench.md`**
 
-Clean up:
+#### Reorganize Development Workbench
+
+Reorganize Development Workbench into `Concept` and `Exercise`
+section with the `Exercise` section sequenced intuitively so 
+that any learner can prescriptive follow the session and links 
+in those section to setup the Workbench.
+
+1. [VM Setup](tools/VM/setup.md)
+Ensure that the set.up.md has clear instructions on how to provision
+and start the WSL (Win11) or DevContainer (MacOS). Example below:
+```text
+Win11 - WSL
+* Provision: Links to set up wsl with distro Ubuntu 24.04 LTS
+* Start: wsl --cd ~
+MacOS DevContainer
+* Provision: ...
+* Start Dev: ...
+```
+2. Claude.ai Setup: [Setup](tools/claude/cloud.md)
+
+3. VSCode Setup: 
+* Extensions: `Remote WSL`, `Claude Plugin`, ...
+* Start inside Ubuntu: `code .`
+
+3. GitHub Setup: GitHub account, ssh key access setup, ...
+
+4. Linux (Ubuntu) tools Setup: 
+* Links to install git
+* Links to setup SSH access to git and update to .ssh/config
+
+5. Test commands to run from VSCode to ensure Claude is working. Maybe
+Hello World program created via Claude and tested from VSCode terminal.
+
+6. Lab Setup: User side set up needed and run projects/group_meetup/labsetup.py
+
+7. Test all set up working via projects/group_meetup/preflight_check.py
+...
+
+#### Cleanup Instructor
+
 
 1. Clean up the `sessions/instructor.md` of any references that are 
 meant for students. For example, [Instructor](sessions/instructor.md)
@@ -1975,45 +2014,50 @@ that are meant for students.
 
 3. If there are files that reference the exact steps to setup and install 
 of the below commonly used tools for development into 
-[Develoment System](../tools/dev_system) directory.
-Specifically move the following files to ../tools/dev_system:
+[Develoment Workbench](../tools/dev_workbench) directory.
+Specifically move the following files to ../tools/dev_workbench:
 * [GitHub](../tools/github.md)
 * [VS Code](../tools/vscode.md) 
 * [LLM Provider Cost Management](../tools/provider_cost_control.md)
 
 
-Organize: Six sections (cross-references only — no duplicated content):
+#### Review
+
+At least these six sections appar, cross-references only — no duplicated content:
 
 - **Section 0 — Platform Overview:** table showing Win11→WSL2 and
   macOS→Dev Container both connecting to VSCode; shared SSH to `ai-lab`
 - **Section 1 — VM / Container Setup:** link to `tools/VM/setup.md`
-- **Section 2 — VSCode Setup:** link to `tools/dev_system/vscode.md`
-- **Section 3 — GitHub Account and SSH Setup:** link to `tools/dev_system/github.md`
+- **Section 2 — VSCode Setup:** link to `tools/dev_workbench/vscode.md`
+- **Section 3 — GitHub Account and SSH Setup:** link to `tools/dev_workbench/github.md`
 - **Section 4 — LLM Provider Setup:** links to `tools/claude/cloud.md`
-  and `tools/dev_system/provider_cost_control.md`
+  and `tools/dev_workbench/provider_cost_control.md`
 - **Section 5 — Run Lab Setup Script:** two-step workflow commands:
   ```bash
   export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
   python3 projects/group_meetup/labsetup.py
   python3 projects/group_meetup/preflight_check.py
   ```
+- **Section 6 — Test Claude Validation:** instructions to write a simple
+  Hello World program using the Claude plugin in VSCode, run it in the terminal,
+  and verify it works.
 
-Validation:
+#### Validate
 ```bash
 python3 -c "
 from pathlib import Path
-t = Path('sessions/development_system.md').read_text()
-for s in ['Section 0', 'tools/dev_system/', 'labsetup.py', 'preflight_check.py']:
+t = Path('sessions/dev_workbench.md').read_text()
+for s in ['Section 0', 'Section 6', 'tools/dev_workbench/', 'projects/group_meetup/labsetup.py', 'projects/group_meetup/preflight_check.py']:
     assert s in t, f'Missing: {s}'
 print('PASS')
 "
 ```
 
-**Step 14.1.2 — Add `development_system.md` row to `README.md` agenda**
+**Step 14.1.2 — Add `dev_workbench.md` row to `README.md` agenda**
 
 Immediately after `instructor.md` in the agenda row:
 ```
-| [**Development System Setup**](sessions/development_system.md) | Before lab | [VM/WSL2/DevContainer](tools/VM/setup.md), [VSCode](tools/dev_system/vscode.md), [GitHub](tools/dev_system/github.md) | 30 mins |
+| [**Development System Setup**](sessions/dev_workbench.md) | Before lab | [VM/WSL2/DevContainer](tools/VM/setup.md), [VSCode](tools/dev_workbench/vscode.md), [GitHub](tools/dev_workbench/github.md) | 30 mins |
 ```
 
 Validation: `grep -n "development_system" README.md` — one match,
@@ -2021,27 +2065,27 @@ immediately after the `instructor.md` row.
 
 ---
 
-### Phase 14.2 — Migrate Tool Files to `tools/dev_system/`
+### Phase 14.2 — Migrate Tool Files to `tools/dev_workbench/`
 
 **Target files:**
-- `tools/github.md` → `tools/dev_system/github.md`
-- `tools/vscode.md` → `tools/dev_system/vscode.md`
-- `tools/provider_cost_control.md` → `tools/dev_system/provider_cost_control.md`
+- `tools/github.md` → `tools/dev_workbench/github.md`
+- `tools/vscode.md` → `tools/dev_workbench/vscode.md`
+- `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md`
 - All files with inbound links to the old paths
 
-**Step 14.2.1 — Move `tools/github.md` → `tools/dev_system/github.md`**
+**Step 14.2.1 — Move `tools/github.md` → `tools/dev_workbench/github.md`**
 ```bash
-git mv tools/github.md tools/dev_system/github.md
+git mv tools/github.md tools/dev_workbench/github.md
 ```
 
-**Step 14.2.2 — Move `tools/vscode.md` → `tools/dev_system/vscode.md`**
+**Step 14.2.2 — Move `tools/vscode.md` → `tools/dev_workbench/vscode.md`**
 ```bash
-git mv tools/vscode.md tools/dev_system/vscode.md
+git mv tools/vscode.md tools/dev_workbench/vscode.md
 ```
 
-**Step 14.2.3 — Move `tools/provider_cost_control.md` → `tools/dev_system/provider_cost_control.md`**
+**Step 14.2.3 — Move `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md`**
 ```bash
-git mv tools/provider_cost_control.md tools/dev_system/provider_cost_control.md
+git mv tools/provider_cost_control.md tools/dev_workbench/provider_cost_control.md
 ```
 
 **Step 14.2.4 — Fix all inbound links broken by the moves**
@@ -2050,13 +2094,13 @@ Files to update (known references):
 
 | File | Old prefix | New prefix |
 |------|-----------|------------|
-| `sessions/client_application.md` | `../tools/provider_cost_control.md` | `../tools/dev_system/provider_cost_control.md` |
-| `sessions/server_multiagent.md` | `../tools/provider_cost_control.md` | `../tools/dev_system/provider_cost_control.md` |
-| `sessions/web_site.md` | `../tools/provider_cost_control.md` | `../tools/dev_system/provider_cost_control.md` |
-| `tools/claude/cli.md` | `../provider_cost_control.md` | `../dev_system/provider_cost_control.md` |
-| `tools/openai/codex_cli.md` | `../provider_cost_control.md` | `../dev_system/provider_cost_control.md` |
-| `tools/openclaw/cli.md` | `../provider_cost_control.md` | `../dev_system/provider_cost_control.md` |
-| Any file referencing `tools/github.md` or `tools/vscode.md` | update to `tools/dev_system/` path |
+| `sessions/client_application.md` | `../tools/provider_cost_control.md` | `../tools/dev_workbench/provider_cost_control.md` |
+| `sessions/server_multiagent.md` | `../tools/provider_cost_control.md` | `../tools/dev_workbench/provider_cost_control.md` |
+| `sessions/web_site.md` | `../tools/provider_cost_control.md` | `../tools/dev_workbench/provider_cost_control.md` |
+| `tools/claude/cli.md` | `../provider_cost_control.md` | `../dev_workbench/provider_cost_control.md` |
+| `tools/openai/codex_cli.md` | `../provider_cost_control.md` | `../dev_workbench/provider_cost_control.md` |
+| `tools/openclaw/cli.md` | `../provider_cost_control.md` | `../dev_workbench/provider_cost_control.md` |
+| Any file referencing `tools/github.md` or `tools/vscode.md` | update to `tools/dev_workbench/` path |
 
 Validation — zero old-path references remain:
 ```bash
@@ -2073,7 +2117,7 @@ grep -rn "tools/github\.md\|tools/vscode\.md\|tools/provider_cost_control\.md" \
   > "Students complete platform and tool setup independently using
   > [Development System Setup](development_system.md) before the
   > lab day. This section covers the instructor's validation gate only."
-- Keep `preflight_check.py` run instruction + "Every item must show PASS"
+- Keep `projects/group_meetup/preflight_check.py` run instruction + "Every item must show PASS"
   in Section 4 — that is the instructor validation step, not student content.
 
 Validation:
@@ -2086,12 +2130,12 @@ grep -c "wsl --status" sessions/development_system.md  # 1
 
 ### Phase 14.3 — GitHub SSH Setup
 
-**Target files:** `tools/dev_system/github.md`,
+**Target files:** `tools/dev_workbench/github.md`,
 `projects/group_meetup/labenv.yaml`,
 `projects/group_meetup/labsetup.py`,
 `projects/group_meetup/preflight_check.py`
 
-**Step 14.3.1 — Expand `tools/dev_system/github.md` with Account + SSH Setup**
+**Step 14.3.1 — Expand `tools/dev_workbench/github.md` with Account + SSH Setup**
 
 Add two new top-level sections before the existing content:
 
@@ -2102,12 +2146,12 @@ Add two new top-level sections before the existing content:
 **## SSH Key Setup for GitHub**
 - Key naming: `~/.ssh/{username}_id_ed25519_github`
   (parallel to lab key `~/.ssh/{username}_id_ed25519`)
-- Generation command (if not using `labsetup.py`):
+- Generation command (if not using `projects/group_meetup/labsetup.py`):
   ```bash
   ssh-keygen -t ed25519 -f ~/.ssh/$(whoami)_id_ed25519_github -N "" -C "$(whoami)@github"
   ```
 - Upload via `gh`: `gh ssh-key add ~/.ssh/$(whoami)_id_ed25519_github.pub --title "$(whoami)-lab-key"`
-- `.ssh/config` entry (written by `labsetup.py`):
+- `.ssh/config` entry (written by `projects/group_meetup/labsetup.py`):
   ```
   Host github.com
     HostName github.com
@@ -2336,10 +2380,10 @@ grep -c "prompting_advanced" sessions/ai_local.md   # 1
 
 ### Phase 14.6 — Consistency Check for Phase 14
 
-- [ ] **Step 14.6.1:** README.md — `development_system.md` row present,
+- [ ] **Step 14.6.1:** README.md — `dev_workbench.md` row present,
   positioned immediately after `instructor.md` row
 
-- [ ] **Step 14.6.2:** `tools/dev_system/` contains exactly three files:
+- [ ] **Step 14.6.2:** `tools/dev_workbench/` contains exactly three files:
   `github.md`, `vscode.md`, `provider_cost_control.md`; original
   `tools/github.md`, `tools/vscode.md`, `tools/provider_cost_control.md`
   no longer exist
@@ -2354,13 +2398,13 @@ grep -c "prompting_advanced" sessions/ai_local.md   # 1
   "Dev Container" count >= 3
 
 - [ ] **Step 14.6.5:** `sessions/instructor.md` — "Parallels" count = 0;
-  Section 8 present; Section 4 redirects to `development_system.md`
+  Section 8 present; Section 4 redirects to `dev_workbench.md`
 
-- [ ] **Step 14.6.6:** `tools/dev_system/github.md` — contains
+- [ ] **Step 14.6.6:** `tools/dev_workbench/github.md` — contains
   `id_ed25519_github`, `gh ssh-key add`, `ssh -T git@github.com`
 
-- [ ] **Step 14.6.7:** `labsetup.py` contains all three GitHub SSH functions;
-  `preflight_check.py` contains all three GitHub checks
+- [ ] **Step 14.6.7:** `projects/group_meetup/labsetup.py` contains all three GitHub SSH functions;
+  `projects/group_meetup/preflight_check.py` contains all three GitHub checks
 
 - [ ] **Step 14.6.8:** `sessions/client_agent.md` contains
   `file-organizer-skill` and back-reference to `prompting_advanced.md`
@@ -2380,11 +2424,11 @@ grep -c "prompting_advanced" sessions/ai_local.md   # 1
 
 | File | Change |
 |------|--------|
-| `sessions/development_system.md` | CREATE |
-| `README.md` | ADD development_system row |
-| `tools/github.md` → `tools/dev_system/github.md` | MOVE + expand GitHub SSH |
-| `tools/vscode.md` → `tools/dev_system/vscode.md` | MOVE |
-| `tools/provider_cost_control.md` → `tools/dev_system/provider_cost_control.md` | MOVE |
+| `sessions/dev_workbench.md` | UPDATE |
+| `README.md` | ADD dev_workbench row |
+| `tools/github.md` → `tools/dev_workbench/github.md` | MOVE + expand GitHub SSH |
+| `tools/vscode.md` → `tools/dev_workbench/vscode.md` | MOVE |
+| `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md` | MOVE |
 | `sessions/instructor.md` | UPDATE Section 0, Section 4; ADD Section 8 |
 | `tools/VM/setup.md` | REPLACE macOS Parallels → Dev Container |
 | `projects/group_meetup/labenv.yaml` | ADD GITHUB_USERNAME |
@@ -2406,3 +2450,34 @@ Follow CLAUDE.md conventions:
 - All code blocks in new files must be tagged (bash/python/json/text)
 - sdw/plan.v2.md will be created first (as a standalone preview of Phase 14),
   then its content merged into sdw/plan.md as the authoritative record
+
+---
+
+## Phase 15: WORKBENCH CONTRIBUTION GUIDELINES
+
+### Phase 15.1: Document SDW in README
+- [ ] Read `README.md`.
+- [ ] Add a new section or amend an existing section in `README.md` to clearly
+  state that the `AI Workbench` repo is a `specification driven workbench
+  (SDW)`.
+- [ ] Include a short, concise description defining what SDW means.
+
+### Phase 15.2: Document Workbench Update Workflow
+- [ ] Review the `Workbench Update Workflow` section from the
+  `prompt_history.md`.
+- [ ] Suggest and incorporate updates to the process, including:
+  - Best practices for managing the contribution and content of Specification
+    Driven Content.
+  - Adding a requirement to Pull Requests that the executed specification plan
+    section must specify the `provider:model` used to generate the append
+    changes and the `provider:model` used to execute the specification plan.
+- [ ] Document the updated `workbench update workflow` in the
+  `Contribution Guidelines` section of `README.md`.
+
+### Phase 15.3: Style and Hygiene Enforcement
+- [ ] Review the `Style and Hygiene` section in `CLAUDE.md`.
+- [ ] Formulate a method or checklist to enforce that AI does not ignore this
+  mandate, ensuring that generated content adheres to the requirement of lines
+  being less than 80 characters and tabs implemented as 2 spaces.
+- [ ] Run a review across the content of the entire workbench to ensure
+  compliance with the line length and tab requirements.

@@ -10,7 +10,7 @@ This file maintains a chronological ledger of prompts that led to the creation a
 
 ---
 
-## Embed RAG Plan Prompt
+## [x] Embed RAG Plan Prompt
 
 ### extracted from add_embed_RAG_prompt.md
 
@@ -53,7 +53,7 @@ Suggest any changes as an update to the plan in `sdw/plan.md` that meets the abo
 
 ---
 
-## Merging various Prompts and Specification Plans Prompt
+## [x] Merging various Prompts and Specification Plans Prompt
 
 ## extracted from merge_plan_prompt.md
 
@@ -149,7 +149,7 @@ until you have my approval.
 
 ---
 
-##  PKM, Design, and Local Plan Prompt
+## [x] PKM, Design, and Local Plan Prompt
 
 ## extracted from pkm_design_local_prompt.md
 
@@ -196,7 +196,7 @@ with an accompanied exercise that be used to illustrate 'AI Local'?
 
 ---
 
-## SDLC Environment Plan Prompt
+## [x] SDLC Environment Plan Prompt
 
 ### extracted from sdlc_env_prompt.md
 
@@ -229,7 +229,7 @@ Please offer the changes to the plan in `sdw/plan.md` using which we will make t
 
 ---
 
-## Specification Driven Activities Plan Prompt
+## [x] Specification Driven Activities Plan Prompt
 
 ### extracted from pkm_sdd_prompt.md
 
@@ -412,7 +412,7 @@ to amend the workbench content.
 
 ---
 
-## Improve Setup Skill RAG 
+## [ ] Improve Setup-Skills-RAG 
 
 ### OBJECTIVES
 
@@ -423,7 +423,7 @@ to amend the workbench content.
 * Suggest an amendment to `sdw/plan.md` to incorporate the below remaining 
 part of this section:
 
-### TASKS:
+### TASKS
 
 #### Students **Development System** Setup
 
@@ -433,6 +433,42 @@ what is used to help set up the development workbench
 for learners. Reference this session as the session 
 in the agenda immediately after the one after `instructor` 
 in README.md. 
+
+Reorganize Development Workbench into `Concept` and `Exercise`
+section with the `Exercise` section sequenced intuitively so 
+that any learner can prescriptive follow the session and links 
+in those section to setup the Workbench.
+
+1. [VM Setup](tools/VM/setup.md)
+Ensure that the set.up.md has clear instructions on how to provision
+and start the WSL (Win11) or DevContainer (MacOS). Example below:
+```text
+Win11 - WSL
+* Provision: Links to set up wsl with distro Ubuntu 24.04 LTS
+* Start: wsl --cd ~
+MacOS DevContainer
+* Provision: ...
+* Start Dev: ...
+```
+2. Claude.ai Setup: [Setup](tools/claude/cloud.md)
+
+3. VSCode Setup: 
+* Extensions: `Remote WSL`, `Claude Plugin`, ...
+* Start inside Ubuntu: `code .`
+
+3. GitHub Setup: GitHub account, ssh key access setup, ...
+
+4. Linux (Ubuntu) tools Setup: 
+* Links to install git
+* Links to setup SSH access to git and update to .ssh/config
+
+5. Test commands to run from VSCode to ensure Claude is working. Maybe
+Hello World program created via Claude and tested from VSCode terminal.
+
+6. Lab Setup: User side set up needed and run projects/group_meetup/labsetup.py
+
+7. Test all set up working via projects/group_meetup/preflight_check.py
+...
 
 #### Move Setup and Install Content to Development System
 
@@ -525,12 +561,78 @@ to amend the workbench content.
 
 ---
 
-## Replan Trigger Prompt
+## [x] Workbench Contribution Guidelines
 
-Read `sdw/plan.md`.
-Reference [Replan Prompt](./sdw/prompt_history.md#improve-setup-skill-rag).
-What is the title of the section and key contents?
-Once I confirm you have narrowed to the correct section, generate the 
-specification plan changes to meet the requirements of that section 
-as a markdown file sdw/plan.v2.md. Once the plan change is approved
-add the sdw/plan.md starting from Phase 14 and Steps in the phase.
+### Workbench Update Workflow
+This is a specification driven workbench. The workflow to update **any**
+content for the workbench is to follow the below sequence in strict order:
+1. **Append** prompts to [Prompt History](sdw/prompt_history.md). 
+The prompt is direct AI to change the [Specification Plan](sdw/plan.md)
+by **appending** new phases and new steps in the phases.
+2. The objective of only appending to `prompt history` and 
+`specification plan` is to create both as system of record for any 
+changes to the plan.
+3. The `specification plan` changes are then executed to amend or create 
+new content while adhering to the operating guidelines of `Claude.md`.
+Note that:
+* NO direct changes to content are only. Only via `Workbench Update Workflow`
+* Strict ADHERENCE to CLAUDE.md `STYLE & HYGIENE` section while generating
+content.
+4. The contributor commits the latest version of `prompt history`, 
+`specification plan` and the workbench content on a branch and submits
+a pull request (PR) to main branch. Note contributors are NOT allowed 
+to commit to main branch. 
+5. Maintainers review the PR request, use AI Code review to enforce simple
+checks (e.g. `STYLE & HYGIENE` of `Claude.md` is followed) and then manaully
+review the content to either approve the merge or revert back to the
+contributor with additional comments.
+
+### BACKGROUND
+* Read section `#Purpose`
+* Reference `sdw/plan.md`
+* Suggest an amendment to `sdw/plan.md` to incorporate the below:
+
+### TASKS
+
+#### Document SDW in README
+
+Add a new or amend an existing section of README.md that clearly calls out 
+that the `AI Workbench` repo is a `specification driven workbench (SDW)` with an 
+short description defining what SDW means.  
+
+#### Document **Workbench Update Workflow**
+
+Review the `Workbench Update Workflow` section above and suggest updates as 
+appropriate to the process. 
+
+For example: shouldn't the Pull Request REQUIRE that the section of 
+`specificatin plan` that was executed to generate changes to the content 
+also contain:
+* `provider:model` used to generate append changes to the `specification plan` 
+section. 
+* `provider:model` used to execute the `specification plan` section and then
+generate the content itself? 
+
+What else do you suggest are **best practices** to manage the contribution and
+content of Specification Driven Content? 
+
+Document the process of `workbench update workflow` in the `Contribution Guidelines` 
+section of README.md.
+
+#### Style and Hygiene
+
+Use the Claude.md `Style and Hygience` to review content of the entire workbench 
+that all lines are less than 80 characters and tabs are implemented as 2 spaces.
+
+We repeatedly see generated content violate the `Claude.md` operating protocol. 
+Are there ways to enforce that AI does NOT forget to ignore this manadate and
+that henceforth generated content always adheres to this requirement?
+
+### CONSTRAINTS:
+Propose the change to the plan in `sdw/plan.md` BUT do NOT change the 
+plan directly. Propose the change first as a diff to the markdown file 
+in terms of changes in phases/steps to the plan of record `sdw/plan.md. 
+Once approved we can incorporate the changes to `sdw/plan.md` and start 
+executing to amend the workbench content.
+
+---
