@@ -10,6 +10,10 @@ Checks for:
 - DISCORD_WEBHOOK_URL set in the shell environment (secret)
 - SSH key exists at ~/.ssh/<username>_id_ed25519
 - SSH connectivity to the lab server (Host ai-lab in ~/.ssh/config)
+- gh CLI installed and authenticated (gh auth status)
+- GitHub SSH key exists at ~/.ssh/<username>_id_ed25519_github
+- GitHub SSH authentication (ssh git@github.com)
+- git global user.name and user.email configured
 
 Non-confidential vars (DISCORD_SERVER, DOCKER_SERVER_*) are read
 directly from labenv.yaml so this script works without requiring
@@ -27,6 +31,9 @@ from pathlib import Path
 
 LABENV = Path(__file__).parent / "labenv.yaml"
 SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519"
+GITHUB_SSH_KEY = (
+  Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_github"
+)
 
 NON_SECRET_VARS = (
   "DISCORD_SERVER",
@@ -116,6 +123,70 @@ def check_ssh():
     )
 
 
+def check_gh_install():
+  result = subprocess.run(
+    ["gh", "--version"], capture_output=True
+  )
+  if result.returncode != 0:
+    raise RuntimeError(
+      "gh not runnable — install via: sudo apt install gh"
+    )
+
+
+def check_gh_auth():
+  result = subprocess.run(
+    ["gh", "auth", "status"], capture_output=True
+  )
+  if result.returncode != 0:
+    raise RuntimeError(
+      "gh not authenticated — run: gh auth login\n"
+      "  See: tools/dev_workbench/github.md#account-setup"
+    )
+
+
+def check_github_ssh_key():
+  if not GITHUB_SSH_KEY.exists():
+    raise RuntimeError(
+      f"{GITHUB_SSH_KEY} not found — run labsetup.py to generate it"
+    )
+
+
+def check_github_ssh():
+  result = subprocess.run(
+    [
+      "ssh", "-o", "BatchMode=yes",
+      "-o", "ConnectTimeout=10",
+      "git@github.com",
+    ],
+    capture_output=True,
+    text=True,
+  )
+  # GitHub always exits 1 even on success; check stderr message
+  if "successfully authenticated" not in result.stderr:
+    raise RuntimeError(
+      "GitHub SSH authentication failed — ensure your key is "
+      "uploaded: gh ssh-key list\n"
+      f"  (stderr: {result.stderr.strip()!r})"
+    )
+
+
+def check_git_identity():
+  name = subprocess.run(
+    ["git", "config", "--global", "user.name"],
+    capture_output=True, text=True,
+  ).stdout.strip()
+  email = subprocess.run(
+    ["git", "config", "--global", "user.email"],
+    capture_output=True, text=True,
+  ).stdout.strip()
+  if not name or not email:
+    raise RuntimeError(
+      "git global identity not configured — run:\n"
+      '  git config --global user.name "Your Name"\n'
+      '  git config --global user.email "you@example.com"'
+    )
+
+
 def main():
   env = _labenv()
   print("=== Preflight Check ===\n")
@@ -130,6 +201,11 @@ def main():
   check("DISCORD_WEBHOOK_URL set", check_discord_webhook)
   check(f"SSH key {SSH_KEY.name}", check_ssh_key)
   check("SSH to ai-lab", check_ssh)
+  check("gh installed", check_gh_install)
+  check("gh authenticated", check_gh_auth)
+  check(f"GitHub SSH key {GITHUB_SSH_KEY.name}", check_github_ssh_key)
+  check("GitHub SSH authentication", check_github_ssh)
+  check("git global identity", check_git_identity)
   print("\nAll items must show PASS before the lab begins.")
 
 
