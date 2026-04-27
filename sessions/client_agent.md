@@ -46,7 +46,8 @@
   * **Plan: Analyze → Update prompt → Iterate**
 
 * Prompt Draft
-```bash
+
+```text
 You are a helpful assistant.
 Context: I want to organize a given folder.
 Task: Propose a safe and reversible plan.
@@ -58,6 +59,15 @@ Constraints:
 
 Output: Step-by-step checklist
 ```
+
+### Turn the Prompt into a Skill
+
+The File Organizer prompt above follows the
+`Context / Task / Constraints / Output` structure introduced in
+[Advanced Prompting — §1 Skills](prompting_advanced.md#1-skills-reusable-prompts).
+It is saved as `file-organizer-skill` in
+[`prompts/skill.md`](../prompts/skill.md) so you can reuse it
+across sessions with a single invocation.
 
 ### Validation
 After completing the exercise, verify each item before moving on:
@@ -73,6 +83,10 @@ After completing the exercise, verify each item before moving on:
 * Shift focus from "writing code" to "writing guardrailed specs."
 * What did the AI get wrong? How did we fix it?
 * What did we miss? How can we improve the prompt?
+* How does `file-organizer-skill` compare to
+  `professional-rewrite-skill` from
+  [Advanced Prompting](prompting_advanced.md#1-skills-reusable-prompts)?
+  What makes a prompt worth naming as a skill?
 
 ## Documentation
 * [CoWork](https://support.claude.com/en/articles/13345190-get-started-with-cowork)
