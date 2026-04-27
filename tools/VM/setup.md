@@ -57,7 +57,7 @@ and suspends when all terminals close.
 
 To adjust resource limits, create `%USERPROFILE%\.wslconfig`:
 
-```
+```ini
 [wsl2]
 memory=8GB
 processors=4
