@@ -264,59 +264,16 @@ ssh ai-lab docker ps   # must return empty table header
 
 ## Section 4 — Student Laptop Preflight (10 min per student)
 
-Students run this themselves before the lab. The instructor
-validates by reviewing the output of `preflight_check.py`
-(located at `projects/group_meetup/preflight_check.py`).
-
-> **Note:** `preflight_check.py` is created in Phase 4 (Step 4.4).
-> Run Phase 4 before distributing this script to students.
+> Students complete platform and tool setup independently using
+> [Development Workbench Setup](dev_workbench.md) before the lab
+> day. This section covers the instructor's validation gate only.
 
 > **SSH prerequisite:** Students must complete Section 3 Phase A
 > (run `labsetup.py`) and the instructor must complete Section 3
 > Phase B (install public keys) before `preflight_check.py` will
 > show `PASS` for the SSH checks.
 
-**Win11 + WSL2 setup:**
-
-```bash
-wsl --status          # Default Version: 2
-wsl -l -v             # Ubuntu-22.04 must appear
-# If missing:
-wsl --install -d Ubuntu-22.04   # requires admin + reboot
-```
-
-**macOS setup:**
-
-```bash
-xcode-select --install
-/bin/bash -c "$(curl -fsSL \
-  https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew install python3 git
-```
-
-**Both platforms — required tools:**
-
-```bash
-# Python 3.10+
-python3 --version           # must be >= 3.10
-
-# Git identity
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
-
-# GitHub CLI
-# Install: https://cli.github.com
-gh auth login               # authenticate with GitHub account
-
-# Claude Code CLI
-npm install -g @anthropic-ai/claude-code
-claude --version
-
-# Python dependencies for the meetup project
-pip install requests pyyaml
-```
-
-**Validation — run and share output with instructor:**
+**Instructor validation — confirm all students show PASS:**
 
 ```bash
 python3 projects/group_meetup/preflight_check.py
