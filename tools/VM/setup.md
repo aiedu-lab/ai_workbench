@@ -13,7 +13,7 @@ alongside your Windows desktop.
 - **Native Linux toolchain** — Python, Git, Docker, and Claude Code
   behave identically to a Linux server; no path or line-ending issues.
 - **Zero licence cost** — built into Windows 11 and Windows 10 (2004+);
-  no Parallels or VirtualBox licence required.
+  no third-party VM licence required.
 - **VSCode integration** — the Remote-WSL extension opens any folder
   inside WSL as if it were a local project; the terminal, debugger,
   and extensions all run on Linux.
@@ -103,46 +103,78 @@ Recommended minimums for this lab: 8 GB RAM, 4 cores, 40 GB disk.
 7. Use snapshots sparingly — WSL2 does not have built-in snapshot
    support; commit frequently to Git instead.
 
-## macOS
+## macOS — Dev Container
 
-**Parallels Desktop** is the most convenient and beginner-friendly option. 
-It provides the smoothest setup, strong macOS integration, and the least 
-friction for students.
+**Dev Containers** give macOS students the same Ubuntu environment
+as WSL2 on Windows — zero licence cost, no disk allocation, and
+native VSCode integration via the same Remote extension pattern.
 
-### Why Parallels Desktop
+### Why Dev Containers
 
-- Easiest for beginners.
-- Strong integration with macOS.
-- Good performance on Apple Silicon Macs.
-- Better suited for classroom use than more technical VM tools.
+- **Zero licence cost** — Docker Desktop is free for personal and
+  educational use; no third-party VM licence required.
+- **Identical Ubuntu environment** — the container image matches
+  the lab server OS; behaviour is the same as WSL2.
+- **VSCode-native** — the Dev Containers extension mirrors the
+  Remote-WSL workflow exactly; students switch platforms with one
+  command change.
+- **No disk allocation** — Docker manages storage automatically;
+  no fixed-size VM disk to provision.
+
+### Requirements
+
+- macOS 13 (Ventura) or later
+- Docker Desktop (free for personal/educational use)
+- VSCode with the **Dev Containers** extension
 
 ### Installation
 
-1. Download **Parallels Desktop** from the official Parallels website.
-2. Open the installer and follow the prompts.
-3. Approve any macOS permission requests.
-4. Launch Parallels Desktop after installation.
+1. Install **Docker Desktop** from `docker.com/products/docker-desktop`.
+   After install, verify:
 
-#### Create a Linux VM
+```bash
+docker --version   # e.g. Docker version 27.x.x
+```
 
-1. Open Parallels Desktop.
-2. Click **+** to create a new virtual machine.
-3. Choose **Install Windows or another OS from a DVD or image file**.
-4. Select Ubuntu ISO - noble 24.04 LTS or later.
-5. Allocate resources:
-   - CPU: 6 cores - `nproc`
-   - RAM: 16 GB, SWAP 4GB - `free -h`
-   - Disk: 64 GB - `df -h`
-6. Start the VM and complete the Linux installation.
-7. Install Parallels Tools when prompted.
+2. Install the **Dev Containers** extension in VSCode
+   (`ms-vscode-remote.remote-containers`).
+
+3. Clone the lab repo (if not already cloned):
+
+```bash
+git clone https://github.com/aiedu-lab/ai_workbench.git
+cd ai_workbench
+```
+
+4. Open the repo in VSCode, then reopen in the container:
+   - VSCode will detect `.devcontainer/devcontainer.json` and
+     show a **"Reopen in Container"** prompt — click it, or use
+     `Cmd+Shift+P` → **Dev Containers: Reopen in Container**.
+
+#### `devcontainer.json`
+
+Commit this file at `.devcontainer/devcontainer.json`:
+
+```json
+{
+  "image": "mcr.microsoft.com/devcontainers/python:3.12-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/node:1": {"version": "lts"}
+  },
+  "postCreateCommand": "pip install requests pyyaml"
+}
+```
 
 #### Suggested workflow
 
-1. Install Parallels Desktop.
-2. Install Ubuntu inside the VM.
-3. Install Python, Git, and VS Code inside the VM or use shared folders from macOS.
-4. Set up Claude-based workflows and your OpenClaw tooling inside the Linux environment.
-5. Use snapshots or restore points before major experiments.
+1. Install Docker Desktop and verify `docker --version`.
+2. Open the lab repo in VSCode → "Reopen in Container".
+3. All lab work happens in the Dev Container terminal — Python,
+   Git, and SSH behave identically to the lab server.
+4. Resource limits (Docker Desktop → Settings → Resources):
+   RAM: 8 GB minimum, CPUs: 4 minimum.
+5. Use `git` inside the container for all commits.
 
 ## Notes for instructors
 
