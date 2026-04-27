@@ -11,6 +11,10 @@ Steps performed:
    (idempotent — skipped if the entry already exists).
 5. Validate SSH connectivity to ai-lab.
 6. Validate that DISCORD_WEBHOOK_URL is set.
+7. If `gh auth status` exits 0: generate ~/.ssh/<username>_id_ed25519_github,
+   upload public key to GitHub, write Host github.com config entry,
+   and validate GitHub SSH authentication. Skipped with WARN if not
+   authenticated — run `gh auth login` first (dev_workbench.md Section 3).
 
 Steps 2–5 are skipped when labenv.yaml still contains placeholder
 values (strings wrapped in < >). DISCORD_WEBHOOK_URL must be set
@@ -41,6 +45,9 @@ SSH_KEYS = (
 _USERNAME = getpass.getuser()
 SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519"
 SSH_CONFIG = SSH_DIR / "config"
+
+GITHUB_HOST_ALIAS = "github.com"
+GITHUB_SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519_github"
 
 
 def _load_env() -> dict[str, str]:
@@ -171,6 +178,90 @@ def _validate_ssh() -> None:
   print(f"  OK   SSH {SSH_HOST_ALIAS} → connection verified")
 
 
+def _generate_github_ssh_key(github_username: str) -> None:
+  """Generate GitHub ed25519 key pair and upload to GitHub.
+
+  Idempotent — skipped if the key file already exists.
+  """
+  SSH_DIR.mkdir(mode=0o700, exist_ok=True)
+  if GITHUB_SSH_KEY.exists():
+    print(
+      f"  OK   GitHub SSH key exists: {GITHUB_SSH_KEY} (skipping)"
+    )
+    return
+  subprocess.run(
+    [
+      "ssh-keygen", "-t", "ed25519",
+      "-f", str(GITHUB_SSH_KEY),
+      "-N", "",
+      "-C", f"{github_username}@github",
+    ],
+    check=True,
+    capture_output=True,
+  )
+  print(f"  GEN  GitHub SSH key created: {GITHUB_SSH_KEY}")
+  subprocess.run(
+    [
+      "gh", "ssh-key", "add",
+      str(GITHUB_SSH_KEY.with_suffix(".pub")),
+      "--title", f"{_USERNAME}-lab-key",
+    ],
+    check=True,
+  )
+  print(f"  POST GitHub public key uploaded for {github_username}")
+
+
+def _write_github_ssh_config() -> None:
+  """Append Host github.com block to ~/.ssh/config.
+
+  Idempotent — skipped if the entry already exists.
+  """
+  existing = SSH_CONFIG.read_text() if SSH_CONFIG.exists() else ""
+  for line in existing.splitlines():
+    if line.strip() == f"Host {GITHUB_HOST_ALIAS}":
+      print(
+        f"  OK   ~/.ssh/config entry exists: "
+        f"Host {GITHUB_HOST_ALIAS} (skipping)"
+      )
+      return
+  SSH_DIR.mkdir(mode=0o700, exist_ok=True)
+  entry = (
+    f"\nHost {GITHUB_HOST_ALIAS}\n"
+    f"  HostName     github.com\n"
+    f"  User         git\n"
+    f"  IdentityFile {GITHUB_SSH_KEY}\n"
+  )
+  with SSH_CONFIG.open("a") as f:
+    f.write(entry)
+  SSH_CONFIG.chmod(0o600)
+  print(f"  WROTE ~/.ssh/config entry: Host {GITHUB_HOST_ALIAS}")
+
+
+def _validate_github_ssh() -> None:
+  """Warn (not exit) if GitHub SSH authentication fails.
+
+  GitHub exits 1 even on success — check the stderr message instead.
+  """
+  result = subprocess.run(
+    [
+      "ssh", "-o", "BatchMode=yes",
+      "-o", "ConnectTimeout=10",
+      "git@github.com",
+    ],
+    capture_output=True,
+    text=True,
+  )
+  if "successfully authenticated" in result.stderr:
+    print("  OK   GitHub SSH authentication verified")
+  else:
+    print(
+      "  WARN GitHub SSH not verified.\n"
+      "  Ensure your key was uploaded: gh ssh-key list\n"
+      f"  (stderr: {result.stderr.strip()!r})",
+      file=sys.stderr,
+    )
+
+
 def _validate_secret() -> None:
   if not os.environ.get(SECRET_KEY):
     print(
@@ -206,6 +297,26 @@ def main() -> None:
     )
 
   _validate_secret()
+
+  gh_auth = subprocess.run(
+    ["gh", "auth", "status"], capture_output=True
+  )
+  if gh_auth.returncode == 0:
+    github_username = subprocess.run(
+      ["gh", "api", "user", "--jq", ".login"],
+      capture_output=True, text=True,
+    ).stdout.strip()
+    _generate_github_ssh_key(github_username)
+    _write_github_ssh_config()
+    _validate_github_ssh()
+  else:
+    print(
+      "  WARN GitHub CLI not authenticated — skipping GitHub SSH.\n"
+      "  Run: gh auth login\n"
+      "  See: tools/dev_workbench/github.md#account-setup",
+      file=sys.stderr,
+    )
+
   print("\nEnvironment ready.")
 
 

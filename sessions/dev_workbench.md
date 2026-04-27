@@ -64,6 +64,27 @@ guide for that tool — no content is duplicated here.
 [GitHub Setup Guide](../tools/dev_workbench/github.md)
 
 - Create a GitHub account at `github.com`
+- Install the `gh` CLI inside Ubuntu (WSL2 or Dev Container) —
+  full steps in the [GitHub Setup Guide](../tools/dev_workbench/github.md#account-setup):
+
+```bash
+curl -fsSL \
+  https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+  | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) \
+  signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] \
+  https://cli.github.com/packages stable main" \
+  | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+sudo apt update && sudo apt install gh -y
+```
+
+- Authenticate — **required before running `labsetup.py`**:
+
+```bash
+gh auth login   # GitHub.com → HTTPS → browser
+gh auth status  # must exit 0 before continuing
+```
+
 - Generate and upload an SSH key for GitHub authentication
 - Set your global git identity inside Ubuntu:
 
