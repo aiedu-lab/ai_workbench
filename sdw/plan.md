@@ -2409,7 +2409,7 @@ grep -c "file-organizer-skill" sessions/client_agent.md    # >= 2
 grep -c "prompting_advanced" sessions/client_agent.md      # 1
 ```
 
-[ ] **Step 14.5.2 — Reinforce LLM Wiki vs RAG in `sessions/llm_wiki.md`**
+[x] **Step 14.5.2 — Reinforce LLM Wiki vs RAG in `sessions/llm_wiki.md`** **COMPLETED**
 
 Immediately after the existing "The Core Concept" bullet block, add a
 callout box:
