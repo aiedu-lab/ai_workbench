@@ -2429,7 +2429,7 @@ grep -c "prompting_advanced" sessions/llm_wiki.md    # >= 1
 grep -c "Traditional RAG" sessions/llm_wiki.md        # >= 2
 ```
 
-[ ] **Step 14.5.3 — Add local embedding stretch goal to `sessions/ai_local.md`**
+[x] **Step 14.5.3 — Add local embedding stretch goal to `sessions/ai_local.md`** **COMPLETED**
 
 Add after the existing "Stretch Goal — Connect to the Main Project" section,
 titled **"Stretch Goal B — Semantic Similarity with Local Embeddings"**:
