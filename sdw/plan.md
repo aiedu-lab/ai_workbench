@@ -2318,7 +2318,7 @@ print('PASS' if not req - fns else f'FAIL: {req - fns}')
 
 **Target files:** `tools/VM/setup.md`, `sessions/instructor.md`
 
-[ ] **Step 14.4.1 — Replace macOS Parallels section in `tools/VM/setup.md` with Dev Container**
+[x] **Step 14.4.1 — Replace macOS Parallels section in `tools/VM/setup.md` with Dev Container** **COMPLETED**
 
 Replace the entire `## macOS` section (full replacement, not additive).
 
@@ -2351,7 +2351,7 @@ grep -c "Dev Container" tools/VM/setup.md  # >= 3
 grep -c "Parallels" tools/VM/setup.md      # 0
 ```
 
-[ ] **Step 14.4.2 — Update `sessions/instructor.md` Section 0 Parallels reference**
+[x] **Step 14.4.2 — Update `sessions/instructor.md` Section 0 Parallels reference** **COMPLETED**
 
 Change the section 0 reference line from:
 > "full instructions for Windows (WSL2) and macOS (Parallels) VMs"
@@ -2359,7 +2359,7 @@ Change the section 0 reference line from:
 To:
 > "full instructions for Windows (WSL2) and macOS (Dev Container) environments"
 
-[ ] **Step 14.4.3 — Add Platform Architecture overview to `sessions/instructor.md`**
+[x] **Step 14.4.3 — Add Platform Architecture overview to `sessions/instructor.md`** **COMPLETED**
 
 Add new Section 8 at the end of the file:
 
