@@ -13,6 +13,16 @@ guess what is relevant.
 summarize, and cross-reference markdown files, creating a human-readable 
 knowledge graph.
 
+> **Why not just build a RAG pipeline?**
+> Traditional RAG (covered in
+> [Advanced Prompting — §8 Embeddings & RAG](prompting_advanced.md#embeddings--retrieval-augmented-generation-rag))
+> requires chunking documents, generating embeddings, a vector database,
+> and retrieval code. The LLM Wiki skips all of that: the LLM organizes
+> knowledge into human-readable, diff-able, Obsidian-navigable markdown.
+> For a personal knowledge base the LLM Wiki is simpler and more
+> maintainable. RAG remains the right choice when your corpus exceeds
+> what a prompt context window can hold and you need at-scale retrieval.
+
 ## 🛠️ Installation & Setup
 1. **The Viewer:** Download and install [Obsidian](https://obsidian.md/).
 2. **The Brain:** Ensure you have the `claude-code` CLI installed.
