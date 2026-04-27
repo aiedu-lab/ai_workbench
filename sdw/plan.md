@@ -2160,7 +2160,7 @@ Add two new top-level sections before the existing content:
   ```
 - Validation: `ssh -T git@github.com` → `Hi <username>! You've successfully authenticated...`
 
-[ ] **Step 14.3.2 — Roster Collection via Google Form**
+[x] **Step 14.3.2 — Roster Collection via Google Form** **COMPLETED**
 
 **Background:** `GITHUB_USERNAME` is per-student and cannot go in
 the shared `labenv.yaml` (unlike `DOCKER_SERVER_*` which are shared
