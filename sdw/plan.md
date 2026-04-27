@@ -2073,22 +2073,22 @@ immediately after the `instructor.md` row.
 - `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md`
 - All files with inbound links to the old paths
 
-[ ] **Step 14.2.1 — Move `tools/github.md` → `tools/dev_workbench/github.md`**
+[x] **Step 14.2.1 — Move `tools/github.md` → `tools/dev_workbench/github.md`** **COMPLETED**
 ```bash
 git mv tools/github.md tools/dev_workbench/github.md
 ```
 
-[ ] **Step 14.2.2 — Move `tools/vscode.md` → `tools/dev_workbench/vscode.md`**
+[x] **Step 14.2.2 — Move `tools/vscode.md` → `tools/dev_workbench/vscode.md`** **COMPLETED**
 ```bash
 git mv tools/vscode.md tools/dev_workbench/vscode.md
 ```
 
-[ ] **Step 14.2.3 — Move `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md`**
+[x] **Step 14.2.3 — Move `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md`** **COMPLETED**
 ```bash
 git mv tools/provider_cost_control.md tools/dev_workbench/provider_cost_control.md
 ```
 
-[ ] **Step 14.2.4 — Fix all inbound links broken by the moves**
+[x] **Step 14.2.4 — Fix all inbound links broken by the moves** **COMPLETED**
 
 Files to update (known references):
 
@@ -2109,7 +2109,7 @@ grep -rn "tools/github\.md\|tools/vscode\.md\|tools/provider_cost_control\.md" \
 # expected: no output
 ```
 
-[ ] **Step 14.2.5 — Move student-facing setup content from `sessions/instructor.md` Section 4 to `sessions/development_system.md`**
+[x] **Step 14.2.5 — Move student-facing setup content from `sessions/instructor.md` Section 4 to `sessions/development_system.md`** **COMPLETED**
 
 - Move Win11+WSL2 and macOS platform setup blocks into
   `sessions/development_system.md` Sections 1–2
