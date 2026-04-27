@@ -2229,7 +2229,7 @@ grep -c "GOOGLE_FORM_URL" sessions/introduction.md          # >= 1
 grep -c "Google Form" sessions/instructor.md                # >= 1
 ```
 
-[ ] **Step 14.3.3 — Add GitHub SSH setup to `projects/group_meetup/labsetup.py`**
+[x] **Step 14.3.3 — Add GitHub SSH setup to `projects/group_meetup/labsetup.py`** **COMPLETED**
 
 **`sessions/dev_workbench.md` Section 3 patch** — add explicit bullet
 before the git-identity block:
@@ -2280,7 +2280,7 @@ print('PASS' if not req - fns else f'FAIL: {req - fns}')
 "
 ```
 
-[ ] **Step 14.3.4 — Add GitHub SSH + git identity checks to `projects/group_meetup/preflight_check.py`**
+[x] **Step 14.3.4 — Add GitHub SSH + git identity checks to `projects/group_meetup/preflight_check.py`** **COMPLETED**
 
 New constant:
 ```python
