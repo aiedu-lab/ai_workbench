@@ -13,9 +13,6 @@ Time required: approximately 60 minutes.
 
 ## Section 0 — Provision Docker VM on Server - set up by Instructor (15 min)
 
-> **Reference:** [VM Setup Guide](../tools/VM/setup.md) — full
-> instructions for Windows (WSL2) and macOS (Parallels) VMs.
-
 This section covers the server used in Phase 6 (Docker deployment).
 If you already have a provisioned Ubuntu server, skip to Section 1.
 

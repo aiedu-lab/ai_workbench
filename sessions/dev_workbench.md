@@ -1,299 +1,117 @@
-# AI Development Workbench: Platform & Workflow Guidelines
+# Development Workbench
 
-## Objective
+<!-- AI-GENERATED: Phase 14 Step 14.1.1 (sdw/plan.md) -->
 
-Provide a **simple, consistent, and low-friction development environment** 
-for learners to learn AI tooling, while allowing enough flexibility for 
-experimentation.
-
----
-
-# 1. Core Principle
-
-> **VS Code is your interface. Your code runs in a Linux environment.**
-
-Students should not initially worry about:
-
-* containers
-* virtual machines
-* kernels
-
-They should focus on:
-
-* writing code
-* running commands
-* using AI tools
+This session walks every student through a one-time platform and
+tooling setup. Both supported platforms produce an identical Ubuntu
+environment — the only difference is the virtualisation layer.
 
 ---
 
-# 2. Standardized Development Framework
+## Concept
 
-## macOS Setup (Primary Recommendation)
+> **VS Code is your interface. Your code runs in Linux.**
 
-### Architecture
-
-```
-[ macOS ]
-   └── VS Code (UI)
-         └── Dev Container (Linux runtime)
-```
-
-### Components
-
-* VS Code installed on macOS
-* Docker Desktop or Colima
-* Dev Containers (`.devcontainer.json`)
-* Linux environment inside container
+Both platforms give you the same Ubuntu shell, the same Claude
+plugin experience, and the same SSH access to the shared lab server.
 
 ---
 
-## Windows 11 Setup
+## Section 0 — Platform Overview
 
-### Architecture
+| Layer | Win11 | macOS |
+|-------|-------|-------|
+| Frontend | VSCode native | VSCode native |
+| Dev environment | WSL2 Ubuntu | Dev Container Ubuntu |
+| Server access | SSH → `ai-lab` | SSH → `ai-lab` (identical) |
 
-```
-[ Windows ]
-   └── VS Code (UI)
-         └── WSL (Linux runtime)
-```
-
-### Components
-
-* VS Code installed on Windows
-* WSL (Ubuntu recommended)
-* Linux environment inside WSL
+> Both paths produce an identical Ubuntu shell. Every command in
+> this session works on both platforms unless noted otherwise.
 
 ---
 
-## Key Insight
+## Exercise
 
-| Concept           | macOS         | Windows |
-| ----------------- | ------------- | ------- |
-| Linux environment | Dev Container | WSL     |
-| VS Code location  | Host          | Host    |
-| Code execution    | Linux         | Linux   |
-
-> From a student perspective, both environments behave the same.
+Complete each section in order. Every section links to the detailed
+guide for that tool — no content is duplicated here.
 
 ---
 
-# 3. Claude + AI Tooling Integration
+## Section 1 — VM / Container Setup
 
-### Recommended Setup
+[VM Setup Guide](../tools/VM/setup.md)
 
-* Claude Desktop → installed on host (macOS / Windows)
-* VS Code → primary IDE
-* Claude VS Code plugin → installed in VS Code
-* Code execution → Linux environment (container or WSL)
-
----
-
-## Mental Model
-
-| Component               | Runs Where              |
-| ----------------------- | ----------------------- |
-| VS Code UI              | Host OS                 |
-| Claude Desktop          | Host OS                 |
-| Claude plugin           | VS Code                 |
-| Python / Node / AI code | Linux (WSL / container) |
+- **Win11:** install WSL2 + Ubuntu 22.04; verify with `wsl --status`
+- **macOS:** install Docker Desktop + Dev Containers extension;
+  open repo in VSCode → "Reopen in Container"
 
 ---
 
-# 4. Learner Rules (Critical)
+## Section 2 — VSCode Setup
 
-## Rule 1 — Single Environment
+[VSCode Setup Guide](../tools/dev_workbench/vscode.md)
 
-> **Your code runs in ONE place: the Linux environment.**
-
-Do NOT mix:
-
-* macOS tools + container tools
-* Windows tools + WSL tools
-
----
-
-## Rule 2 — Use the Right Terminal
-
-> **Use a terminal connected to your project environment.**
-
-Recommended:
-
-* VS Code integrated terminal
-
-Advanced (optional):
-
-* External terminal attached to WSL/container
+- Install VSCode on your host OS
+- **Win11:** install **Remote - WSL** extension
+- **macOS:** install **Dev Containers** extension
+- Install the **Claude** extension inside VSCode
+- Open project from Ubuntu terminal: `code .`
 
 ---
 
-## Rule 3 — Install Tools in the Right Place
+## Section 3 — GitHub Account and SSH Setup
 
-Install inside Linux:
+[GitHub Setup Guide](../tools/dev_workbench/github.md)
 
-* Python
-* Node.js
-* pip / npm packages
-* AI frameworks
+- Create a GitHub account at `github.com`
+- Generate and upload an SSH key for GitHub authentication
+- Set your global git identity inside Ubuntu:
 
-Install on host:
-
-* VS Code
-* Claude Desktop
-* Docker / WSL
-
----
-
-## Rule 4 — Keep Files in Linux
-
-Always work in:
-
-* WSL: `/home/...`
-* Dev Container: `/workspaces/...`
-
-Avoid:
-
-* Windows `C:\` paths
-* macOS `/Users/...` for project code
-
----
-
-## Rule 5 — If Things Break
-
-> **Rebuild the environment instead of debugging endlessly.**
-
-* Dev Containers → “Rebuild Container”
-* WSL → restart or recreate environment
-
----
-
-# 5. Workflow (What Learners Actually Do)
-
-## Step 1 — Open Project
-
-* macOS → “Reopen in Container”
-* Windows → “Open in WSL”
-
----
-
-## Step 2 — Use Terminal
-
-```
-python
-pip install <package>
-npm install
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
 ```
 
-Same commands across both platforms.
+---
+
+## Section 4 — LLM Provider Setup
+
+- [Claude Account Setup](../tools/claude/cloud.md)
+- [LLM Provider Cost Control](../tools/dev_workbench/provider_cost_control.md)
+
+Set spending limits and enable usage notifications before running
+any multi-turn or automated workflows.
 
 ---
 
-## Step 3 — Develop + Use AI Tools
+## Section 5 — Run Lab Setup Script
 
-* Edit code in VS Code
-* Use Claude plugin for assistance
-* Run code in terminal
+Retrieve the Discord webhook URL from `#meetup-notifications`,
+then run both scripts from inside Ubuntu:
 
----
+```bash
+export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
+python3 projects/group_meetup/labsetup.py
+python3 projects/group_meetup/preflight_check.py
+```
 
-# 6. Common Pitfalls
-
-## Pitfall 1 — Installing Tools in Wrong Place
-
-Symptom:
-
-* “Command not found”
-* “Package not installed”
-
-Cause:
-
-* Installed on host instead of Linux
+`labsetup.py` generates your SSH key pair, posts your public key
+to Discord, and writes the `ai-lab` SSH config entry.
+Every item in `preflight_check.py` output must show **PASS**.
 
 ---
 
-## Pitfall 2 — Mixed File Systems
+## Section 6 — Test Claude Validation
 
-Symptom:
+1. Open the Claude plugin panel in VSCode.
+2. Prompt: `"Write a hello_world.py that prints Hello, World!"`
+3. Accept the generated file, then run it from the terminal:
 
-* Code not visible
-* Performance issues
+```bash
+python3 hello_world.py
+```
 
-Cause:
+Expected output: `Hello, World!`
 
-* Working outside Linux environment
-
----
-
-## Pitfall 3 — Multiple Terminals
-
-Symptom:
-
-* Different results in different terminals
-
-Cause:
-
-* Using:
-
-  * system terminal
-  * VS Code terminal
-  * WSL/container inconsistently
-
----
-
-# 7. General Learning Strategy
-
-## Phase 1 (Beginner)
-
-* Do NOT bog down into:
-
-  * containers
-  * WSL internals
-  * virtualization
-
-Focus on:
-
-* “Run this command”
-* “Write this code”
-
----
-
-## Phase 2 (Intermediate)
-
-Introduction to:
-
-* “This is actually Linux”
-* File system structure
-* Basic environment concepts
-
----
-
-## Phase 3 (Advanced)
-
-Understand:
-
-* Containers vs WSL
-* Reproducibility
-* Dev environments
-* AI agent workflows
-
----
-
-# 8. Why This Framework Works
-
-* Consistent across Mac and Windows
-* Minimizes setup complexity
-* Reduces environment-related failures
-* Scales from beginner → advanced workflows
-* Compatible with modern AI tooling
-
----
-
-# 9. Bottom Line
-
-* macOS → Dev Containers
-* Windows → WSL
-* VS Code → always the interface
-* Linux → always the execution environment
-
-> Keep the model simple. Hide complexity early. Reveal it only when needed.
-
----
+If Claude generates the file and it runs correctly, your
+development environment is fully operational.
