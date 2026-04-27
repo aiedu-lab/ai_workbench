@@ -67,6 +67,44 @@ an AI you built yourself, running on your own hardware.
 
 ---
 
+## 🔢 Stretch Goal B — Semantic Similarity with Local Embeddings
+
+Pull the embedding model:
+
+```bash
+ollama pull nomic-embed-text
+```
+
+Run this 5-line demo (requires only `ollama` and `numpy`):
+
+```python
+import ollama, numpy as np
+
+def embed(text):
+  return ollama.embeddings(
+    model="nomic-embed-text", prompt=text
+  )["embedding"]
+
+a, b, c = map(np.array, [
+  embed("The meeting is at 3pm"),
+  embed("What time is my next event?"),
+  embed("I enjoy hiking on weekends"),
+])
+def cosine(x, y):
+  return float(
+    np.dot(x, y) / (np.linalg.norm(x) * np.linalg.norm(y))
+  )
+print(f"related:   {cosine(a, b):.2f}")   # ~0.6–0.8
+print(f"unrelated: {cosine(a, c):.2f}")   # ~0.1–0.2
+```
+
+> This is the same cosine similarity from
+> [Advanced Prompting — §8](prompting_advanced.md#embeddings--retrieval-augmented-generation-rag),
+> but running entirely offline. How does local embedding quality
+> compare to the cloud model you used there?
+
+---
+
 ## 🧹 Phase 3: Tear Down & Resource Recovery
 Local AI consumes significant RAM while active. To "clean up" your workbench so your other apps don't lag:
 
