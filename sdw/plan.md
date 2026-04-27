@@ -2135,7 +2135,7 @@ grep -c "wsl --status" sessions/development_system.md  # 1
 `projects/group_meetup/labsetup.py`,
 `projects/group_meetup/preflight_check.py`
 
-[ ] **Step 14.3.1 — Expand `tools/dev_workbench/github.md` with Account + SSH Setup**
+[x] **Step 14.3.1 — Expand `tools/dev_workbench/github.md` with Account + SSH Setup** **COMPLETED**
 
 Add two new top-level sections before the existing content:
 
@@ -2160,29 +2160,114 @@ Add two new top-level sections before the existing content:
   ```
 - Validation: `ssh -T git@github.com` → `Hi <username>! You've successfully authenticated...`
 
-[ ] **Step 14.3.2 — Add `GITHUB_USERNAME` to `projects/group_meetup/labenv.yaml`**
+[ ] **Step 14.3.2 — Roster Collection via Google Form**
+
+**Background:** `GITHUB_USERNAME` is per-student and cannot go in
+the shared `labenv.yaml` (unlike `DOCKER_SERVER_*` which are shared
+across all students). Instead, use a Google Form during the
+Introduction session. `labsetup.py` (Step 14.3.3) auto-detects each
+student's GitHub username from the authenticated `gh` session via
+`gh api user --jq .login` — no env var or manual entry needed.
+
+**Target files:** `projects/group_meetup/labenv.yaml`,
+`sessions/introduction.md`, `sessions/instructor.md`
+
+**Privacy:** Google Form responses are private — only the form owner
+(the instructor) can see them. Students cannot see each other's
+entries. The public form URL is safe to publish in `labenv.yaml`.
+
+**Persistent link:** Create the form once; reuse across all cohorts.
+Filter responses by submission date, or clear the Sheet between runs.
+
+**`projects/group_meetup/labenv.yaml`** — add one new field:
+
 ```yaml
-# GitHub username for SSH key upload and git operations.
-GITHUB_USERNAME: "<your-github-username>"
+# Permanent Google Form URL for student roster collection.
+# Set by instructor once (see instructor.md Section 1 Google Form
+# Setup). Students read this value to find the form — never changes.
+GOOGLE_FORM_URL: "<google-form-url>"
 ```
-Same placeholder-detection pattern as `DOCKER_SERVER_ID`.
+
+**`sessions/introduction.md`** — add a "Before You Leave" activity
+directing students to open `projects/group_meetup/labenv.yaml`, read
+the `GOOGLE_FORM_URL` value, and fill in the form before leaving the
+session.
+
+**`sessions/instructor.md` Section 1** — add a "Google Form Setup"
+sub-section with one-time steps to create the form and publish the
+URL to `labenv.yaml`, plus a per-cohort step to extract the roster
+CSV for GitHub/Discord provisioning:
+
+1. Go to `forms.google.com` → blank form.
+   Title: `AI Workbench Lab Roster`.
+2. Add four **Short Answer** questions:
+   Full Name, Email, GitHub username, Discord username.
+3. Responses tab → **Link to Sheets** → new spreadsheet.
+4. Settings → **Get pre-filled link** → copy base URL (strip
+   everything from `?entry.` onward — that is the shareable form
+   URL). Set `GOOGLE_FORM_URL` in
+   `projects/group_meetup/labenv.yaml` to this value.
+5. **Per cohort** — Responses tab → ⋮ → **Download responses
+   (.csv)** → save as `roster.csv` (never commit — contains PII).
+6. **Add GitHub collaborators** from roster CSV:
+
+```bash
+while IFS=, read -r name email github discord; do
+  gh api repos/OWNER/REPO/collaborators/"$github" \
+    -X PUT -f permission=push && echo "Added: $github"
+done < <(tail -n +2 roster.csv)
+```
+
+7. **Discord invites** — send the invite link (instructor.md
+   Section 2) via the email column in the roster CSV. No automation
+   needed at class scale.
+
+**Validation:**
+```bash
+grep -c "GOOGLE_FORM_URL" projects/group_meetup/labenv.yaml  # 1
+grep -c "GOOGLE_FORM_URL" sessions/introduction.md          # >= 1
+grep -c "Google Form" sessions/instructor.md                # >= 1
+```
 
 [ ] **Step 14.3.3 — Add GitHub SSH setup to `projects/group_meetup/labsetup.py`**
 
-New constants (follow existing lab-SSH naming exactly):
-```python
-GITHUB_KEYS = ("GITHUB_USERNAME",)
-GITHUB_HOST_ALIAS = "github.com"
-GITHUB_SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519_github"
+**`sessions/dev_workbench.md` Section 3 patch** — add explicit bullet
+before the git-identity block:
+
+```text
+- Run `gh auth login` (GitHub.com → HTTPS → browser) and confirm
+  with `gh auth status` before running labsetup.py
 ```
 
-New functions (identical signature pattern to Phase 12 functions):
-- `_generate_github_ssh_key()` — idempotent (skip if `GITHUB_SSH_KEY.exists()`)
-- `_write_github_ssh_config(env)` — idempotent (scan for `Host github.com`; skip if found)
-- `_validate_github_ssh()` — WARN (not exit): check `"successfully authenticated"` in
-  `stderr` of `ssh git@github.com` (GitHub always exits 1 even on success; string check is correct)
+**`projects/group_meetup/labsetup.py`** — new constants:
 
-Wire into `main()`: guarded by `github_real` flag (all `GITHUB_KEYS` are non-placeholder).
+```python
+GITHUB_HOST_ALIAS = "github.com"
+GITHUB_SSH_KEY    = SSH_DIR / f"{_USERNAME}_id_ed25519_github"
+```
+
+`GITHUB_USERNAME` is NOT in `labenv.yaml`; auto-detect after auth:
+
+```python
+result = subprocess.run(
+    ["gh", "api", "user", "--jq", ".login"],
+    capture_output=True, text=True,
+)
+github_username = result.stdout.strip()
+```
+
+Guard in `main()`: run `gh auth status` (returncode 0 = student is
+authenticated). If not authenticated → print WARN pointing to
+`tools/dev_workbench/github.md#account-setup` and skip GitHub block.
+
+New functions (identical signature pattern to Phase 12 functions):
+- `_generate_github_ssh_key()` — idempotent (skip if
+  `GITHUB_SSH_KEY.exists()`)
+- `_write_github_ssh_config()` — idempotent (scan for
+  `Host github.com`; skip if found)
+- `_validate_github_ssh()` — WARN (not exit): check
+  `"successfully authenticated"` in `stderr` of `ssh git@github.com`
+  (GitHub always exits 1 even on success; string check is correct)
 
 Validation:
 ```bash
@@ -2202,14 +2287,16 @@ New constant:
 GITHUB_SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_github"
 ```
 
-New check functions:
+New check functions (wire into `main()` after existing SSH checks):
+- `check_gh_install()` — assert `gh --version` exits 0
+- `check_gh_auth()` — assert `gh auth status` exits 0; fail message
+  points to `tools/dev_workbench/github.md#account-setup`
 - `check_github_ssh_key()` — assert `GITHUB_SSH_KEY.exists()`
-- `check_github_ssh()` — run `ssh -o BatchMode=yes -o ConnectTimeout=10 git@github.com`;
+- `check_github_ssh()` — run
+  `ssh -o BatchMode=yes -o ConnectTimeout=10 git@github.com`;
   success = `"successfully authenticated"` in `result.stderr`
-- `check_git_identity()` — assert `git config --global user.name` and
-  `git config --global user.email` are both non-empty
-
-Wire into `main()` after existing SSH checks.
+- `check_git_identity()` — assert `git config --global user.name`
+  and `git config --global user.email` are both non-empty
 
 Validation:
 ```bash
@@ -2217,7 +2304,10 @@ python3 -c "
 import ast, pathlib
 src = pathlib.Path('projects/group_meetup/preflight_check.py').read_text()
 fns = {n.name for n in ast.walk(ast.parse(src)) if isinstance(n, ast.FunctionDef)}
-req = {'check_github_ssh_key', 'check_github_ssh', 'check_git_identity'}
+req = {
+  'check_gh_install', 'check_gh_auth',
+  'check_github_ssh_key', 'check_github_ssh', 'check_git_identity',
+}
 print('PASS' if not req - fns else f'FAIL: {req - fns}')
 "
 ```
@@ -2403,8 +2493,12 @@ grep -c "prompting_advanced" sessions/ai_local.md   # 1
 - [ ] **Step 14.6.6:** `tools/dev_workbench/github.md` — contains
   `id_ed25519_github`, `gh ssh-key add`, `ssh -T git@github.com`
 
-- [ ] **Step 14.6.7:** `projects/group_meetup/labsetup.py` contains all three GitHub SSH functions;
-  `projects/group_meetup/preflight_check.py` contains all three GitHub checks
+- [ ] **Step 14.6.7:** `projects/group_meetup/labsetup.py` contains all
+  three GitHub SSH functions (`_generate_github_ssh_key`,
+  `_write_github_ssh_config`, `_validate_github_ssh`) guarded by
+  `gh auth status`; `projects/group_meetup/preflight_check.py`
+  contains all five GitHub checks (`check_gh_install`, `check_gh_auth`,
+  `check_github_ssh_key`, `check_github_ssh`, `check_git_identity`)
 
 - [ ] **Step 14.6.8:** `sessions/client_agent.md` contains
   `file-organizer-skill` and back-reference to `prompting_advanced.md`
@@ -2431,7 +2525,7 @@ grep -c "prompting_advanced" sessions/ai_local.md   # 1
 | `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md` | MOVE |
 | `sessions/instructor.md` | UPDATE Section 0, Section 4; ADD Section 8 |
 | `tools/VM/setup.md` | REPLACE macOS Parallels → Dev Container |
-| `projects/group_meetup/labenv.yaml` | ADD GITHUB_USERNAME |
+| `projects/group_meetup/labenv.yaml` | ADD GOOGLE_FORM_URL |
 | `projects/group_meetup/labsetup.py` | ADD GitHub SSH key/config/validate |
 | `projects/group_meetup/preflight_check.py` | ADD GitHub SSH + git identity checks |
 | `sessions/client_agent.md` | ADD Skills callback |
