@@ -2390,7 +2390,7 @@ grep -c "Section 8" sessions/instructor.md  # 1
 
 **Target files:** `sessions/client_agent.md`, `sessions/llm_wiki.md`, `sessions/ai_local.md`
 
-[ ] **Step 14.5.1 — Add Skills callback to `sessions/client_agent.md` Exercise A**
+[x] **Step 14.5.1 — Add Skills callback to `sessions/client_agent.md` Exercise A** **COMPLETED** 
 
 After the Exercise A "Prompt Draft" block, add a **"Turn the Prompt into a Skill"** subsection:
 
