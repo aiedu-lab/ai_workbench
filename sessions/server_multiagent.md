@@ -43,7 +43,7 @@ shows an empty workflow list.
   shallow and agent prompts narrow.
 * Use an API proxy between OpenClaw and your LLM provider to
   monitor and cap spend.
-* Reference [💰 Cost Control](../tools/provider_cost_control.md#pay-per-use)
+* Reference [💰 Cost Control](../tools/dev_workbench/provider_cost_control.md#pay-per-use)
   and [OpenClaw Tokenomics](../tools/openclaw/cli.md#tokenomics).
 
 ## CoWork vs OpenClaw

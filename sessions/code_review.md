@@ -96,8 +96,8 @@ The human still owns the merge decision.
 ---
 
 ## Tools
-* [GitHub Pull Requests - VSCode Extension](../tools/github.md#set-up-vscode)
-* [GitHub - Command Line](../tools/github.md#set-up-command-line)
+* [GitHub Pull Requests - VSCode Extension](../tools/dev_workbench/github.md#set-up-vscode)
+* [GitHub - Command Line](../tools/dev_workbench/github.md#set-up-command-line)
 * [Claude - Code Review](../tools/claude/cli.md#set-up-code-review)
 
 ## Code Review Trigger Mechansisms

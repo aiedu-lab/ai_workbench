@@ -128,8 +128,8 @@ Attending: Alice, Bob, David
 
 ## Guardrails & Tokenomics
 
-* Reference [⚠️ Guardrails - CLI Agents](../tools/provider_cost_control.md#cli-agents)
-* Reference [💰 Cost Control - API](../tools/provider_cost_control.md#pay-per-use)
+* Reference [⚠️ Guardrails - CLI Agents](../tools/dev_workbench/provider_cost_control.md#cli-agents)
+* Reference [💰 Cost Control - API](../tools/dev_workbench/provider_cost_control.md#pay-per-use)
 
 ---
 
