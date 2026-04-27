@@ -415,3 +415,30 @@ If this works, the lab is ready. If not, check:
 - `responses.json` — did `poller.py` write valid JSON?
 - `decision.json` — did `selector.py` pick a date and venue?
 - Discord channel — is `DISCORD_WEBHOOK_URL` exported correctly?
+
+---
+
+## Section 8 — Student Platform Architecture
+
+Students arrive on one of two platforms. Both produce an identical
+Ubuntu shell; the Docker server (Section 3) is accessed via SSH
+from both.
+
+> "Students on Win11 use VSCode → Remote-WSL → Ubuntu. Students on
+> macOS use VSCode → Dev Containers → Ubuntu. Both produce an
+> identical Ubuntu shell. The Docker server (Section 3) is accessed
+> via SSH from both."
+
+| Layer | Win11 | macOS |
+|-------|-------|-------|
+| Frontend | VSCode native | VSCode native |
+| Dev environment | WSL2 Ubuntu | Dev Container Ubuntu |
+| Server access | SSH → `ai-lab` | SSH → `ai-lab` (identical) |
+
+Validate student platform before the lab:
+
+```bash
+# On each student laptop — confirm Ubuntu shell is active:
+uname -a   # must show Linux
+python3 --version  # must be >= 3.10
+```
