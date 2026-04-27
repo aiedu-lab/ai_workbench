@@ -46,8 +46,44 @@ All three commands must succeed before continuing to Section 3
 
 ## Section 1 — Collect Student Roster (5 min)
 
-Before provisioning anything, collect one row per student in a
-local roster file (never committed — contains personal info):
+Student roster data is collected via a Google Form filled in by
+students at the end of the Introduction session. Responses are
+private — only the form owner (you) can see them.
+
+### Google Form Setup (one-time — reused across all cohorts)
+
+1. Go to `forms.google.com` → create a blank form.
+   Title: `AI Workbench Lab Roster`
+2. Add four **Short Answer** questions:
+   Full Name, Email, GitHub username, Discord username
+3. Responses tab → **Link to Sheets** → create new spreadsheet.
+4. Settings → **Get pre-filled link** → copy the base URL
+   (remove everything from `?entry.` onward).
+   Set `GOOGLE_FORM_URL` in
+   `projects/group_meetup/labenv.yaml` to this URL.
+
+### Per-cohort — Extract Roster CSV
+
+Responses tab → ⋮ → **Download responses (.csv)** → save as
+`roster.csv` (never commit — contains PII).
+
+Use the roster for provisioning:
+
+**GitHub repo access** — add each student as a collaborator:
+
+```bash
+while IFS=, read -r name email github discord; do
+  gh api repos/OWNER/REPO/collaborators/"$github" \
+    -X PUT -f permission=push && echo "Added: $github"
+done < <(tail -n +2 roster.csv)
+```
+
+**Discord invites** — send the server invite link (Section 2)
+to each student's email address from the roster CSV.
+
+### Roster Reference Table
+
+Before provisioning anything, verify one row per student exists:
 
 | Full name   | GitHub username | Discord username | Laptop OS   | Admin? | Server acct? |
 |-------------|-----------------|------------------|-------------|--------|--------------|
@@ -71,11 +107,16 @@ has a Discord account before inviting (Section 2).
 **Laptop OS** — accept only `Win11+WSL2` or `macOS 13+`. Students
 on older OS versions must upgrade before the lab.
 
-**Admin/sudo** — required for tool installation (Section 4).
+**Admin/sudo** — required for tool installation.
 Students without admin access cannot complete the exercises.
 
 **Server account** — required for Phase 6 Docker deployment.
 Provision in Section 3; mark this column `yes` after that step.
+
+---
+
+*The roster table above is a local tracking aid — never commit it.
+The Google Form CSV is the authoritative source.*
 
 ---
 

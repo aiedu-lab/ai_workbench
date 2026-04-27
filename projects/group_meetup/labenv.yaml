@@ -27,7 +27,10 @@ DOCKER_SERVER_USERNAME: "labuser"
 # Format: <sshport> (e.g. 22, 2222, etc.)
 DOCKER_SERVER_SSH_PORT: 22
 
-# GOOGLE FORM URL for students to submit their 
-# name, email, Discord username, GitHub username
-# Format: URL
-# GOOGLE_FORM_URL: "https://docs.google.com/forms/d/e/FA/viewform?usp=sf_link"
+# Permanent Google Form URL for student roster collection.
+# Created once by the instructor (see instructor.md Section 1).
+# Students open this URL during the Introduction session to submit
+# their name, email, GitHub username, and Discord username.
+# Responses are private — only the form owner can see them.
+# Format: https://forms.gle/...  (never changes across cohorts)
+GOOGLE_FORM_URL: "<google-form-url>"
