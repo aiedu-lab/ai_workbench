@@ -1952,7 +1952,7 @@ never referenced in later sessions.
 
 **Target files:** `sessions/dev_workbench.md`, `README.md`
 
-**Step 14.1.1 — Review `sessions/dev_workbench.md`** **COMPLETED**
+[x] **Step 14.1.1 — Review `sessions/dev_workbench.md`** **COMPLETED**
 
 #### Reorganize Development Workbench
 
@@ -2053,7 +2053,7 @@ print('PASS')
 "
 ```
 
-**Step 14.1.2 — Add `dev_workbench.md` row to `README.md` agenda**
+[x] **Step 14.1.2 — Add `dev_workbench.md` row to `README.md` agenda** **COMPLETED**
 
 Immediately after `instructor.md` in the agenda row:
 ```
@@ -2073,22 +2073,22 @@ immediately after the `instructor.md` row.
 - `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md`
 - All files with inbound links to the old paths
 
-**Step 14.2.1 — Move `tools/github.md` → `tools/dev_workbench/github.md`**
+[ ] **Step 14.2.1 — Move `tools/github.md` → `tools/dev_workbench/github.md`**
 ```bash
 git mv tools/github.md tools/dev_workbench/github.md
 ```
 
-**Step 14.2.2 — Move `tools/vscode.md` → `tools/dev_workbench/vscode.md`**
+[ ] **Step 14.2.2 — Move `tools/vscode.md` → `tools/dev_workbench/vscode.md`**
 ```bash
 git mv tools/vscode.md tools/dev_workbench/vscode.md
 ```
 
-**Step 14.2.3 — Move `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md`**
+[ ] **Step 14.2.3 — Move `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md`**
 ```bash
 git mv tools/provider_cost_control.md tools/dev_workbench/provider_cost_control.md
 ```
 
-**Step 14.2.4 — Fix all inbound links broken by the moves**
+[ ] **Step 14.2.4 — Fix all inbound links broken by the moves**
 
 Files to update (known references):
 
@@ -2109,7 +2109,7 @@ grep -rn "tools/github\.md\|tools/vscode\.md\|tools/provider_cost_control\.md" \
 # expected: no output
 ```
 
-**Step 14.2.5 — Move student-facing setup content from `sessions/instructor.md` Section 4 to `sessions/development_system.md`**
+[ ] **Step 14.2.5 — Move student-facing setup content from `sessions/instructor.md` Section 4 to `sessions/development_system.md`**
 
 - Move Win11+WSL2 and macOS platform setup blocks into
   `sessions/development_system.md` Sections 1–2
@@ -2135,7 +2135,7 @@ grep -c "wsl --status" sessions/development_system.md  # 1
 `projects/group_meetup/labsetup.py`,
 `projects/group_meetup/preflight_check.py`
 
-**Step 14.3.1 — Expand `tools/dev_workbench/github.md` with Account + SSH Setup**
+[ ] **Step 14.3.1 — Expand `tools/dev_workbench/github.md` with Account + SSH Setup**
 
 Add two new top-level sections before the existing content:
 
@@ -2160,14 +2160,14 @@ Add two new top-level sections before the existing content:
   ```
 - Validation: `ssh -T git@github.com` → `Hi <username>! You've successfully authenticated...`
 
-**Step 14.3.2 — Add `GITHUB_USERNAME` to `projects/group_meetup/labenv.yaml`**
+[ ] **Step 14.3.2 — Add `GITHUB_USERNAME` to `projects/group_meetup/labenv.yaml`**
 ```yaml
 # GitHub username for SSH key upload and git operations.
 GITHUB_USERNAME: "<your-github-username>"
 ```
 Same placeholder-detection pattern as `DOCKER_SERVER_ID`.
 
-**Step 14.3.3 — Add GitHub SSH setup to `projects/group_meetup/labsetup.py`**
+[ ] **Step 14.3.3 — Add GitHub SSH setup to `projects/group_meetup/labsetup.py`**
 
 New constants (follow existing lab-SSH naming exactly):
 ```python
@@ -2195,7 +2195,7 @@ print('PASS' if not req - fns else f'FAIL: {req - fns}')
 "
 ```
 
-**Step 14.3.4 — Add GitHub SSH + git identity checks to `projects/group_meetup/preflight_check.py`**
+[ ] **Step 14.3.4 — Add GitHub SSH + git identity checks to `projects/group_meetup/preflight_check.py`**
 
 New constant:
 ```python
@@ -2228,7 +2228,7 @@ print('PASS' if not req - fns else f'FAIL: {req - fns}')
 
 **Target files:** `tools/VM/setup.md`, `sessions/instructor.md`
 
-**Step 14.4.1 — Replace macOS Parallels section in `tools/VM/setup.md` with Dev Container**
+[ ] **Step 14.4.1 — Replace macOS Parallels section in `tools/VM/setup.md` with Dev Container**
 
 Replace the entire `## macOS` section (full replacement, not additive).
 
@@ -2261,7 +2261,7 @@ grep -c "Dev Container" tools/VM/setup.md  # >= 3
 grep -c "Parallels" tools/VM/setup.md      # 0
 ```
 
-**Step 14.4.2 — Update `sessions/instructor.md` Section 0 Parallels reference**
+[ ] **Step 14.4.2 — Update `sessions/instructor.md` Section 0 Parallels reference**
 
 Change the section 0 reference line from:
 > "full instructions for Windows (WSL2) and macOS (Parallels) VMs"
@@ -2269,7 +2269,7 @@ Change the section 0 reference line from:
 To:
 > "full instructions for Windows (WSL2) and macOS (Dev Container) environments"
 
-**Step 14.4.3 — Add Platform Architecture overview to `sessions/instructor.md`**
+[ ] **Step 14.4.3 — Add Platform Architecture overview to `sessions/instructor.md`**
 
 Add new Section 8 at the end of the file:
 
@@ -2300,7 +2300,7 @@ grep -c "Section 8" sessions/instructor.md  # 1
 
 **Target files:** `sessions/client_agent.md`, `sessions/llm_wiki.md`, `sessions/ai_local.md`
 
-**Step 14.5.1 — Add Skills callback to `sessions/client_agent.md` Exercise A**
+[ ] **Step 14.5.1 — Add Skills callback to `sessions/client_agent.md` Exercise A**
 
 After the Exercise A "Prompt Draft" block, add a **"Turn the Prompt into a Skill"** subsection:
 
@@ -2319,7 +2319,7 @@ grep -c "file-organizer-skill" sessions/client_agent.md    # >= 2
 grep -c "prompting_advanced" sessions/client_agent.md      # 1
 ```
 
-**Step 14.5.2 — Reinforce LLM Wiki vs RAG in `sessions/llm_wiki.md`**
+[ ] **Step 14.5.2 — Reinforce LLM Wiki vs RAG in `sessions/llm_wiki.md`**
 
 Immediately after the existing "The Core Concept" bullet block, add a
 callout box:
@@ -2339,7 +2339,7 @@ grep -c "prompting_advanced" sessions/llm_wiki.md    # >= 1
 grep -c "Traditional RAG" sessions/llm_wiki.md        # >= 2
 ```
 
-**Step 14.5.3 — Add local embedding stretch goal to `sessions/ai_local.md`**
+[ ] **Step 14.5.3 — Add local embedding stretch goal to `sessions/ai_local.md`**
 
 Add after the existing "Stretch Goal — Connect to the Main Project" section,
 titled **"Stretch Goal B — Semantic Similarity with Local Embeddings"**:
