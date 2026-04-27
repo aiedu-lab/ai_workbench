@@ -105,7 +105,9 @@ Execute only Step 1.
 Create a **fixed structure** for prompts so they are consistent.
 It is like a **form** you fill out every time instead of writing 
 from scratch. 
-For example, this [Prompt Template](../prompts/template.md#prompt-template) can be used to realize the example [Prompt](../projects/prompting_advanced/prompt.md#invest-or-buy-laptop)
+For example, this [Prompt Template](../prompts/template.md#prompt-template) 
+can be used to realize the example 
+[Prompt](../projects/prompting_advanced/prompt.md#invest-or-buy-laptop)
 
 
 #### Template substitution mechanisms
