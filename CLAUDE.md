@@ -49,13 +49,16 @@ Read [file]. Explain what it does. Do NOT write any file yet.
 
 Never assume the contents of a file. Always verify.
 
-### 2. Plan Before Coding or Creating Content
+### 2. Plan Before Generating Plan, Content, or Code edits
 
 For any change touching more than one file or one function, produce a
-written plan first. Use Plan Mode:
+written plan first. In the plan always include the `provider:model`
+used to generate the edits to the plan. Use Plan Mode:
 
-```
-Propose a step-by-step plan. Do not write ANY code until I approve.
+```html
+Propose a step-by-step plan. Do NOT write ANYTHING until I approve.
+Annotate any changes to the specification plan with
+<!-- AI-GENERATED [provider:model]: Phase [X] Step [Y] (plan_history.md) -->
 ```
 
 ### 3. One Step at a Time
