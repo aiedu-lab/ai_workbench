@@ -2,6 +2,10 @@
 node_modules/
 .tmp/
 *.log
+
+# ignore language specific generated directories
+__pycache__/
+
 # ignore Obsidian vault files except plan.md
 projects/llm_wiki/.obsidian
 projects/llm_wiki/Home.md
