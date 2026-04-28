@@ -2586,3 +2586,27 @@ Follow CLAUDE.md conventions:
   being less than 80 characters and tabs implemented as 2 spaces.
 - [ ] Run a review across the content of the entire workbench to ensure
   compliance with the line length and tab requirements.
+
+---
+
+<!-- AI-GENERATED: Phase 16 appended from replan workflow using Gemini 3.1 Pro (High) -->
+## Phase 16: SPECIFICATION DRIVEN XXX AND REPO CLEANUP
+
+### Phase 16.1: Improve Agenda
+- [ ] Update the agenda section of `README.md` by adding a new column `Description`.
+- [ ] For each session in the agenda, write a one-sentence summary that explains the motivation (e.g., why attend, what will be learned, or key takeaways).
+
+### Phase 16.2: Specification Driven Activities
+- [ ] Update `sessions/sdd_basics.md` in the section "Specification Driven Beyond Code".
+- [ ] Add rows to the table illustrating additional use cases:
+  - Specification Driven Bootstrapping (ideation, research, GTM, product, tech mocks).
+  - Specification Driven Computer Aided Design ([Claude on AutoDesk](https://x.com/claudeai/status/2049143438281445811?s=20)).
+  - Specification Driven Creative Tooling ([Claude on Blender](https://x.com/claudeai/status/2049143438281445811?s=20)).
+  - Specification Driven **XXX** (Perform a quick search for other known activities driven by specifications and LLMs, and add them to the table with reference links).
+- [ ] At the end of the table, add a new sub-section explaining that `Specifications` can drive any digital services with an authorized, LLM-readable interface (MCP or APIs with schema, types, description) where rules of execution are explicitly stated.
+- [ ] Clarify in this sub-section that if the physical world is digitally controlled (e.g., via robots), LLMs can drive activities spanning both digital and physical realms, using MCP or APIs as digital interfaces to the physical world.
+
+### Phase 16.3: Delete Unused Files
+- [ ] Scan the repository to identify files whose contents have been absorbed elsewhere and are no longer used.
+- [ ] Validate that the contents of `sessions/claude_design.md` have been moved to `sessions/presentation_n_design.md` (or similar).
+- [ ] Delete `sessions/claude_design.md` and any other orphaned files identified during the scan.

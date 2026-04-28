@@ -636,3 +636,57 @@ Once approved we can incorporate the changes to `sdw/plan.md` and start
 executing to amend the workbench content.
 
 ---
+
+## [x] Specification Driven XXX
+
+
+### Imporve Agenda
+Update the agenda section of README.md with another column `Description` that 
+offers a one sentence summary for each session describing the essence of 
+whatever is the most relevant wrt any of the below reasons:
+* why the students should bother attending the session
+* what will they learn, what will they get out of doing the session
+* basically lay out the motivation of the session.
+
+### Specification Driven Activities
+
+Many activities can be driven via Specifications. 
+
+Add to the table in `sessions/sdd_basics.md` for the section on 
+`Specification Driven Beyond Code` rows, where we
+illustrate additional use cases, such as:
+
+* Specification Driven Bootstrapping: spec plans can be used to drive, 
+orchestrate, manage, et.c many of the key activities that entrepreneurs 
+engage as part of bootstrapping start-ups, such as ideation, research, 
+GTM, product, and technology i.e. creating mocks, building prototypes, etc.
+
+* Specification Driven Computer Aided Design - 
+[Claude on AutoDesk](https://x.com/claudeai/status/2049143438281445811?s=20)
+
+* Specificatin Driven Creative Tooling: 
+[Claude on Blender](https://x.com/claudeai/status/2049143438281445811?s=20)
+
+* Specification Driven **XXX**: Do a quick search of what all activities are
+already known as being driven by specifications and LLMs and add those to 
+the table with reference links to the table.
+
+* At the end of the table, add a new sub-section stating that 
+`Specifications` can drive any digital services with authorized interface 
+that is LLM readable - MCP or APIs with 
+schema, types, description, etc. - and rules of execution are well defined 
+i.e. not implicit in human mind but rather explicitly stated. 
+
+Once physical world can be digitally controlled (e.g. robots) then 
+LLMs can drive additional activities that span the digital and 
+physical world as well. Clarify here that in this case the MCP or API 
+are the digital interfaces to the physical world.
+
+### Delete unused files
+
+Please scan the repo to eliminate files whose contents have been absored 
+in other files. These files were left behind due to oversigh.
+As an example reference `sessions/claude_design.md` - validate that contents
+its contents have since been moved to `sessions/presentation_n_design.md`.
+
+---
