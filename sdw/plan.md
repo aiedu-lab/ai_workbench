@@ -2561,11 +2561,13 @@ Follow CLAUDE.md conventions:
 ## Phase 15: WORKBENCH CONTRIBUTION GUIDELINES
 
 ### Phase 15.1: Document SDW in README
-- [ ] Read `README.md`.
-- [ ] Add a new section or amend an existing section in `README.md` to clearly
-  state that the `AI Workbench` repo is a `specification driven workbench
-  (SDW)`.
-- [ ] Include a short, concise description defining what SDW means.
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 15 Step 15.1 (plan_history.md) -->
+- [x] **COMPLETED** Read `README.md`.
+- [x] **COMPLETED** Add a new section or amend an existing section in
+  `README.md` to clearly state that the `AI Workbench` repo is a
+  `specification driven workbench (SDW)`.
+- [x] **COMPLETED** Include a short, concise description defining what
+  SDW means.
 
 ### Phase 15.2: Document Workbench Update Workflow
 - [ ] Review the `Workbench Update Workflow` section from the
