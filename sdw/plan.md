@@ -2638,6 +2638,13 @@ Follow CLAUDE.md conventions:
   `sessions/dev_workbench.md`, `tools/openai/codex_cli.md`.
 
 ### Phase 16.4: Delete Unused Files
-- [ ] Scan the repository to identify files whose contents have been absorbed elsewhere and are no longer used.
-- [ ] Validate that the contents of `sessions/claude_design.md` have been moved to `sessions/presentation_n_design.md` (or similar).
-- [ ] Delete `sessions/claude_design.md` and any other orphaned files identified during the scan.
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 16 Step 16.4 (plan_history.md) -->
+- [x] **COMPLETED** Scan the repository to identify files whose
+  contents have been absorbed elsewhere and are no longer used.
+- [x] **COMPLETED** Validated that all content of
+  `sessions/claude_design.md` (UI prototype + pitch deck exercises)
+  is fully present in `sessions/presentation_n_design.md`
+  (Exercises C & D). No student-facing file referenced the old file.
+- [x] **COMPLETED** Deleted `sessions/claude_design.md`.
+  `sessions/software_enhancement.md` retained — cross-referenced
+  from `sessions/sdlc_ai.md` as supplemental reading.
