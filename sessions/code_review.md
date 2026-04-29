@@ -199,23 +199,23 @@ claude
 #### Level 2a: Workflow triggered by GitHub Actions
 
 1. Authorize: 
-  * `gh secret list` shows that authorization token CLAUDE_CODE_OAUTH_TOKEN 
-  (Subscription) or key ANTHROPIC_API_LEY (pay as you go) is uploaded to Repo
-  * GitHub Repo => Setting => Secrets  Variables => Actions. 
-  * Validate: `claude auth status --text` shows auth mode.
+* `gh secret list` shows that authorization token CLAUDE_CODE_OAUTH_TOKEN 
+(Subscription) or key ANTHROPIC_API_LEY (pay as you go) is uploaded to Repo
+* GitHub Repo => Setting => Secrets  Variables => Actions. 
+* Validate: `claude auth status --text` shows auth mode.
 
 3. Permit Workflows
-  * GitHub Org => Settings => Actions => General: "Allow GiHub Actions to 
-  create and approve pull requests" is enabled.
-  * GitHub Repo => Settings => Actions => General: "Allow GiHub Actions to 
-  create and approve pull requests" is enabled. 
-  NOTE: The repo-level setting is greyed out until the same setting is
-  enabled at the org level first:
-  GitHub Org => Settings => Actions => General => "Allow GitHub Actions
-  to create and approve pull requests"
+* GitHub Org => Settings => Actions => General: "Allow GiHub Actions to 
+create and approve pull requests" is enabled.
+* GitHub Repo => Settings => Actions => General: "Allow GiHub Actions to 
+create and approve pull requests" is enabled. 
+NOTE: The repo-level setting is greyed out until the same setting is
+enabled at the org level first:
+GitHub Org => Settings => Actions => General => "Allow GitHub Actions
+to create and approve pull requests"
 
-  * Validate: GitHub Repo => Actions => "Claude PR Review" listed on left. If it has an icon - yellow (queued) or green (in progress) - it is working.
-
+* Validate: GitHub Repo => Actions => "Claude PR Review" listed on left. 
+If it has an icon - yellow (queued) or green (in progress) - it is working.
 
 #### Level 2b: Self-Hosted GitHub Actions
 

@@ -24,7 +24,8 @@ A **skill** is a prompt you reuse again and again for a specific job.
 
 #### Analogy
 
-Like a **calculator function** (e.g., `sum()`), instead of doing math manually every time.
+Like a **calculator function** (e.g., `sum()`), instead of doing math 
+manually every time.
 
 #### Example
 
