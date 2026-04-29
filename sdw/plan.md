@@ -2570,16 +2570,19 @@ Follow CLAUDE.md conventions:
   SDW means.
 
 ### Phase 15.2: Document Workbench Update Workflow
-- [ ] Review the `Workbench Update Workflow` section from the
-  `prompt_history.md`.
-- [ ] Suggest and incorporate updates to the process, including:
-  - Best practices for managing the contribution and content of Specification
-    Driven Content.
-  - Adding a requirement to Pull Requests that the executed specification plan
-    section must specify the `provider:model` used to generate the append
-    changes and the `provider:model` used to execute the specification plan.
-- [ ] Document the updated `workbench update workflow` in the
-  `Contribution Guidelines` section of `README.md`.
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 15 Step 15.2 (plan_history.md) -->
+- [x] **COMPLETED** Review the `Workbench Update Workflow` section
+  from the `prompt_history.md`.
+- [x] **COMPLETED** Suggest and incorporate updates to the process,
+  including:
+  - Best practices for managing the contribution and content of
+    Specification Driven Content.
+  - Adding a requirement to Pull Requests that the executed
+    specification plan section must specify the `provider:model`
+    used to generate the append changes and the `provider:model`
+    used to execute the specification plan.
+- [x] **COMPLETED** Document the updated `workbench update workflow`
+  in the `Contribution Guidelines` section of `README.md`.
 
 ### Phase 15.3: Style and Hygiene Enforcement
 - [ ] Review the `Style and Hygiene` section in `CLAUDE.md`.
