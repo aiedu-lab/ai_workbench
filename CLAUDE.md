@@ -224,6 +224,18 @@ def organize_files(
 ) -> None:
 ```
 
+**Enforcement — run before every commit:**
+
+```bash
+# Report lines over 80 chars in staged md/py/yaml/sh files
+git diff --name-only HEAD \
+  | grep -E '\.(md|py|yaml|yml|sh)$' \
+  | xargs awk 'length>80 {
+      print FILENAME ":" NR ": " length " chars"
+    }' \
+  | grep . && echo "FAIL: lines exceed 80 cols" || echo "PASS"
+```
+
 ### Diff consistency
 
 Indentation of surrounding context in all diffs must match the 2-space
