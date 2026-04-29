@@ -1,9 +1,18 @@
 # OpenClaw CLI
 
 ## Setup
-Detects  OS, installs Node (if needed), installs OpenClaw, and launches onboarding.
+Detects OS, installs Node (if needed), installs OpenClaw, and
+launches onboarding.
+
 ```bash
 curl -fsSL https://openclaw.ai/install.sh | bash
+```
+
+### Validation
+
+```bash
+openclaw --version   # prints installed version
+openclaw help        # command list appears without errors
 ```
 
 ## Guardrails
@@ -16,7 +25,7 @@ curl -fsSL https://openclaw.ai/install.sh | bash
 OpenClaw is eager to do its job and greedy in token execution. Intermediate 
 access between OpenClaw to LLM provider via a proxy to monitor, track and 
 control token usage.
-* Reference [💰 Cost Control - API](../provider_cost_control.md#pay-per-use)
+* Reference [💰 Cost Control - API](../dev_workbench/provider_cost_control.md#pay-per-use)
 
 ## Documentation
 

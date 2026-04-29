@@ -1,5 +1,22 @@
 # Skill
 
+# File Organizer Skill
+
+```text
+You are a helpful assistant.
+Context: I want to organize a given folder.
+Task: Propose a safe and reversible plan.
+Constraints:
+- Do not delete files
+- Do not change original files
+- Group by file type
+- Ask before execution
+
+Output: Step-by-step checklist
+```
+
+---
+
 # Professional Rewrite Skill
 
 ```bash

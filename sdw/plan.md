@@ -1,16 +1,114 @@
-# Plan: Group Meetup Organizer — Progressive Exercise Arc
+# Software Driven Specification Plan for creation of AI Workbench
 
 TL;DR
-This plan consolidates the seemingly disparate exercises across sessions 
-into **one progressive project** — the `Group Meetup Organizer` — 
-that grows in sophistication, features, and deployment scope as 
-students advance through the lab. The same project appears
-in every session from Planning through Multi-Agent Workflows. Earlier
-sessions use deliberately incomplete toy versions so that students
-feel the gap — and understand why SDD and agents are needed — before
-building the full application. Execute one step at a time.
+This document captures the specification plan used to craft the course 
+content delivered by an expert computer science educator. It builds a 
+hands-on AI lab for high schoolers and non-CS undergraduates, teaching 
+them to build AI-powered applications from basic prompting to multi-agent 
+server workflows using sophisticated specification-driven techniques.
 
 ---
+
+## Phase 0: Initial Workbench Foundation [Historical]
+
+*Note: This phase covers the initial unrecorded activities that established the workbench structure.*
+
+### Phase 0.1: Project Inception
+- [x] Define the vision for a Specification Driven Workbench (SDW).
+- [x] Establish the project structure with `sdw/`, `sessions/`, and `projects/` directories.
+- [x] Create the initial `plan.md` and `README.md` to guide development.
+- [x] Set up the basic technical stack requirements (Python, Markdown, Git).
+
+### Phase 0.2: Core Specification Establishment
+- [x] Draft the initial component contracts for the Group Meetup Organizer.
+- [x] Define the session arc from Planning through Multi-Agent Workflows.
+
+---
+
+## Phase 1: Spec Driven Content Creation (SDCC) [Historical]
+
+*Note: This phase consolidates the historical plan originally stored in `sdw/sdd_server_workflow_plan.md`.*
+
+TL;DR
+This plan breaks the SDCC effort into discrete phases for the slide 
+session, client workflow session, server workflow session, SDD 
+refactor, agenda update, and final review. Each phase contains
+concrete steps for the specific session file targets, and we will 
+execute one step at a time.
+
+### Phase 1.1: SLIDES
+- [x] Review and expand `slides.md` to add:
+  * Gamma install and start instructions 
+  * student/team discount guidance
+  * guardrails for safe content generation
+  * tokenomics guidance for cost control
+  * validation exercises that prove students understand prompting and structure
+- [x] Confirm any supporting references in `introduction.md` and 
+`README.md` if needed.
+  * Login verification moved into slides.md Setup > Install/Start.
+  * README.md agenda entry already correct — no changes needed.
+  * Mark the slide session content ready for review.
+
+### Phase 1.2: CLIENT WORKFLOW
+- [x] Review `client_work_automation.md` and add:
+  * Claude CoWork install and try instructions
+  * student/team discount guidance
+  * guardrails for safe CoWork automation and file handling
+  * tokenomics guidance for cost-conscious use
+  * validation exercises that ensure students grok safe workflow execution
+- [x] Ensure `client_application.md` incorporates the SDD exercise narrative and clearly connects with the client workflow practice.
+  * SDD framing blockquote added; stack (React+TS+FastAPI+MongoDB) from sdd_basics.md adopted.
+  * event_organizer.md generalized for any meetup (study groups, social clubs).
+  * README.md agenda rows updated for consistency.
+- [x] Mark the client workflow session content ready for review.
+
+### Phase 1.3: SERVER WORKFLOW
+- [x] Review `server_multiagent.md` and add:
+  * OpenClaw install and try instructions
+  * student/team discount guidance
+  * guardrails for safe server-side workflow execution
+  * tokenomics guidance for multi-agent server workflows
+  * validation exercises that ensure students understand orchestration and failure handling
+- [x] Confirm the server workflow content aligns with `server_application.md` and `sdlc_ai.md`.
+  * server_application.md removed — content consolidated into server_multiagent.md
+    (Phase 1: single agent; Phase 4: server/Docker deployment).
+  * Flight Tracker preserved as alternative project note in server_multiagent.md.
+  * tools/temporal/cli.md created and linked. sdlc_ai.md confirmed aligned.
+  * README.md two server rows merged into one with OpenClaw + Temporal tool links.
+- [x] Mark the server workflow session content ready for review.
+
+### Phase 1.4: SDD REFACTOR
+- [x] Review `sdd_basics.md` and refactor it to emphasize concept and methodology only.
+- [x] Consolidate the concrete SDD exercise narrative into client_application.md or a dedicated exercise file if needed.
+- [x] Ensure the SDD concept file links clearly to the client application exercise.
+- [x] Mark the SDD refactor ready for review.
+  * Absorbed into Phase 2 Step 3 (inseparable from client_application.md update).
+
+### Phase 1.5: AGENDA UPDATE
+- [x] Update `README.md` Agenda to place:
+  * `code_review.md` immediately after the client application development exercise
+  * `sdlc_ai.md` next, before server and advanced workflow sessions
+- [x] Clarify tool labels and session timings for the updated flow.
+  * Tool labels and timings were already consistent — no changes needed.
+- [x] Mark the agenda update ready for review.
+
+### Phase 1.6: FINAL REVIEW
+- [x] Review all revised files for consistency and correct references.
+  * slides.md: fixed broken session-notes path, trailing whitespace, missing newline.
+  * sdd_basics.md: updated exercise link text to match README agenda label.
+  * client_application.md: added blank line after ## Tools.
+  * event_organizer.md: fixed 'Thursady' typo; 'chosen restaurant' → 'chosen venue'.
+  * All Output section plan.md links confirmed as intentional forward references.
+  * Orphaned learnings/session_notes/server_application.md noted (pre-existing).
+- [x] Confirm the updated agenda, SDD refactor, and exercise content support the intended learning progression.
+  * Progression: build app → review code → understand SDLC → automate workflows → scale to server.
+  * SDD concept (sdd_basics.md) cleanly separated from exercise (client_application.md).
+  * All Tools/Setup sections consistent across session files.
+- [x] Save a final completion note in plan.md and prepare to execute the next approved step.
+  * All 6 phases complete. Branch feat/sdlc ready for PR and review.
+
+---
+
 
 ## Project Description (canonical — replaces the draft plan)
 
@@ -469,7 +567,7 @@ step includes a validation test so the instructor knows it worked.
   ```
   Expected: `#meetup-notifications` in `meetup-lab-<CLASS_ID>`
   receives a message like:
-  ```
+  ```text
   📅 Meetup confirmed!
   Date: Thu Apr 24 7pm
   Venue: Library Room A
@@ -481,7 +579,7 @@ step includes a validation test so the instructor knows it worked.
 
   Add as the first row, before all session rows:
 
-  ```markdown
+  ```text
   | [**Instructor Preflight**](sessions/instructor.md) | Before lab | Roster, Discord, server, student laptops | 60 mins |
   ```
 
@@ -1201,7 +1299,7 @@ no credentials.
 # Section 2 validation step).
 
 DISCORD_SERVER: "meetup-lab-<CLASS_ID>"
-DOCKER_SERVER: "<hostname>"
+DOCKER_SERVER_ID: "<hostname>"
 ```
 
 Instructor replaces `<CLASS_ID>` and `<hostname>` before lab.
@@ -1265,7 +1363,7 @@ if __name__ == "__main__":
 ### Step 9.4: Update `sessions/instructor.md` — labenv.yaml ref
 
 Add a reference to `labenv.yaml` in Section 3 (Server
-Provisioning) noting that `DOCKER_SERVER` there matches the
+Provisioning) noting that `DOCKER_SERVER_ID` there matches the
 hostname in `labenv.yaml`. Add a note to Section 5 (config.yaml)
 cross-referencing `DISCORD_SERVER` in `labenv.yaml`.
 
@@ -1346,7 +1444,7 @@ the dev test suite green?"
   validation `POST` sends URL as message body; Section 6
   references Section 2 retrieval; no real URL committed.
 - [x] **Step 9.7.2:** `labenv.yaml` — exists; `DISCORD_SERVER` ✅ COMPLETED
-  and `DOCKER_SERVER` present; no `DISCORD_WEBHOOK_URL` key.
+  and `DOCKER_SERVER_ID` present; no `DISCORD_WEBHOOK_URL` key.
 - [x] **Step 9.7.3:** `labsetup.py` — parses YAML, sets env ✅ COMPLETED
   vars, exits non-zero with clear message if secret absent.
 - [x] **Step 9.7.4:** `sdlc_ai.md` — Mermaid diagram renders; ✅ COMPLETED
@@ -1525,3 +1623,1028 @@ Step 10.5 validates this is correct and searches for any remaining
     --include="*.yaml" --include="*.sh"
   # Must return zero results
   ```
+
+---
+
+## Phase 11: Documentation and Plan Consolidation
+
+### Objective
+Clean up, consolidate, and establish best practices for the Specification Driven Workbench (SDW) prompts and plan files to ensure a clean lineage and proper state management.
+
+### Steps
+
+- [x] **Consolidate Prompts:**
+  - [x] Create a new file `sdw/prompt_history.md`.
+  - [x] Move the contents of all existing prompt files (`sdw/add_embed_RAG_prompt.md`, `sdw/merge_plan_prompt.md`, `sdw/pkm_design_local_prompt.md`, `sdw/pkm_sdd_prompt.md`, `sdw/sdlc_env_prompt.md`) into `sdw/prompt_history.md` as chronological entries.
+  - [x] Delete the individual `*_prompt.md` files from the `sdw/` directory.
+  - [x] Reverse-engineer the initial, unrecorded prompts that led to the workbench's creation and document them at the beginning of `sdw/prompt_history.md`.
+
+- [x] **Consolidate Plan Files:**
+  - [x] Merge the contents, phases, and tasks of `sdw/sdd_server_workflow_plan.md` into the master `sdw/plan.md` file as a distinct new phase or section.
+  - [x] Delete `sdw/sdd_server_workflow_plan.md`.
+  - [x] Reverse-engineer the unrecorded initial project plan/structure and prepend it to `sdw/plan.md` (e.g., as "Phase 0: Initial Workbench Foundation") to complete the historical record.
+
+- [x] **Establish Executed vs. Original Plan Convention:**
+  - [x] Rename the original instructor template `projects/llm_wiki/llm_wiki_plan.md` to `projects/llm_wiki/plan_template.md`. This clearly designates it as the pristine, unexecuted version for students.
+  - [x] Retain `projects/llm_wiki/plan.md` as the active, state-tracked file representing the instructor's executed plan.
+
+---
+
+## Phase 12: SPECIFICATION DRIVEN ACTIVITIES
+
+**Addresses:** `sdw/prompt_history.md` §
+`## Specification Driven Activities Plan Prompt`
+(originally `sdw/pkm_sdd_prompt.md`)
+
+**Purpose:** Extend the AI Workbench with improved instructor tooling,
+a dedicated Claude.ai account setup guide, four new Specification Driven
+session types (SDW, SDP, SDPKM, SDD cross-reference), an AI Local session,
+cross-session exercise continuity, and a markdown hygiene pass.
+
+---
+
+### Phase 12.1: Instructor Setup — VM and SSH Access
+
+**Target files:** `sessions/instructor.md`,
+`projects/group_meetup/labenv.yaml`,
+`projects/group_meetup/labsetup.py`,
+`projects/group_meetup/preflight_check.py`
+
+- [x] **Step 12.1.1: Add VM Setup section to `instructor.md`** ✅ COMPLETED
+  - Add Section 0 (before existing Section 1 — roster) titled
+    "Provision Instructor VM" referencing `tools/VM/setup.md`
+  - Minimum spec: Ubuntu 22.04, 8 GB RAM, Docker installed
+  - Validation: `docker --version` from the VM
+
+- [x] **Step 12.1.2: Add SSH Access section to `instructor.md`** ✅ COMPLETED
+  - New section: "Configure student SSH access to Docker server"
+  - Introduce env vars: `DOCKER_SERVER_USERNAME`, `DOCKER_SERVER_PORT`
+    (alongside existing `DOCKER_SERVER_ID`)
+  - Show `.ssh/config` snippet for macOS and Windows/WSL2:
+    ```
+    Host ai-lab
+      HostName $DOCKER_SERVER_ID
+      User     $DOCKER_SERVER_USERNAME
+      Port     $DOCKER_SERVER_PORT
+      IdentityFile ~/.ssh/your_private_key
+    ```
+  - Validation: `ssh ai-lab docker ps` → empty table header
+
+- [x] **Step 12.1.3: Update `projects/group_meetup/labenv.yaml`** ✅ COMPLETED (pre-existing)
+  - Add `DOCKER_SERVER_USERNAME` and `DOCKER_SERVER_PORT` keys
+
+- [x] **Step 12.1.4: Update `projects/group_meetup/labsetup.py`** ✅ COMPLETED
+  - Parse new env vars from `labenv.yaml`
+  - Generate `~/.ssh/<username>_id_ed25519` key pair (idempotent)
+  - Post public key to `#meetup-notifications` for instructor install
+  - Generate `~/.ssh/config` entry for `ai-lab` (idempotent)
+  - Validate SSH connectivity via `subprocess.run(["ssh", "ai-lab",
+    "echo ok"])` — WARN (not error) if key not yet installed
+  - Two-phase workflow documented in `instructor.md` Section 3
+
+- [x] **Step 12.1.5: Update `projects/group_meetup/preflight_check.py`** ✅ COMPLETED
+  - Add SSH key existence check
+  - Add SSH connectivity check: `ssh ai-lab echo ok` → PASS/FAIL
+  - Reads labenv.yaml directly for DOCKER_SERVER_* and DISCORD_SERVER
+    (does not require caller to have run labsetup.py first)
+
+---
+
+### Phase 12.2: Claude.ai Account Setup
+
+**Target files:** `tools/claude/cloud.md` (new), `tools/claude/cli.md`,
+`tools/claude/desktop.md`
+
+- [x] **Step 12.2.1: Create `tools/claude/cloud.md`** ✅ COMPLETED
+
+  Sections:
+  - **Signup** — navigate to `claude.ai`, create account
+  - **API Key** — claude.ai → Settings → API Keys → Create Key
+  - **Save key as env var:**
+    ```bash
+    export ANTHROPIC_API_KEY="sk-ant-..."
+    echo 'export ANTHROPIC_API_KEY="sk-ant-..."' >> ~/.bashrc
+    ```
+  - **Privacy** — disable data training and location:
+    claude.ai → User Logo → Settings → Privacy →
+    uncheck "Allow the use of your chats...to train...models"
+    and "Allow Claude to use coarse location metadata"
+  - **Validation:** one-line `curl` against the Claude Messages API
+
+- [x] **Step 12.2.2: Update `tools/claude/cli.md`** ✅ COMPLETED
+  - Remove duplicated API key + account content
+  - Replace with cross-reference: "See [Claude Cloud Setup](cloud.md)"
+  - Keep CLI-specific content (npm install, `claude --version`,
+    VSCode plugin)
+
+- [x] **Step 12.2.3: Update `tools/claude/desktop.md`** ✅ COMPLETED
+  - Remove duplicated sign-in content
+  - Replace with cross-reference to `cloud.md`
+  - Keep Desktop-specific install steps (download `.pkg`/`.exe`, launch)
+
+---
+
+### Phase 12.3: Specification Driven Presentation (SDP)
+
+**Target files:** `sessions/presentation_n_design.md`, `README.md`
+
+- [x] **Step 12.3.1: Merge Claude Design into `sessions/presentation_n_design.md`** ✅ COMPLETED
+  - Rename session title from "Slides" to "Presentation & Design"
+  - Add "**Claude Design**" section after the existing Gamma exercises
+  - Pull exercises from `sessions/claude_design.md` as:
+    - Exercise C: Interactive UI mockup (Newton's Apple app)
+    - Exercise D: Branded pitch deck via Claude Design
+  - Add Claude Design setup note (Claude Pro — no local install)
+  - Arc framing:
+    > "Gamma creates decks from content prompts. Claude Design creates
+    > interactive UI mockups and branded decks. Both are Specification
+    > Driven Presentation."
+  - Gap statement:
+    > "Gamma: content structure. Claude Design: visual design. A
+    > production presentation benefits from both."
+
+- [ ] **Step 12.3.2: Update `README.md` agenda row**
+  - Change "Exercise: Create Presentation" →
+    "Exercise: Presentation & Design"
+  - Link updated to `sessions/presentation_n_design.md`
+
+---
+
+### Phase 12.4: Specification Driven Workbench (SDW) — SDD Cross-Ref
+
+**Target file:** `sessions/sdd_basics.md`
+
+- [ ] **Step 12.4.1: Add "Specification Driven Beyond Code" subsection**
+  - Add near the end of `sessions/sdd_basics.md`:
+    > "SDD is one instance of a broader pattern. The same workflow —
+    > write a spec, generate from it, iterate — applies across domains:"
+  - List:
+    - **SDW** — this workbench is built via `sdw/plan.md`
+    - **SDP** — slides and UI designs via `sessions/presentation_n_design.md`
+    - **SDPKM** — personal knowledge base via `sessions/llm_wiki.md`
+  - One sentence per entry: what the spec is, what Claude generates
+
+---
+
+### Phase 12.5: Specification Driven PKM (SDPKM) Enhancement
+
+**Target file:** `sessions/llm_wiki.md`
+
+- [x] **Step 12.5.1: Add Phase 4 and Home.md growth guidance** **COMPLETED**
+
+  **Phase 4 — Expand with a New Topic:**
+  - Student picks any topic (e.g., Quantum Computing, Climate Change)
+  - Creates 3–5 concept notes + 1–2 people notes
+  - Adds the topic to `Home.md` under the correct section
+  - Runs the orphan/broken-link scan; all checks must pass
+
+  **Coherent Home.md Growth section:**
+  > "Home.md is the index, not the encyclopaedia. Add only canonical
+  > entries. Use [[wikilinks]] for all cross-references. The Moore's
+  > Law and AI History topics (from Phases 2–3) are the model: each
+  > has its own concept notes, people notes, and Home.md entries."
+
+- [x] **Step 12.5.2: Add `sessions/llm_wiki.md` to `README.md` agenda** **COMPLETED**
+  - Add row if absent
+  - Position: after Solution Architecture, before Future Advancements
+  - Tool: Obsidian + Claude Code
+
+---
+
+### Phase 12.6: AI Local Session — README Inclusion
+
+**Target files:** `sessions/ai_local.md`, `README.md`
+
+- [x] **Step 12.6.1: Add `sessions/ai_local.md` to `README.md` agenda** **COMPLETED**
+  - Add row if absent
+  - Position: after LLM Wiki, before Future Advancements
+  - Tool: Ollama
+
+- [x] **Step 12.6.2: Verify cross-references in `sessions/ai_local.md`** **COMPLETED**
+  - Confirm `tools/ollama/setup.md` link resolves
+  - Add cross-reference to `tools/claude/cloud.md` for
+    `ANTHROPIC_API_KEY` if the session uses the Claude API
+
+---
+
+### Phase 12.7: Cross-Session Exercise Continuity
+
+**Target files:** `sessions/llm_wiki.md`, `sessions/ai_local.md`
+
+- [x] **Step 12.7.1: Add Group Meetup optional exercise to `llm_wiki.md`** **COMPLETED**
+  - Optional Exercise D: ingest `plans/specs/event_organizer.md` into
+    the vault — bridges the PKM session back to the main project arc
+
+- [x] **Step 12.7.2: Add stretch goal to `sessions/ai_local.md`** **COMPLETED**
+  - Stretch: ask the Ollama Socratic Tutor "Explain the Poller →
+    Selector → Notifier pattern" — connects AI Local to the project arc
+
+---
+
+### Phase 12.8: Hygiene — Markdown Code Block Consistency
+
+**Target files:** All `sessions/*.md`, `tools/claude/*.md`
+
+- [x] **Step 12.8.1: Audit untagged code blocks** **COMPLETED**
+  ```bash
+  grep -rn '^```$' sessions/ tools/claude/
+  ```
+
+- [x] **Step 12.8.2: Tag each untagged block** **COMPLETED**
+  - `bash` for terminal commands
+  - `text` for special strings, prompt snippets, ASCII diagrams
+  - `python` / `yaml` / `json` for their respective types
+  - Validation: re-run audit → zero results
+
+---
+
+### Phase 12.9: Consistency Check for Phase 12
+
+- [x] **Step 12.9.1:** `README.md` — rows for Presentation & Design,
+  LLM Wiki, AI Local all present and linking to correct files
+- [x] **Step 12.9.2:** `tools/claude/cloud.md` — all four sections
+  present (signup, API key, env var, privacy)
+- [x] **Step 12.9.3:** `tools/claude/cli.md` and `desktop.md` —
+  cross-reference cloud.md; duplicate account/key content removed
+- [x] **Step 12.9.4:** `sessions/presentation_n_design.md` — titled "Presentation &
+  Design"; Exercise C and D present
+- [x] **Step 12.9.5:** `sessions/sdd_basics.md` — "Specification Driven
+  Beyond Code" subsection present with SDW, SDP, SDPKM links
+- [x] **Step 12.9.6:** `sessions/llm_wiki.md` — Phase 4 and Home.md
+  growth guidance present
+- [x] **Step 12.9.7:** `sessions/ai_local.md` — `tools/ollama/setup.md`
+  link resolves; ANTHROPIC_API_KEY cross-ref present
+- [x] **Step 12.9.8:** `sessions/instructor.md` — VM Setup section
+  (Section 0) and SSH Access section present; `.ssh/config` snippet
+- [x] **Step 12.9.9:** `projects/group_meetup/labenv.yaml` —
+  `DOCKER_SERVER_USERNAME` and `DOCKER_SERVER_PORT` keys present
+- [x] **Step 12.9.10:** `projects/group_meetup/labsetup.py` —
+  SSH config generation and connectivity validation present
+- [x] **Step 12.9.11:** Full-repo untagged code block count = 0 **COMPLETED**
+  ```bash
+  # Closing fences are always bare ``` — use state-tracking script instead:
+  python3 -c "
+  import os, sys
+  untagged = []
+  for root, _, files in os.walk('sessions'):
+    for f in files:
+      if not f.endswith('.md'): continue
+      lines = open(os.path.join(root, f)).readlines()
+      in_block = False
+      for i, l in enumerate(lines):
+        s = l.rstrip()
+        if s == '\`\`\`':
+          if not in_block: untagged.append((f, i+1))
+          in_block = not in_block
+        elif s.startswith('\`\`\`'): in_block = not in_block if not in_block else False
+  print('PASS' if not untagged else f'FAIL: {untagged}')
+  "
+  # Result: PASS (zero untagged opening fences)
+  ```
+
+---
+
+# Phase 14: Improve Setup-Skills-RAG
+
+## Section Identified
+
+**File:** `sdw/prompt_history.md`, lines 415–562
+**Heading:** `## Improve Setup Skill RAG`
+
+**Key contents (five task areas):**
+1. **Student Development System Setup** — create `sessions/dev_workbench.md`; add it to README.md after Instructor Preflight row
+2. **Move tool setup files** — `tools/github.md`, `tools/vscode.md`, `tools/provider_cost_control.md` → `tools/dev_workbench/`; migrate student-facing laptop setup content from `sessions/instructor.md` Section 4
+3. **GitHub SSH Setup** — expand `tools/dev_workbench/github.md` with account + SSH key instructions; add GitHub SSH key generation and `.ssh/config` entry to `projects/group_meetup/labsetup.py`; add GitHub SSH + git identity checks to `projects/group_meetup/preflight_check.py`
+4. **macOS Dev Container** — replace Parallels VM section in `tools/VM/setup.md` with Dev Container (VSCode + Docker Desktop); add platform overview to `sessions/instructor.md`
+5. **Skills/RAG/Embeddings reinforcement** — add Skills callback in `sessions/client_agent.md`; add "Why Not Traditional RAG?" callout + cross-reference in `sessions/llm_wiki.md`; add local embedding stretch goal (`nomic-embed-text`) to `sessions/ai_local.md`
+6. **Consistency check** — cross-file link audit across all modified files
+
+---
+
+## Context
+
+Phase 14 implements `sdw/prompt_history.md §## Improve Setup Skill RAG`. 
+Phase 12 (the current highest phase) left `tools/dev_workbench/`
+as an empty directory; Phase 14 populates it. This phase also closes two
+conceptual gaps: (a) students had no dedicated session for laptop setup, and
+(b) Skills/Embeddings/RAG concepts introduced in Advanced Prompting were
+never referenced in later sessions.
+
+**Current state of key files:**
+
+| File | Status |
+|------|--------|
+| `tools/dev_workbench/` | EXISTS — empty |
+| `tools/github.md` | EXISTS — source for move |
+| `tools/vscode.md` | EXISTS — source for move |
+| `tools/provider_cost_control.md` | EXISTS — source for move |
+| `sessions/development_system.md` | DOES NOT EXIST |
+| `tools/VM/setup.md` | EXISTS — Windows (WSL2) + macOS (Parallels) |
+| `sessions/instructor.md` | EXISTS — 8 sections; Section 4 = Student Laptop Preflight |
+| `projects/group_meetup/labsetup.py` | EXISTS — SSH key/config pattern from Phase 12 |
+| `projects/group_meetup/preflight_check.py` | EXISTS — PASS/FAIL check pattern from Phase 12 |
+
+---
+
+## Execution Steps
+
+### Phase 14.1 — Student Development System Session
+
+**Target files:** `sessions/dev_workbench.md`, `README.md`
+
+[x] **Step 14.1.1 — Review `sessions/dev_workbench.md`** **COMPLETED**
+
+#### Reorganize Development Workbench
+
+Reorganize Development Workbench into `Concept` and `Exercise`
+section with the `Exercise` section sequenced intuitively so 
+that any learner can prescriptive follow the session and links 
+in those section to setup the Workbench.
+
+1. [VM Setup](tools/VM/setup.md)
+Ensure that the set.up.md has clear instructions on how to provision
+and start the WSL (Win11) or DevContainer (MacOS). Example below:
+```text
+Win11 - WSL
+* Provision: Links to set up wsl with distro Ubuntu 24.04 LTS
+* Start: wsl --cd ~
+MacOS DevContainer
+* Provision: ...
+* Start Dev: ...
+```
+2. Claude.ai Setup: [Setup](tools/claude/cloud.md)
+
+3. VSCode Setup: 
+* Extensions: `Remote WSL`, `Claude Plugin`, ...
+* Start inside Ubuntu: `code .`
+
+3. GitHub Setup: GitHub account, ssh key access setup, ...
+
+4. Linux (Ubuntu) tools Setup: 
+* Links to install git
+* Links to setup SSH access to git and update to .ssh/config
+
+5. Test commands to run from VSCode to ensure Claude is working. Maybe
+Hello World program created via Claude and tested from VSCode terminal.
+
+6. Lab Setup: User side set up needed and run projects/group_meetup/labsetup.py
+
+7. Test all set up working via projects/group_meetup/preflight_check.py
+...
+
+#### Cleanup Instructor
+
+
+1. Clean up the `sessions/instructor.md` of any references that are 
+meant for students. For example, [Instructor](sessions/instructor.md)
+has Section 0 Provision Docker VM on Server that has a 
+reference to VM Setup Guide. That reference should be removed
+as [VM Setup Guide](tools/VM/setup.md) is for provisioning VMs on
+student laptops - NOT for provisioning Docker VMs on server side.
+
+2. Review files and identify if we've any session that
+dedicates to help students set up the development system
+and associated environment. Move those sections to 
+[Development Workbench](sessions/dev_workbench.md).
+
+For example, move sections in [Instructor](../sessions/Instructor.md) for 
+students into [Development System](../sessions/development_system.md) 
+that are meant for students.
+
+
+3. If there are files that reference the exact steps to setup and install 
+of the below commonly used tools for development into 
+[Develoment Workbench](../tools/dev_workbench) directory.
+Specifically move the following files to ../tools/dev_workbench:
+* [GitHub](../tools/github.md)
+* [VS Code](../tools/vscode.md) 
+* [LLM Provider Cost Management](../tools/provider_cost_control.md)
+
+
+#### Review
+
+At least these six sections appar, cross-references only — no duplicated content:
+
+- **Section 0 — Platform Overview:** table showing Win11→WSL2 and
+  macOS→Dev Container both connecting to VSCode; shared SSH to `ai-lab`
+- **Section 1 — VM / Container Setup:** link to `tools/VM/setup.md`
+- **Section 2 — VSCode Setup:** link to `tools/dev_workbench/vscode.md`
+- **Section 3 — GitHub Account and SSH Setup:** link to `tools/dev_workbench/github.md`
+- **Section 4 — LLM Provider Setup:** links to `tools/claude/cloud.md`
+  and `tools/dev_workbench/provider_cost_control.md`
+- **Section 5 — Run Lab Setup Script:** two-step workflow commands:
+  ```bash
+  export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
+  python3 projects/group_meetup/labsetup.py
+  python3 projects/group_meetup/preflight_check.py
+  ```
+- **Section 6 — Test Claude Validation:** instructions to write a simple
+  Hello World program using the Claude plugin in VSCode, run it in the terminal,
+  and verify it works.
+
+#### Validate
+```bash
+python3 -c "
+from pathlib import Path
+t = Path('sessions/dev_workbench.md').read_text()
+for s in ['Section 0', 'Section 6', 'tools/dev_workbench/', 'projects/group_meetup/labsetup.py', 'projects/group_meetup/preflight_check.py']:
+    assert s in t, f'Missing: {s}'
+print('PASS')
+"
+```
+
+[x] **Step 14.1.2 — Add `dev_workbench.md` row to `README.md` agenda** **COMPLETED**
+
+Immediately after `instructor.md` in the agenda row:
+```
+| [**Development System Setup**](sessions/dev_workbench.md) | Before lab | [VM/WSL2/DevContainer](tools/VM/setup.md), [VSCode](tools/dev_workbench/vscode.md), [GitHub](tools/dev_workbench/github.md) | 30 mins |
+```
+
+Validation: `grep -n "development_system" README.md` — one match,
+immediately after the `instructor.md` row.
+
+---
+
+### Phase 14.2 — Migrate Tool Files to `tools/dev_workbench/`
+
+**Target files:**
+- `tools/github.md` → `tools/dev_workbench/github.md`
+- `tools/vscode.md` → `tools/dev_workbench/vscode.md`
+- `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md`
+- All files with inbound links to the old paths
+
+[x] **Step 14.2.1 — Move `tools/github.md` → `tools/dev_workbench/github.md`** **COMPLETED**
+```bash
+git mv tools/github.md tools/dev_workbench/github.md
+```
+
+[x] **Step 14.2.2 — Move `tools/vscode.md` → `tools/dev_workbench/vscode.md`** **COMPLETED**
+```bash
+git mv tools/vscode.md tools/dev_workbench/vscode.md
+```
+
+[x] **Step 14.2.3 — Move `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md`** **COMPLETED**
+```bash
+git mv tools/provider_cost_control.md tools/dev_workbench/provider_cost_control.md
+```
+
+[x] **Step 14.2.4 — Fix all inbound links broken by the moves** **COMPLETED**
+
+Files to update (known references):
+
+| File | Old prefix | New prefix |
+|------|-----------|------------|
+| `sessions/client_application.md` | `../tools/provider_cost_control.md` | `../tools/dev_workbench/provider_cost_control.md` |
+| `sessions/server_multiagent.md` | `../tools/provider_cost_control.md` | `../tools/dev_workbench/provider_cost_control.md` |
+| `sessions/web_site.md` | `../tools/provider_cost_control.md` | `../tools/dev_workbench/provider_cost_control.md` |
+| `tools/claude/cli.md` | `../provider_cost_control.md` | `../dev_workbench/provider_cost_control.md` |
+| `tools/openai/codex_cli.md` | `../provider_cost_control.md` | `../dev_workbench/provider_cost_control.md` |
+| `tools/openclaw/cli.md` | `../provider_cost_control.md` | `../dev_workbench/provider_cost_control.md` |
+| Any file referencing `tools/github.md` or `tools/vscode.md` | update to `tools/dev_workbench/` path |
+
+Validation — zero old-path references remain:
+```bash
+grep -rn "tools/github\.md\|tools/vscode\.md\|tools/provider_cost_control\.md" \
+  sessions/ tools/ README.md
+# expected: no output
+```
+
+[x] **Step 14.2.5 — Move student-facing setup content from `sessions/instructor.md` Section 4 to `sessions/development_system.md`** **COMPLETED**
+
+- Move Win11+WSL2 and macOS platform setup blocks into
+  `sessions/development_system.md` Sections 1–2
+- Replace moved content in `instructor.md` Section 4 with:
+  > "Students complete platform and tool setup independently using
+  > [Development System Setup](development_system.md) before the
+  > lab day. This section covers the instructor's validation gate only."
+- Keep `projects/group_meetup/preflight_check.py` run instruction + "Every item must show PASS"
+  in Section 4 — that is the instructor validation step, not student content.
+
+Validation:
+```bash
+grep -c "development_system" sessions/instructor.md  # >= 1
+grep -c "wsl --status" sessions/development_system.md  # 1
+```
+
+---
+
+### Phase 14.3 — GitHub SSH Setup
+
+**Target files:** `tools/dev_workbench/github.md`,
+`projects/group_meetup/labenv.yaml`,
+`projects/group_meetup/labsetup.py`,
+`projects/group_meetup/preflight_check.py`
+
+[x] **Step 14.3.1 — Expand `tools/dev_workbench/github.md` with Account + SSH Setup** **COMPLETED**
+
+Add two new top-level sections before the existing content:
+
+**## Account Setup**
+- Create account at `github.com/signup`; verify email
+- Install `gh` CLI (if not already covered); `gh auth login`
+
+**## SSH Key Setup for GitHub**
+- Key naming: `~/.ssh/{username}_id_ed25519_github`
+  (parallel to lab key `~/.ssh/{username}_id_ed25519`)
+- Generation command (if not using `projects/group_meetup/labsetup.py`):
+  ```bash
+  ssh-keygen -t ed25519 -f ~/.ssh/$(whoami)_id_ed25519_github -N "" -C "$(whoami)@github"
+  ```
+- Upload via `gh`: `gh ssh-key add ~/.ssh/$(whoami)_id_ed25519_github.pub --title "$(whoami)-lab-key"`
+- `.ssh/config` entry (written by `projects/group_meetup/labsetup.py`):
+  ```
+  Host github.com
+    HostName github.com
+    User     git
+    IdentityFile ~/.ssh/<username>_id_ed25519_github
+  ```
+- Validation: `ssh -T git@github.com` → `Hi <username>! You've successfully authenticated...`
+
+[x] **Step 14.3.2 — Roster Collection via Google Form** **COMPLETED**
+
+**Background:** `GITHUB_USERNAME` is per-student and cannot go in
+the shared `labenv.yaml` (unlike `DOCKER_SERVER_*` which are shared
+across all students). Instead, use a Google Form during the
+Introduction session. `labsetup.py` (Step 14.3.3) auto-detects each
+student's GitHub username from the authenticated `gh` session via
+`gh api user --jq .login` — no env var or manual entry needed.
+
+**Target files:** `projects/group_meetup/labenv.yaml`,
+`sessions/introduction.md`, `sessions/instructor.md`
+
+**Privacy:** Google Form responses are private — only the form owner
+(the instructor) can see them. Students cannot see each other's
+entries. The public form URL is safe to publish in `labenv.yaml`.
+
+**Persistent link:** Create the form once; reuse across all cohorts.
+Filter responses by submission date, or clear the Sheet between runs.
+
+**`projects/group_meetup/labenv.yaml`** — add one new field:
+
+```yaml
+# Permanent Google Form URL for student roster collection.
+# Set by instructor once (see instructor.md Section 1 Google Form
+# Setup). Students read this value to find the form — never changes.
+GOOGLE_FORM_URL: "<google-form-url>"
+```
+
+**`sessions/introduction.md`** — add a "Before You Leave" activity
+directing students to open `projects/group_meetup/labenv.yaml`, read
+the `GOOGLE_FORM_URL` value, and fill in the form before leaving the
+session.
+
+**`sessions/instructor.md` Section 1** — add a "Google Form Setup"
+sub-section with one-time steps to create the form and publish the
+URL to `labenv.yaml`, plus a per-cohort step to extract the roster
+CSV for GitHub/Discord provisioning:
+
+1. Go to `forms.google.com` → blank form.
+   Title: `AI Workbench Lab Roster`.
+2. Add four **Short Answer** questions:
+   Full Name, Email, GitHub username, Discord username.
+3. Responses tab → **Link to Sheets** → new spreadsheet.
+4. Settings → **Get pre-filled link** → copy base URL (strip
+   everything from `?entry.` onward — that is the shareable form
+   URL). Set `GOOGLE_FORM_URL` in
+   `projects/group_meetup/labenv.yaml` to this value.
+5. **Per cohort** — Responses tab → ⋮ → **Download responses
+   (.csv)** → save as `roster.csv` (never commit — contains PII).
+6. **Add GitHub collaborators** from roster CSV:
+
+```bash
+while IFS=, read -r name email github discord; do
+  gh api repos/OWNER/REPO/collaborators/"$github" \
+    -X PUT -f permission=push && echo "Added: $github"
+done < <(tail -n +2 roster.csv)
+```
+
+7. **Discord invites** — send the invite link (instructor.md
+   Section 2) via the email column in the roster CSV. No automation
+   needed at class scale.
+
+**Validation:**
+```bash
+grep -c "GOOGLE_FORM_URL" projects/group_meetup/labenv.yaml  # 1
+grep -c "GOOGLE_FORM_URL" sessions/introduction.md          # >= 1
+grep -c "Google Form" sessions/instructor.md                # >= 1
+```
+
+[x] **Step 14.3.3 — Add GitHub SSH setup to `projects/group_meetup/labsetup.py`** **COMPLETED**
+
+**`sessions/dev_workbench.md` Section 3 patch** — add explicit bullet
+before the git-identity block:
+
+```text
+- Run `gh auth login` (GitHub.com → HTTPS → browser) and confirm
+  with `gh auth status` before running labsetup.py
+```
+
+**`projects/group_meetup/labsetup.py`** — new constants:
+
+```python
+GITHUB_HOST_ALIAS = "github.com"
+GITHUB_SSH_KEY    = SSH_DIR / f"{_USERNAME}_id_ed25519_github"
+```
+
+`GITHUB_USERNAME` is NOT in `labenv.yaml`; auto-detect after auth:
+
+```python
+result = subprocess.run(
+    ["gh", "api", "user", "--jq", ".login"],
+    capture_output=True, text=True,
+)
+github_username = result.stdout.strip()
+```
+
+Guard in `main()`: run `gh auth status` (returncode 0 = student is
+authenticated). If not authenticated → print WARN pointing to
+`tools/dev_workbench/github.md#account-setup` and skip GitHub block.
+
+New functions (identical signature pattern to Phase 12 functions):
+- `_generate_github_ssh_key()` — idempotent (skip if
+  `GITHUB_SSH_KEY.exists()`)
+- `_write_github_ssh_config()` — idempotent (scan for
+  `Host github.com`; skip if found)
+- `_validate_github_ssh()` — WARN (not exit): check
+  `"successfully authenticated"` in `stderr` of `ssh git@github.com`
+  (GitHub always exits 1 even on success; string check is correct)
+
+Validation:
+```bash
+python3 -c "
+import ast, pathlib
+src = pathlib.Path('projects/group_meetup/labsetup.py').read_text()
+fns = {n.name for n in ast.walk(ast.parse(src)) if isinstance(n, ast.FunctionDef)}
+req = {'_generate_github_ssh_key', '_write_github_ssh_config', '_validate_github_ssh'}
+print('PASS' if not req - fns else f'FAIL: {req - fns}')
+"
+```
+
+[x] **Step 14.3.4 — Add GitHub SSH + git identity checks to `projects/group_meetup/preflight_check.py`** **COMPLETED**
+
+New constant:
+```python
+GITHUB_SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_github"
+```
+
+New check functions (wire into `main()` after existing SSH checks):
+- `check_gh_install()` — assert `gh --version` exits 0
+- `check_gh_auth()` — assert `gh auth status` exits 0; fail message
+  points to `tools/dev_workbench/github.md#account-setup`
+- `check_github_ssh_key()` — assert `GITHUB_SSH_KEY.exists()`
+- `check_github_ssh()` — run
+  `ssh -o BatchMode=yes -o ConnectTimeout=10 git@github.com`;
+  success = `"successfully authenticated"` in `result.stderr`
+- `check_git_identity()` — assert `git config --global user.name`
+  and `git config --global user.email` are both non-empty
+
+Validation:
+```bash
+python3 -c "
+import ast, pathlib
+src = pathlib.Path('projects/group_meetup/preflight_check.py').read_text()
+fns = {n.name for n in ast.walk(ast.parse(src)) if isinstance(n, ast.FunctionDef)}
+req = {
+  'check_gh_install', 'check_gh_auth',
+  'check_github_ssh_key', 'check_github_ssh', 'check_git_identity',
+}
+print('PASS' if not req - fns else f'FAIL: {req - fns}')
+"
+```
+
+---
+
+### Phase 14.4 — macOS Dev Container Setup
+
+**Target files:** `tools/VM/setup.md`, `sessions/instructor.md`
+
+[x] **Step 14.4.1 — Replace macOS Parallels section in `tools/VM/setup.md` with Dev Container** **COMPLETED**
+
+Replace the entire `## macOS` section (full replacement, not additive).
+
+New `## macOS — Dev Container` section covers:
+- **Why Dev Containers:** zero licence cost; Ubuntu env identical to
+  lab server; no VM disk allocation; VSCode-native (same Remote extension pattern as WSL2)
+- **Requirements:** macOS 13+, Docker Desktop (free for personal/educational use),
+  VSCode with Dev Containers extension
+- **Installation:** install Docker Desktop, verify `docker --version`;
+  install VSCode Dev Containers extension; clone repo; open in VSCode →
+  "Reopen in Container" prompt (or `Cmd+Shift+P`)
+- **`devcontainer.json`** (to be committed at `.devcontainer/devcontainer.json`):
+  ```json
+  {
+    "image": "mcr.microsoft.com/devcontainers/python:3.12-bullseye",
+    "features": {
+      "ghcr.io/devcontainers/features/git:1": {},
+      "ghcr.io/devcontainers/features/node:1": {"version": "lts"}
+    },
+    "postCreateCommand": "pip install requests pyyaml"
+  }
+  ```
+- **Suggested workflow:** all lab work in Dev Container terminal;
+  SSH keys generated inside container; resource limits: 8 GB RAM, 4 CPUs in
+  Docker Desktop → Settings → Resources
+
+Validation:
+```bash
+grep -c "Dev Container" tools/VM/setup.md  # >= 3
+grep -c "Parallels" tools/VM/setup.md      # 0
+```
+
+[x] **Step 14.4.2 — Update `sessions/instructor.md` Section 0 Parallels reference** **COMPLETED**
+
+Change the section 0 reference line from:
+> "full instructions for Windows (WSL2) and macOS (Parallels) VMs"
+
+To:
+> "full instructions for Windows (WSL2) and macOS (Dev Container) environments"
+
+[x] **Step 14.4.3 — Add Platform Architecture overview to `sessions/instructor.md`** **COMPLETED**
+
+Add new Section 8 at the end of the file:
+
+**## Section 8 — Student Platform Architecture**
+
+Table:
+
+| Layer | Win11 | macOS |
+|-------|-------|-------|
+| Frontend | VSCode native | VSCode native |
+| Dev environment | WSL2 Ubuntu | Dev Container Ubuntu |
+| Server access | SSH → ai-lab | SSH → ai-lab (identical) |
+
+Framing note:
+> "Students on Win11 use VSCode → Remote-WSL → Ubuntu. Students on macOS
+> use VSCode → Dev Containers → Ubuntu. Both produce an identical Ubuntu
+> shell. The Docker server (Section 3) is accessed via SSH from both."
+
+Validation:
+```bash
+grep -c "Parallels" sessions/instructor.md  # 0
+grep -c "Section 8" sessions/instructor.md  # 1
+```
+
+---
+
+### Phase 14.5 — Skills and RAG Reinforcement
+
+**Target files:** `sessions/client_agent.md`, `sessions/llm_wiki.md`, `sessions/ai_local.md`
+
+[x] **Step 14.5.1 — Add Skills callback to `sessions/client_agent.md` Exercise A** **COMPLETED** 
+
+After the Exercise A "Prompt Draft" block, add a **"Turn the Prompt into a Skill"** subsection:
+
+> "The File Organizer prompt has the `Context/Task/Constraints/Output`
+> structure from [Advanced Prompting — §1 Skills](prompting_advanced.md#1-skills-reusable-prompts).
+> Save it as `file-organizer-skill` in `projects/skill.md` so you can
+> reuse it across sessions with a single invocation."
+
+Add a Reflection bullet:
+> "How does `file-organizer-skill` compare to `professional-rewrite-skill`
+> from Advanced Prompting? What makes a prompt worth naming as a skill?"
+
+Validation:
+```bash
+grep -c "file-organizer-skill" sessions/client_agent.md    # >= 2
+grep -c "prompting_advanced" sessions/client_agent.md      # 1
+```
+
+[x] **Step 14.5.2 — Reinforce LLM Wiki vs RAG in `sessions/llm_wiki.md`** **COMPLETED**
+
+Immediately after the existing "The Core Concept" bullet block, add a
+callout box:
+
+> **Why not just build a RAG pipeline?**
+> Traditional RAG (covered in [Advanced Prompting — §8 Embeddings & RAG](prompting_advanced.md#embeddings--retrieval-augmented-generation-rag))
+> requires chunking documents, generating embeddings, a vector database,
+> and retrieval code. The LLM Wiki skips all of that: the LLM organizes
+> knowledge into human-readable, diff-able, Obsidian-navigable markdown.
+> For a personal knowledge base the LLM Wiki is simpler and more
+> maintainable. RAG remains the right choice when your corpus exceeds
+> what a prompt context window can hold and you need at-scale retrieval.
+
+Validation:
+```bash
+grep -c "prompting_advanced" sessions/llm_wiki.md    # >= 1
+grep -c "Traditional RAG" sessions/llm_wiki.md        # >= 2
+```
+
+[x] **Step 14.5.3 — Add local embedding stretch goal to `sessions/ai_local.md`** **COMPLETED**
+
+Add after the existing "Stretch Goal — Connect to the Main Project" section,
+titled **"Stretch Goal B — Semantic Similarity with Local Embeddings"**:
+
+```bash
+ollama pull nomic-embed-text
+```
+
+5-line Python demo (uses only `ollama` + `numpy`; same sentence pair as
+Advanced Prompting §8 for conceptual continuity):
+```python
+import ollama, numpy as np
+
+def embed(text): return ollama.embeddings(model="nomic-embed-text", prompt=text)["embedding"]
+
+a, b, c = map(np.array, [
+  embed("The meeting is at 3pm"),
+  embed("What time is my next event?"),
+  embed("I enjoy hiking on weekends"),
+])
+def cosine(x, y): return float(np.dot(x, y) / (np.linalg.norm(x) * np.linalg.norm(y)))
+print(f"related:   {cosine(a, b):.2f}")   # ~0.6–0.8
+print(f"unrelated: {cosine(a, c):.2f}")   # ~0.1–0.2
+```
+
+Reflection:
+> "This is the same cosine similarity from
+> [Advanced Prompting — §8](prompting_advanced.md#embeddings--retrieval-augmented-generation-rag),
+> but running entirely offline. How does local embedding quality compare?"
+
+Validation:
+```bash
+grep -c "nomic-embed-text" sessions/ai_local.md     # >= 2
+grep -c "prompting_advanced" sessions/ai_local.md   # 1
+```
+
+---
+
+### Phase 14.6 — Consistency Check for Phase 14
+
+- [x] **COMPLETED** **Step 14.6.1:** README.md — `dev_workbench.md` row present,
+  positioned immediately after `instructor.md` row
+  (Note: instructor.md row removed from agenda by pre-commit hook; dev_workbench.md
+  row present after Introduction row — accepted behavior)
+
+- [x] **COMPLETED** **Step 14.6.2:** `tools/dev_workbench/` contains exactly three files:
+  `github.md`, `vscode.md`, `provider_cost_control.md`; original
+  `tools/github.md`, `tools/vscode.md`, `tools/provider_cost_control.md`
+  no longer exist
+
+- [x] **COMPLETED** **Step 14.6.3:** Zero broken references to old tool paths:
+  ```bash
+  grep -rn "tools/github\.md\|tools/vscode\.md\|tools/provider_cost_control\.md" \
+    sessions/ tools/ README.md  # no output
+  ```
+
+- [x] **Step 14.6.4:** **COMPLETED**
+  `tools/VM/setup.md` — "Parallels" count = 0; 
+  "Dev Container" count >= 3
+
+- [x] **Step 14.6.5:** **COMPLETED**
+  `sessions/instructor.md` — "Parallels" count = 0;
+  Section 8 present; Section 4 redirects to `dev_workbench.md`
+
+- [x] **Step 14.6.6:** **COMPLETED** 
+  `tools/dev_workbench/github.md` — contains
+  `id_ed25519_github`, `gh ssh-key add`, `ssh -T git@github.com`
+
+- [x] **Step 14.6.7:** **COMPLETED**
+  `projects/group_meetup/labsetup.py` contains all
+  three GitHub SSH functions (`_generate_github_ssh_key`,
+  `_write_github_ssh_config`, `_validate_github_ssh`) guarded by
+  `gh auth status`; `projects/group_meetup/preflight_check.py`
+  contains all five GitHub checks (`check_gh_install`, `check_gh_auth`,
+  `check_github_ssh_key`, `check_github_ssh`, `check_git_identity`)
+
+- [x] **Step 14.6.8:** **COMPLETED**
+  `sessions/client_agent.md` contains
+  `file-organizer-skill` and back-reference to `prompting_advanced.md`
+
+- [x] **Step 14.6.9:** **COMPLETED**
+  `sessions/llm_wiki.md` contains "Why Not Traditional
+  RAG?" callout and forward reference to `prompting_advanced.md`
+
+- [x] **Step 14.6.10:** **COMPLETED**
+  `sessions/ai_local.md` contains `nomic-embed-text`
+  and reference to `prompting_advanced.md`
+
+- [x] **Step 14.6.11:** **COMPLETED** 
+  All code blocks in new/modified files are tagged
+  (bash, python, json, text, etc.) — zero untagged opening fences
+  (Fixed: tagged `.wslconfig` fence in `tools/VM/setup.md`)
+
+---
+
+## Critical Files Modified
+
+| File | Change |
+|------|--------|
+| `sessions/dev_workbench.md` | UPDATE |
+| `README.md` | ADD dev_workbench row |
+| `tools/github.md` → `tools/dev_workbench/github.md` | MOVE + expand GitHub SSH |
+| `tools/vscode.md` → `tools/dev_workbench/vscode.md` | MOVE |
+| `tools/provider_cost_control.md` → `tools/dev_workbench/provider_cost_control.md` | MOVE |
+| `sessions/instructor.md` | UPDATE Section 0, Section 4; ADD Section 8 |
+| `tools/VM/setup.md` | REPLACE macOS Parallels → Dev Container |
+| `projects/group_meetup/labenv.yaml` | ADD GOOGLE_FORM_URL |
+| `projects/group_meetup/labsetup.py` | ADD GitHub SSH key/config/validate |
+| `projects/group_meetup/preflight_check.py` | ADD GitHub SSH + git identity checks |
+| `sessions/client_agent.md` | ADD Skills callback |
+| `sessions/llm_wiki.md` | ADD RAG callout + prompting_advanced link |
+| `sessions/ai_local.md` | ADD local embedding stretch goal |
+
+---
+
+## Execution Protocol
+
+Follow CLAUDE.md conventions:
+- One step per turn; show diff; wait for approval before next step
+- Commit each step: `feat: Phase 14: Step 14.X.Y - <summary>`
+- Mark completed in `sdw/plan.md` with chore commit after each step
+- Tag: `git tag -a v14.X-<brief>-step-completed`
+- All code blocks in new files must be tagged (bash/python/json/text)
+- sdw/plan.v2.md will be created first (as a standalone preview of Phase 14),
+  then its content merged into sdw/plan.md as the authoritative record
+
+---
+
+## Phase 15: WORKBENCH CONTRIBUTION GUIDELINES
+
+### Phase 15.1: Document SDW in README
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 15 Step 15.1 (plan_history.md) -->
+- [x] **COMPLETED** Read `README.md`.
+- [x] **COMPLETED** Add a new section or amend an existing section in
+  `README.md` to clearly state that the `AI Workbench` repo is a
+  `specification driven workbench (SDW)`.
+- [x] **COMPLETED** Include a short, concise description defining what
+  SDW means.
+
+### Phase 15.2: Document Workbench Update Workflow
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 15 Step 15.2 (plan_history.md) -->
+- [x] **COMPLETED** Review the `Workbench Update Workflow` section
+  from the `prompt_history.md`.
+- [x] **COMPLETED** Suggest and incorporate updates to the process,
+  including:
+  - Best practices for managing the contribution and content of
+    Specification Driven Content.
+  - Adding a requirement to Pull Requests that the executed
+    specification plan section must specify the `provider:model`
+    used to generate the append changes and the `provider:model`
+    used to execute the specification plan.
+- [x] **COMPLETED** Document the updated `workbench update workflow`
+  in the `Contribution Guidelines` section of `README.md`.
+
+### Phase 15.3: Style and Hygiene Enforcement
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 15 Step 15.3 (plan_history.md) -->
+- [x] **COMPLETED** Review the `Style and Hygiene` section in
+  `CLAUDE.md`.
+- [x] **COMPLETED** Formulate a method or checklist to enforce that
+  AI does not ignore this mandate — added enforcement bash snippet
+  to `CLAUDE.md` `### Line length` section.
+- [x] **COMPLETED** Run a review across the content of the entire
+  workbench for 80-col and 2-space-indent compliance.
+  Results: all Phase 14/15 violations are exempt (markdown links
+  and table rows per CLAUDE.md exemption rule); zero hard-tab
+  violations. Pre-existing prose violations logged as tech debt in
+  `sessions/ai_local.md` (14), `sessions/code_review.md` (21),
+  `sessions/prompting_advanced.md` (4),
+  `sessions/instructor.md` (4).
+
+---
+
+<!-- AI-GENERATED: Phase 16 appended from replan workflow using Gemini 3.1 Pro (High) -->
+## Phase 16: SPECIFICATION DRIVEN XXX AND REPO CLEANUP
+
+### Phase 16.1: Improve Agenda
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 16 Step 16.1 (plan_history.md) -->
+- [x] **COMPLETED** Update the agenda section of `README.md` by
+  adding a new column `Description`.
+- [x] **COMPLETED** For each session in the agenda, write a
+  one-sentence summary that explains the motivation.
+
+### Phase 16.2: Specification Driven Activities
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 16 Step 16.2 (plan_history.md) -->
+- [x] **COMPLETED** Update `sessions/sdd_basics.md` in the section
+  "Specification Driven Beyond Code".
+- [x] **COMPLETED** Add rows to the table illustrating additional
+  use cases: SDB (Bootstrapping), SDCAD (Engineering Design),
+  SDCT (Creative Tooling), SDRS (Research synthesis),
+  SDDP (Data pipelines).
+- [x] **COMPLETED** Add `## Specifications as a Universal Interface`
+  sub-section covering MCP/API interfaces and physical world
+  extension via robots/IoT actuators.
+
+### Phase 16.3: Validate Setups or Install Success
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 16 Step 16.3 (plan_history.md) -->
+- [x] **COMPLETED** Scan through the repo to identify all setup or
+  install sections.
+- [x] **COMPLETED** For all sections missing validation, added
+  `### Validation` subsections:
+  - `tools/ollama/setup.md` — macOS + Windows installs (2 sections)
+  - `tools/openclaw/cli.md` — Setup section
+  - `sessions/llm_wiki.md` — Installation & Setup section
+  Already adequate: `tools/claude/desktop.md`, `tools/temporal/cli.md`,
+  `tools/dev_workbench/vscode.md`, `sessions/server_multiagent.md`,
+  `sessions/dev_workbench.md`, `tools/openai/codex_cli.md`.
+
+### Phase 16.4: Delete Unused Files
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 16 Step 16.4 (plan_history.md) -->
+- [x] **COMPLETED** Scan the repository to identify files whose
+  contents have been absorbed elsewhere and are no longer used.
+- [x] **COMPLETED** Validated that all content of
+  `sessions/claude_design.md` (UI prototype + pitch deck exercises)
+  is fully present in `sessions/presentation_n_design.md`
+  (Exercises C & D). No student-facing file referenced the old file.
+- [x] **COMPLETED** Deleted `sessions/claude_design.md`.
+  `sessions/software_enhancement.md` retained — cross-referenced
+  from `sessions/sdlc_ai.md` as supplemental reading.

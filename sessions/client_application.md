@@ -69,7 +69,7 @@ implement exactly those interfaces — nothing more.
 
 Repeat this loop for each of the three scripts:
 
-```
+```text
 1. Write spec  → describe what the script does in plain language
 2. Review spec → confirm inputs, outputs, edge cases
 3. Generate    → claude -p "$(cat spec.md)" --allowedTools "Write" > /dev/null
@@ -106,7 +106,7 @@ python notifier.py  # confirm Discord message arrives
 
 Expected in `#meetup-notifications`:
 
-```
+```text
 📅 Meetup confirmed!
 Date: Thu Apr 24 7pm
 Venue: Library Room A
@@ -128,8 +128,8 @@ Attending: Alice, Bob, David
 
 ## Guardrails & Tokenomics
 
-* Reference [⚠️ Guardrails - CLI Agents](../tools/provider_cost_control.md#cli-agents)
-* Reference [💰 Cost Control - API](../tools/provider_cost_control.md#pay-per-use)
+* Reference [⚠️ Guardrails - CLI Agents](../tools/dev_workbench/provider_cost_control.md#cli-agents)
+* Reference [💰 Cost Control - API](../tools/dev_workbench/provider_cost_control.md#pay-per-use)
 
 ---
 

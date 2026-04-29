@@ -107,7 +107,7 @@ rules to keep it coherent:
 
 **Fence sections in CLAUDE.md:**
 
-```markdown
+```text
 ## Do NOT Touch
 - The <header> block in files — manually maintained
 
@@ -118,7 +118,7 @@ rules to keep it coherent:
 
 **One plan.md per feature:**
 
-```
+```text
 [project directory]
   plan.md             ← original app
   plan_history.md     ← history feature

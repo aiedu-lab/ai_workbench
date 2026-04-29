@@ -283,7 +283,7 @@ atomically; a crash leaves the collection intact.
 > Claude Code generates the three Python scripts. Each script
 > is a standalone program, not an agent itself.
 
-```
+```text
 Show me a step-by-step plan and wait for my approval before
 writing any code or running any command.
 
@@ -346,7 +346,7 @@ retries it automatically. NotifyActivity never fires until
 SelectActivity succeeds — no coordination code needed in your
 agents.
 
-```
+```text
 Temporal Workflow: MeetupWorkflow
   ├── PollActivity    (poll logic → responses to MongoDB)
   ├── SelectActivity  (select logic → decision to MongoDB)
@@ -371,7 +371,7 @@ temporal server start-dev
 > Claude Code generates the Temporal workflow. The three activity
 > functions wrap your Phase 5 agent scripts.
 
-```
+```text
 Show me a step-by-step plan and wait for my approval before
 writing any code or running any command.
 

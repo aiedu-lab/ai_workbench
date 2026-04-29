@@ -49,13 +49,16 @@ Read [file]. Explain what it does. Do NOT write any file yet.
 
 Never assume the contents of a file. Always verify.
 
-### 2. Plan Before Coding or Creating Content
+### 2. Plan Before Generating Plan, Content, or Code edits
 
 For any change touching more than one file or one function, produce a
-written plan first. Use Plan Mode:
+written plan first. In the plan always include the `provider:model`
+used to generate the edits to the plan. Use Plan Mode:
 
-```
-Propose a step-by-step plan. Do not write ANY code until I approve.
+```html
+Propose a step-by-step plan. Do NOT write ANYTHING until I approve.
+Annotate any changes to the specification plan with
+<!-- AI-GENERATED [provider:model]: Phase [X] Step [Y] (plan_history.md) -->
 ```
 
 ### 3. One Step at a Time
@@ -140,6 +143,22 @@ Unless explicitly instructed by the user:
 * **ALWAYS** run the validation command listed in the task's plan
   step before declaring the step complete
 
+### 9. Specification & Prompt Management
+
+To maintain a clean project lineage and ensure repeatability:
+
+* **Record Significant Prompts:** Whenever a significant new task, 
+  specification, or architectural change is initiated (especially if 
+  delivered via a `sdw/*_prompt.md` file), the prompt must be recorded 
+  in `sdw/prompt_history.md`.
+* **Sanitize & Summarize:** Prompts should be sanitized of any 
+  sensitive information and summarized if they are excessively 
+  long, while preserving all core objectives and constraints.
+* **Instructor Approval:** Propose the entry for `prompt_history.md` 
+  and wait for instructor approval before appending.
+* **Keep Ledger Chronological:** Maintain the chronological order 
+  in `sdw/prompt_history.md` using `## [Topic/Filename]` headers.
+
 ---
 
 ## DOCUMENTATION
@@ -203,6 +222,18 @@ def organize_files(
   dry_run: bool,
   verbose: bool,
 ) -> None:
+```
+
+**Enforcement — run before every commit:**
+
+```bash
+# Report lines over 80 chars in staged md/py/yaml/sh files
+git diff --name-only HEAD \
+  | grep -E '\.(md|py|yaml|yml|sh)$' \
+  | xargs awk 'length>80 {
+      print FILENAME ":" NR ": " length " chars"
+    }' \
+  | grep . && echo "FAIL: lines exceed 80 cols" || echo "PASS"
 ```
 
 ### Diff consistency

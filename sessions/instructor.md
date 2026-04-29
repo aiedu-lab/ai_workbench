@@ -11,10 +11,79 @@ Time required: approximately 60 minutes.
 
 ---
 
+## Section 0 — Provision Docker VM on Server - set up by Instructor (15 min)
+
+This section covers the server used in Phase 6 (Docker deployment).
+If you already have a provisioned Ubuntu server, skip to Section 1.
+
+**Minimum spec:**
+- OS: Ubuntu 22.04 LTS (or 24.04)
+- RAM: 8 GB minimum (16 GB recommended for concurrent Docker stacks)
+- Disk: 40 GB free
+- Docker Engine installed and running
+
+**Install Docker on the VM:**
+
+```bash
+sudo apt-get update
+sudo apt-get install -y docker.io docker-compose-v2
+sudo systemctl enable docker
+sudo usermod -aG docker $USER   # re-login for group to take effect
+```
+
+**Validation:**
+
+```bash
+docker --version          # e.g. Docker version 24.x.x
+docker compose version    # e.g. Docker Compose version v2.x.x
+docker run hello-world    # must print "Hello from Docker!"
+```
+
+All three commands must succeed before continuing to Section 3
+(server provisioning for students).
+
+---
+
 ## Section 1 — Collect Student Roster (5 min)
 
-Before provisioning anything, collect one row per student in a
-local roster file (never committed — contains personal info):
+Student roster data is collected via a Google Form filled in by
+students at the end of the Introduction session. Responses are
+private — only the form owner (you) can see them.
+
+### Google Form Setup (one-time — reused across all cohorts)
+
+1. Go to `forms.google.com` → create a blank form.
+   Title: `AI Workbench Lab Roster`
+2. Add four **Short Answer** questions:
+   Full Name, Email, GitHub username, Discord username
+3. Responses tab → **Link to Sheets** → create new spreadsheet.
+4. Settings → **Get pre-filled link** → copy the base URL
+   (remove everything from `?entry.` onward).
+   Set `GOOGLE_FORM_URL` in
+   `projects/group_meetup/labenv.yaml` to this URL.
+
+### Per-cohort — Extract Roster CSV
+
+Responses tab → ⋮ → **Download responses (.csv)** → save as
+`roster.csv` (never commit — contains PII).
+
+Use the roster for provisioning:
+
+**GitHub repo access** — add each student as a collaborator:
+
+```bash
+while IFS=, read -r name email github discord; do
+  gh api repos/OWNER/REPO/collaborators/"$github" \
+    -X PUT -f permission=push && echo "Added: $github"
+done < <(tail -n +2 roster.csv)
+```
+
+**Discord invites** — send the server invite link (Section 2)
+to each student's email address from the roster CSV.
+
+### Roster Reference Table
+
+Before provisioning anything, verify one row per student exists:
 
 | Full name   | GitHub username | Discord username | Laptop OS   | Admin? | Server acct? |
 |-------------|-----------------|------------------|-------------|--------|--------------|
@@ -38,11 +107,16 @@ has a Discord account before inviting (Section 2).
 **Laptop OS** — accept only `Win11+WSL2` or `macOS 13+`. Students
 on older OS versions must upgrade before the lab.
 
-**Admin/sudo** — required for tool installation (Section 4).
+**Admin/sudo** — required for tool installation.
 Students without admin access cannot complete the exercises.
 
 **Server account** — required for Phase 6 Docker deployment.
 Provision in Section 3; mark this column `yes` after that step.
+
+---
+
+*The roster table above is a local tracking aid — never commit it.
+The Google Form CSV is the authoritative source.*
 
 ---
 
@@ -107,9 +181,10 @@ before the lab — students cannot do this themselves.
 - Inbound ports open: 22 (SSH), 8080 (Temporal UI), 8088 (app)
 - Outbound internet access (to pull Docker images, reach Discord)
 
-> **labenv.yaml:** Record the server hostname as `DOCKER_SERVER`
-> in `projects/group_meetup/labenv.yaml` so students load it
-> automatically via `labsetup.py` (see Section 6).
+> **labenv.yaml:** Record `DOCKER_SERVER_ID`, `DOCKER_SERVER_USERNAME`,
+> and `DOCKER_SERVER_SSH_PORT` in `projects/group_meetup/labenv.yaml`.
+> `labsetup.py` reads these and writes a student `.ssh/config` entry
+> automatically (see SSH Convenience Setup below and Section 6).
 
 **Provision the shared account:**
 
@@ -140,7 +215,7 @@ sudo chmod 600 /home/labuser/.ssh/authorized_keys
 sudo chown -R labuser:labuser /home/labuser/.ssh
 ```
 
-**Validation — run from each student laptop:**
+**Validation — basic SSH (run from each student laptop):**
 
 ```bash
 ssh labuser@<SERVER_IP> docker ps
@@ -152,58 +227,94 @@ Expected: empty table header (no error). If any student gets
 Mark the `Server acct?` column `yes` in the roster (Section 1)
 once every student passes this check.
 
+### SSH Convenience Setup — Two-Phase Workflow
+
+SSH setup requires a handoff between student and instructor.
+Complete **Phase A** before **Phase B**.
+
+#### Phase A — Student runs `labsetup.py` (before instructor installs keys)
+
+Before the lab, ensure `projects/group_meetup/labenv.yaml` has
+real values (not placeholders) for:
+
+| Variable | Value |
+|---|---|
+| `DOCKER_SERVER_ID` | server hostname or IP |
+| `DOCKER_SERVER_USERNAME` | shared account name (e.g. `labuser`) |
+| `DOCKER_SERVER_SSH_PORT` | SSH port (default `22`) |
+
+Students run:
+
+```bash
+export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
+python3 projects/group_meetup/labsetup.py
+```
+
+`labsetup.py` will:
+1. Generate `~/.ssh/<username>_id_ed25519` key pair (skipped if it
+   already exists)
+2. Post the public key to `#meetup-notifications` so the instructor
+   can install it
+3. Write a `Host ai-lab` entry to `~/.ssh/config` (skipped if
+   already present)
+4. Attempt SSH validation (will WARN — expected at this stage
+   because the key is not yet installed on the server)
+
+**macOS note:** `~/.ssh/` and SSH config behave identically to
+Linux — no extra steps required.
+
+**Windows/WSL2 note:** Run `labsetup.py` from the Ubuntu terminal
+(inside WSL2). The generated `~/.ssh/config` lives in the WSL2
+filesystem, not in Windows `%USERPROFILE%\.ssh`. Use the Ubuntu
+terminal for all SSH commands.
+
+#### Phase B — Instructor installs student public keys on the server
+
+Check `#meetup-notifications` for each student's public key message
+(posted automatically by `labsetup.py`). Install each key:
+
+```bash
+# On the server, for each student key posted to the channel:
+echo "<paste student public key>" \
+  | sudo tee -a /home/labuser/.ssh/authorized_keys
+```
+
+After all keys are installed, notify students to run Phase C.
+
+#### Phase C — Student runs `preflight_check.py` (after keys installed)
+
+> **Important:** Run `preflight_check.py` only after the instructor
+> confirms that all SSH public keys have been installed on the
+> server. SSH connectivity will FAIL until that step is complete.
+
+```bash
+python3 projects/group_meetup/preflight_check.py
+```
+
+`preflight_check.py` reads `labenv.yaml` directly for non-secret
+vars and checks SSH connectivity to `ai-lab`. Every item must show
+`PASS` before the lab begins.
+
+**Validation:**
+
+```bash
+ssh ai-lab docker ps   # must return empty table header
+```
+
 ---
 
 ## Section 4 — Student Laptop Preflight (10 min per student)
 
-Students run this themselves before the lab. The instructor
-validates by reviewing the output of `preflight_check.py`
-(located at `projects/group_meetup/preflight_check.py`).
+> Students complete platform and tool setup independently using
+> [Development Workbench Setup](dev_workbench.md) before the lab
+> day. This section covers the instructor's validation gate only.
 
-> **Note:** `preflight_check.py` is created in Phase 4 (Step 4.4).
-> Run Phase 4 before distributing this script to students.
+> **SSH prerequisite:** Students must complete Section 3 Phase A
+> (run `labsetup.py`) and the instructor must complete Section 3
+> Phase B (install public keys) before `preflight_check.py` will
+> show `PASS` for the SSH checks.
 
-**Win11 + WSL2 setup:**
-
-```bash
-wsl --status          # Default Version: 2
-wsl -l -v             # Ubuntu-22.04 must appear
-# If missing:
-wsl --install -d Ubuntu-22.04   # requires admin + reboot
-```
-
-**macOS setup:**
-
-```bash
-xcode-select --install
-/bin/bash -c "$(curl -fsSL \
-  https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew install python3 git
-```
-
-**Both platforms — required tools:**
-
-```bash
-# Python 3.10+
-python3 --version           # must be >= 3.10
-
-# Git identity
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
-
-# GitHub CLI
-# Install: https://cli.github.com
-gh auth login               # authenticate with GitHub account
-
-# Claude Code CLI
-npm install -g @anthropic-ai/claude-code
-claude --version
-
-# Python dependencies for the meetup project
-pip install requests pyyaml
-```
-
-**Validation — run and share output with instructor:**
+**Instructor validation — confirm all students show PASS:**
 
 ```bash
 python3 projects/group_meetup/preflight_check.py
@@ -255,7 +366,7 @@ No errors means the file is valid YAML.
 Create `.env.example` in the project root to document the
 required variable (placeholder only — never the real value):
 
-```
+```bash
 # Retrieve the real URL from #meetup-notifications (Section 2)
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/REPLACE_ME
 ```
@@ -293,7 +404,7 @@ python3 notifier.py  # confirm Discord message arrives
 Expected: `#meetup-notifications` in `meetup-lab-<CLASS_ID>`
 receives a message like:
 
-```
+```text
 📅 Meetup confirmed!
 Date: Thu Apr 24 7pm
 Venue: Library Room A
@@ -304,3 +415,30 @@ If this works, the lab is ready. If not, check:
 - `responses.json` — did `poller.py` write valid JSON?
 - `decision.json` — did `selector.py` pick a date and venue?
 - Discord channel — is `DISCORD_WEBHOOK_URL` exported correctly?
+
+---
+
+## Section 8 — Student Platform Architecture
+
+Students arrive on one of two platforms. Both produce an identical
+Ubuntu shell; the Docker server (Section 3) is accessed via SSH
+from both.
+
+> "Students on Win11 use VSCode → Remote-WSL → Ubuntu. Students on
+> macOS use VSCode → Dev Containers → Ubuntu. Both produce an
+> identical Ubuntu shell. The Docker server (Section 3) is accessed
+> via SSH from both."
+
+| Layer | Win11 | macOS |
+|-------|-------|-------|
+| Frontend | VSCode native | VSCode native |
+| Dev environment | WSL2 Ubuntu | Dev Container Ubuntu |
+| Server access | SSH → `ai-lab` | SSH → `ai-lab` (identical) |
+
+Validate student platform before the lab:
+
+```bash
+# On each student laptop — confirm Ubuntu shell is active:
+uname -a   # must show Linux
+python3 --version  # must be >= 3.10
+```

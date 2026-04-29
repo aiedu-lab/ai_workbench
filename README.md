@@ -11,28 +11,45 @@ for various use cases, such as coding, automation, etc. using:
 * Agent execution
 * Reflection and debugging
 
+## 🔧 Specification Driven Workbench (SDW)
+
+This repository is a **Specification Driven Workbench (SDW)**: all
+content changes flow from a written specification, never from direct
+edits. The specification plan (`sdw/plan.md`) is the single source
+of truth — it is append-only, never rewritten. AI executes each
+plan step under instructor review; the resulting content, plan
+entries, and prompt history are committed together, creating a full
+audit trail from intent to implementation.
+
+> **In short:** prompt → plan → execute → review → commit.
+> No content is created outside the plan.
+
+---
+
 ## 📅 Agenda
 
-| Topic of Lesson | Lesson Duration | Tool | Tool Duration |
-| :--- | :---: | :--- | :---: |
-| [**Instructor Preflight**](sessions/instructor.md) | Before lab | Roster, Discord, server, student laptops | 60 mins |
-| [**Introduction**](sessions/introduction.md) | 30 mins |  |  |
-| [**Concept: Basic Prompting Techniques**](sessions/prompting_basics.md) | 30 mins | [Browser Chat](https://gemini.google.com) |  |
-| [**Exercise: Problem Solving**](sessions/problem_solving.md) | 45 mins | [Browser Chat](https://gemini.google.com) |  |
-| [**Concept: Planning**](sessions/planning.md) | 45 mins | [Claude Desktop (Chat)](tools/claude/desktop.md) | 15 mins  |
-| [**Exercise: Create Presentation**](sessions/slides.md) | 45 mins | [Gamma](https://gamma.app/), [GitHub](tools/github.md) | 15 mins |
-| [**Exercise: Create/Run Web Site on Laptop/Lovable**](sessions/web_site.md) | 60 mins | [Lovable.dev](https://lovable.ai), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
-| [**Concept: Advanced Prompting Techniques**](sessions/prompting_advanced.md) | 90 mins | [Claude Chat](tools/claude/desktop.md) |  |
-| [**Concept: Spec Driven Development (SDD)**](sessions/sdd_basics.md) | 45 mins | | |
-| [**Exercise: Create Group Meetup Organizer using SDD, App runs on Laptop**](sessions/client_application.md) | 45 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) | 15 mins |
-| [**Concept: Code Review**](sessions/code_review.md) | 30 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) |  |
-| [**Concept: AI Across the SDLC**](sessions/sdlc_ai.md) | 45 mins | [Claude Code (CLI)](tools/claude/cli.md), GitHub Actions |  |
-| [**Exercise: Create/Run Agent App on Laptop**](sessions/client_agent.md) | 75 mins | [Claude CoWork](tools/claude/desktop.md) | 15 mins |
-| [**Exercise: Create/Run Multi-Agent Workflows on Laptop**](sessions/client_multiagent.md) | 60 mins | [Claude Code (CLI)](tools/claude/cli.md), [OpenAI Codex (CLI)](tools/openai/codex_cli.md) | 15 mins |
-| [**Exercise: Run Multi-Agent Workflows on Server**](sessions/server_multiagent.md) | 60 mins | [OpenClaw](tools/openclaw/cli.md), [Temporal](tools/temporal/cli.md) | 15 mins |
-| [**Concept: Solution Architecture**](sessions/solution.md) | 45 mins | [Claude Chat](tools/claude/desktop.md), Python |  |
-| [**Future Advancements**](sessions/future_advancements.md) | 30 mins |  |  |
-| [**Recap**](sessions/recap.md) | 30 mins |  |  |
+| Topic of Lesson | Description | Lesson Duration | Tool | Tool Duration |
+| :--- | :--- | :---: | :--- | :---: |
+| [**Introduction**](sessions/introduction.md) | Orient to the course arc, tools, and the Group Meetup Organizer project thread. | 30 mins |  |  |
+| [**Development Workbench Setup**](sessions/dev_workbench.md) | Install and verify WSL2/Dev Container, VSCode, and GitHub before lab day. | Before lab | [VM/WSL2/DevContainer](tools/VM/setup.md), [VSCode](tools/dev_workbench/vscode.md), [GitHub](tools/dev_workbench/github.md) | 30 mins |
+| [**Concept: Basic Prompting Techniques**](sessions/prompting_basics.md) | Learn the vocabulary and mental models for directing AI effectively. | 30 mins | [Browser Chat](https://gemini.google.com) |  |
+| [**Exercise: Problem Solving**](sessions/problem_solving.md) | Apply prompting to real problems and build a structured AI feedback loop. | 45 mins | [Browser Chat](https://gemini.google.com) |  |
+| [**Concept: Planning**](sessions/planning.md) | Draft, critique, and refine plans with AI — the foundation of spec-driven work. | 45 mins | [Claude Desktop (Chat)](tools/claude/desktop.md) | 15 mins |
+| [**Exercise: Presentation & Design**](sessions/presentation_n_design.md) | Generate slide decks and visual designs with AI in minutes. | 60 mins | [Gamma](https://gamma.app/), [Claude Design](https://claude.ai/design) | 15 mins |
+| [**Exercise: Create/Run Web Site on Laptop/Lovable**](sessions/web_site.md) | Build and deploy a working web page using AI code generation. | 60 mins | [Lovable.dev](https://lovable.ai), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
+| [**Concept: Advanced Prompting Techniques**](sessions/prompting_advanced.md) | Master skills, few-shot examples, chain-of-thought, RAG, and agent patterns. | 90 mins | [Claude Chat](tools/claude/desktop.md) |  |
+| [**Concept: Spec Driven Development (SDD)**](sessions/sdd_basics.md) | Write a specification first, then let AI generate matching code reliably. | 45 mins | | |
+| [**Exercise: Create Group Meetup Organizer using SDD, App runs on Laptop**](sessions/client_application.md) | Implement the Poller → Selector → Notifier pipeline with AI-generated code. | 45 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) | 15 mins |
+| [**Concept: Code Review**](sessions/code_review.md) | Use AI to catch bugs, enforce style, and explain unfamiliar code. | 30 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) |  |
+| [**Concept: AI Across the SDLC**](sessions/sdlc_ai.md) | See how AI integrates across the entire software development lifecycle. | 45 mins | [Claude Code (CLI)](tools/claude/cli.md), GitHub Actions |  |
+| [**Exercise: Create/Run Agent App on Laptop**](sessions/client_agent.md) | Build a single-agent CoWork workflow that plans and executes file tasks. | 75 mins | [Claude CoWork](tools/claude/desktop.md) | 15 mins |
+| [**Exercise: Create/Run Multi-Agent Workflows on Laptop**](sessions/client_multiagent.md) | Coordinate specialized agents for problems no single agent handles reliably. | 60 mins | [Claude Code (CLI)](tools/claude/cli.md), [OpenAI Codex (CLI)](tools/openai/codex_cli.md) | 15 mins |
+| [**Exercise: Run Multi-Agent Workflows on Server**](sessions/server_multiagent.md) | Deploy a durable multi-agent system using Temporal on a shared server. | 60 mins | [OpenClaw](tools/openclaw/cli.md), [Temporal](tools/temporal/cli.md) | 15 mins |
+| [**Concept: Solution Architecture**](sessions/solution.md) | Design full-stack AI solutions using patterns learned across the lab. | 45 mins | [Claude Chat](tools/claude/desktop.md), Python |  |
+| [**Exercise: Personal Knowledge Management (LLM Wiki)**](sessions/llm_wiki.md) | Use an AI agent as librarian for a knowledge base that grows with each ingest. | 60 mins | [Obsidian](https://obsidian.md), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
+| [**Exercise: AI Local**](sessions/ai_local.md) | Run an LLM entirely offline for privacy, custom personas, and zero cloud cost. | 45 mins | [Ollama](tools/ollama/setup.md) | 15 mins |
+| [**Future Advancements**](sessions/future_advancements.md) | Survey the AI frontier and what it means for the tools you just built. | 30 mins |  |  |
+| [**Recap**](sessions/recap.md) | Reflect on what was built, what surprised you, and how to keep improving. | 30 mins |  |  |
 
 ---
 
@@ -72,19 +89,46 @@ ai-education-lab/
 
 ---
 
+## 🧑‍🏫 Instructor Guidelines
+
+Execute [**Instructor Preflight**](sessions/instructor.md) before starting 
+the workbench lab sessions and check off on setting up the student roster, 
+discord server, docker server, student laptops, etc.
+
+---
+
 ## 🤝 Contribution Guidelines
-After each session:
-1. Add/update:
-   * `plan.md`
-   * prompts (best + failures)
-   * learnings
-2. Commit to a separate branch:
-```bash
-git add .
-git commit -m "Session X updates"
-git push
-```
-3. Submit for Pull Request for merging into main branch
+
+### Workbench Update Workflow
+
+All content changes must follow this sequence in strict order:
+
+1. **Specify** — append the new prompt to
+   `sdw/prompt_history.md`. The prompt directs AI to extend
+   `sdw/plan.md` with new phases or steps; never edit plan.md
+   directly.
+2. **Plan** — AI appends the new phase/steps to `sdw/plan.md`.
+   Both files are append-only and serve as the system of record.
+3. **Execute** — AI executes each plan step one at a time under
+   reviewer approval, following `CLAUDE.md` operating protocol.
+4. **Commit** — commit `prompt_history.md`, `plan.md`, and the
+   generated content together on a feature branch. Annotate every
+   AI-generated section:
+   ```text
+   <!-- AI-GENERATED [provider:model]: Phase X Step Y -->
+   ```
+5. **PR & Review** — submit a pull request to `main`. The PR
+   description must include:
+   * `provider:model` used to append changes to `sdw/plan.md`
+   * `provider:model` used to execute the plan and generate content
+   * Link to the executed section in `sdw/plan.md`
+   Maintainers run AI-assisted style checks (80-col, 2-space
+   indent) then review content before approving the merge.
+
+> **No direct content edits.** All changes originate in
+> `sdw/prompt_history.md` and flow through `sdw/plan.md`.
+> Contributors may not commit directly to `main`.
+
 ---
 
 ## 🙌 Credits

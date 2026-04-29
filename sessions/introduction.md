@@ -2,10 +2,10 @@
 
 ## Objective
 Help participants learn use AI and understand how to:
-* Think in prompts
 * Design plans (spec-first thinking)
+* Think in prompts
 * Validate AI outputs
-* Develop "feel" for tool fit to use case
+* Develop "feel" for "tool fit" to use case 
 
 ## Learning - Philosophy
 Each session follows a simple structure:
@@ -18,12 +18,31 @@ We emphasize:
 * Learning from failures
 
 ## Activities
-- Claude Chat login verification
-- Group formation 
-- Roles: Driver, Prompt Engineer, Observer
-- Observer tracks hallucination drift
+* Repository walk through as overview of `AI Workbench` content
+* Next session - [Development Workbench Setup](./dev_workbench.md)
+* Group formation with roles in each group: 
+  * Driver, Prompt Engineer, Observer
+  * Observer tracks hallucination drift
+* Claude Chat login verification
 
-## Walk through of Repository
+## Before You Leave
+
+Fill in the **Class Roster Form** before leaving today's session.
+The form collects your name, email, GitHub username, and Discord
+username — used by the instructor to grant you access to the lab
+repo and Discord server.
+
+> Your responses are private — only the instructor can see them.
+
+Find the form URL in the lab config file:
+
+```bash
+grep GOOGLE_FORM_URL projects/group_meetup/labenv.yaml
+```
+
+Open the URL printed and submit your details.
+
+---
 
 ## References
 * [Ethan Mollick's "One Useful Thing" Blog](https://www.oneusefulthing.org/)

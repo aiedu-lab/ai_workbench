@@ -1,3 +1,11 @@
 # .github/CODEOWNERS
-# These people must approve any PR touching these paths
+# Core Curriculum & Planning
+# PR must be approved by an instructor
+plans/              @asarcar
+projects/           @asarcar
+sessions/           @asarcar
+learnings/          @asarcar
+tools/              @asarcar
+
+# Default for everything else
 *                   @asarcar

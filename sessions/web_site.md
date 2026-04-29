@@ -118,7 +118,7 @@ a toy version — real UI, fake backend.
 
 ### Lovable prompt
 
-```
+```text
 Build a one-page meetup poll app.
 
 Page 1 — Poll form:
@@ -338,7 +338,7 @@ For Lovable (SaaS), reference the student programs for cost control:
 For Claude and any LLM-Provider API calls, reference the links below
 for cost control:
 * [Claude Cost Control](../tools/claude/cost_control.md)
-* [Provider Cost Control](../tools/provider_cost_control.md)
+* [Provider Cost Control](../tools/dev_workbench/provider_cost_control.md)
 
 ---
 
