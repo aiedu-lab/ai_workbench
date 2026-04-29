@@ -45,6 +45,11 @@ typist; the human defines the spec and validates the output:
 | Presentation | **SDP** | Slide outline or brief | Decks, UI mockups |
 | Knowledge base | **SDPKM** | Topic list + vault structure | Cross-linked wiki notes |
 | Workbench | **SDW** | `sdw/plan.md` | Lab sessions, tools, exercises |
+| Bootstrapping | **SDB** | Idea brief + market scope | Research memos, GTM plans, product mocks |
+| Engineering Design | **SDCAD** | Design constraints + tolerances | AutoDesk drawings, simulation configs |
+| Creative Tooling | **SDCT** | Scene description + style guide | Blender models, shader scripts, animations |
+| Research synthesis | **SDRS** | Research question + source list | Literature summaries, citation graphs |
+| Data pipelines | **SDDP** | Schema + transformation rules | ETL scripts, dbt models, validation tests |
 
 > This workbench itself is built using Specifications.
 > See [`sdw/plan.md`](../sdw/plan.md) as a live example of SDW —
@@ -54,3 +59,17 @@ The SDD session teaches the pattern for code. The same mindset —
 write the spec first, generate from it, iterate — transfers directly
 to SDP ([Presentation & Design](presentation_n_design.md)) and
 SDPKM ([LLM Wiki / PKM](llm_wiki.md)).
+
+## Specifications as a Universal Interface
+
+A specification can drive **any digital service** that exposes an
+LLM-readable interface — an MCP server or an API with schema,
+types, and descriptions that make the rules of execution explicit.
+The LLM reads the spec, interprets the interface contract, and
+generates or executes the required actions.
+
+If the physical world is digitally controlled — via robots,
+CNC machines, or IoT actuators — LLMs can drive activities that
+span both digital and physical realms, using MCP or APIs as the
+digital interface to the physical world. The specification is
+always the contract; the interface is always the boundary.
