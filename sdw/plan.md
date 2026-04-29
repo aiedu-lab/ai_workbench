@@ -2625,10 +2625,17 @@ Follow CLAUDE.md conventions:
   extension via robots/IoT actuators.
 
 ### Phase 16.3: Validate Setups or Install Success
-- [ ] Scan through the repo to identify all setup or install sections. 
-- [ ] For all those sections, identify a validation or test that 
-  assures the correct completion of the exercise, add those validation 
-  steps as a subsection of the Setup or Install exercise.
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 16 Step 16.3 (plan_history.md) -->
+- [x] **COMPLETED** Scan through the repo to identify all setup or
+  install sections.
+- [x] **COMPLETED** For all sections missing validation, added
+  `### Validation` subsections:
+  - `tools/ollama/setup.md` — macOS + Windows installs (2 sections)
+  - `tools/openclaw/cli.md` — Setup section
+  - `sessions/llm_wiki.md` — Installation & Setup section
+  Already adequate: `tools/claude/desktop.md`, `tools/temporal/cli.md`,
+  `tools/dev_workbench/vscode.md`, `sessions/server_multiagent.md`,
+  `sessions/dev_workbench.md`, `tools/openai/codex_cli.md`.
 
 ### Phase 16.4: Delete Unused Files
 - [ ] Scan the repository to identify files whose contents have been absorbed elsewhere and are no longer used.
