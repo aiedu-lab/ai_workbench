@@ -21,6 +21,7 @@ GitHub is like:
 ## Account Setup
 
 1. Create an account at `github.com/signup` and verify your email.
+
 2. Install the `gh` CLI inside Ubuntu (WSL2 or Dev Container):
 
 ```bash
@@ -41,10 +42,11 @@ echo "deb [arch=$(dpkg --print-architecture) \
 sudo apt update && sudo apt install gh -y
 ```
 
-3. Authenticate:
+3. Authenticate - **required before running `labsetup.py`**:
 
 ```bash
 gh auth login   # choose GitHub.com → HTTPS → browser
+gh auth status  # must exit 0 before continuing
 ```
 
 ---
