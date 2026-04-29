@@ -98,18 +98,36 @@ discord server, docker server, student laptops, etc.
 ---
 
 ## 🤝 Contribution Guidelines
-After each session:
-1. Add/update:
-   * `plan.md`
-   * prompts (best + failures)
-   * learnings
-2. Commit to a separate branch:
-```bash
-git add .
-git commit -m "Session X updates"
-git push
-```
-3. Submit for Pull Request for merging into main branch
+
+### Workbench Update Workflow
+
+All content changes must follow this sequence in strict order:
+
+1. **Specify** — append the new prompt to
+   `sdw/prompt_history.md`. The prompt directs AI to extend
+   `sdw/plan.md` with new phases or steps; never edit plan.md
+   directly.
+2. **Plan** — AI appends the new phase/steps to `sdw/plan.md`.
+   Both files are append-only and serve as the system of record.
+3. **Execute** — AI executes each plan step one at a time under
+   reviewer approval, following `CLAUDE.md` operating protocol.
+4. **Commit** — commit `prompt_history.md`, `plan.md`, and the
+   generated content together on a feature branch. Annotate every
+   AI-generated section:
+   ```text
+   <!-- AI-GENERATED [provider:model]: Phase X Step Y -->
+   ```
+5. **PR & Review** — submit a pull request to `main`. The PR
+   description must include:
+   * `provider:model` used to append changes to `sdw/plan.md`
+   * `provider:model` used to execute the plan and generate content
+   * Link to the executed section in `sdw/plan.md`
+   Maintainers run AI-assisted style checks (80-col, 2-space
+   indent) then review content before approving the merge.
+
+> **No direct content edits.** All changes originate in
+> `sdw/prompt_history.md` and flow through `sdw/plan.md`.
+> Contributors may not commit directly to `main`.
 
 ---
 
