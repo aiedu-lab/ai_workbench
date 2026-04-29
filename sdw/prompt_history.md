@@ -682,6 +682,18 @@ LLMs can drive additional activities that span the digital and
 physical world as well. Clarify here that in this case the MCP or API 
 are the digital interfaces to the physical world.
 
+### Validate Setup or Install Success
+
+Scan through the repo to ensure all setup or installation of tools is 
+followed by a validation command to ensure the exercise succeeded. 
+For example, we've a validation step in `tools/dev_workbench/github.com` 
+where after setting up the GitHub with public SSH keys, we validate
+that the SSH acceess has been provisioned correctly by running
+`ssh -T git@github.com` and then expecting a given response. 
+
+This kind of test or validation instruction should follow every setup 
+instruction.
+
 ### Delete unused files
 
 Please scan the repo to eliminate files whose contents have been absored 
