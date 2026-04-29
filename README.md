@@ -11,6 +11,21 @@ for various use cases, such as coding, automation, etc. using:
 * Agent execution
 * Reflection and debugging
 
+## 🔧 Specification Driven Workbench (SDW)
+
+This repository is a **Specification Driven Workbench (SDW)**: all
+content changes flow from a written specification, never from direct
+edits. The specification plan (`sdw/plan.md`) is the single source
+of truth — it is append-only, never rewritten. AI executes each
+plan step under instructor review; the resulting content, plan
+entries, and prompt history are committed together, creating a full
+audit trail from intent to implementation.
+
+> **In short:** prompt → plan → execute → review → commit.
+> No content is created outside the plan.
+
+---
+
 ## 📅 Agenda
 
 | Topic of Lesson | Lesson Duration | Tool | Tool Duration |
