@@ -26,9 +26,20 @@ knowledge graph.
 ## 🛠️ Installation & Setup
 1. **The Viewer:** Download and install [Obsidian](https://obsidian.md/).
 2. **The Brain:** Ensure you have the `claude-code` CLI installed.
-3. **The Vault:** Create a new folder on your laptop called `my-ai-brain` 
-and open it as a "Vault" in Obsidian.
-4. **The Structure:** Inside the vault, create a folder named `raw_sources/`.
+3. **The Vault:** Create a new folder on your laptop called
+   `my-ai-brain` and open it as a "Vault" in Obsidian.
+4. **The Structure:** Inside the vault, create a folder named
+   `raw_sources/`.
+
+### Validation
+
+```bash
+claude --version   # must print a version number
+```
+
+- [ ] Obsidian opens without error; `my-ai-brain` vault is visible
+- [ ] `raw_sources/` folder appears in the Obsidian file explorer
+- [ ] `claude` starts without errors when run inside the vault folder
 
 ## 🏃‍♂️ The Exercise: Compounding Knowledge
 

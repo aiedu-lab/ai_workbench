@@ -21,7 +21,17 @@ Macs handle memory very efficiently. If you have an Apple Silicon chip (M1, M2, 
 2. Download the Mac version.
 3. Unzip the file and drag **Ollama.app** into your Applications folder.
 4. Open the app. You will see a small llama icon appear in your top menu bar.
-5. Open your **Terminal** app and run your chosen pull command (e.g., `ollama pull llama3:8b`).
+5. Open your **Terminal** app and run your chosen pull command
+   (e.g., `ollama pull llama3:8b`).
+
+### Validation
+
+```bash
+ollama --version   # prints e.g. ollama version 0.x.x
+ollama list        # shows your pulled model (llama3:8b or gemma:2b)
+```
+
+Expected: version string printed; model appears in the list.
 
 ---
 
@@ -57,4 +67,14 @@ Windows handles System RAM and Graphics Card Memory (VRAM) separately. We have a
 1. Go to [Ollama.com/download](https://ollama.com/download/windows).
 2. Download the Windows installer (`.exe`) and run it.
 3. Ensure the Ollama icon is running in your system tray (bottom right).
-4. Open **PowerShell** (or your WSL terminal) and run your chosen pull command (e.g., `ollama pull llama3:8b`).
+4. Open **PowerShell** (or your WSL terminal) and run your chosen
+   pull command (e.g., `ollama pull llama3:8b`).
+
+### Validation
+
+```bash
+ollama --version   # prints e.g. ollama version 0.x.x
+ollama list        # shows your pulled model (llama3:8b or gemma:2b)
+```
+
+Expected: version string printed; model appears in the list.
