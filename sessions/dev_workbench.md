@@ -88,8 +88,12 @@ Hi [GitHub Username]! You've successfully authenticated...
 - **Win11:** install **Remote - WSL** extension
 - **macOS:** install **Dev Containers** extension
 - Open VSCode project from **Ubuntu terminal**: `code .`
-- Install the **Claude** extension inside VSCode
-- Setup GitHub extension, validate Git Pull
+- Install and sign in to the **Claude Code** extension
+- Install and sign in to the **GitHub Pull Requests** extension —
+  full steps in
+  [VSCode Setup Guide](../tools/dev_workbench/vscode.md#setup)
+- Validate both extensions per
+  [VSCode Validation](../tools/dev_workbench/vscode.md#validation)
 
 ---
 

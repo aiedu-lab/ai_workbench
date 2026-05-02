@@ -7,16 +7,31 @@
 * [Remote-WSL Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl) (Microsoft) - if using WSL
 * [Python Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.python) (Microsoft)
 * [Claude Code Extension](https://marketplace.visualstudio.com/items?itemName=anthropic.claude-code) (Anthropic)
-* [GitHub Extension](https://code.visualstudio.com/docs/sourcecontrol/github)
+* **GitHub Extension** — built-in Source Control; no extra install
+  needed. Sign in: Accounts icon (bottom-left) → "Sign in with
+  GitHub" → authorize in browser.
+* **GitHub Pull Requests Extension**:
+  1. Extensions (`Ctrl+Shift+X`) → search "GitHub Pull Requests"
+  2. Install **GitHub Pull Requests** (GitHub, Inc.)
+  3. Sign in: click the GitHub icon in the Activity Bar →
+     "Sign In" → authorize in browser.
 
 ## Validation
-* Change Directory to Your WS: Open a folder in WSL
-* Open VSCode: and connect to Remote-WSL `code .`
-* Check Claude
-  * Works on command line? Run: `claude --version`
-  * Claude Extension Works? chat `just act as a conversational agent as "say Hello"
-  * GitHub Works on command line? Run `git branch --all` shows you are on a branch
-  * GitHub Extension Works? `git pull`, `git push`, etc. works on the branch
+
+### VSCode and CLI Basics
+* Open your `ai_workbench` folder from Ubuntu terminal: `code .`
+* Verify Claude CLI: `claude --version`
+
+### GitHub Extension
+* Run from Ubuntu terminal: `git branch --all`
+  — your personal branch (`feature/from_<username>`) should appear.
+* Use VSCode Source Control panel: `git pull` and `git push`
+  work without entering credentials.
+
+### GitHub Pull Request Extension
+* Click the GitHub icon in the Activity Bar.
+* The **Pull Requests** and **Issues** panels are visible.
+* Your personal branch appears under "Current Branch".
 ## Guardrails
 * If using WAL, always work inside WSL directory `~/` rather than 
   Windows paths `/mnt/c/...` as cross-filesystem I/O is significantly 
