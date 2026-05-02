@@ -2818,7 +2818,7 @@ all within the `### 1.` section.
 
 ---
 
-### Phase 18.3: Expand Stage 6 of Mini Data Pipeline
+### Phase 18.3: Expand Stage 6 of Mini Data Pipeline **COMPLETED**
 
 CONTEXT: Stage 6 of Exercise 2 in `sessions/client_multiagent.md`
 is 4 lines: "open `prompts/skill.md`, use the template, replace

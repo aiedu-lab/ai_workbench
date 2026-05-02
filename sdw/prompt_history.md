@@ -930,7 +930,84 @@ Change your `user_prompt` to: *"Who are you, and what is your architecture?"*
 ##### Phase 4: Critical Thinking
 1.  **Portability:** Why is it useful for a developer to use a library like `openai` even when they aren't using OpenAI's models?
 2.  **Economics:** Look at your Groq or OpenRouter dashboard. How much did this lab cost you? (In most cases, it should be **$0.00**).
-3.  **The "Open" Advantage:** If a company like Google or OpenAI went offline tomorrow, could you still run your "Hello World" app? (Hint: Research "Local LLMs" and **Ollama**).
+3.  **The "Open" Advantage:** If a company like Google or OpenAI went offline tomorrow, could you still run your "Hello World" app? 
+(Hint: Research "Local LLMs" and **Ollama**).
 ---
 
 <<<---
+
+---
+
+## Tweak Skills
+[x] Status
+
+### Specification Driven
+
+Update `sessions/sdd_basics.md` section `Specification Driven Beyond Code` 
+table to update the `Name` column for each row  reference to exercises that 
+illustrate the Concept. 
+
+For example, in instead of the Name being just 
+vanilla text `SDD`, make it SDD clickable link that referes 
+`client_application.md` section:
+`Exercise — Group Meetup Organizer (non-agentic version)`
+
+Update the other `Name` field of other rows to clickable links wherever an
+exercise exists.
+
+### Improve Exercise on Skills
+
+#### Reference
+Simmilarly, `prompting_advanced` session goes over the Concept of Skills, 
+Plugins, and `Step 5 - Build a Minii Plugin (3 Skills Combined)` help
+students learns Skills better. You could summarize the below:
+
+``` text
+EXTRACT PHASE
+Help the student identify WHY the correction worked. Extract the structural 
+difference between the vague and precise prompt. Name the skill pattern 
+(e.g. "scope-bounding", "output-anchoring", "constraint-first").
+
+GENERALIZE PHASE
+Help the student rewrite the corrected prompt as a reusable template with 
+placeholders — general enough to apply across domains but specific enough 
+to prevent the original failure mode.
+
+CATALOG PHASE
+Ask the student: which phase type does this skill belong to? 
+(e.g. setup, feature build, refactor, integration, testing). 
+Add it to our prompts/skill.md - skill libraray: 
+skill name, description, template, and one example usage.
+```
+
+#### Task
+
+##### Concept
+Please add in section in `prompting_advanced.md` where 
+we introduce Skills concept: 
+1. The general `discovery` best practice process of 
+identifying a skill-able prompt. Do folks actually 
+prompt the agent periodically and make it identify 
+the prompt recipes - sequence of prompts that worked to 
+deliver an outcome - and create skills out of it. Or
+do humans realize a common pattern to solve problems
+and then humans consciously collaborate with the 
+agent to templatize and orient the prompt into a Skill?
+
+2. The idea of "Extract ==> Catalog" steps of Skills. 
+Reference the `client_multiagent.md` section 
+`Exercise 2: "Mini Data Pipeline"` where this concept 
+will be brought to life via that Exercise.
+
+##### Exercise
+
+Update step `6. Develop a Skill (Reusable Prompt)` of 
+`Exercise 2: “Mini Data Pipeline”` where we help students 
+learn building Skills for repetivite tasks. 
+Specifically, craft how we extract from the prompt 
+a repeatble reusable template version where few fields 
+are set as placeholder to ensure it is GENERALIZED.
+
+
+
+
