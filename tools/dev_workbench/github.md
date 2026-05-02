@@ -128,8 +128,11 @@ gh auth status
 
 ```bash
 export GITHUB_USERNAME="<your_github_username>"
-mkdir -p ~/ws/sw
-cd ~/ws/sw
+# Set MY_WORKSPACE to your preferred directory.
+# Example: ~/ws/sw — choose any path you like.
+export MY_WORKSPACE=~/ws/sw
+mkdir -p $MY_WORKSPACE
+cd $MY_WORKSPACE
 git clone git@github.com:aiedu-lab/ai_workbench.git
 cd ai_workbench
 ```
