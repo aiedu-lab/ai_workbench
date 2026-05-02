@@ -51,6 +51,36 @@ Overkill example:
 Summarize this article
 ```
 
+#### Discovering a Skill
+
+Two approaches to recognize when a prompt is worth templating:
+
+1. **Prompt-driven:** Periodically ask the agent to surface
+   recurring patterns — *"Which of our last prompts solved a
+   repeating problem?"*
+2. **Human-driven:** You notice a repeating pattern yourself,
+   then consciously templatize it with the agent.
+
+#### Extract → Catalog
+
+Once you spot a skill-able prompt, build it in three steps:
+
+**EXTRACT** — identify WHY the prompt worked; name the structural
+pattern (e.g. "scope-bounding", "output-anchoring").
+
+**GENERALIZE** — rewrite as a reusable template with
+`[PLACEHOLDER]` variables: broad enough to reuse across domains,
+specific enough to prevent the original failure mode.
+
+**CATALOG** — add to `prompts/skill.md` with four fields:
+- **Skill name** — a short descriptive label
+- **Description** — one sentence on what problem it solves
+- **Template** — the generalized prompt with `[PLACEHOLDER]` slots
+- **Example usage** — one concrete filled-in instance
+
+> **Hands-on application:** See Stage 6 of the
+> [Mini Data Pipeline](client_multiagent.md#exercise-2-mini-data-pipeline).
+
 ---
 
 ### 2. Progressive Disclosure
