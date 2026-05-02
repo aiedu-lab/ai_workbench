@@ -256,11 +256,43 @@ Expected: 20 rows before, 19 after (one row has missing `open`).
 
 6. Develop a Skill (Reusable Prompt)
 
-Encode the clean-and-transform step as a reusable skill.
-Open [`prompts/skill.md`](../prompts/skill.md) and use the
-**Data Pipeline Clean & Transform Skill** template.
-Replace `[INPUT_CSV]` and `[OUTPUT_CSV]` with your file paths,
-then feed the skill prompt to Claude Code.
+Follow the **Extract → Catalog** process from
+[Advanced Prompting §1](prompting_advanced.md#1-skills-reusable-prompts):
+
+**EXTRACT** — Ask Claude Code:
+
+```text
+Look at the clean-and-transform prompt we just used.
+Why does it work reliably? Name the structural pattern.
+```
+
+Expected answer: something like *"csv-transform — it names the
+input file, lists the exact columns to operate on, specifies the
+output file, and states a validation check."*
+
+**GENERALIZE** — Ask Claude Code to turn it into a template:
+
+```text
+Rewrite that prompt as a reusable template. Replace every
+dataset-specific value with a [PLACEHOLDER] so it can be
+applied to any CSV pipeline task.
+```
+
+Confirm the template has at least these placeholders:
+`[INPUT_CSV]`, `[OUTPUT_CSV]`, `[DROP_CONDITION]`, `[NEW_COLUMNS]`.
+
+**CATALOG** — Ask Claude Code to add it to `prompts/skill.md`:
+
+```text
+Add the skill to prompts/skill.md with these four fields:
+- Skill name
+- Description (one sentence)
+- Template (the generalized prompt)
+- Example usage (filled in for this pipeline)
+```
+
+Verify the entry appears in
+[`prompts/skill.md`](../prompts/skill.md).
 
 7. Specification Plan
 

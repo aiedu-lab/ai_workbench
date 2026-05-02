@@ -2747,3 +2747,97 @@ Follow CLAUDE.md conventions:
   Pluggable Models row immediately before AI Local.
 - [x] **COMPLETED** `## Multimodel` in `sdw/prompt_history.md`
   already marked `[x]` during Phase 17 append step.
+
+---
+
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 18 appended
+     from replan workflow
+     (sdw/replan.md → prompt_history.md#tweak-skills) -->
+## Phase 18: TWEAK SKILLS
+
+### Phase 18.1: Link Names in Specification Driven Beyond Code Table
+**COMPLETED**
+
+CONTEXT: `sessions/sdd_basics.md` table has 9 rows with plain bold
+Name cells; only SDDP has an external blockquote note below the table.
+
+ACTION: In `sessions/sdd_basics.md` table, replace the Name cell
+for the five rows that have a workbench exercise with markdown links:
+- SDD → `[**SDD**](client_application.md#exercise--group-meetup-organizer-non-agentic-version)`
+- SDP → `[**SDP**](presentation_n_design.md#exercise-b--group-meetup-organizer-pitch-deck-toy-version-0-gamma)`
+- SDPKM → `[**SDPKM**](llm_wiki.md#the-exercise-compounding-knowledge)`
+- SDW → `[**SDW**](../sdw/plan.md)`
+- SDDP → `[**SDDP**](client_multiagent.md#exercise-2-mini-data-pipeline)`
+  and delete the existing SDDP blockquote note below the table.
+
+CONSTRAINTS: Do not modify rows SDB, SDCAD, SDCT, SDRS (no workbench
+exercise exists for these); do not change the Abbreviation, Spec Type,
+or AI Output columns; do not touch any content outside the table and
+the SDDP blockquote note.
+
+OUTPUT: `sessions/sdd_basics.md` — 5 Name cells updated to clickable
+links; existing SDDP blockquote note removed.
+
+TEST: `grep -n '\[.*SDD\|SDP\|SDPKM\|SDW\|SDDP' sessions/sdd_basics.md`
+returns 5 lines; `grep -n "SDDP in practice" sessions/sdd_basics.md`
+returns no lines.
+
+---
+
+### Phase 18.2: Add Skills Discovery and Catalog Concept
+**COMPLETED**
+
+CONTEXT: `sessions/prompting_advanced.md` section
+`### 1. Skills (Reusable Prompts)` covers What/Analogy/Example/When
+NOT useful; no discovery methodology or Extract→Catalog process
+exists anywhere in the file.
+
+ACTION: In `sessions/prompting_advanced.md`, immediately after the
+existing `### 1. Skills (Reusable Prompts)` content (before `### 2.`),
+add two new `####` sub-sections:
+1. `#### Discovering a Skill` — two approaches: (a) prompt-driven:
+   ask the agent to surface recurring patterns; (b) human-driven:
+   recognize the pattern, consciously templatize with the agent.
+2. `#### Extract → Catalog` — three steps: EXTRACT (identify WHY
+   the prompt worked; name the pattern), GENERALIZE (rewrite as a
+   template with `[PLACEHOLDER]` variables), CATALOG (add to
+   `prompts/skill.md`: name, description, template, example usage).
+Then add one cross-reference line to Mini Data Pipeline Stage 6 in
+`sessions/client_multiagent.md`.
+
+CONSTRAINTS: Do not modify `### 2.` through `### 8.` sub-sections;
+do not change Step 5 "Build a Mini Plugin" in the Exercise section;
+do not modify `prompts/skill.md`.
+
+OUTPUT: `sessions/prompting_advanced.md` — two new `####`
+sub-sections inside `### 1. Skills (Reusable Prompts)`.
+
+TEST: `grep -n "Discovering\|EXTRACT\|GENERALIZE\|CATALOG"
+sessions/prompting_advanced.md` returns at least 4 matches,
+all within the `### 1.` section.
+
+---
+
+### Phase 18.3: Expand Stage 6 of Mini Data Pipeline **COMPLETED**
+
+CONTEXT: Stage 6 of Exercise 2 in `sessions/client_multiagent.md`
+is 4 lines: "open `prompts/skill.md`, use the template, replace
+`[INPUT_CSV]` and `[OUTPUT_CSV]`" — no walkthrough of how to build
+or generalize the template.
+
+ACTION: In `sessions/client_multiagent.md`, replace the 4-line Stage 6
+body with an inline EXTRACT → GENERALIZE → CATALOG walkthrough:
+EXTRACT: prompt Claude to explain why the step is repeatable; name the
+pattern. GENERALIZE: expand specific values into placeholders
+`[INPUT_CSV]`, `[OUTPUT_CSV]`, `[DROP_CONDITION]`, `[NEW_COLUMNS]`.
+CATALOG: write name, description, template, example to
+`prompts/skill.md`.
+
+CONSTRAINTS: Do not modify Stages 0–5 or Stage 7; do not modify
+`prompts/skill.md` directly (student writes to it as exercise output).
+
+OUTPUT: `sessions/client_multiagent.md` — Stage 6 body replaced with
+inline ~20-line EXTRACT/GENERALIZE/CATALOG walkthrough.
+
+TEST: `grep -n "EXTRACT\|GENERALIZE\|CATALOG\|DROP_CONDITION\|NEW_COLUMNS"
+sessions/client_multiagent.md` returns matches only in Stage 6.
