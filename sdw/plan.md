@@ -2739,27 +2739,11 @@ Follow CLAUDE.md conventions:
 ### Phase 17.7: New Session — Applications on Pluggable Models
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
      Phase 17 Step 17.7 (plan_history.md) -->
-- [ ] Create `sessions/pluggable_models.md` with these sections:
-  - **Concept**: Open-Weight vs Closed models; why the
-    OpenAI-compatible API standard matters for portability
-  - **Tools**: links to Groq, OpenRouter, Cline setup files
-    (from Phase 17.6)
-  - **Setup**: Environment install — `pip install openai`;
-    API keys for Groq and OpenRouter
-  - **Exercise: The Brain Swap Experiment**
-    - Phase 1: Environment Setup
-      (install library, get API keys)
-    - Phase 2: The Code — `hello_ai.py` using OpenAI SDK
-      with provider-agnostic config block
-    - Phase 3: Lab Tasks
-      (Hello World, Brain Swap, Identity Check)
-    - Phase 4: Critical Thinking questions
-    (Content source: `sdw/prompt_history.md` lines 848–936)
-  - **Reflection**: portability, economics,
-    open-source resilience
-- [ ] Update `README.md` agenda: insert new row for
-  `Applications on Pluggable Models` immediately before the
-  `AI Local` row.
-- [ ] Mark `## Multimodel` section in
-  `sdw/prompt_history.md` as `[x] Status` after all
-  Phase 17 steps are committed.
+- [x] **COMPLETED** Created `sessions/pluggable_models.md`:
+  Concept (Closed vs Open-Weight, OpenAI-compatible standard),
+  Tools table (Groq/OpenRouter/Cline), Setup, Brain Swap
+  Experiment (4 phases), Reflection.
+- [x] **COMPLETED** Updated `README.md` agenda: inserted
+  Pluggable Models row immediately before AI Local.
+- [x] **COMPLETED** `## Multimodel` in `sdw/prompt_history.md`
+  already marked `[x]` during Phase 17 append step.
