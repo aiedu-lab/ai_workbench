@@ -2648,3 +2648,133 @@ Follow CLAUDE.md conventions:
 - [x] **COMPLETED** Deleted `sessions/claude_design.md`.
   `sessions/software_enhancement.md` retained — cross-referenced
   from `sessions/sdlc_ai.md` as supplemental reading.
+
+---
+
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 17 appended
+     from replan workflow
+     (sdw/replan.md → prompt_history.md#multimodel) -->
+## Phase 17: DEVELOPER WORKBENCH ENHANCEMENT AND PLUGGABLE MODELS
+
+### Phase 17.1: GitHub — Clone Repo and Branch Workflow
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.1 (plan_history.md) -->
+- [ ] Read `tools/dev_workbench/github.md` and
+  `sessions/dev_workbench.md`.
+- [ ] Update `tools/dev_workbench/github.md` Activity section:
+  - Add step to clone `ai_workbench` into `~/ws/sw/`.
+  - Add step to create personal branch
+    `feature/from_$GITHUB_USERNAME` off `main`.
+  - Add step to push branch to origin with `--set-upstream`.
+  - Add validation: confirm branch visible on GitHub web.
+- [ ] Update `sessions/dev_workbench.md` Section 2 to reference
+  the new clone and branch steps in
+  `tools/dev_workbench/github.md`.
+
+### Phase 17.2: VSCode — GitHub and Pull Request Extensions
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.2 (plan_history.md) -->
+- [ ] Read `tools/dev_workbench/vscode.md`.
+- [ ] Add step-by-step install for the **GitHub Pull Request**
+  extension (Extensions → search "GitHub Pull Requests" →
+  Install → sign in).
+- [ ] Expand the existing GitHub extension entry to include
+  sign-in and validation steps.
+- [ ] Add a `### Validation` sub-section confirming both
+  extensions are active and authenticated.
+- [ ] Update `sessions/dev_workbench.md` Section 3 to reference
+  the expanded VSCode setup in `tools/dev_workbench/vscode.md`.
+
+### Phase 17.3: Test VSCode + GitHub + Claude Code Integration
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.3 (plan_history.md) -->
+- [ ] Read `sessions/dev_workbench.md` Section 6.
+- [ ] Expand Section 6 to cover the full round-trip:
+  1. Use VSCode Source Control to **Pull** the latest code from
+     the user's personal branch.
+  2. Use the Claude Code extension to prompt: update
+     `tests/vscode/hello.py` to print
+     `hello, <my_github_username>!`
+  3. Use VSCode Source Control to **Push** the changes to the
+     user's personal branch on origin.
+  4. Use the GitHub Pull Request extension to submit a **PR**
+     targeting `main`.
+- [ ] Add expected outputs and validation criteria for each step.
+
+### Phase 17.4: Update SDDP Cross-Reference
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.4 (plan_history.md) -->
+- [ ] Read `sessions/sdd_basics.md` table for
+  `Specification Driven Beyond Code`.
+- [ ] Update the `Specification Driven Data Pipeline (SDDP)` row
+  to add a link to the Mini Data Pipeline exercise in
+  `sessions/client_multiagent.md`.
+
+### Phase 17.5: Expand Mini Data Pipeline Exercise
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.5 (plan_history.md) -->
+- [ ] Read `sessions/client_multiagent.md` Exercise 2
+  (Mini Data Pipeline).
+- [ ] Add **Unit Test Sample Data** stage: create
+  `tests/data/pipeline/sample.csv` with < 100 rows of sample
+  data used to unit-test transformation logic locally.
+- [ ] Add **Skill** stage: create `prompts/skill.md` encoding a
+  repetitive pipeline transformation task as a resumable prompt
+  that also references the sample CSV for validation.
+- [ ] Add **Specification Plan** stage: codify the full pipeline
+  as a phased plan of discrete steps in the exercise narrative.
+- [ ] Ensure cross-reference from Phase 17.4 (SDDP row) is
+  consistent with exercise title and anchor link.
+
+### Phase 17.6: Tool Setup Files — Groq, OpenRouter, Cline
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.6 (plan_history.md) -->
+- [ ] Create `tools/groq/setup.md`:
+  - Account creation at console.groq.com
+  - Generate and save API key as `GROQ_API_KEY`
+  - Validation: simple curl or python call returns a response
+- [ ] Create `tools/openrouter/openrouter.md`:
+  - Account creation at openrouter.ai
+  - API Keys → generate key, save as `OPENROUTER_API_KEY`
+  - BYOK (Bring Your Own Key) note
+  - Validation: confirm key at openrouter.ai/activity
+- [ ] Create `tools/dev_workbench/cline.md`:
+  - Install Cline (Extensions → search "Cline" → Install)
+  - Configure API Provider: OpenRouter,
+    paste `OPENROUTER_API_KEY`
+  - Select a model
+    (e.g. `meta-llama/llama-3.1-8b-instruct:free`)
+  - Validation: send "just say hello" and confirm response
+  - Usage Model note: Claude Pro as primary,
+    OpenRouter/Cline as secondary for cross-checking or when
+    rate-limited
+  - Tracking Token Usage: links for Anthropic, OpenAI, Gemini,
+    OpenRouter dashboards
+
+### Phase 17.7: New Session — Applications on Pluggable Models
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.7 (plan_history.md) -->
+- [ ] Create `sessions/pluggable_models.md` with these sections:
+  - **Concept**: Open-Weight vs Closed models; why the
+    OpenAI-compatible API standard matters for portability
+  - **Tools**: links to Groq, OpenRouter, Cline setup files
+    (from Phase 17.6)
+  - **Setup**: Environment install — `pip install openai`;
+    API keys for Groq and OpenRouter
+  - **Exercise: The Brain Swap Experiment**
+    - Phase 1: Environment Setup
+      (install library, get API keys)
+    - Phase 2: The Code — `hello_ai.py` using OpenAI SDK
+      with provider-agnostic config block
+    - Phase 3: Lab Tasks
+      (Hello World, Brain Swap, Identity Check)
+    - Phase 4: Critical Thinking questions
+    (Content source: `sdw/prompt_history.md` lines 848–936)
+  - **Reflection**: portability, economics,
+    open-source resilience
+- [ ] Update `README.md` agenda: insert new row for
+  `Applications on Pluggable Models` immediately before the
+  `AI Local` row.
+- [ ] Mark `## Multimodel` section in
+  `sdw/prompt_history.md` as `[x] Status` after all
+  Phase 17 steps are committed.

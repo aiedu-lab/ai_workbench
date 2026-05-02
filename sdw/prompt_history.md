@@ -703,8 +703,7 @@ its contents have since been moved to `sessions/presentation_n_design.md`.
 
 ---
 
-## Multimodel
-[ ] Status
+## [x] Multimodel
 
 The objective is to enhance our developer workbench 
 `sessions/dev_workbench` setup where we use
