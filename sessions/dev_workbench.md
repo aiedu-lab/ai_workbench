@@ -124,17 +124,50 @@ Every item in `preflight_check.py` output must show **PASS**.
 
 ---
 
-## Section 6 — Test Claude Validation
+## Section 6 — Test VSCode + GitHub + Claude Code Integration
 
-1. Open the Claude plugin panel in VSCode.
-2. Prompt: `"Write a hello_world.py that prints Hello, World!"`
-3. Accept the generated file, then run it from the terminal:
+Validate the full round-trip: Pull → Claude edits → Push → PR.
 
-```bash
-python3 hello_world.py
+**Step 1 — Pull latest code from your personal branch:**
+
+In VSCode, open the Source Control panel (`Ctrl+Shift+G`).
+Click the **⋯** menu → **Pull**. Confirm no errors.
+
+**Step 2 — Use Claude Code to update `tests/vscode/hello.py`:**
+
+Open the Claude Code panel in VSCode and send this prompt:
+
+```text
+Update tests/vscode/hello.py to print:
+hello, <my_github_username>!
+Replace <my_github_username> with my actual GitHub username.
 ```
 
-Expected output: `Hello, World!`
+Claude will create or update the file. Run it to confirm:
 
-If Claude generates the file and it runs correctly, your
-development environment is fully operational.
+```bash
+python3 tests/vscode/hello.py
+```
+
+Expected output: `hello, <your_github_username>!`
+
+**Step 3 — Push the change to your personal branch:**
+
+In the Source Control panel:
+1. Stage `tests/vscode/hello.py` (click the `+` icon).
+2. Enter a commit message: `feat: add hello.py`
+3. Click **Commit**, then **Sync Changes** (push).
+
+**Step 4 — Submit a Pull Request to `main`:**
+
+In the Activity Bar, click the **GitHub** icon.
+Under **Pull Requests**, click **Create Pull Request**.
+- Base: `main` → Compare: `feature/from_<your_username>`
+- Title: `feat: hello.py from <your_username>`
+- Click **Create**.
+
+Expected: PR appears on
+`github.com/aiedu-lab/ai_workbench/pulls`.
+
+If all four steps succeed, your development environment is
+fully operational.
