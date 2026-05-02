@@ -123,9 +123,17 @@ gh auth status
   - Bad: "update"
 
 ### Git Command Line (Local)
-- Clone repo if not already cloned
+- Clone repo if not already cloned and create a branch for every student
 ```bash
+# replace below with github username
+export GITHUB_USERNAME="<github_user>"
+export WORKBENCH_REPO="ai_workbench"
+# replace work_dir below with your workspace directory
+cd <work_dir> 
 git clone <repo_url>
+cd $WORKBENCH_REPO
+# create a branch on which all exercises will be executed
+git checkout -b chore/from_$GITHUB_USERNAME
 ```
 - Pull latest
 ```bash
