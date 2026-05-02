@@ -2725,27 +2725,16 @@ Follow CLAUDE.md conventions:
 ### Phase 17.6: Tool Setup Files — Groq, OpenRouter, Cline
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
      Phase 17 Step 17.6 (plan_history.md) -->
-- [ ] Create `tools/groq/setup.md`:
-  - Account creation at console.groq.com
-  - Generate and save API key as `GROQ_API_KEY`
-  - Validation: simple curl or python call returns a response
-- [ ] Create `tools/openrouter/openrouter.md`:
-  - Account creation at openrouter.ai
-  - API Keys → generate key, save as `OPENROUTER_API_KEY`
-  - BYOK (Bring Your Own Key) note
-  - Validation: confirm key at openrouter.ai/activity
-- [ ] Create `tools/dev_workbench/cline.md`:
-  - Install Cline (Extensions → search "Cline" → Install)
-  - Configure API Provider: OpenRouter,
-    paste `OPENROUTER_API_KEY`
-  - Select a model
-    (e.g. `meta-llama/llama-3.1-8b-instruct:free`)
-  - Validation: send "just say hello" and confirm response
-  - Usage Model note: Claude Pro as primary,
-    OpenRouter/Cline as secondary for cross-checking or when
-    rate-limited
-  - Tracking Token Usage: links for Anthropic, OpenAI, Gemini,
-    OpenRouter dashboards
+- [x] **COMPLETED** Created `tools/groq/setup.md`:
+  account creation, API key as `GROQ_API_KEY`, curl + python
+  validation.
+- [x] **COMPLETED** Created `tools/openrouter/openrouter.md`:
+  account creation, API key as `OPENROUTER_API_KEY`, BYOK note,
+  validation, provider dashboard comparison table.
+- [x] **COMPLETED** Created `tools/dev_workbench/cline.md`:
+  install, configure OpenRouter, validate, usage model
+  (Claude primary / Cline+OpenRouter secondary), token
+  tracking dashboards.
 
 ### Phase 17.7: New Session — Applications on Pluggable Models
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
