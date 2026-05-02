@@ -2688,18 +2688,16 @@ Follow CLAUDE.md conventions:
 ### Phase 17.3: Test VSCode + GitHub + Claude Code Integration
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
      Phase 17 Step 17.3 (plan_history.md) -->
-- [ ] Read `sessions/dev_workbench.md` Section 6.
-- [ ] Expand Section 6 to cover the full round-trip:
-  1. Use VSCode Source Control to **Pull** the latest code from
-     the user's personal branch.
-  2. Use the Claude Code extension to prompt: update
-     `tests/vscode/hello.py` to print
-     `hello, <my_github_username>!`
-  3. Use VSCode Source Control to **Push** the changes to the
-     user's personal branch on origin.
-  4. Use the GitHub Pull Request extension to submit a **PR**
-     targeting `main`.
-- [ ] Add expected outputs and validation criteria for each step.
+- [x] **COMPLETED** Read `sessions/dev_workbench.md` Section 6.
+- [x] **COMPLETED** Expanded Section 6 to cover the full
+  round-trip:
+  1. Pull via Source Control panel.
+  2. Claude Code prompt to create/update
+     `tests/vscode/hello.py`.
+  3. Stage, commit, and push via Source Control.
+  4. Create PR targeting `main` via GitHub PR extension.
+- [x] **COMPLETED** Added expected outputs and validation
+  criteria for each step.
 
 ### Phase 17.4: Update SDDP Cross-Reference
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
