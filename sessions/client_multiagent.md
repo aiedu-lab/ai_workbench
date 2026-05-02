@@ -236,6 +236,61 @@ Example Prompt for Lovable:
 4. Keep it easy to understand.
 ```
 
+5. Unit Test Sample Data
+
+Before running your cleaning script on the full dataset, validate
+it against the sample data in `tests/data/pipeline/sample.csv`
+(20 rows, one intentionally missing `open` value):
+
+```bash
+python3 -c "
+import pandas as pd
+df = pd.read_csv('tests/data/pipeline/sample.csv')
+print('Rows before clean:', len(df))
+df = df.dropna(subset=['open', 'close', 'volume'])
+print('Rows after clean:', len(df))
+"
+```
+
+Expected: 20 rows before, 19 after (one row has missing `open`).
+
+6. Develop a Skill (Reusable Prompt)
+
+Encode the clean-and-transform step as a reusable skill.
+Open [`prompts/skill.md`](../prompts/skill.md) and use the
+**Data Pipeline Clean & Transform Skill** template.
+Replace `[INPUT_CSV]` and `[OUTPUT_CSV]` with your file paths,
+then feed the skill prompt to Claude Code.
+
+7. Specification Plan
+
+Codify the full pipeline as a phased plan so any teammate can
+reproduce it from scratch:
+
+```markdown
+## Data Pipeline Plan
+
+### Phase 1: Setup
+- [ ] Define input source and target schema.
+- [ ] Copy sample data to tests/data/pipeline/sample.csv.
+
+### Phase 2: Collection
+- [ ] Download raw CSV via Claude CoWork.
+
+### Phase 3: Cleaning
+- [ ] Run clean-and-transform skill (prompts/skill.md).
+- [ ] Validate against sample data (Stage 5 test).
+
+### Phase 4: Analysis
+- [ ] Generate insights with Gemini.
+
+### Phase 5: Visualization
+- [ ] Build interactive UI with Lovable.
+```
+
+Save this as `projects/group_meetup/pipeline_plan.md` and
+check it into your personal branch.
+
 ---
 
 ## Reflection
