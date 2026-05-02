@@ -51,6 +51,10 @@ typist; the human defines the spec and validates the output:
 | Research synthesis | **SDRS** | Research question + source list | Literature summaries, citation graphs |
 | Data pipelines | **SDDP** | Schema + transformation rules | ETL scripts, dbt models, validation tests |
 
+> **SDDP in practice:** See the
+> [Mini Data Pipeline](client_multiagent.md#exercise-2-mini-data-pipeline)
+> exercise in the multi-agent session for a hands-on example.
+
 > This workbench itself is built using Specifications.
 > See [`sdw/plan.md`](../sdw/plan.md) as a live example of SDW —
 > every session and exercise in the lab was generated from that plan.
