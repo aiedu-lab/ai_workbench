@@ -2756,6 +2756,7 @@ Follow CLAUDE.md conventions:
 ## Phase 18: TWEAK SKILLS
 
 ### Phase 18.1: Link Names in Specification Driven Beyond Code Table
+**COMPLETED**
 
 CONTEXT: `sessions/sdd_basics.md` table has 9 rows with plain bold
 Name cells; only SDDP has an external blockquote note below the table.
