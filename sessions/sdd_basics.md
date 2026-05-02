@@ -41,19 +41,15 @@ typist; the human defines the spec and validates the output:
 
 | Domain | Name | Spec | AI generates |
 |--------|------|------|--------------|
-| Software | **SDD** | `CLAUDE.md` + `plan.md` | Code, tests, configs |
-| Presentation | **SDP** | Slide outline or brief | Decks, UI mockups |
-| Knowledge base | **SDPKM** | Topic list + vault structure | Cross-linked wiki notes |
-| Workbench | **SDW** | `sdw/plan.md` | Lab sessions, tools, exercises |
+| Software | [**SDD**](client_application.md#exercise--group-meetup-organizer-non-agentic-version) | `CLAUDE.md` + `plan.md` | Code, tests, configs |
+| Presentation | [**SDP**](presentation_n_design.md#exercise-b--group-meetup-organizer-pitch-deck-toy-version-0-gamma) | Slide outline or brief | Decks, UI mockups |
+| Knowledge base | [**SDPKM**](llm_wiki.md#the-exercise-compounding-knowledge) | Topic list + vault structure | Cross-linked wiki notes |
+| Workbench | [**SDW**](../sdw/plan.md) | `sdw/plan.md` | Lab sessions, tools, exercises |
 | Bootstrapping | **SDB** | Idea brief + market scope | Research memos, GTM plans, product mocks |
 | Engineering Design | **SDCAD** | Design constraints + tolerances | AutoDesk drawings, simulation configs |
 | Creative Tooling | **SDCT** | Scene description + style guide | Blender models, shader scripts, animations |
 | Research synthesis | **SDRS** | Research question + source list | Literature summaries, citation graphs |
-| Data pipelines | **SDDP** | Schema + transformation rules | ETL scripts, dbt models, validation tests |
-
-> **SDDP in practice:** See the
-> [Mini Data Pipeline](client_multiagent.md#exercise-2-mini-data-pipeline)
-> exercise in the multi-agent session for a hands-on example.
+| Data pipelines | [**SDDP**](client_multiagent.md#exercise-2-mini-data-pipeline) | Schema + transformation rules | ETL scripts, dbt models, validation tests |
 
 > This workbench itself is built using Specifications.
 > See [`sdw/plan.md`](../sdw/plan.md) as a live example of SDW —
