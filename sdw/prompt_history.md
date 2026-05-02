@@ -702,3 +702,235 @@ As an example reference `sessions/claude_design.md` - validate that contents
 its contents have since been moved to `sessions/presentation_n_design.md`.
 
 ---
+
+## [x] Multimodel
+
+The objective is to enhance our developer workbench 
+`sessions/dev_workbench` setup where we use
+
+### VSCode
+
+#### VSCode and GitHub Setup
+
+##### GitHub Setup
+Reference:
+* `sessions/dev_workbench`
+* `tools/dev_workbench/github.md`
+and related files.
+
+1. Update GitHub setup for a student to clone the repo corresponding
+to `ai_workbench` in an appropriate directory, say `~/ws/sw`.
+
+2. Ensure User creates a github branch on which she will execute 
+and push/pull all the relevant exercises.
+
+##### VSCode Setup
+Reference:
+* `sessions/dev_workbench`
+* `tools/dev_workbench/vscode.md`
+and related files.
+
+1. Install VSCode GitHub extension. Ensure students have the steps to now 
+push and pull contents against a branch that they created against which 
+they freely make and save changes in GitHub. 
+
+2. Install VSCode GitHub Pull Request extension. Ensure students have the 
+steps to raise a pull request (PR) to merge content on their personal branch 
+to the main branch. 
+
+#### Test VSCode, GitHub, and Claude Code Setup
+
+Reference `Section 6` of `sessions/dev_workbench.md`
+
+Now that Claude, VScode, and VSCode plugins and extensions for GitHub, Claude Code, etc.
+setup, validate the setup by having the student chat to:
+1. Use VSCode to `Pull` the latest code (if any) in the repo
+2. Use Clauge Extension to prompt Claude to add or update the python code 
+`tests/vscode/hello.py` and print the user's GitHub username:
+```text
+print "hello, <my_github_username>!" 
+```
+3. Use VSCode to `Push` the latest code to the user's git branch off of main.
+4. Submit a `Pull Request (PR)` to merge the user's git branch to main.
+
+### Update SDDP
+
+Reference: 
+* `sessions/sdb_basics.md` where `Specification Driven Data Pipeline` 
+is offered as one of the examples of `Specification Driven XXX`. 
+* `sessions/client_multiagent.md` where we set up a 
+`Exercise 2: Mini Data Pipeline` where we set up a plan.
+
+### Update Data Pipeline
+
+Reference link the `Mini Data Pipeline` exercise as an example of the
+`Specification Driven Data Pipeline` (SDDP). 
+
+Expand the `Mini Data Pipeline` with additional stages to:
+* Unit Test Sample Data: few rows (<100) of the data are sampled and kept in 
+`tests/data/pipeline` as a CSV file that then allows data engineers 
+to unit test directly in their local sandbox.
+* Develop a Skill in `prompts/skill.md`: the skill encodes a repetitive data 
+pipeline task within the pipeline with a python script that transforms
+data, a resumable prompt with instructions to also test the success of data 
+transformation using the Unit Test Sample Data.
+* Codify the entire data pipeline as a specification plan of phases and tasks 
+dedicated to automate the `data pipeline`. 
+
+### Model Swap and Open Weight Model
+
+1. Add a session before the `AI Local` session. The objective of the session 
+is for students to learn
+* How to build AI-powered apps with pluggable brains
+* Expose them to few `Open Weight` models. 
+
+Name the session `Applications on Pluggable Models` or something more
+appropriate.
+
+2. Add set and install in instrcutions for various tools: 
+* groq: tools/groq/setup.md
+* openrouter: tools/openrouter/openrouter.md
+* cline: tools/dev_workbench/cline.md
+
+3. Reference these in the `Setup` section of the `Open Weight` session:
+instruction
+* [Groq](http://console.groq.com) 
+* [OpenRouter](http://openrouter.ai)
+* [Cline](reference to dev workbench with cline set up and install)
+
+
+4. Separate the below section earmarked within >>>--- and <<<--- 
+that has install instructions for Cline & OpenRouter, 
+the setup and validation instructions, 
+recommendations on Usage Model, and Tracking Token Usage 
+into appropriate setup files in tools directory. 
+
+Add references to the Setup Directory in the above new session that 
+we are createing.
+
+>>>---
+
+1. Install Cline:
+Extensions (Ctrl + Shift + X) --> Install Cline
+
+2. Install OpenRouter:
+https://openrouter.ai/ --> API Keys or BYOK --> Save Key --> Test
+
+3. Setup Cline to use OPENROUTER
+Launch Cline --> Settings --> API Provider, API Key, Model
+
+4. Validate: In Cline `act as a conversational assistant and just say hello`.
+If Cline responds setup is complete.
+
+#### Usage Model
+
+* Claude `Pro Subscription` as primary - use Claude extension enabled
+conversation for thinking, reasoning, execution, validation, etc.
+* OpenRouter as secondary - use for testing, cross checking, or when
+rate limited in a session. Examples of cross checking are `plan` validation,
+code review, etc.
+
+#### Tracking Token Usage
+Tracking is not exposed for subscribers and only enabled for PAYG (API Key) users:
+* Anthropic: https://platform.claude.com/workspaces/ --> Workspace --> Analytics
+* OpenAI: https://platform.openai.com/usage
+* Gemini: Google Cloud Console → Billing
+* OpenRouter: https://openrouter.ai/activity - shows requests, tokens, cost
+
+<<<---
+
+5. Separates the below section encloded within >>>--- and <<<--- 
+that goes over the content into different sections on 
+`concept`, `tools`, `setup`, `exercise`, etc.
+
+>>>---
+
+#### Student Lab: The "Brain Swap" Experiment
+**Objective:** Learn to build an AI-powered Python application using **Open-Weight** models and understand how to switch "model brains" without changing your code.
+
+---
+
+##### Phase 1: Environment Setup
+We will use the **OpenAI Python Library**, which has become the industry standard for connecting to almost any AI provider (including Open-Weight providers like Groq and OpenRouter).
+
+###### **1. Install Python & Library**
+Open your terminal (WSL Ubuntu or macOS Terminal) and run:
+```bash
+# Ensure your package manager is up to date
+pip install --upgrade pip
+
+# Install the OpenAI communication library
+pip install openai
+```
+
+###### **2. Get Your "Passes" (API Keys)**
+For this lab, we will use two providers that offer generous free tiers for students:
+1.  **Groq:** Go to [console.groq.com](https://console.groq.com/) and create a free API key.
+2.  **OpenRouter:** Go to [openrouter.ai](https://openrouter.ai/) and create a free API key.
+
+---
+
+##### Phase 2: The Code (The "Skeleton")
+Create a file named `hello_ai.py`. This code is designed to be **provider-agnostic**, meaning it doesn't care which company is providing the AI, as long as they follow the standard protocol.
+
+```python
+import os
+from openai import OpenAI
+
+# --- CONFIGURATION AREA ---
+# To swap brains, you only change these two variables!
+
+# OPTION A: Groq (Ultra Fast)
+# URL = "https://api.groq.com/openai/v1"
+# KEY = "your-groq-key-here"
+# MODEL = "llama-3.1-8b-instant"
+
+# OPTION B: OpenRouter (Free Choice)
+URL = "https://openrouter.ai/api/v1"
+KEY = "your-openrouter-key-here"
+MODEL = "openrouter/free" 
+# --------------------------
+
+client = OpenAI(base_url=URL, api_key=KEY)
+
+def ask_ai(prompt):
+    print(f"\n[Sending request to {MODEL}...]")
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return response.choices[0].message.content
+
+# The Exercise Task
+user_prompt = "Write a 3-line Python script that prints 'Hello World' and the current time."
+print("AI Response:", ask_ai(user_prompt))
+```
+
+---
+
+##### Phase 3: The Lab Tasks
+
+###### **Task 1: The "Hello World" Test**
+Run your script using the **OpenRouter** configuration.
+```bash
+python3 hello_ai.py
+```
+*   **Observe:** How long did it take? What model did it actually use? (OpenRouter "Free" usually picks the best available open model like **Qwen 3 Coder** or **Llama 4 Scout**).
+
+###### **Task 2: The "Brain Swap"**
+Now, comment out the OpenRouter lines and uncomment the **Groq** lines in your script. Replace `your-groq-key-here` with your actual key and run it again.
+*   **Observe:** Did the speed change? Groq uses specialized hardware (LPUs) that is often 10x faster than traditional providers.
+
+###### **Task 3: Identity Check**
+Change your `user_prompt` to: *"Who are you, and what is your architecture?"*
+*   **Discussion:** Note how **Open-Weight** models (like Llama or Qwen) will often tell you their specific version, unlike "Closed" models that might just say "I am a large language model trained by [Company]."
+
+---
+
+##### Phase 4: Critical Thinking
+1.  **Portability:** Why is it useful for a developer to use a library like `openai` even when they aren't using OpenAI's models?
+2.  **Economics:** Look at your Groq or OpenRouter dashboard. How much did this lab cost you? (In most cases, it should be **$0.00**).
+3.  **The "Open" Advantage:** If a company like Google or OpenAI went offline tomorrow, could you still run your "Hello World" app? (Hint: Research "Local LLMs" and **Ollama**).
+---
+
+<<<---

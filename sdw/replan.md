@@ -7,7 +7,7 @@ Use the below prompt to effect any changes to
 
 Read 
 * [Specification Plan](sdw/plan.md) and 
-* [Replan Prompt](sdw/prompt_history.md#specification-driven-xxx).
+* [Replan Prompt](sdw/prompt_history.md#multimodel).
 
 ## TEST
 What is the title of the section in prompt_history and what line numbers

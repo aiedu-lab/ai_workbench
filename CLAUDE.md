@@ -1,6 +1,6 @@
 # CLAUDE.md — AI Workbench
 
-> **Purpose:** This file is read by Claude Code at the start of every
+> **Purpose:** This file is read by provider agent at the start of every
 > session. It encodes project-wide operating protocol, guardrails,
 > style rules, and commit conventions. Keep this file concise
 > (target 150–200 lines). Move project-specific detail to

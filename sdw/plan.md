@@ -2648,3 +2648,102 @@ Follow CLAUDE.md conventions:
 - [x] **COMPLETED** Deleted `sessions/claude_design.md`.
   `sessions/software_enhancement.md` retained — cross-referenced
   from `sessions/sdlc_ai.md` as supplemental reading.
+
+---
+
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]: Phase 17 appended
+     from replan workflow
+     (sdw/replan.md → prompt_history.md#multimodel) -->
+## Phase 17: DEVELOPER WORKBENCH ENHANCEMENT AND PLUGGABLE MODELS
+
+### Phase 17.1: GitHub — Clone Repo and Branch Workflow
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.1 (plan_history.md) -->
+- [x] **COMPLETED** Read `tools/dev_workbench/github.md` and
+  `sessions/dev_workbench.md`.
+- [x] **COMPLETED** Update `tools/dev_workbench/github.md`
+  Activity section:
+  - Added steps to clone `ai_workbench` into `~/ws/sw/`.
+  - Added steps to create personal branch
+    `feature/from_$GITHUB_USERNAME` off `main`.
+  - Added push with `--set-upstream` and validation via
+    `gh browse`.
+- [x] **COMPLETED** Updated `sessions/dev_workbench.md`:
+  - Added clone and branch reference to Section 2.
+  - Reordered sections: GitHub (2) before VSCode (3).
+
+### Phase 17.2: VSCode — GitHub and Pull Request Extensions
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.2 (plan_history.md) -->
+- [x] **COMPLETED** Read `tools/dev_workbench/vscode.md`.
+- [x] **COMPLETED** Added step-by-step install for the
+  **GitHub Pull Requests** extension with sign-in steps.
+- [x] **COMPLETED** Expanded GitHub extension entry to include
+  sign-in and validation steps.
+- [x] **COMPLETED** Restructured `## Validation` into three
+  sub-sections: VSCode/CLI, GitHub Extension, GitHub PR Extension.
+- [x] **COMPLETED** Updated `sessions/dev_workbench.md` Section 3
+  to reference the expanded VSCode setup and validation guides.
+
+### Phase 17.3: Test VSCode + GitHub + Claude Code Integration
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.3 (plan_history.md) -->
+- [x] **COMPLETED** Read `sessions/dev_workbench.md` Section 6.
+- [x] **COMPLETED** Expanded Section 6 to cover the full
+  round-trip:
+  1. Pull via Source Control panel.
+  2. Claude Code prompt to create/update
+     `tests/vscode/hello.py`.
+  3. Stage, commit, and push via Source Control.
+  4. Create PR targeting `main` via GitHub PR extension.
+- [x] **COMPLETED** Added expected outputs and validation
+  criteria for each step.
+
+### Phase 17.4: Update SDDP Cross-Reference
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.4 (plan_history.md) -->
+- [x] **COMPLETED** Read `sessions/sdd_basics.md` table for
+  `Specification Driven Beyond Code`.
+- [x] **COMPLETED** Added a blockquote note below the SDDP row
+  linking to the Mini Data Pipeline exercise in
+  `sessions/client_multiagent.md`.
+
+### Phase 17.5: Expand Mini Data Pipeline Exercise
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.5 (plan_history.md) -->
+- [x] **COMPLETED** Read `sessions/client_multiagent.md` Exercise 2.
+- [x] **COMPLETED** Added Stage 5 (Unit Test Sample Data):
+  created `tests/data/pipeline/sample.csv` (20 rows, one
+  intentionally missing value for cleaning test).
+- [x] **COMPLETED** Added Stage 6 (Skill): added Data Pipeline
+  Clean & Transform Skill section to `prompts/skill.md`.
+- [x] **COMPLETED** Added Stage 7 (Specification Plan): embedded
+  pipeline_plan.md template in the exercise narrative.
+- [x] **COMPLETED** Cross-reference from Phase 17.4 consistent
+  with exercise heading anchor.
+
+### Phase 17.6: Tool Setup Files — Groq, OpenRouter, Cline
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.6 (plan_history.md) -->
+- [x] **COMPLETED** Created `tools/groq/setup.md`:
+  account creation, API key as `GROQ_API_KEY`, curl + python
+  validation.
+- [x] **COMPLETED** Created `tools/openrouter/openrouter.md`:
+  account creation, API key as `OPENROUTER_API_KEY`, BYOK note,
+  validation, provider dashboard comparison table.
+- [x] **COMPLETED** Created `tools/dev_workbench/cline.md`:
+  install, configure OpenRouter, validate, usage model
+  (Claude primary / Cline+OpenRouter secondary), token
+  tracking dashboards.
+
+### Phase 17.7: New Session — Applications on Pluggable Models
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 17 Step 17.7 (plan_history.md) -->
+- [x] **COMPLETED** Created `sessions/pluggable_models.md`:
+  Concept (Closed vs Open-Weight, OpenAI-compatible standard),
+  Tools table (Groq/OpenRouter/Cline), Setup, Brain Swap
+  Experiment (4 phases), Reflection.
+- [x] **COMPLETED** Updated `README.md` agenda: inserted
+  Pluggable Models row immediately before AI Local.
+- [x] **COMPLETED** `## Multimodel` in `sdw/prompt_history.md`
+  already marked `[x]` during Phase 17 append step.
