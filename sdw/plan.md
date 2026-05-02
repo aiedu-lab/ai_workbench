@@ -2659,17 +2659,18 @@ Follow CLAUDE.md conventions:
 ### Phase 17.1: GitHub — Clone Repo and Branch Workflow
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
      Phase 17 Step 17.1 (plan_history.md) -->
-- [ ] Read `tools/dev_workbench/github.md` and
+- [x] **COMPLETED** Read `tools/dev_workbench/github.md` and
   `sessions/dev_workbench.md`.
-- [ ] Update `tools/dev_workbench/github.md` Activity section:
-  - Add step to clone `ai_workbench` into `~/ws/sw/`.
-  - Add step to create personal branch
+- [x] **COMPLETED** Update `tools/dev_workbench/github.md`
+  Activity section:
+  - Added steps to clone `ai_workbench` into `~/ws/sw/`.
+  - Added steps to create personal branch
     `feature/from_$GITHUB_USERNAME` off `main`.
-  - Add step to push branch to origin with `--set-upstream`.
-  - Add validation: confirm branch visible on GitHub web.
-- [ ] Update `sessions/dev_workbench.md` Section 2 to reference
-  the new clone and branch steps in
-  `tools/dev_workbench/github.md`.
+  - Added push with `--set-upstream` and validation via
+    `gh browse`.
+- [x] **COMPLETED** Updated `sessions/dev_workbench.md`:
+  - Added clone and branch reference to Section 2.
+  - Reordered sections: GitHub (2) before VSCode (3).
 
 ### Phase 17.2: VSCode — GitHub and Pull Request Extensions
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
