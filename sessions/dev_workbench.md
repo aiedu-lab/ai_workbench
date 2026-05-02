@@ -47,41 +47,50 @@ guide for that tool — no content is duplicated here.
 
 ---
 
-## Section 2 — VSCode Setup
+## Section 2 — GitHub Account and SSH Setup
+
+[GitHub Setup Guide](../tools/dev_workbench/github.md)
+
+- Create a GitHub account at `github.com`
+- Install the `gh` CLI inside Ubuntu (WSL2 or Dev Container) —
+  full steps in the
+  [GitHub Setup Guide](../tools/dev_workbench/github.md#account-setup)
+- Generate and upload an SSH key for GitHub authentication
+- Set your global git identity inside Ubuntu:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+- Test the SSH connection directly without using any git commands:
+
+```bash
+ssh -T git@github.com
+```
+
+- Validate: you'll receive a greeting if the key is provisioned:
+
+```text
+Hi [GitHub Username]! You've successfully authenticated...
+```
+
+- Clone `ai_workbench` and create your personal branch — see
+  [Clone & Branch](../tools/dev_workbench/github.md#git-command-line-local)
+
+---
+
+## Section 3 — VSCode Setup
 
 [VSCode Setup Guide](../tools/dev_workbench/vscode.md)
 
 - Install VSCode on your host OS
 - **Win11:** install **Remote - WSL** extension
 - **macOS:** install **Dev Containers** extension
+- Open VSCode project from **Ubuntu terminal**: `code .`
 - Install the **Claude** extension inside VSCode
-- Open project from Ubuntu terminal: `code .`
+- Setup GitHub extension, validate Git Pull
 
----
-
-## Section 3 — GitHub Account and SSH Setup
-
-[GitHub Setup Guide](../tools/dev_workbench/github.md)
-
-- Create a GitHub account at `github.com`
-- Install the `gh` CLI inside Ubuntu (WSL2 or Dev Container) —
-  full steps in the [GitHub Setup Guide](../tools/dev_workbench/github.md#account-setup):
-- Generate and upload an SSH key for GitHub authentication
-- Set your global git identity inside Ubuntu:
-```bash
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
-```
-- Test the SSH connection directly without using any git commands:
-```bash
-ssh -T git@github.com
-```
-- Validate the GitHub ssh connnection - if key provisioned correctly in 
-GitHub account, you'll receive a greeting:
-```text
-Hi [GitHub Username]! You've successfully authenticated, but GitHub does 
-not provide shell access.
-```
 ---
 
 ## Section 4 — LLM Provider Setup

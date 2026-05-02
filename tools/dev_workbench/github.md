@@ -123,34 +123,57 @@ gh auth status
   - Bad: "update"
 
 ### Git Command Line (Local)
-- Clone repo if not already cloned and create a branch for every student
+
+**Step 1 — Clone `ai_workbench` into your workspace:**
+
 ```bash
-# replace below with github username
-export GITHUB_USERNAME="<github_user>"
-export WORKBENCH_REPO="ai_workbench"
-# replace work_dir below with your workspace directory
-cd <work_dir> 
-git clone <repo_url>
-cd $WORKBENCH_REPO
-# create a branch on which all exercises will be executed
-git checkout -b chore/from_$GITHUB_USERNAME
+export GITHUB_USERNAME="<your_github_username>"
+mkdir -p ~/ws/sw
+cd ~/ws/sw
+git clone git@github.com:aiedu-lab/ai_workbench.git
+cd ai_workbench
 ```
-- Pull latest
+
+**Step 2 — Create your personal branch off `main`:**
+
+```bash
+# All your exercises will live on this branch
+git checkout main
+git pull
+git checkout -b feature/from_$GITHUB_USERNAME
+```
+
+**Step 3 — Push branch to origin and set upstream:**
+
+```bash
+git push --set-upstream origin feature/from_$GITHUB_USERNAME
+```
+
+**Validate — confirm branch is visible on GitHub:**
+
+```bash
+gh browse --branch feature/from_$GITHUB_USERNAME
+# Opens the branch URL in your browser.
+# Confirm it appears under Code → Branches.
+```
+
+- Pull latest changes from your branch at any time:
+
 ```bash
 git pull
 ```
-- Edit README.md to add "git CLI section completed"
-- Check status anytime to find what changed
+
+- Check status before and after edits:
+
 ```bash
-# use especially 
-#   when you change files 
-#   before/after add, commit, push
 git status
 ```
-- "Commit" and "push" changes
+
+- Commit and push changes:
+
 ```bash
-git add .
-git commit -m "Add GitHub Command Line section completed"
+git add <file>
+git commit -m "feat: <what you changed>"
 git push
 ```
 ---
