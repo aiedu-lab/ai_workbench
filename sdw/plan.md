@@ -2785,6 +2785,7 @@ returns no lines.
 ---
 
 ### Phase 18.2: Add Skills Discovery and Catalog Concept
+**COMPLETED**
 
 CONTEXT: `sessions/prompting_advanced.md` section
 `### 1. Skills (Reusable Prompts)` covers What/Analogy/Example/When
