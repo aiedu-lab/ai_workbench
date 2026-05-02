@@ -2702,10 +2702,10 @@ Follow CLAUDE.md conventions:
 ### Phase 17.4: Update SDDP Cross-Reference
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
      Phase 17 Step 17.4 (plan_history.md) -->
-- [ ] Read `sessions/sdd_basics.md` table for
+- [x] **COMPLETED** Read `sessions/sdd_basics.md` table for
   `Specification Driven Beyond Code`.
-- [ ] Update the `Specification Driven Data Pipeline (SDDP)` row
-  to add a link to the Mini Data Pipeline exercise in
+- [x] **COMPLETED** Added a blockquote note below the SDDP row
+  linking to the Mini Data Pipeline exercise in
   `sessions/client_multiagent.md`.
 
 ### Phase 17.5: Expand Mini Data Pipeline Exercise
