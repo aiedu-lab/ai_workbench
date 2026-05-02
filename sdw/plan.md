@@ -2675,16 +2675,15 @@ Follow CLAUDE.md conventions:
 ### Phase 17.2: VSCode — GitHub and Pull Request Extensions
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
      Phase 17 Step 17.2 (plan_history.md) -->
-- [ ] Read `tools/dev_workbench/vscode.md`.
-- [ ] Add step-by-step install for the **GitHub Pull Request**
-  extension (Extensions → search "GitHub Pull Requests" →
-  Install → sign in).
-- [ ] Expand the existing GitHub extension entry to include
+- [x] **COMPLETED** Read `tools/dev_workbench/vscode.md`.
+- [x] **COMPLETED** Added step-by-step install for the
+  **GitHub Pull Requests** extension with sign-in steps.
+- [x] **COMPLETED** Expanded GitHub extension entry to include
   sign-in and validation steps.
-- [ ] Add a `### Validation` sub-section confirming both
-  extensions are active and authenticated.
-- [ ] Update `sessions/dev_workbench.md` Section 3 to reference
-  the expanded VSCode setup in `tools/dev_workbench/vscode.md`.
+- [x] **COMPLETED** Restructured `## Validation` into three
+  sub-sections: VSCode/CLI, GitHub Extension, GitHub PR Extension.
+- [x] **COMPLETED** Updated `sessions/dev_workbench.md` Section 3
+  to reference the expanded VSCode setup and validation guides.
 
 ### Phase 17.3: Test VSCode + GitHub + Claude Code Integration
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
