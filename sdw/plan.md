@@ -2711,18 +2711,16 @@ Follow CLAUDE.md conventions:
 ### Phase 17.5: Expand Mini Data Pipeline Exercise
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
      Phase 17 Step 17.5 (plan_history.md) -->
-- [ ] Read `sessions/client_multiagent.md` Exercise 2
-  (Mini Data Pipeline).
-- [ ] Add **Unit Test Sample Data** stage: create
-  `tests/data/pipeline/sample.csv` with < 100 rows of sample
-  data used to unit-test transformation logic locally.
-- [ ] Add **Skill** stage: create `prompts/skill.md` encoding a
-  repetitive pipeline transformation task as a resumable prompt
-  that also references the sample CSV for validation.
-- [ ] Add **Specification Plan** stage: codify the full pipeline
-  as a phased plan of discrete steps in the exercise narrative.
-- [ ] Ensure cross-reference from Phase 17.4 (SDDP row) is
-  consistent with exercise title and anchor link.
+- [x] **COMPLETED** Read `sessions/client_multiagent.md` Exercise 2.
+- [x] **COMPLETED** Added Stage 5 (Unit Test Sample Data):
+  created `tests/data/pipeline/sample.csv` (20 rows, one
+  intentionally missing value for cleaning test).
+- [x] **COMPLETED** Added Stage 6 (Skill): added Data Pipeline
+  Clean & Transform Skill section to `prompts/skill.md`.
+- [x] **COMPLETED** Added Stage 7 (Specification Plan): embedded
+  pipeline_plan.md template in the exercise narrative.
+- [x] **COMPLETED** Cross-reference from Phase 17.4 consistent
+  with exercise heading anchor.
 
 ### Phase 17.6: Tool Setup Files — Groq, OpenRouter, Cline
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
