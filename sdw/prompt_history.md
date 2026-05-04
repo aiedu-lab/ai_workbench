@@ -1008,7 +1008,7 @@ Specifically, craft how we extract from the prompt
 a repeatble reusable template version where few fields 
 are set as placeholder to ensure it is GENERALIZED.
 
-## Streamline Setup and Install
+## [x] Streamline Setup and Install
 
 This section attempts to streamline few sections, specially 
 in the Setup and Install areas. 
