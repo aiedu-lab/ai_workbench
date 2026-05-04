@@ -139,11 +139,11 @@ Open the Claude Code panel in VSCode and send this prompt:
 
 ```text
 Update tests/vscode/hello.py to print:
-hello, <my_github_username>!
-Replace <my_github_username> with my actual GitHub username.
+hello, <YourGitHubUser>!
+where <YourGitHubUser> is your GitHub username e.g. "joesmith"
 ```
 
-Claude will create or update the file. Run it to confirm:
+Claude should create or update the file. Run it to confirm:
 
 ```bash
 python3 tests/vscode/hello.py
@@ -162,9 +162,9 @@ In the Source Control panel:
 
 In the Activity Bar, click the **GitHub** icon.
 Under **Pull Requests**, click **Create Pull Request**.
-- Base: `main` → Compare: `feature/from_<your_username>`
-- Title: `feat: hello.py from <your_username>`
-- Click **Create**.
+1. Base: `main` → Compare: `feature/from_<your_username>`
+2. Title: `feat: hello.py from <your_username>`
+3. Click **Create**.
 
 Expected: PR appears on
 `github.com/aiedu-lab/ai_workbench/pulls`.
