@@ -12,15 +12,36 @@ tools cross-reference it.
 2. Click **Get started** and create an account using your Google
    account or email address.
 3. Verify your email if prompted.
-4. Choose the **Free** tier to start — upgrade to Pro if needed
-   for higher usage limits or access to Claude Desktop features.
+4. Choose the **Pro** subscription — required for Claude Desktop,
+   Claude Code CLI, and higher usage limits in the lab.
 
 **Validation:** You can open a new conversation in the browser and
 receive a response from Claude.
 
 ---
 
-## 2. Generate an API Key
+## 2. Privacy Settings
+
+Opt out of data training and location sharing before using Claude
+for any lab work.
+
+1. Open [claude.ai](https://claude.ai) and click your **profile
+   icon** (top-right).
+2. Go to **Settings → Privacy**.
+3. **Disable** both of the following:
+   - *"Help improve Claude — Allow the use of your chats and coding
+     sessions to train and improve Anthropic AI models."*
+   - *"Allow Claude to use coarse location metadata (city/region)
+     to improve product experiences."*
+4. Save changes.
+
+> These settings apply to the browser chat. Claude Code CLI and
+> API calls are governed by the API Terms of Service, which already
+> exclude training on API data.
+
+---
+
+## 3. Generate an API Key
 
 Required for: Claude Code CLI (`--api-key` mode), direct API calls,
 and any Python/Node code that uses the Anthropic SDK.
@@ -42,7 +63,7 @@ return a 429 error.
 
 ---
 
-## 3. Save the API Key as an Environment Variable
+## 4. Save the API Key as an Environment Variable
 
 Set `ANTHROPIC_API_KEY` in your shell so every tool can find it
 without hardcoding.
@@ -65,27 +86,6 @@ echo $ANTHROPIC_API_KEY        # must print your key (not empty)
 > **NEVER** add this key to any file that is committed to Git.
 > Add `.env` to `.gitignore` if you store keys in a local `.env`
 > file.
-
----
-
-## 4. Privacy Settings
-
-Opt out of data training and location sharing before using Claude
-for any lab work.
-
-1. Open [claude.ai](https://claude.ai) and click your **profile
-   icon** (top-right).
-2. Go to **Settings → Privacy**.
-3. **Disable** both of the following:
-   - *"Help improve Claude — Allow the use of your chats and coding
-     sessions to train and improve Anthropic AI models."*
-   - *"Allow Claude to use coarse location metadata (city/region)
-     to improve product experiences."*
-4. Save changes.
-
-> These settings apply to the browser chat. Claude Code CLI and
-> API calls are governed by the API Terms of Service, which already
-> exclude training on API data.
 
 ---
 

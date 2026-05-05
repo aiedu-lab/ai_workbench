@@ -67,7 +67,18 @@ guide for that tool — no content is duplicated here.
 
 ---
 
-## Section 3 — VSCode Setup
+## Section 3 — LLM Provider Setup
+
+- [Claude Account Setup](../tools/claude/cloud.md)
+- [LLM Provider Cost Control](
+  ../tools/dev_workbench/provider_cost_control.md)
+
+Set spending limits and enable usage notifications before running
+any multi-turn or automated workflows.
+
+---
+
+## Section 4 — VSCode Setup
 
 [VSCode Setup Guide](../tools/dev_workbench/vscode.md)
 
@@ -81,16 +92,6 @@ guide for that tool — no content is duplicated here.
   [VSCode Setup Guide](../tools/dev_workbench/vscode.md#setup)
 - Validate both extensions per
   [VSCode Validation](../tools/dev_workbench/vscode.md#validation)
-
----
-
-## Section 4 — LLM Provider Setup
-
-- [Claude Account Setup](../tools/claude/cloud.md)
-- [LLM Provider Cost Control](../tools/dev_workbench/provider_cost_control.md)
-
-Set spending limits and enable usage notifications before running
-any multi-turn or automated workflows.
 
 ---
 
