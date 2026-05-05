@@ -104,55 +104,33 @@ connections emerge.
 
 #### Step 1: Download the source
 
-```bash
-curl -o raw_sources/gpu_computing.html \
-  "https://en.wikipedia.org/wiki/Graphics_processing_unit"
-```
+Download a source article on your chosen topic into
+`raw_sources/`. See [the detailed plan](
+../projects/llm_wiki/plan_template.md) for the exact command.
 
 #### Step 2: Ingest and link
 
-```text
-Ingest raw_sources/gpu_computing.html. Create concept notes,
-people notes, and technology notes following the same pattern
-as the existing wiki. Cross-reference new notes with existing
-ones (especially Moore's Law, Dennard Scaling, Deep Learning,
-and Transformer Architecture) where the topics connect. Update
-Home.md to include the new topic under the appropriate sections.
-```
+Prompt Claude Code to ingest the new source, create concept,
+people, and technology notes following the existing wiki
+pattern, and cross-reference with existing notes. Update
+`Home.md`. See [the detailed plan](
+../projects/llm_wiki/plan_template.md) for the exact prompt.
 
-#### Step 3: Verify
+Link verification (zero orphans, zero broken wikilinks) is
+covered in the detailed plan.
 
-```bash
-python3 projects/llm_wiki/verify_links.py
-```
-
-All checks must pass: zero orphans, zero broken wikilinks.
-
-#### Step 4: Explore the knowledge graph
+#### Step 3: Explore the knowledge graph
 
 Open **Obsidian Graph View**. Navigate `Home.md` and look for
 connections between GPU Computing and the previous topics. Note
 which existing notes gained new incoming links — this is where
 your knowledge graph compounded.
 
-Then query your personal knowledge graph:
-
-```text
-Based ONLY on my wiki, explain how GPU computing transformed the
-pace of AI breakthroughs after Moore's Law began to plateau. 
-Please generate the response as a separate file 
-gpu_impact_on_ai_breakthrough.md in the project/llm_wiki/ 
-directory
-```
-
-A strong answer will pull from at least four topics: Moore's Law,
-Dennard Scaling, Deep Learning, and Transformer Architecture —
-showing that the knowledge graph is genuinely connected.
-
-> **If you chose your own topic:** navigate `Home.md` to discover
-> which previous topics your new topic relates to — the cross-links
-> reveal the connections. Then form your own synthesis question that
-> ties your new topic to at least two existing ones.
+> **If you chose your own topic:** navigate `Home.md` to
+> discover which previous topics your new topic relates to —
+> the cross-links reveal the connections. Then form your own
+> synthesis question that ties your new topic to at least two
+> existing ones.
 
 ---
 
