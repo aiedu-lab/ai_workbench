@@ -3093,7 +3093,7 @@ count as before.
 ---
 
 ### Phase 20.2: Simplify LLM Wiki Phases 1–3 — Concept +
-Plan Reference
+Plan Reference **COMPLETED**
 
 CONTEXT: `sessions/llm_wiki.md` Phases 1–3 duplicate
 detailed curl commands and prompt text blocks already in
