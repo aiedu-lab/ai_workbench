@@ -3066,7 +3066,7 @@ section.
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
      Phase 20 (prompt_history.md#llm-wiki-cleanup) -->
 
-### Phase 20.1: Update README.md — Tool Column for All Sessions
+### Phase 20.1: Update README.md — Tool Column for All Sessions **COMPLETED**
 
 CONTEXT: The `Tool` column in the agenda table of `README.md`
 is incomplete; the `Developer Workbench` row does not list
