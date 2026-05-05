@@ -2996,7 +2996,7 @@ sessions/dev_workbench.md` returns ≥ 3 matches.
 ---
 
 ### Phase 19.5: AI Local — Assess Ollama Impact, Conditionally
-Add to dev_workbench.md
+Add to dev_workbench.md **COMPLETED**
 
 CONTEXT: `tools/ollama/setup.md` documents that Ollama model
 downloads are memory-intensive (8 GB → gemma:2b,
