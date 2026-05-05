@@ -33,10 +33,7 @@ knowledge graph.
 
 ### Validation
 
-```bash
-claude --version   # must print a version number
-```
-
+- [ ] `claude --version` prints a version number
 - [ ] Obsidian opens without error; `my-ai-brain` vault is visible
 - [ ] `raw_sources/` folder appears in the Obsidian file explorer
 - [ ] `claude` starts without errors when run inside the vault folder
