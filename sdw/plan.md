@@ -3035,7 +3035,7 @@ finding documented.
 ---
 
 ### Phase 19.6: Global Cleanup — Audit Sessions, Move
-Terminal Commands to Tools
+Terminal Commands to Tools **COMPLETED**
 
 CONTEXT: After Phases 19.1–19.5, some sessions may still
 contain inline bash blocks in `Set Up` sections.
