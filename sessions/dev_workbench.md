@@ -56,25 +56,12 @@ guide for that tool — no content is duplicated here.
   full steps in the
   [GitHub Setup Guide](../tools/dev_workbench/github.md#account-setup)
 - Generate and upload an SSH key for GitHub authentication
-- Set your global git identity inside Ubuntu:
-
-```bash
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
-```
-
-- Test the SSH connection directly without using any git commands:
-
-```bash
-ssh -T git@github.com
-```
-
-- Validate: you'll receive a greeting if the key is provisioned:
-
-```text
-Hi [GitHub Username]! You've successfully authenticated...
-```
-
+- Set your global git identity — see
+  [Git Identity Setup](
+  ../tools/dev_workbench/github.md#git-identity-setup)
+- Test the SSH connection and verify the greeting — see
+  [SSH Validation](
+  ../tools/dev_workbench/github.md#ssh-key-setup-for-github)
 - Clone `ai_workbench` and create your personal branch — see
   [Clone & Branch](../tools/dev_workbench/github.md#git-command-line-local)
 
