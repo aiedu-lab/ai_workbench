@@ -33,10 +33,7 @@ knowledge graph.
 
 ### Validation
 
-```bash
-claude --version   # must print a version number
-```
-
+- [ ] `claude --version` prints a version number
 - [ ] Obsidian opens without error; `my-ai-brain` vault is visible
 - [ ] `raw_sources/` folder appears in the Obsidian file explorer
 - [ ] `claude` starts without errors when run inside the vault folder
@@ -46,49 +43,48 @@ claude --version   # must print a version number
 We will watch the AI connect two seemingly unrelated articles.
 
 ### Phase 1: The First Ingest
-1. **Source:** Download a Wikipedia PDF about "Moore's Law" and put it in 
-`raw_sources/`.
-```text
-curl -o raw_sources/moores_law.html \
-"https://en.wikipedia.org/wiki/Moore%27s_law"
-```
-2. **Action:** Open your terminal in the vault folder and run `claude`.
-3. **Prompt:** *"Read the PDF in raw_sources. Create a structured markdown 
-wiki. Create separate files for key concepts, people, and technologies. 
-Use Obsidian [[wikilinks]] to connect them."*
-4. **Observe:** Open Obsidian and look at the Graph View. You will see a 
-small cluster of linked notes.
+
+**Concept:** Download a source article (e.g. the "Moore's Law"
+Wikipedia page) into `raw_sources/` and prompt Claude Code to
+build an initial structured wiki — separate files for concepts,
+people, and technologies, linked with Obsidian `[[wikilinks]]`.
+Open Obsidian Graph View to see the first cluster of linked
+notes appear.
+
+> For exact download commands and prompts, see
+> [Phase 2: First Ingestion](
+> ../projects/llm_wiki/plan_template.md#phase-2-first-ingestion-moores-law)
+> in the detailed plan.
 
 ### Phase 2: The Compound Effect
-1. **Source:** Download an article about "The History of Artificial 
-Intelligence" and drop it into `raw_sources/`.
-```text
-curl -o raw_sources/history_of_ai.html \
-"https://en.wikipedia.org/wiki/History_of_artificial_intelligence"
-```
-2. **Action:** In your running Claude terminal, prompt: 
-*"Ingest the new AI history article. Update our existing wiki pages with 
-new context, create new pages only where necessary, and ensure everything 
-is heavily cross-referenced using [[links]]."*
-3. **Observe:** Watch the Obsidian Graph View. You will see Claude 
-automatically draw lines connecting the compute scaling of 
-Moore's Law to the breakthroughs in AI—connections you didn't have 
-to make yourself.
+
+**Concept:** Download a second article (e.g. "History of
+Artificial Intelligence") and ingest it into the existing wiki.
+Claude cross-references the new content with existing notes
+automatically — watch the Obsidian Graph View draw connections
+between Moore's Law and AI breakthroughs without any manual
+linking.
+
+> For exact download commands and prompts, see
+> [Phase 3: Second Ingestion](
+> ../projects/llm_wiki/plan_template.md#phase-3-second-ingestion-history-of-ai)
+> in the detailed plan.
 
 ### Phase 3: The Synthesis
 
-1. **Prompt:**
+**Concept:** Query your personal knowledge graph for a
+synthesized answer (e.g. "How did hardware limitations dictate
+the timeline of AI advancements?"). Claude answers using only
+the notes it built — no internet search — and saves the
+response as a new markdown file in the wiki.
 
-```text
-Based ONLY on my wiki, explain how hardware limitations
-dictated the timeline of AI advancements. Please generate
-the response as a separate file hw_relation_to_ai_advancement.md
-in the project/llm_wiki/ directory.
-```
+**Key Takeaway:** The AI is not searching the open internet; it
+is synthesizing from the curated knowledge graph it built.
 
-2. **Key Takeaway:** The AI isn't searching the open internet; it is
-providing a synthesized answer based entirely on the curated knowledge
-graph it built for you.
+> For the exact synthesis prompt, see
+> [Phase 4: Synthesis](
+> ../projects/llm_wiki/plan_template.md#phase-4-synthesis)
+> in the detailed plan.
 
 ---
 
@@ -108,55 +104,33 @@ connections emerge.
 
 #### Step 1: Download the source
 
-```bash
-curl -o raw_sources/gpu_computing.html \
-  "https://en.wikipedia.org/wiki/Graphics_processing_unit"
-```
+Download a source article on your chosen topic into
+`raw_sources/`. See [the detailed plan](
+../projects/llm_wiki/plan_template.md) for the exact command.
 
 #### Step 2: Ingest and link
 
-```text
-Ingest raw_sources/gpu_computing.html. Create concept notes,
-people notes, and technology notes following the same pattern
-as the existing wiki. Cross-reference new notes with existing
-ones (especially Moore's Law, Dennard Scaling, Deep Learning,
-and Transformer Architecture) where the topics connect. Update
-Home.md to include the new topic under the appropriate sections.
-```
+Prompt Claude Code to ingest the new source, create concept,
+people, and technology notes following the existing wiki
+pattern, and cross-reference with existing notes. Update
+`Home.md`. See [the detailed plan](
+../projects/llm_wiki/plan_template.md) for the exact prompt.
 
-#### Step 3: Verify
+Link verification (zero orphans, zero broken wikilinks) is
+covered in the detailed plan.
 
-```bash
-python3 projects/llm_wiki/verify_links.py
-```
-
-All checks must pass: zero orphans, zero broken wikilinks.
-
-#### Step 4: Explore the knowledge graph
+#### Step 3: Explore the knowledge graph
 
 Open **Obsidian Graph View**. Navigate `Home.md` and look for
 connections between GPU Computing and the previous topics. Note
 which existing notes gained new incoming links — this is where
 your knowledge graph compounded.
 
-Then query your personal knowledge graph:
-
-```text
-Based ONLY on my wiki, explain how GPU computing transformed the
-pace of AI breakthroughs after Moore's Law began to plateau. 
-Please generate the response as a separate file 
-gpu_impact_on_ai_breakthrough.md in the project/llm_wiki/ 
-directory
-```
-
-A strong answer will pull from at least four topics: Moore's Law,
-Dennard Scaling, Deep Learning, and Transformer Architecture —
-showing that the knowledge graph is genuinely connected.
-
-> **If you chose your own topic:** navigate `Home.md` to discover
-> which previous topics your new topic relates to — the cross-links
-> reveal the connections. Then form your own synthesis question that
-> ties your new topic to at least two existing ones.
+> **If you chose your own topic:** navigate `Home.md` to
+> discover which previous topics your new topic relates to —
+> the cross-links reveal the connections. Then form your own
+> synthesis question that ties your new topic to at least two
+> existing ones.
 
 ---
 

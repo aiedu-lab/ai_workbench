@@ -56,31 +56,47 @@ guide for that tool — no content is duplicated here.
   full steps in the
   [GitHub Setup Guide](../tools/dev_workbench/github.md#account-setup)
 - Generate and upload an SSH key for GitHub authentication
-- Set your global git identity inside Ubuntu:
-
-```bash
-git config --global user.name "Your Name"
-git config --global user.email "you@example.com"
-```
-
-- Test the SSH connection directly without using any git commands:
-
-```bash
-ssh -T git@github.com
-```
-
-- Validate: you'll receive a greeting if the key is provisioned:
-
-```text
-Hi [GitHub Username]! You've successfully authenticated...
-```
-
+- Set your global git identity — see
+  [Git Identity Setup](
+  ../tools/dev_workbench/github.md#git-identity-setup)
+- Test the SSH connection and verify the greeting — see
+  [SSH Validation](
+  ../tools/dev_workbench/github.md#ssh-key-setup-for-github)
 - Clone `ai_workbench` and create your personal branch — see
   [Clone & Branch](../tools/dev_workbench/github.md#git-command-line-local)
 
 ---
 
-## Section 3 — VSCode Setup
+## Section 3 — LLM Provider Setup
+
+- [Claude Account Setup](../tools/claude/cloud.md)
+- [LLM Provider Cost Control](
+  ../tools/dev_workbench/provider_cost_control.md)
+
+Set spending limits and enable usage notifications before running
+any multi-turn or automated workflows.
+
+### Multi LLM Provider and Multi Model
+
+Set up alternative LLM providers for the
+[Pluggable Models](../sessions/pluggable_models.md) session:
+
+- **Groq** (ultra-fast LPU inference) — see
+  [tools/groq/setup.md](../tools/groq/setup.md)
+- **OpenRouter** (gateway to 100+ models) — see
+  [tools/openrouter/openrouter.md](
+  ../tools/openrouter/openrouter.md)
+- **Cline** (VSCode AI assistant via OpenRouter) — see
+  [tools/dev_workbench/cline.md](
+  ../tools/dev_workbench/cline.md)
+
+Install shared Python dependencies — see
+[Install OpenAI Python Library](
+../tools/dev_workbench/multimodel.md#install-openai-python-library).
+
+---
+
+## Section 4 — VSCode Setup
 
 [VSCode Setup Guide](../tools/dev_workbench/vscode.md)
 
@@ -95,15 +111,12 @@ Hi [GitHub Username]! You've successfully authenticated...
 - Validate both extensions per
   [VSCode Validation](../tools/dev_workbench/vscode.md#validation)
 
----
+### Claude Multimode
 
-## Section 4 — LLM Provider Setup
-
-- [Claude Account Setup](../tools/claude/cloud.md)
-- [LLM Provider Cost Control](../tools/dev_workbench/provider_cost_control.md)
-
-Set spending limits and enable usage notifications before running
-any multi-turn or automated workflows.
+Configure Claude Code for two authentication modes — Pro
+Subscription (default) and PAYG API. See
+[Claude Multimode Set Up](
+../tools/dev_workbench/vscode.md#claude-multimode-set-up).
 
 ---
 
@@ -139,11 +152,11 @@ Open the Claude Code panel in VSCode and send this prompt:
 
 ```text
 Update tests/vscode/hello.py to print:
-hello, <my_github_username>!
-Replace <my_github_username> with my actual GitHub username.
+hello, <YourGitHubUser>!
+where <YourGitHubUser> is your GitHub username e.g. "joesmith"
 ```
 
-Claude will create or update the file. Run it to confirm:
+Claude should create or update the file. Run it to confirm:
 
 ```bash
 python3 tests/vscode/hello.py
@@ -162,12 +175,38 @@ In the Source Control panel:
 
 In the Activity Bar, click the **GitHub** icon.
 Under **Pull Requests**, click **Create Pull Request**.
-- Base: `main` → Compare: `feature/from_<your_username>`
-- Title: `feat: hello.py from <your_username>`
-- Click **Create**.
+1. Base: `main` → Compare: `feature/from_<your_username>`
+2. Title: `feat: hello.py from <your_username>`
+3. Click **Create**.
 
 Expected: PR appears on
 `github.com/aiedu-lab/ai_workbench/pulls`.
 
 If all four steps succeed, your development environment is
 fully operational.
+
+---
+
+## AI Local
+
+Ollama model files consume disk space but **do not use RAM
+when idle** — safe to install now without slowing other
+exercises. See [AI Local](ai_local.md) for the full session.
+
+### Set Up
+
+Ollama lets you run open-weight LLMs (Llama, Gemma) entirely
+on your laptop — no cloud, no API key, no cost after download.
+Follow the guide for your OS:
+[Local AI Setup Guide](../tools/ollama/setup.md).
+
+### Test
+
+After installation, verify the model responds:
+
+```bash
+ollama run gemma:2b "Hello, who are you?"
+```
+
+Expected: a short reply from the local model. Type `/bye`
+to exit and free RAM.

@@ -2841,3 +2841,330 @@ inline ~20-line EXTRACT/GENERALIZE/CATALOG walkthrough.
 
 TEST: `grep -n "EXTRACT\|GENERALIZE\|CATALOG\|DROP_CONDITION\|NEW_COLUMNS"
 sessions/client_multiagent.md` returns matches only in Stage 6.
+
+## Phase 19: STREAMLINE SETUP AND INSTALL
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 19 (prompt_history.md#streamline-setup-and-install) -->
+
+### Phase 19.1: GitHub — Restructure Section 2 to Move Commands **COMPLETED**
+
+CONTEXT: `sessions/dev_workbench.md` Section 2 mixes concept
+prose with inline terminal commands; `tools/dev_workbench/
+github.md` has partial coverage from Phase 17.1.
+
+ACTION: In `tools/dev_workbench/github.md`, add/expand to
+cover all terminal commands for: account setup, `git config`,
+SSH key generation and upload to GitHub, SSH connection test.
+In `sessions/dev_workbench.md` Section 2, remove any remaining
+inline commands and replace with reference sentences pointing
+to `tools/dev_workbench/github.md`; keep only concept prose
+for each sub-step.
+
+CONSTRAINTS: Do not re-do Phase 17.1 clone/branch content
+already in `github.md`; do not touch Sections 0, 1, 3–6 of
+`sessions/dev_workbench.md`.
+
+OUTPUT: `tools/dev_workbench/github.md` — account setup,
+git config, SSH key, SSH test commands added/consolidated;
+`sessions/dev_workbench.md` Section 2 — concept-only prose
+with reference link.
+
+TEST: `grep -n '^\`\`\`' sessions/dev_workbench.md` shows no
+fenced code blocks within Section 2;
+`grep -c '^\`\`\`' tools/dev_workbench/github.md`
+returns ≥ 5.
+
+---
+
+### Phase 19.2: LLM Provider — Reorder Section and Update cloud.md **COMPLETED**
+
+CONTEXT: In `sessions/dev_workbench.md` current order is
+Section 3 VSCode Setup then Section 4 LLM Provider Setup;
+`tools/claude/cloud.md` does not specify Pro Subscription and
+Privacy Settings is not immediately after Set Up.
+
+ACTION:
+1. In `sessions/dev_workbench.md`, swap so LLM Provider
+   becomes Section 3 and VSCode Setup becomes Section 4;
+   update section numbers in headings accordingly.
+2. In `tools/claude/cloud.md` Cloud Account Setup, change
+   sign-up text to explicitly name claude.ai **Pro
+   Subscription** (not free tier).
+3. In `tools/claude/cloud.md`, move `Privacy Settings Setup`
+   section to immediately after the `Set Up` section.
+
+CONSTRAINTS: Do not change content inside VSCode Setup or
+other sections; preserve all heading text; only reorder
+sections and update section numbers.
+
+OUTPUT: `sessions/dev_workbench.md` — LLM Provider precedes
+VSCode; `tools/claude/cloud.md` — Pro Subscription specified,
+Privacy Settings follows Set Up.
+
+TEST: `grep -n "^## Section" sessions/dev_workbench.md` shows
+LLM Provider as Section 3 and VSCode as Section 4;
+`grep -n "Privacy Settings\|Pro Subscription"
+tools/claude/cloud.md` returns matches in expected order.
+
+---
+
+### Phase 19.3: Claude Multimode — Primary Subscription Backup PAYG **COMPLETED**
+
+CONTEXT: `sessions/dev_workbench.md` VSCode Setup has no
+`Claude Multimode` subsection; `tools/dev_workbench/vscode.md`
+has no dual-auth-mode section.
+
+ACTION:
+1. In `sessions/dev_workbench.md` VSCode Setup section, add
+   a `### Claude Multimode` subsection referencing
+   `Claude Multimode Set Up` in
+   `tools/dev_workbench/vscode.md`.
+2. In `tools/dev_workbench/vscode.md`, add
+   `## Claude Multimode Set Up` with two modes:
+   - **Pro Subscription** (default): `CLAUDE_CONFIG_DIR`
+     unset or `$HOME/.claude` — launch with `code .`
+   - **PAYG API**: `CLAUDE_CONFIG_DIR=$HOME/.claude-payg`
+     — launch with
+     `CLAUDE_CONFIG_DIR=$HOME/.claude-payg code .`
+3. Include validation:
+   `cat ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/credentials.json`
+   and `/status` in Claude Chat window of VSCode.
+
+CONSTRAINTS: Do not modify other sections of
+`tools/dev_workbench/vscode.md` or other VSCode subsections
+in `sessions/dev_workbench.md`.
+
+OUTPUT: `sessions/dev_workbench.md` — `Claude Multimode`
+subsection added to VSCode Setup section;
+`tools/dev_workbench/vscode.md` — `## Claude Multimode Set Up`
+with two modes and validation commands.
+
+TEST: `grep -n "Claude Multimode\|CLAUDE_CONFIG_DIR\|
+claude-payg" tools/dev_workbench/vscode.md` returns ≥ 4
+matches; `grep -n "Claude Multimode"
+sessions/dev_workbench.md` returns ≥ 1 match.
+
+---
+
+### Phase 19.4: Multi LLM Provider — dev_workbench.md,
+multimodel.md, pluggable_models.md **COMPLETED**
+
+CONTEXT: `sessions/dev_workbench.md` has no Multi LLM
+Provider section; `sessions/pluggable_models.md` Exercise
+Phase 1 contains inline pip install commands;
+`tools/dev_workbench/multimodel.md` does not yet exist.
+
+ACTION:
+1. In `sessions/dev_workbench.md`, add a
+   `### Multi LLM Provider and Multi Model` section covering
+   Set Up of Groq (→ `tools/groq/setup.md`), OpenRouter
+   (→ `tools/openrouter/openrouter.md`), and Cline
+   (→ `tools/dev_workbench/cline.md`); keep only concepts,
+   reference tool files for commands.
+2. Create `tools/dev_workbench/multimodel.md` with an
+   `## Install OpenAI Python Library` section:
+   ```bash
+   pip install --upgrade pip
+   pip install openai
+   ```
+3. In `sessions/pluggable_models.md` Exercise Phase 1,
+   replace the inline pip install block with a reference to
+   the `Install OpenAI Python Library` section in
+   `tools/dev_workbench/multimodel.md`.
+4. Add `## Validation` section to
+   `tools/dev_workbench/multimodel.md` with test cases for
+   Groq API (curl/python call), OpenRouter API, and Cline
+   VSCode extension (verify extension active).
+
+CONSTRAINTS: Do not modify `tools/groq/setup.md`,
+`tools/openrouter/openrouter.md`, or
+`tools/dev_workbench/cline.md`; do not modify Exercise
+Phases 2–4 in `sessions/pluggable_models.md`.
+
+OUTPUT: `sessions/dev_workbench.md` — Multi LLM Provider
+section added; `tools/dev_workbench/multimodel.md` — created
+with Install and Validation sections;
+`sessions/pluggable_models.md` — Phase 1 pip install
+replaced with reference.
+
+TEST: `grep -n "pip install\|upgrade pip"
+sessions/pluggable_models.md` returns 0 inline code blocks;
+`grep -c "pip install" tools/dev_workbench/multimodel.md`
+returns ≥ 1; `grep -n "Multi LLM\|Groq\|OpenRouter\|Cline"
+sessions/dev_workbench.md` returns ≥ 3 matches.
+
+---
+
+### Phase 19.5: AI Local — Assess Ollama Impact, Conditionally
+Add to dev_workbench.md **COMPLETED**
+
+CONTEXT: `tools/ollama/setup.md` documents that Ollama model
+downloads are memory-intensive (8 GB → gemma:2b,
+16 GB+ → llama3:8b); `sessions/dev_workbench.md` has no
+`AI Local` section; impact on WSL2 workbench exercises is
+unconfirmed.
+
+ACTION:
+1. Read `tools/ollama/setup.md` (full) and
+   `sessions/ai_local.md`; document assessment of whether
+   premature Ollama model pull on WSL2 only consumes disk
+   or also consumes CPU/memory that would slow exercises.
+2. **If install does NOT slow down exercises**: add
+   `## AI Local` section to `sessions/dev_workbench.md`
+   with: (a) `### Set Up` — concept of Ollama purpose,
+   reference `tools/ollama/setup.md` for commands;
+   (b) `### Test` — quick validation
+   (`ollama run <model> "Hello"`).
+3. **If install DOES slow down exercises**: add a brief
+   note in `sessions/dev_workbench.md` pointing to
+   `sessions/ai_local.md` as a standalone session to run
+   after workbench exercises.
+
+CONSTRAINTS: Do not modify `tools/ollama/setup.md` or
+`sessions/ai_local.md`; do not inline Ollama model-pull
+commands in `sessions/dev_workbench.md`.
+
+OUTPUT: Assessment finding documented in step completion
+note; `sessions/dev_workbench.md` — `AI Local` section
+added (content conditional on assessment).
+
+TEST: `grep -n "AI Local\|ollama\|Ollama"
+sessions/dev_workbench.md` returns ≥ 1 match; assessment
+finding documented.
+
+---
+
+### Phase 19.6: Global Cleanup — Audit Sessions, Move
+Terminal Commands to Tools **COMPLETED**
+
+CONTEXT: After Phases 19.1–19.5, some sessions may still
+contain inline bash blocks in `Set Up` sections.
+
+ACTION: Audit these session files for remaining fenced bash/
+shell blocks inside `Set Up` sections:
+`sessions/introduction.md`, `sessions/planning.md`,
+`sessions/web_site.md`, `sessions/client_application.md`,
+`sessions/client_multiagent.md`, `sessions/llm_wiki.md`,
+`sessions/dev_workbench.md`, `sessions/pluggable_models.md`.
+For each `Set Up` section containing fenced commands, move
+commands to the appropriate existing `tools/` file and
+replace with a reference sentence.
+
+CONSTRAINTS: Do not modify `Exercise` sections, only
+`Set Up` sections; do not create new `tools/` directories;
+skip sessions with no `Set Up` section.
+
+OUTPUT: All audited session files — `Set Up` sections
+contain only concept prose and reference links; corresponding
+`tools/` files — contain the moved commands.
+
+TEST: `grep -rn '^\`\`\`bash\|^\`\`\`sh' sessions/` piped
+through context check returns 0 matches inside any `Set Up`
+section.
+
+## Phase 20: LLM WIKI CLEANUP
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 20 (prompt_history.md#llm-wiki-cleanup) -->
+
+### Phase 20.1: Update README.md — Tool Column for All Sessions **COMPLETED**
+
+CONTEXT: The `Tool` column in the agenda table of `README.md`
+is incomplete; the `Developer Workbench` row does not list
+Claude, while other rows list their tools.
+
+ACTION: Read `README.md` agenda table. For each session row,
+audit and update the `Tool` column to include all tools
+actually used in that session. At minimum add Claude
+(appropriate variant) to the `Developer Workbench` row.
+Cross-reference each session's corresponding markdown file
+to confirm the tools listed there.
+
+CONSTRAINTS: Do not modify session content, descriptions,
+durations, or any section of `README.md` outside the `Tool`
+column cells in the agenda table.
+
+OUTPUT: `README.md` — agenda table `Tool` column updated for
+all session rows, including `Developer Workbench`.
+
+TEST: `grep -n "Developer Workbench" README.md` shows Claude
+in the same line; `grep -c "^|" README.md` returns the same
+count as before.
+
+---
+
+### Phase 20.2: Simplify LLM Wiki Phases 1–3 — Concept +
+Plan Reference **COMPLETED**
+
+CONTEXT: `sessions/llm_wiki.md` Phases 1–3 duplicate
+detailed curl commands and prompt text blocks already in
+`projects/llm_wiki/plan_template.md`; sessions should be
+concept-only with references to the detailed plan.
+
+ACTION: In `sessions/llm_wiki.md`, replace the detailed curl
+commands and prompt text blocks in Phases 1, 2, and 3 with
+concept-level prose:
+- Phase 1 → concept of "Download Source" and "First Ingest"
+- Phase 2 → concept of "Compound Effect" and
+  cross-referencing
+- Phase 3 → concept of "Synthesis query"
+Add one reference sentence per phase pointing to
+`projects/llm_wiki/plan_template.md` for actual prompts
+and commands.
+
+CONSTRAINTS: Do not modify Phase 4 or any section after it;
+do not change section headings, Objective, Installation &
+Setup, or the Core Concept blocks.
+
+OUTPUT: `sessions/llm_wiki.md` — Phases 1–3 contain concept
+prose + reference to `projects/llm_wiki/plan_template.md`;
+no fenced code or prompt text blocks in Phases 1–3.
+
+TEST: `grep -n '^\`\`\`' sessions/llm_wiki.md` first match
+falls beyond the line where Phase 3 ends; no bash or text
+blocks in Phases 1–3 range.
+
+---
+
+### Phase 20.3: Fix Phase 4 — Remove verify_links.py,
+Simplify Steps 1–3, Update Step 4 **COMPLETED**
+
+CONTEXT: Phase 4 in `sessions/llm_wiki.md` Step 3 references
+`projects/llm_wiki/verify_links.py` which does not exist;
+Steps 1–2 contain inline curl and prompt blocks; Step 4 body
+contains a prompt block that should be concept-only.
+
+ACTION:
+1. Replace Phase 4 Step 1 (Download the source) with one
+   concept sentence; add reference to
+   `projects/llm_wiki/plan_template.md`.
+2. Replace Phase 4 Step 2 (Ingest and link) with one
+   concept sentence; add reference to
+   `projects/llm_wiki/plan_template.md`.
+3. Remove Phase 4 Step 3 (Verify / verify_links.py)
+   entirely; add prose note that verification is covered
+   in the detailed plan.
+4. Replace Phase 4 Step 4 (Explore the knowledge graph)
+   body with the exact concept text from the replan:
+   "Open **Obsidian Graph View**. Navigate `Home.md` and
+   look for connections between GPU Computing and the
+   previous topics. Note which existing notes gained new
+   incoming links — this is where your knowledge graph
+   compounded.
+   > **If you chose your own topic:** navigate `Home.md`
+   > to discover which previous topics your new topic
+   > relates to — the cross-links reveal the connections.
+   > Then form your own synthesis question that ties your
+   > new topic to at least two existing ones."
+
+CONSTRAINTS: Do not modify `### Coherent Home.md Growth` or
+`### Optional Extension — Group Meetup Organizer PKM`; do
+not modify `projects/llm_wiki/plan_template.md`.
+
+OUTPUT: `sessions/llm_wiki.md` — Phase 4 Steps 1–2
+concept-only with references; Step 3 removed; Step 4
+concept text only (no prompt blocks); `verify_links.py`
+reference removed.
+
+TEST: `grep -n "verify_links" sessions/llm_wiki.md` returns
+0 matches; `grep -n '^\`\`\`bash\|^\`\`\`text'
+sessions/llm_wiki.md` shows no blocks in Phase 4 area.

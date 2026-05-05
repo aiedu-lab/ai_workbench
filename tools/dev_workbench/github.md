@@ -51,6 +51,20 @@ gh auth status  # must exit 0 before continuing
 
 ---
 
+## Git Identity Setup
+
+Set your name and email so every commit is attributed to you:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+Replace `"Your Name"` and `"you@example.com"` with your
+actual name and GitHub-registered email address.
+
+---
+
 ## SSH Key Setup for GitHub
 
 Keys are named `~/.ssh/<username>_id_ed25519_github` — parallel

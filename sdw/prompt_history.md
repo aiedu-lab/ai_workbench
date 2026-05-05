@@ -1008,6 +1008,173 @@ Specifically, craft how we extract from the prompt
 a repeatble reusable template version where few fields 
 are set as placeholder to ensure it is GENERALIZED.
 
+## [x] Streamline Setup and Install
+
+This section attempts to streamline few sections, specially 
+in the Setup and Install areas. 
+
+### GitHub
+
+Reference `tools/dev_workbench/dev_workbench.md`
+
+Restructure the `Section 2 — GitHub Account and SSH Setup` 
+just as we did in the `Section 3 — VSCode Setup` i.e. 
+keep the concept of what all that Section should 
+accomplish. 
+
+BUT the actual termianal commands should 
+all be in `tools/dev_workbench/github.md` including 
+account setup, git hub config, ssh key upload to 
+setup ssh connect, testing github connection, 
+clone the repo, create a branch and switch to the
+branch, etc.
+
+### LLM Provider
+
+Reference `tools/dev_workbench/dev_workbench.md`
+
+1.  session has sections on `VSCode Setup` and `LLM Provider Setup`. 
+Move the LLM Provider section *before* the VSCode Setup 
+as we often reference the LLM Provider accounts in VSCode.
+
+2. `tools/claude/cloud.md`: Inside the `Cloud Account Setup`, 
+be specific about signing up claud.ai Pro Subscription - 
+not free tier. Move the `Privacy Settings Setup` section 
+to right after the `Set Up` section.
+
+#### Primary Subscription Backup PAYG
+
+1. Add a sub-section `Claude Multimode` in the `VSCode Setup`
+section of `sessions/dev_workbench.md` that refers to 
+`Claude Multimode Set Up` in `tools/dev_workbench/vscode.md`. 
+
+2. Add a section `Claude Multimode Set Up` to 
+`tools/dev_workbench/vscode.md`that sets up 
+VSCode -> Claude Extension to support two 
+modes based on how CLAUDE_CONFIG_DIR is set. The two modes
+should support `Primary Subscription Backup PAYG`. 
+
+3. Leave CLAUDE_CONFIG_DIR not set or set to `$HOME/.claude`, 
+to set up the authentication as Pro Susctiption (defautl mode).
+This is invoked simply when starting vscode in Linux as: 
+`code .`
+
+4. When CLAUDE_CONFIG_DIR is set to $HOME/.claude-payg to 
+set up the authentication as PAYG (API) mode.
+This is invoked by starting vscode in Linux as:
+`CLAUDE_CONFIG_DIR=$HOME/.claude-payg code .`
+
+5. Test/Validate active auth mode in use by VScode terminal as: 
+`cat ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/credentials.json` AND
+by running /status inside Claude Chat window of VSCode - it 
+should show the appropriate mode.
+
+#### Multi LLM Provider and Multi Model
+
+Add a section in `sessions/dev_workbench.md` that 
+covers `Set Up` of `Groq`, `Set Up` of `OpenRouter`, 
+`Set Up` of Cline, etc.
+
+The actual terminal commands should reference the relevant 
+files is `tools/groq`, `tools/openrouter`, and
+`tools/dev_workbench/cline.md` respectively
+with the concept of what the `Set Up` does kept in 
+the section in `sessions/dev_workbench.md`.
+
+Reference `sessions/pluggable_models.md`.
+1. Move the terminal command in `Set Up` section to 
+`tools/dev_workbench/multimodel.md` with the `Set Up` section
+in `sessions/pluggable_models.md` only keeping the concept of 
+what is accomplished in `Set Up`.
+
+2. The `Set Up` section in `tools/dev_workbench/multimodel.md` should
+expand the `Install OpenAI Python Library ...` to  install `openai`
+and upgrade pip as well.
+
+```bash
+pip install --upgrade pip
+pip install openai
+```  
+
+3. The `Exercise: The Brain Swap Experiment` section 
+`sessions/pluggable_models.md` `Phase 1: Environment Setup`
+should just have the reference to  `Install OpenAI Python Library ...`
+secton that we just added to `tools/dev_workbench/multimodel.md`.
 
 
+4. Add a small test case to validate Groq, OpenRouter, and cline
+is working including (VSCode extension) 
 
+
+### AI Local
+
+Reference `sessions/dev_workbench.md`, 
+`sessions/ai_local.md`, and `tools/ollama/setup.md`.
+
+Assess whether the premature installation of the 
+`Ollama` model would ONLY take up disk space or will
+ALSO eat into the CPU/memory space and slow down all the
+workbench exercise.
+
+If the installation does NOT slow down the next few exercises,
+then:
+1. Add an `AI Local` section to `sessions/dev_workbench.md`.
+
+2. Add a `Set Up` subsection that goes over the concept and
+references `tools/ollama/setup.md` for actual commands.
+
+3. Add a `Test` subsection that runs a quick test to validate the 
+installation.
+
+### Overall Objective
+
+Comb through the sessions and keep the actual terminal commands 
+for `Set Up` sections in `sessions` into `tools`. The `Set Up` 
+section of each `sessions` has the concept of what all 
+the `Set Up` should accomplishe.
+
+
+## [x] LLM Wiki Cleanup
+[ ] Status
+
+### Update README.md
+Update the column `Tool` in the agenda table of `README.md` 
+for all the tools used in each session. For example, for the 
+row on session `Developer Workbench` we should also add 
+`Claude` to the Tool column.
+
+
+### Update LLM Wiki Plan
+
+1. The llm_wiki exercise `🏃‍♂️ The Exercise: Compounding Knowledge` 
+in `sessions/llm_wiki.md` phase 1 to phase 3 overlaps with
+the detailed plan set in `projects/llm_wiki/plan_template.md`.
+
+2. The `sessions/llm_wiki` plan Step 1 to Step 3 should just talk 
+about the concept of `Download Source` and `Ingest and Link` and
+reference the detailed plan for any prompts or active work.
+
+3. Validate the `Verify links` in Step 3 of LLM Wiki sessions 
+is executed as Phase 4 Verification Step 2 of the detailed plan. 
+As such, Phase 4 of detailed plan ensures links are correctly set -
+`projects/llm_wiki/verify_links.py` does not exist and 
+references must be removed. 
+
+4. Step 4 of llm_wiki would only talks about key ideas and concepts
+BUT not prompts:
+
+Open **Obsidian Graph View**. Navigate `Home.md` and look for
+connections between GPU Computing and the previous topics. Note
+which existing notes gained new incoming links — this is where
+your knowledge graph compounded.
+
+> **If you chose your own topic:** navigate `Home.md` to discover
+> which previous topics your new topic relates to — the cross-links
+> reveal the connections. Then form your own synthesis question that
+> ties your new topic to at least two existing ones.
+
+5. Remaining part of LLM Wiki sessions can be left alone as they are
+building off of the detailed plan. That is leave the two sections 
+below as is: 
+* `### Coherent Home.md Growth`
+* `### Optional Extension — Group Meetup Organizer PKM`
