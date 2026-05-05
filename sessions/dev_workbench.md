@@ -184,3 +184,29 @@ Expected: PR appears on
 
 If all four steps succeed, your development environment is
 fully operational.
+
+---
+
+## AI Local
+
+Ollama model files consume disk space but **do not use RAM
+when idle** — safe to install now without slowing other
+exercises. See [AI Local](ai_local.md) for the full session.
+
+### Set Up
+
+Ollama lets you run open-weight LLMs (Llama, Gemma) entirely
+on your laptop — no cloud, no API key, no cost after download.
+Follow the guide for your OS:
+[Local AI Setup Guide](../tools/ollama/setup.md).
+
+### Test
+
+After installation, verify the model responds:
+
+```bash
+ollama run gemma:2b "Hello, who are you?"
+```
+
+Expected: a short reply from the local model. Type `/bye`
+to exit and free RAM.
