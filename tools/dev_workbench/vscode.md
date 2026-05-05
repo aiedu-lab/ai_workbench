@@ -32,6 +32,44 @@
 * Click the GitHub icon in the Activity Bar.
 * The **Pull Requests** and **Issues** panels are visible.
 * Your personal branch appears under "Current Branch".
+## Claude Multimode Set Up
+
+The Claude Code extension reads `CLAUDE_CONFIG_DIR` to locate its
+credentials. Different directories let you switch between Pro
+Subscription (browser login) and PAYG API key modes without
+re-authenticating.
+
+### Mode 1 — Pro Subscription (default)
+
+Leave `CLAUDE_CONFIG_DIR` unset, or set it to `$HOME/.claude`.
+Launch VSCode from the Ubuntu terminal:
+
+```bash
+code .
+```
+
+### Mode 2 — PAYG API
+
+Set `CLAUDE_CONFIG_DIR` to `$HOME/.claude-payg` at launch:
+
+```bash
+CLAUDE_CONFIG_DIR=$HOME/.claude-payg code .
+```
+
+Ensure `$HOME/.claude-payg/credentials.json` contains a valid
+API key before switching.
+
+### Validation
+
+Check which credentials are active from the VSCode terminal:
+
+```bash
+cat ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/credentials.json
+```
+
+Inside the Claude Code panel, run `/status` — the output shows
+the active authentication mode (Pro Subscription or API key).
+
 ## Guardrails
 * If using WAL, always work inside WSL directory `~/` rather than 
   Windows paths `/mnt/c/...` as cross-filesystem I/O is significantly 

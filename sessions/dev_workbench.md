@@ -93,6 +93,13 @@ any multi-turn or automated workflows.
 - Validate both extensions per
   [VSCode Validation](../tools/dev_workbench/vscode.md#validation)
 
+### Claude Multimode
+
+Configure Claude Code for two authentication modes — Pro
+Subscription (default) and PAYG API. See
+[Claude Multimode Set Up](
+../tools/dev_workbench/vscode.md#claude-multimode-set-up).
+
 ---
 
 ## Section 5 — Run Lab Setup Script
