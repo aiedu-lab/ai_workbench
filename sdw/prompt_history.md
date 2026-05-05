@@ -1132,3 +1132,49 @@ Comb through the sessions and keep the actual terminal commands
 for `Set Up` sections in `sessions` into `tools`. The `Set Up` 
 section of each `sessions` has the concept of what all 
 the `Set Up` should accomplishe.
+
+
+## LLM Wiki Cleanup
+[ ] Status
+
+### Update README.md
+Update the column `Tool` in the agenda table of `README.md` 
+for all the tools used in each session. For example, for the 
+row on session `Developer Workbench` we should also add 
+`Claude` to the Tool column.
+
+
+### Update LLM Wiki Plan
+
+1. The llm_wiki exercise `🏃‍♂️ The Exercise: Compounding Knowledge` 
+in `sessions/llm_wiki.md` phase 1 to phase 3 overlaps with
+the detailed plan set in `projects/llm_wiki/plan_template.md`.
+
+2. The `sessions/llm_wiki` plan Step 1 to Step 3 should just talk 
+about the concept of `Download Source` and `Ingest and Link` and
+reference the detailed plan for any prompts or active work.
+
+3. Validate the `Verify links` in Step 3 of LLM Wiki sessions 
+is executed as Phase 4 Verification Step 2 of the detailed plan. 
+As such, Phase 4 of detailed plan ensures links are correctly set -
+`projects/llm_wiki/verify_links.py` does not exist and 
+references must be removed. 
+
+4. Step 4 of llm_wiki would only talks about key ideas and concepts
+BUT not prompts:
+
+Open **Obsidian Graph View**. Navigate `Home.md` and look for
+connections between GPU Computing and the previous topics. Note
+which existing notes gained new incoming links — this is where
+your knowledge graph compounded.
+
+> **If you chose your own topic:** navigate `Home.md` to discover
+> which previous topics your new topic relates to — the cross-links
+> reveal the connections. Then form your own synthesis question that
+> ties your new topic to at least two existing ones.
+
+5. Remaining part of LLM Wiki sessions can be left alone as they are
+building off of the detailed plan. That is leave the two sections 
+below as is: 
+* `### Coherent Home.md Growth`
+* `### Optional Extension — Group Meetup Organizer PKM`
