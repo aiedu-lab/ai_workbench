@@ -2846,7 +2846,7 @@ sessions/client_multiagent.md` returns matches only in Stage 6.
 <!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
      Phase 19 (prompt_history.md#streamline-setup-and-install) -->
 
-### Phase 19.1: GitHub — Restructure Section 2 to Move Commands
+### Phase 19.1: GitHub — Restructure Section 2 to Move Commands **COMPLETED**
 
 CONTEXT: `sessions/dev_workbench.md` Section 2 mixes concept
 prose with inline terminal commands; `tools/dev_workbench/
