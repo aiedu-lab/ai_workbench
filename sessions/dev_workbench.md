@@ -76,6 +76,24 @@ guide for that tool — no content is duplicated here.
 Set spending limits and enable usage notifications before running
 any multi-turn or automated workflows.
 
+### Multi LLM Provider and Multi Model
+
+Set up alternative LLM providers for the
+[Pluggable Models](../sessions/pluggable_models.md) session:
+
+- **Groq** (ultra-fast LPU inference) — see
+  [tools/groq/setup.md](../tools/groq/setup.md)
+- **OpenRouter** (gateway to 100+ models) — see
+  [tools/openrouter/openrouter.md](
+  ../tools/openrouter/openrouter.md)
+- **Cline** (VSCode AI assistant via OpenRouter) — see
+  [tools/dev_workbench/cline.md](
+  ../tools/dev_workbench/cline.md)
+
+Install shared Python dependencies — see
+[Install OpenAI Python Library](
+../tools/dev_workbench/multimodel.md#install-openai-python-library).
+
 ---
 
 ## Section 4 — VSCode Setup

@@ -57,24 +57,14 @@ Only two variables change. Your application code is identical.
 
 ## Setup
 
-**Install the OpenAI Python library** (works with any provider):
+Install the OpenAI Python library (works with any provider) — see
+[Install OpenAI Python Library](
+../tools/dev_workbench/multimodel.md#install-openai-python-library).
 
-```bash
-pip install openai
-```
-
-**Set your API keys** (if not already done):
-
-```bash
-# Groq
-echo 'export GROQ_API_KEY="<your-groq-key>"' >> ~/.bashrc
-
-# OpenRouter
-echo 'export OPENROUTER_API_KEY="<your-openrouter-key>"' \
-  >> ~/.bashrc
-
-source ~/.bashrc
-```
+Set your API keys:
+- **Groq:** see [Groq Setup](../tools/groq/setup.md)
+- **OpenRouter:** see
+  [OpenRouter Setup](../tools/openrouter/openrouter.md)
 
 ---
 
@@ -85,12 +75,9 @@ the underlying LLM without changing your code.
 
 ### Phase 1: Environment Setup
 
-1. Install dependencies:
-
-```bash
-pip install --upgrade pip
-pip install openai
-```
+1. Install dependencies — see
+   [Install OpenAI Python Library](
+   ../tools/dev_workbench/multimodel.md#install-openai-python-library).
 
 2. Get API keys from the Tool Setup guides above.
 
