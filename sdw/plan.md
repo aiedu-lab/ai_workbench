@@ -3061,3 +3061,110 @@ contain only concept prose and reference links; corresponding
 TEST: `grep -rn '^\`\`\`bash\|^\`\`\`sh' sessions/` piped
 through context check returns 0 matches inside any `Set Up`
 section.
+
+## Phase 20: LLM WIKI CLEANUP
+<!-- AI-GENERATED [anthropic:claude-sonnet-4-6]:
+     Phase 20 (prompt_history.md#llm-wiki-cleanup) -->
+
+### Phase 20.1: Update README.md — Tool Column for All Sessions
+
+CONTEXT: The `Tool` column in the agenda table of `README.md`
+is incomplete; the `Developer Workbench` row does not list
+Claude, while other rows list their tools.
+
+ACTION: Read `README.md` agenda table. For each session row,
+audit and update the `Tool` column to include all tools
+actually used in that session. At minimum add Claude
+(appropriate variant) to the `Developer Workbench` row.
+Cross-reference each session's corresponding markdown file
+to confirm the tools listed there.
+
+CONSTRAINTS: Do not modify session content, descriptions,
+durations, or any section of `README.md` outside the `Tool`
+column cells in the agenda table.
+
+OUTPUT: `README.md` — agenda table `Tool` column updated for
+all session rows, including `Developer Workbench`.
+
+TEST: `grep -n "Developer Workbench" README.md` shows Claude
+in the same line; `grep -c "^|" README.md` returns the same
+count as before.
+
+---
+
+### Phase 20.2: Simplify LLM Wiki Phases 1–3 — Concept +
+Plan Reference
+
+CONTEXT: `sessions/llm_wiki.md` Phases 1–3 duplicate
+detailed curl commands and prompt text blocks already in
+`projects/llm_wiki/plan_template.md`; sessions should be
+concept-only with references to the detailed plan.
+
+ACTION: In `sessions/llm_wiki.md`, replace the detailed curl
+commands and prompt text blocks in Phases 1, 2, and 3 with
+concept-level prose:
+- Phase 1 → concept of "Download Source" and "First Ingest"
+- Phase 2 → concept of "Compound Effect" and
+  cross-referencing
+- Phase 3 → concept of "Synthesis query"
+Add one reference sentence per phase pointing to
+`projects/llm_wiki/plan_template.md` for actual prompts
+and commands.
+
+CONSTRAINTS: Do not modify Phase 4 or any section after it;
+do not change section headings, Objective, Installation &
+Setup, or the Core Concept blocks.
+
+OUTPUT: `sessions/llm_wiki.md` — Phases 1–3 contain concept
+prose + reference to `projects/llm_wiki/plan_template.md`;
+no fenced code or prompt text blocks in Phases 1–3.
+
+TEST: `grep -n '^\`\`\`' sessions/llm_wiki.md` first match
+falls beyond the line where Phase 3 ends; no bash or text
+blocks in Phases 1–3 range.
+
+---
+
+### Phase 20.3: Fix Phase 4 — Remove verify_links.py,
+Simplify Steps 1–3, Update Step 4
+
+CONTEXT: Phase 4 in `sessions/llm_wiki.md` Step 3 references
+`projects/llm_wiki/verify_links.py` which does not exist;
+Steps 1–2 contain inline curl and prompt blocks; Step 4 body
+contains a prompt block that should be concept-only.
+
+ACTION:
+1. Replace Phase 4 Step 1 (Download the source) with one
+   concept sentence; add reference to
+   `projects/llm_wiki/plan_template.md`.
+2. Replace Phase 4 Step 2 (Ingest and link) with one
+   concept sentence; add reference to
+   `projects/llm_wiki/plan_template.md`.
+3. Remove Phase 4 Step 3 (Verify / verify_links.py)
+   entirely; add prose note that verification is covered
+   in the detailed plan.
+4. Replace Phase 4 Step 4 (Explore the knowledge graph)
+   body with the exact concept text from the replan:
+   "Open **Obsidian Graph View**. Navigate `Home.md` and
+   look for connections between GPU Computing and the
+   previous topics. Note which existing notes gained new
+   incoming links — this is where your knowledge graph
+   compounded.
+   > **If you chose your own topic:** navigate `Home.md`
+   > to discover which previous topics your new topic
+   > relates to — the cross-links reveal the connections.
+   > Then form your own synthesis question that ties your
+   > new topic to at least two existing ones."
+
+CONSTRAINTS: Do not modify `### Coherent Home.md Growth` or
+`### Optional Extension — Group Meetup Organizer PKM`; do
+not modify `projects/llm_wiki/plan_template.md`.
+
+OUTPUT: `sessions/llm_wiki.md` — Phase 4 Steps 1–2
+concept-only with references; Step 3 removed; Step 4
+concept text only (no prompt blocks); `verify_links.py`
+reference removed.
+
+TEST: `grep -n "verify_links" sessions/llm_wiki.md` returns
+0 matches; `grep -n '^\`\`\`bash\|^\`\`\`text'
+sessions/llm_wiki.md` shows no blocks in Phase 4 area.

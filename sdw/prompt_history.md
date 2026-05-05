@@ -1134,7 +1134,7 @@ section of each `sessions` has the concept of what all
 the `Set Up` should accomplishe.
 
 
-## LLM Wiki Cleanup
+## [x] LLM Wiki Cleanup
 [ ] Status
 
 ### Update README.md
