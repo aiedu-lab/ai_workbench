@@ -43,49 +43,48 @@ knowledge graph.
 We will watch the AI connect two seemingly unrelated articles.
 
 ### Phase 1: The First Ingest
-1. **Source:** Download a Wikipedia PDF about "Moore's Law" and put it in 
-`raw_sources/`.
-```text
-curl -o raw_sources/moores_law.html \
-"https://en.wikipedia.org/wiki/Moore%27s_law"
-```
-2. **Action:** Open your terminal in the vault folder and run `claude`.
-3. **Prompt:** *"Read the PDF in raw_sources. Create a structured markdown 
-wiki. Create separate files for key concepts, people, and technologies. 
-Use Obsidian [[wikilinks]] to connect them."*
-4. **Observe:** Open Obsidian and look at the Graph View. You will see a 
-small cluster of linked notes.
+
+**Concept:** Download a source article (e.g. the "Moore's Law"
+Wikipedia page) into `raw_sources/` and prompt Claude Code to
+build an initial structured wiki — separate files for concepts,
+people, and technologies, linked with Obsidian `[[wikilinks]]`.
+Open Obsidian Graph View to see the first cluster of linked
+notes appear.
+
+> For exact download commands and prompts, see
+> [Phase 2: First Ingestion](
+> ../projects/llm_wiki/plan_template.md#phase-2-first-ingestion-moores-law)
+> in the detailed plan.
 
 ### Phase 2: The Compound Effect
-1. **Source:** Download an article about "The History of Artificial 
-Intelligence" and drop it into `raw_sources/`.
-```text
-curl -o raw_sources/history_of_ai.html \
-"https://en.wikipedia.org/wiki/History_of_artificial_intelligence"
-```
-2. **Action:** In your running Claude terminal, prompt: 
-*"Ingest the new AI history article. Update our existing wiki pages with 
-new context, create new pages only where necessary, and ensure everything 
-is heavily cross-referenced using [[links]]."*
-3. **Observe:** Watch the Obsidian Graph View. You will see Claude 
-automatically draw lines connecting the compute scaling of 
-Moore's Law to the breakthroughs in AI—connections you didn't have 
-to make yourself.
+
+**Concept:** Download a second article (e.g. "History of
+Artificial Intelligence") and ingest it into the existing wiki.
+Claude cross-references the new content with existing notes
+automatically — watch the Obsidian Graph View draw connections
+between Moore's Law and AI breakthroughs without any manual
+linking.
+
+> For exact download commands and prompts, see
+> [Phase 3: Second Ingestion](
+> ../projects/llm_wiki/plan_template.md#phase-3-second-ingestion-history-of-ai)
+> in the detailed plan.
 
 ### Phase 3: The Synthesis
 
-1. **Prompt:**
+**Concept:** Query your personal knowledge graph for a
+synthesized answer (e.g. "How did hardware limitations dictate
+the timeline of AI advancements?"). Claude answers using only
+the notes it built — no internet search — and saves the
+response as a new markdown file in the wiki.
 
-```text
-Based ONLY on my wiki, explain how hardware limitations
-dictated the timeline of AI advancements. Please generate
-the response as a separate file hw_relation_to_ai_advancement.md
-in the project/llm_wiki/ directory.
-```
+**Key Takeaway:** The AI is not searching the open internet; it
+is synthesizing from the curated knowledge graph it built.
 
-2. **Key Takeaway:** The AI isn't searching the open internet; it is
-providing a synthesized answer based entirely on the curated knowledge
-graph it built for you.
+> For the exact synthesis prompt, see
+> [Phase 4: Synthesis](
+> ../projects/llm_wiki/plan_template.md#phase-4-synthesis)
+> in the detailed plan.
 
 ---
 
