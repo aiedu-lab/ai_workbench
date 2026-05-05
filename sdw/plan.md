@@ -3126,7 +3126,7 @@ blocks in Phases 1–3 range.
 ---
 
 ### Phase 20.3: Fix Phase 4 — Remove verify_links.py,
-Simplify Steps 1–3, Update Step 4
+Simplify Steps 1–3, Update Step 4 **COMPLETED**
 
 CONTEXT: Phase 4 in `sessions/llm_wiki.md` Step 3 references
 `projects/llm_wiki/verify_links.py` which does not exist;
