@@ -34,40 +34,40 @@ Before processing any data, ensure the following directory structure exists:
 > added thereafter.
 
 ### Phase 1: Vault Initialization ✅ COMPLETED
-- [ ] Verify (or create if not present) the file/folder structure above.
-- [ ] Verify (or Create) `Home.md`. It should contain a welcome message
+- [x] Verify (or create if not present) the file/folder structure above.
+- [x] Verify (or Create) `Home.md`. It should contain a welcome message
       and empty sections for "Recent Additions," "Core Concepts,"
       "People," and "Technologies."
-- [ ] `articles.md` has two sections: `## Private Articles` (local paths
+- [x] `articles.md` has two sections: `## Private Articles` (local paths
       under `raw_sources/private/`) first, then `## Public Articles`
       (URLs fetched to `raw_sources/public/`) at the bottom so new
       public URLs are easy to append. Articles already
       fetched/placed are marked `[x]`; pending ones are `[ ]`.
-- [ ] Confirm `raw_sources/` is listed in `.gitignore`. Raw source
+- [x] Confirm `raw_sources/` is listed in `.gitignore`. Raw source
       files stay on local disk and are never committed to git.
 
 ### Phase 2: Data Fetching ✅ COMPLETED
-- [ ] For each `[ ]` entry in `## Public Articles`, fetch the URL
+- [x] For each `[ ]` entry in `## Public Articles`, fetch the URL
       and save to `raw_sources/public/<slug>.(html|md)`.
       Mark the entry `[x]` in `articles.md`.
-- [ ] For each `[ ]` entry in `## Private Articles`, confirm the
+- [x] For each `[ ]` entry in `## Private Articles`, confirm the
       file exists at the listed `raw_sources/private/` path.
       Mark the entry `[x]` in `articles.md`.
  
 ### Phase 3: Data Ingestion ✅ COMPLETED
-- [ ] Read the provided documents in `raw_sources/`.
-- [ ] For each document, extract the core and major themes.
+- [x] Read the provided documents in `raw_sources/`.
+- [x] For each document, extract the core and major themes.
       For each new theme, create a new file in `concepts` if one does
       not exist with a summary of the definition, implications, etc.
       Example: for "Moore's Law", summarize the definition and
       implications.
-- [ ] Create new files or update existing files in `people/` covering
+- [x] Create new files or update existing files in `people/` covering
       any people mentioned in the text.
       Example: Gordon Moore
-- [ ] Create new files or update existing files in `tech/` covering any
+- [x] Create new files or update existing files in `tech/` covering any
       technology mentioned in the text.
       Example: Transistors, Microprocessors
-- [ ] **Crucial Synthesis Step:**
+- [x] **Crucial Synthesis Step:**
       - Ensure that each of the topics in files of different directories
         are cross linked to files in other directories.
         Example: each concept within `concepts/` uses `[[wikilinks]]`
@@ -84,24 +84,24 @@ Before processing any data, ensure the following directory structure exists:
         note to the new one.
         Example: how the scaling of transistors enabled the training
         of deep neural networks.
-- [ ] Update `Home.md` to reflect the newly integrated knowledge graph
+- [x] Update `Home.md` to reflect the newly integrated knowledge graph
       with links and cross references to the file/content including
       any new ones.
-- [ ] For each article just ingested, mark it `[✓]` in `articles.md`.
+- [x] For each article just ingested, mark it `[✓]` in `articles.md`.
       Raw source files are gitignored — they stay on local disk and
       are never committed. If a file was accidentally committed to
       git, remove it with: `git rm --cached <path>`.
 
 ### Phase 4: Verification ✅ COMPLETED
-- [ ] Run a check across all markdown files in `concepts/`, `people/`,
+- [x] Run a check across all markdown files in `concepts/`, `people/`,
       and `tech/`.
-- [ ] Identify any "Orphaned" notes i.e. notes that do not have any
+- [x] Identify any "Orphaned" notes i.e. notes that do not have any
       `[[wikilinks]]` pointing to them or out of them.
-- [ ] If orphans exist, logically connect them to existing concepts.
-- [ ] Prompt the agent "Based ONLY on my wiki, explain how hardware
+- [x] If orphans exist, logically connect them to existing concepts.
+- [x] Prompt the agent "Based ONLY on my wiki, explain how hardware
       limitations dictated the timeline of AI advancements and save
       your analysis in `analysis/hw_relation_to_ai_advancement.md`."
-- [ ] Announce completion to the user. For future articles, proceed
+- [x] Announce completion to the user. For future articles, proceed
       to Phase 5.
 
 ### Phase 5: Incremental Ingestion 🔁 REPEATABLE
