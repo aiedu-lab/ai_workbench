@@ -3239,3 +3239,68 @@ OUTPUT: `## [x] LLM Wiki Reclean` in prompt_history.md;
 replan.md points to next section; commit tagged and pushed.
 TEST: `grep "\[ \] LLM Wiki Reclean" sdw/prompt_history.md`
 → 0 matches.
+
+## Phase 22
+
+### Step 22.1: Create `pristine/` directory with clean copies
+
+CONTEXT: `SiliconAndAI/` has no `pristine/` subdirectory;
+working `plan.md` has all Phase 1–4 boxes `[x]`; `articles.md`
+entries are `[✓]`.
+ACTION: Create `pristine/plan.md` (all Phase 1–4 `[x]` → `[ ]`,
+strip `✅ COMPLETED` from headings, Phase 5 unchanged, add
+`pristine/` to Required Folder Structure). Update working
+`plan.md` Required Folder Structure with `pristine/` entry.
+Create `pristine/articles.md` (`[✓]` → `[ ]`, URLs unchanged).
+In `README.md`: add `pristine/` to `## Repository Layout`
+fenced block; add step 5 to `### Adding a New Subject`
+workflow for creating `pristine/` copies; renumber steps 5–9
+→ 6–10.
+CONSTRAINTS: Only add `pristine/` entry to working `plan.md`
+Required Folder Structure — do not change any other line.
+OUTPUT: `pristine/plan.md` zero task-checkbox `[x]`, zero
+`COMPLETED`; `pristine/` in Required Folder Structure of both
+plan.md files; `pristine/articles.md` zero `[✓]`/`[x]`;
+`README.md` mentions `pristine/` in ≥2 places.
+TEST: `grep "^- \[x\]"
+projects/llm_wiki/SiliconAndAI/pristine/plan.md` → 0 matches;
+`grep "pristine" projects/llm_wiki/README.md | wc -l` → ≥2.
+
+### Step 22.2: Add "Before You Begin" section to sessions/llm_wiki.md
+
+CONTEXT: `sessions/llm_wiki.md` has no instruction to restore
+pristine files before Phase 1.
+ACTION: Insert `### Before You Begin: Reset to Pristine State`
+immediately before `### Phase 1: The First Ingest` with `cp`
+commands for `pristine/plan.md` and `pristine/articles.md`.
+CONSTRAINTS: Insert only; do not touch Phase 1–4 content.
+OUTPUT: `sessions/llm_wiki.md` contains "Before You Begin"
+heading before "Phase 1: The First Ingest".
+TEST: `grep -n "Before You Begin\|Phase 1: The First"
+sessions/llm_wiki.md` — "Before You Begin" line < "Phase 1".
+
+### Step 22.3: Add prompt entry to sdw/prompt_history.md
+
+CONTEXT: No `Pristine Plan Reset` entry in prompt_history.md.
+ACTION: Append `## [ ] Pristine Plan Reset` block at end of
+prompt_history.md describing all changes: pristine/ files,
+Required Folder Structure updates in both plan.md files,
+README.md layout and workflow updates, and the
+sessions/llm_wiki.md Before You Begin section.
+CONSTRAINTS: Append only; do not modify existing lines.
+OUTPUT: `sdw/prompt_history.md` ends with
+`## [ ] Pristine Plan Reset`.
+TEST: `grep "Pristine Plan Reset" sdw/prompt_history.md`
+→ one match.
+
+### Step 22.4: Mark Pristine Plan Reset complete
+
+CONTEXT: Steps 22.1–22.3 executed and committed.
+ACTION: Mark `## [x] Pristine Plan Reset` in prompt_history.md.
+Replan.md pointer stays at `#improve-setup-skills-rag`.
+Append Phase 22 to sdw/plan.md. Commit + tag.
+CONSTRAINTS: Do not modify other lines in prompt_history.md.
+OUTPUT: `## [x] Pristine Plan Reset` in prompt_history.md;
+sdw/plan.md has Phase 22; commit tagged and pushed.
+TEST: `grep "\[ \] Pristine Plan Reset" sdw/prompt_history.md`
+→ 0 matches.

@@ -62,6 +62,22 @@ Three workflows cover every update scenario:
 > [projects/llm_wiki/README.md](
 > ../projects/llm_wiki/README.md).
 
+### Before You Begin: Reset to Pristine State
+
+The `plan.md` and `articles.md` in your subject directory may
+already have completed checkboxes from a prior run. Copy the
+pristine versions to reset them before starting Phase 1:
+
+```bash
+cp projects/llm_wiki/SiliconAndAI/pristine/plan.md \
+   projects/llm_wiki/SiliconAndAI/plan.md
+cp projects/llm_wiki/SiliconAndAI/pristine/articles.md \
+   projects/llm_wiki/SiliconAndAI/articles.md
+```
+
+> The `pristine/` directory is committed to git and never
+> modified during execution — always safe to copy from.
+
 ### Phase 1: The First Ingest
 
 **Concept:** Initialise the `SiliconAndAI` vault (Phases 1–2

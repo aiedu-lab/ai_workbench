@@ -27,6 +27,8 @@ PKM/
       private/
     tech/
     analysis/           # gitignored — query outputs and synthesis
+    pristine/           # clean plan.md + articles.md; copy to
+                        # subject root before starting Phase 1
   <NextSubject>/        # Template for future subjects
 ```
 
@@ -53,17 +55,21 @@ PKM/
    - Update the required folder structure list to match your taxonomy.
    - Update Phase 3 directory scan steps to match your taxonomy.
    - Update the Phase 4 synthesis prompt to reflect the subject.
-5. **Run Phase 1** of `plan.md` — creates subdirs, `raw_sources/`,
+5. **Create `pristine/`** copies: copy the adapted `plan.md` and
+   the empty `articles.md` into `pristine/` with all checkboxes
+   `[ ]`. These are never modified during execution — students
+   copy from them before each run to reset to a clean state.
+6. **Run Phase 1** of `plan.md` — creates subdirs, `raw_sources/`,
    and a skeleton `Home.md`.
-6. **Add initial articles** to `articles.md` (`[ ]` state).
-7. **Run Phase 2** — fetches public URLs to `raw_sources/public/`;
+7. **Add initial articles** to `articles.md` (`[ ]` state).
+8. **Run Phase 2** — fetches public URLs to `raw_sources/public/`;
    confirms private files in `raw_sources/private/`. Marks `[x]`.
-8. **Run Phase 3** — ingests all articles into the knowledge graph.
+9. **Run Phase 3** — ingests all articles into the knowledge graph.
    After each article is ingested, mark it `[✓]` in `articles.md`
    and delete its raw file from `raw_sources/` (private files are
    sensitive; public files are re-fetchable from `articles.md`).
-9. **Run Phase 4** — verifies the graph, fixes orphans, runs the
-   subject-specific synthesis prompt.
+10. **Run Phase 4** — verifies the graph, fixes orphans, runs the
+    subject-specific synthesis prompt.
 
 ---
 

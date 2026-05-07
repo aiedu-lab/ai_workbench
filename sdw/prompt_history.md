@@ -1229,3 +1229,39 @@ processes JUST as an enhancement of the knowledge graph
 already built for that subject and captured in the 
 corresponding `Home.md` inside the directory corresponding to 
 that Subject.
+
+## [x] Pristine Plan Reset
+
+Students executing `projects/llm_wiki/SiliconAndAI/plan.md`
+start from a plan where all checkboxes are already `[x]`.
+They need a clean slate to follow the exercise.
+
+Add a `pristine/` subdirectory to each Subject
+(e.g., `projects/llm_wiki/SiliconAndAI/pristine/`) containing:
+- `plan.md` — identical to the working plan but with all
+  Phase 1–4 checkboxes `[ ]` and `✅ COMPLETED` stripped.
+- `articles.md` — all entries reset to `[ ]` (URLs kept).
+
+The `pristine/` directory is committed to git and never
+modified during execution — students copy from it; they
+never write to it.
+
+In `projects/llm_wiki/SiliconAndAI/plan.md` (working copy),
+add `pristine/` to the `## 📁 Required Folder Structure` list.
+
+In `projects/llm_wiki/SiliconAndAI/pristine/plan.md`
+(clean copy), the `## 📁 Required Folder Structure` list also
+includes `pristine/` so students see it as part of the layout.
+
+Update `projects/llm_wiki/README.md`:
+- In `## Repository Layout`, add `pristine/` to the subject
+  directory block (after `analysis/`, before `<NextSubject>/`).
+- In `### Adding a New Subject`, add a step after copying
+  `plan.md` to create `pristine/plan.md` and
+  `pristine/articles.md` as clean copies (all boxes `[ ]`)
+  so students can reset before each run.
+
+In `sessions/llm_wiki.md`, insert a
+`### Before You Begin: Reset to Pristine State` subsection
+immediately before `### Phase 1: The First Ingest` with `cp`
+commands to restore these files before starting execution.
