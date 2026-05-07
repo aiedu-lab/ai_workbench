@@ -64,47 +64,44 @@ Three workflows cover every update scenario:
 
 ### Phase 1: The First Ingest
 
-**Concept:** Download a source article (e.g. the "Moore's Law"
-Wikipedia page) into `raw_sources/` and prompt Claude Code to
-build an initial structured wiki — separate files for concepts,
-people, and technologies, linked with Obsidian `[[wikilinks]]`.
-Open Obsidian Graph View to see the first cluster of linked
-notes appear.
+**Concept:** Initialise the `SiliconAndAI` vault (Phases 1–2
+of `plan.md`), fetch the Moore's Law Wikipedia article to
+`raw_sources/public/`, then run Phase 3 (Data Ingestion):
+Claude creates concept, people, and technology notes linked
+with Obsidian `[[wikilinks]]`. Open Obsidian Graph View to
+see the first cluster of linked notes appear.
 
-> For exact download commands and prompts, see
-> [Phase 2: First Ingestion](
-> ../projects/llm_wiki/plan_template.md#phase-2-first-ingestion-moores-law)
-> in the detailed plan.
+> For commands and prompts, see
+> [Phases 1–3 of the detailed plan](
+> ../projects/llm_wiki/SiliconAndAI/plan.md).
 
 ### Phase 2: The Compound Effect
 
-**Concept:** Download a second article (e.g. "History of
-Artificial Intelligence") and ingest it into the existing wiki.
-Claude cross-references the new content with existing notes
-automatically — watch the Obsidian Graph View draw connections
-between Moore's Law and AI breakthroughs without any manual
-linking.
+**Concept:** Register the History of AI article in
+`articles.md` (state `[ ]`), fetch it via Phase 2 of
+`plan.md`, then run Phase 5 (Incremental Ingestion). Claude
+enriches existing notes and draws explicit cross-links —
+watch Obsidian Graph View connect Moore's Law breakthroughs
+to AI milestones without any manual linking.
 
-> For exact download commands and prompts, see
-> [Phase 3: Second Ingestion](
-> ../projects/llm_wiki/plan_template.md#phase-3-second-ingestion-history-of-ai)
-> in the detailed plan.
+> For commands and prompts, see
+> [Phase 5: Incremental Ingestion](
+> ../projects/llm_wiki/SiliconAndAI/plan.md).
 
 ### Phase 3: The Synthesis
 
-**Concept:** Query your personal knowledge graph for a
-synthesized answer (e.g. "How did hardware limitations dictate
-the timeline of AI advancements?"). Claude answers using only
-the notes it built — no internet search — and saves the
-response as a new markdown file in the wiki.
+**Concept:** Run Phase 4 (Verification) of `plan.md` to
+check for orphaned notes, then issue the synthesis prompt.
+Claude saves the analysis to `analysis/` — no internet
+search; synthesis is drawn entirely from the curated
+knowledge graph it built.
 
-**Key Takeaway:** The AI is not searching the open internet; it
-is synthesizing from the curated knowledge graph it built.
+**Key Takeaway:** The AI is not searching the open internet;
+it is synthesizing from the curated knowledge graph it built.
 
-> For the exact synthesis prompt, see
-> [Phase 4: Synthesis](
-> ../projects/llm_wiki/plan_template.md#phase-4-synthesis)
-> in the detailed plan.
+> For the synthesis prompt and verification steps, see
+> [Phase 4: Verification](
+> ../projects/llm_wiki/SiliconAndAI/plan.md).
 
 ---
 
