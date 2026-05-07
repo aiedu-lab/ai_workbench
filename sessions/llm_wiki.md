@@ -147,37 +147,54 @@ topics. Note which existing notes gained new incoming links
 
 ### Coherent Home.md Growth
 
-`Home.md` is the **index**, not the encyclopaedia. Each topic that
-enters the vault should add only a small number of canonical entries
-to `Home.md` — one line per major concept, person, or technology.
-The detail lives in the individual notes.
+Each subject's `Home.md` lives in its own subdirectory and
+is the **index** for that subject, not a vault-wide
+encyclopaedia.
 
-**Model:** look at how Moore's Law and AI History were factored in
-(Phases 1–2). Each topic added:
+**Expanding an existing subject (Phase 4):** each new
+article enriches the subject's existing `Home.md` — add
+only a small number of canonical entries, one line per major
+new concept, person, or technology. Niche concepts go as
+sub-bullets.
+
+**Model:** look at how Moore's Law and History of AI were
+factored in (Phases 1–2). Each article added:
 - A handful of entries under **Recent Additions**
 - Key concept titles under **Core Concepts**
 - Names under **People** (grouped by era or field)
 - Key technologies under **Technologies**
 
-Follow the same pattern for every new topic. A cluttered `Home.md`
-defeats the purpose — if a concept is niche, skip it or add it as
-a sub-bullet under an existing entry.
+**Adding a new subject (Optional Extension):** create a new
+subdirectory with its own `Home.md` and `plan.md` — it does
+not modify the existing subject's `Home.md`.
 
-> **Rule:** if removing a `Home.md` entry wouldn't confuse a future
-> reader of the vault, don't add it.
+> **Rule:** if removing a `Home.md` entry wouldn't confuse
+> a future reader of the vault, don't add it.
 
 ---
 
 ### Optional Extension — Group Meetup Organizer PKM
 
-Bridge this session back to the main project arc:
+This is a **new subject** exercise — follow the
+"Adding a New Subject" workflow from
+[projects/llm_wiki/README.md](
+../projects/llm_wiki/README.md),
+not the Phase 4 incremental-ingestion pattern.
 
-```text
-Ingest plans/specs/event_organizer.md. Create concept notes for
-Poller, Selector, and Notifier. Create a technology note for
-Discord Webhooks. Cross-reference with existing AI and systems
-notes where they connect. Update Home.md.
-```
+1. Create a `GroupMeetup/` subdirectory at the vault root.
+2. Copy and adapt `SiliconAndAI/plan.md` for the
+   `GroupMeetup` taxonomy (`concepts/`, `tech/`).
+3. Add `plans/specs/event_organizer.md` as a private article
+   in `GroupMeetup/articles.md` (state `[ ]`).
+4. Run Phases 1–4 of the new `plan.md`:
+   - Initialise dirs, `Home.md`, `articles.md`
+   - Fetch / confirm `event_organizer.md` in `raw_sources/`
+   - Ingest: create notes for Poller, Selector, Notifier,
+     Discord Webhooks; cross-reference with any AI or
+     systems notes that connect
+   - Verify: resolve orphans
 
-This connects the PKM session to the Group Meetup Organizer project
-that runs through every other session in the lab.
+The new `GroupMeetup/Home.md` is created fresh — it does
+not modify `SiliconAndAI/Home.md`. This connects the PKM
+session to the Group Meetup Organizer project running
+through every other session in the lab.
