@@ -42,6 +42,26 @@ knowledge graph.
 
 We will watch the AI connect two seemingly unrelated articles.
 
+### The Framework
+
+The LLM Wiki uses **Specification Driven PKM**: each subject
+lives in its own subdirectory with a dedicated `Home.md`,
+`plan.md`, and taxonomy folders (`concepts/`, `people/`,
+`tech/`). `raw_sources/` holds fetched articles locally
+(gitignored); `analysis/` stores synthesis outputs.
+
+Three workflows cover every update scenario:
+
+| Scenario | Workflow |
+|---|---|
+| New subject | Create subdirectory; adapt `plan.md`; run Phases 1–4 |
+| New article, existing subject | Register in `articles.md`; run Phase 5 |
+| Updated article | Uncheck `[✓]→[ ]` in `articles.md`; re-run Phase 5 |
+
+> For the full directory layout and workflow steps, see
+> [projects/llm_wiki/README.md](
+> ../projects/llm_wiki/README.md).
+
 ### Phase 1: The First Ingest
 
 **Concept:** Download a source article (e.g. the "Moore's Law"
