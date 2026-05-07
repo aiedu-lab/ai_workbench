@@ -3168,3 +3168,74 @@ reference removed.
 TEST: `grep -n "verify_links" sessions/llm_wiki.md` returns
 0 matches; `grep -n '^\`\`\`bash\|^\`\`\`text'
 sessions/llm_wiki.md` shows no blocks in Phase 4 area.
+
+## Phase 21
+
+### Step 21.1: Add `### The Framework` subsection
+
+CONTEXT: `sessions/llm_wiki.md` has no PKM layout overview
+before the exercise phases.
+ACTION: Insert `### The Framework` subsection in
+`sessions/llm_wiki.md` after intro sentence, before Phase 1.
+Content: subject-subdirectory layout, three-workflow table,
+reference to `../projects/llm_wiki/README.md`.
+CONSTRAINTS: Insert only; do not touch Phase 1–4 content.
+OUTPUT: `sessions/llm_wiki.md` contains `### The Framework`.
+TEST: `grep -n "### The Framework" sessions/llm_wiki.md`
+prints one match.
+
+### Step 21.2: Reword Phases 1–3 + fix plan_template.md refs
+
+CONTEXT: Phases 1–3 reference deleted `plan_template.md` and
+do not align with `SiliconAndAI/plan.md` phase names.
+ACTION: In `sessions/llm_wiki.md`, reword Phase 1 concept to
+reference Phases 1–3 of SiliconAndAI/plan.md; Phase 2 to
+Phase 5 (Incremental Ingestion); Phase 3 to Phase 4
+(Verification). Replace all `plan_template.md` links with
+`../projects/llm_wiki/SiliconAndAI/plan.md`.
+CONSTRAINTS: Do not touch Phase 4 or sections below Phase 3.
+OUTPUT: No `plan_template.md` references in Phases 1–3.
+TEST: `grep "plan_template" sessions/llm_wiki.md` → 0 matches.
+
+### Step 21.3: Reword Phase 4 — remove "own topic" option
+
+CONTEXT: Phase 4 has "choose your own topic" paragraphs and
+`plan_template.md` references.
+ACTION: In `sessions/llm_wiki.md` Phase 4: rename to "Expand
+with a New Article"; delete "You are free to choose…"
+paragraph; reword Steps 1–2 to use Phase 2 + Phase 5 of
+plan.md; delete "If you chose your own topic:" block in
+Step 3; replace `plan_template.md` links with
+`SiliconAndAI/plan.md`.
+CONSTRAINTS: Do not touch Phases 1–3 or sections below Phase 4.
+OUTPUT: No "your own topic" or `plan_template.md` text remains.
+TEST: `grep "plan_template\|your own topic\|chose your own"
+sessions/llm_wiki.md` → 0 matches.
+
+### Step 21.4: Reword Coherent Home.md Growth + Optional Ext.
+
+CONTEXT: Both sections do not distinguish expanding an existing
+subject from adding a new subject subdirectory.
+ACTION: In `sessions/llm_wiki.md`, add Phase-4-expansion vs.
+new-subject framing to "Coherent Home.md Growth"; rewrite
+"Optional Extension" as a numbered new-subject workflow:
+create `GroupMeetup/` subdirectory, adapt SiliconAndAI/plan.md,
+add event_organizer.md, run Phases 1–4; reference README.md.
+CONSTRAINTS: Do not touch Phase 1–4 content.
+OUTPUT: Coherent section mentions "subject's subdirectory";
+Optional Extension has numbered steps + README.md reference.
+TEST: `grep -n "subdirectory\|GroupMeetup" sessions/llm_wiki.md`
+returns matches in both sections.
+
+### Step 21.5: Mark LLM Wiki Reclean complete
+
+CONTEXT: Steps 21.1–21.4 are all executed and committed.
+ACTION: `sdw/prompt_history.md`: mark
+`## [ ] LLM Wiki Reclean` → `## [x]`. `sdw/replan.md`: update
+pointer to `#improve-setup-skills-rag`. Append Phase 21 steps
+to `sdw/plan.md`. Commit + tag.
+CONSTRAINTS: Do not modify other lines in prompt_history.md.
+OUTPUT: `## [x] LLM Wiki Reclean` in prompt_history.md;
+replan.md points to next section; commit tagged and pushed.
+TEST: `grep "\[ \] LLM Wiki Reclean" sdw/prompt_history.md`
+→ 0 matches.
