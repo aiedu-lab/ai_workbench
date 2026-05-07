@@ -105,49 +105,43 @@ it is synthesizing from the curated knowledge graph it built.
 
 ---
 
-### Phase 4: Expand with a New Topic
+### Phase 4: Expand with a New Article
 
-**Suggested topic: GPU Computing**
-> Why this topic? GPU Computing connects directly to both Moore's Law
-> (billions of transistors packed onto a single chip) and the History
-> of AI (the GPU-powered deep learning revolution of 2012 that ended
-> the second AI Winter). Ingesting it will generate many new cross-links
-> to existing notes — Dennard Scaling, Deep Learning, Transformer
+**Topic: GPU Computing.**
+> Why GPU Computing? It connects directly to both Moore's Law
+> (billions of transistors packed onto a single chip) and the
+> History of AI (the GPU-powered deep learning revolution of
+> 2012 that ended the second AI Winter). Ingesting it generates
+> new cross-links to Dennard Scaling, Deep Learning, Transformer
 > Architecture, Gordon Moore, and more.
 
-You are free to choose any topic you find interesting. If you pick
-your own topic, follow the same four steps below and explore whatever
-connections emerge.
+#### Step 1: Register and fetch the article
 
-#### Step 1: Download the source
+Add a GPU Computing URL to `articles.md` (state `[ ]`).
+Run Phase 2 of `plan.md` to fetch it to
+`raw_sources/public/` and mark it `[x]`.
 
-Download a source article on your chosen topic into
-`raw_sources/`. See [the detailed plan](
-../projects/llm_wiki/plan_template.md) for the exact command.
+> See [Phase 2: Data Fetching](
+> ../projects/llm_wiki/SiliconAndAI/plan.md)
+> for the exact command.
 
-#### Step 2: Ingest and link
+#### Step 2: Incremental ingestion
 
-Prompt Claude Code to ingest the new source, create concept,
-people, and technology notes following the existing wiki
-pattern, and cross-reference with existing notes. Update
-`Home.md`. See [the detailed plan](
-../projects/llm_wiki/plan_template.md) for the exact prompt.
+Run Phase 5 (Incremental Ingestion) of `plan.md`. Claude
+enriches or creates notes, cross-links new content with ALL
+relevant existing notes, updates `Home.md`, and resolves
+any new orphans.
 
-Link verification (zero orphans, zero broken wikilinks) is
-covered in the detailed plan.
+> See [Phase 5: Incremental Ingestion](
+> ../projects/llm_wiki/SiliconAndAI/plan.md)
+> for the exact prompt.
 
 #### Step 3: Explore the knowledge graph
 
-Open **Obsidian Graph View**. Navigate `Home.md` and look for
-connections between GPU Computing and the previous topics. Note
-which existing notes gained new incoming links — this is where
-your knowledge graph compounded.
-
-> **If you chose your own topic:** navigate `Home.md` to
-> discover which previous topics your new topic relates to —
-> the cross-links reveal the connections. Then form your own
-> synthesis question that ties your new topic to at least two
-> existing ones.
+Open **Obsidian Graph View**. Navigate `Home.md` and look
+for connections between GPU Computing and the previous
+topics. Note which existing notes gained new incoming links
+— this is where your knowledge graph compounded.
 
 ---
 
