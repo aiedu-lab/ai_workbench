@@ -124,7 +124,10 @@ git commit -m "feat: Phase 1: Step 2 - add history list to index.html"
 
 ### 5. Update Plan, Tag, and Push
 
-After each committed step, mark it COMPLETED in `plan.md`, then:
+After each committed step, mark it COMPLETED in `plan.md`. If the
+plan uses checkbox tasks (`- [ ]`), also flip every checkbox in the
+completed phase to `- [x]` before committing — not just the phase
+heading. Then:
 
 ```bash
 git add plan.md

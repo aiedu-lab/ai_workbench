@@ -1178,3 +1178,90 @@ building off of the detailed plan. That is leave the two sections
 below as is: 
 * `### Coherent Home.md Growth`
 * `### Optional Extension — Group Meetup Organizer PKM`
+
+## [x] LLM Wiki Reclean
+
+### LLM Wiki README Summary and Reference from Session
+* Add a new subsection right before `The First Ingest` subsection 
+in `The Exercise: Compounding Knowledge` section of the session 
+`sessions/llm_wiki` that goes over the framework of 
+`projects/llm_wiki/README.md`. 
+
+
+### Knowledge Graph Updates
+The overall objective of the exercise 
+`The Exercise: Compounding Knowledge` is to cover all 
+scenarios of building/updating the personal knowledge 
+graph, namely:
+* New KG for a new subject, new articles
+* Update KG for an existing subject, new article
+* Update KG for an existing subject, updated of existing article
+* New KG for an unrelated subject, new article.
+
+Please **validate** all the above scenarios is covered by the 
+different Phases/Steps mentioned in `sessions/llm_wiki`. 
+Specifically, reword per the below suggestions:
+
+* Phase 1 to Phase 3 of `sessions/llm_wiki` should be re-worded 
+and re-referenced to make it consistent with the appropriate 
+Phases of `projects/llm_wiki/SiliconAndAI/plan.md`. 
+Note that the `plan.md` is already executing the Fetch, Ingest, 
+Re-Ingest, ReLink of new or updated documents. 
+
+* Remove the option of giving the user of choosing their own
+topic in Phase 4 of `sessions/llm_wiki`. It just 
+complicates the lesson. 
+
+* Phase 4 of `sessions/llm_wiki` (adds a new source, re-ingests, 
+re-links) should be re-worded and re-referenced to make it 
+consistent with teh appropriate Phases of `projects/llm_wiki/plan.md`. 
+
+* Reword section `Coherent Home.md Growth` and 
+`Optional Extension - Group Meetup Organizer PKM` in the session
+`sessions/llm_wiki` to emphasize that addition of completely 
+new subjects as this one should be dealt by creating a 
+completely different subdirectory inside `sessions/llm_wiki` 
+with a parallel and new set of knowledge graph `Home.md`, 
+`plan.md`, directories, concepts, topics, raw_sources, etc. 
+whereas expansion of an existing subject with a New Topic as 
+was done in Phase 4 of `sessions/llm_wiki` should be 
+processes JUST as an enhancement of the knowledge graph 
+already built for that subject and captured in the 
+corresponding `Home.md` inside the directory corresponding to 
+that Subject.
+
+## [x] Pristine Plan Reset
+
+Students executing `projects/llm_wiki/SiliconAndAI/plan.md`
+start from a plan where all checkboxes are already `[x]`.
+They need a clean slate to follow the exercise.
+
+Add a `pristine/` subdirectory to each Subject
+(e.g., `projects/llm_wiki/SiliconAndAI/pristine/`) containing:
+- `plan.md` — identical to the working plan but with all
+  Phase 1–4 checkboxes `[ ]` and `✅ COMPLETED` stripped.
+- `articles.md` — all entries reset to `[ ]` (URLs kept).
+
+The `pristine/` directory is committed to git and never
+modified during execution — students copy from it; they
+never write to it.
+
+In `projects/llm_wiki/SiliconAndAI/plan.md` (working copy),
+add `pristine/` to the `## 📁 Required Folder Structure` list.
+
+In `projects/llm_wiki/SiliconAndAI/pristine/plan.md`
+(clean copy), the `## 📁 Required Folder Structure` list also
+includes `pristine/` so students see it as part of the layout.
+
+Update `projects/llm_wiki/README.md`:
+- In `## Repository Layout`, add `pristine/` to the subject
+  directory block (after `analysis/`, before `<NextSubject>/`).
+- In `### Adding a New Subject`, add a step after copying
+  `plan.md` to create `pristine/plan.md` and
+  `pristine/articles.md` as clean copies (all boxes `[ ]`)
+  so students can reset before each run.
+
+In `sessions/llm_wiki.md`, insert a
+`### Before You Begin: Reset to Pristine State` subsection
+immediately before `### Phase 1: The First Ingest` with `cp`
+commands to restore these files before starting execution.

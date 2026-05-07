@@ -8,7 +8,7 @@ Use the below prompt to effect any changes to
 Read 
 * [Operating Protocol](Claude.md)
 * [Specification Plan](sdw/plan.md) and 
-* [Replan Prompt](sdw/prompt_history.md#llm-wiki-cleanup).
+* [Replan Prompt](sdw/prompt_history.md#improve-setup-skills-rag).
 
 ## TEST
 What is the title of the section in prompt_history and what line numbers

@@ -3168,3 +3168,139 @@ reference removed.
 TEST: `grep -n "verify_links" sessions/llm_wiki.md` returns
 0 matches; `grep -n '^\`\`\`bash\|^\`\`\`text'
 sessions/llm_wiki.md` shows no blocks in Phase 4 area.
+
+## Phase 21
+
+### Step 21.1: Add `### The Framework` subsection
+
+CONTEXT: `sessions/llm_wiki.md` has no PKM layout overview
+before the exercise phases.
+ACTION: Insert `### The Framework` subsection in
+`sessions/llm_wiki.md` after intro sentence, before Phase 1.
+Content: subject-subdirectory layout, three-workflow table,
+reference to `../projects/llm_wiki/README.md`.
+CONSTRAINTS: Insert only; do not touch Phase 1–4 content.
+OUTPUT: `sessions/llm_wiki.md` contains `### The Framework`.
+TEST: `grep -n "### The Framework" sessions/llm_wiki.md`
+prints one match.
+
+### Step 21.2: Reword Phases 1–3 + fix plan_template.md refs
+
+CONTEXT: Phases 1–3 reference deleted `plan_template.md` and
+do not align with `SiliconAndAI/plan.md` phase names.
+ACTION: In `sessions/llm_wiki.md`, reword Phase 1 concept to
+reference Phases 1–3 of SiliconAndAI/plan.md; Phase 2 to
+Phase 5 (Incremental Ingestion); Phase 3 to Phase 4
+(Verification). Replace all `plan_template.md` links with
+`../projects/llm_wiki/SiliconAndAI/plan.md`.
+CONSTRAINTS: Do not touch Phase 4 or sections below Phase 3.
+OUTPUT: No `plan_template.md` references in Phases 1–3.
+TEST: `grep "plan_template" sessions/llm_wiki.md` → 0 matches.
+
+### Step 21.3: Reword Phase 4 — remove "own topic" option
+
+CONTEXT: Phase 4 has "choose your own topic" paragraphs and
+`plan_template.md` references.
+ACTION: In `sessions/llm_wiki.md` Phase 4: rename to "Expand
+with a New Article"; delete "You are free to choose…"
+paragraph; reword Steps 1–2 to use Phase 2 + Phase 5 of
+plan.md; delete "If you chose your own topic:" block in
+Step 3; replace `plan_template.md` links with
+`SiliconAndAI/plan.md`.
+CONSTRAINTS: Do not touch Phases 1–3 or sections below Phase 4.
+OUTPUT: No "your own topic" or `plan_template.md` text remains.
+TEST: `grep "plan_template\|your own topic\|chose your own"
+sessions/llm_wiki.md` → 0 matches.
+
+### Step 21.4: Reword Coherent Home.md Growth + Optional Ext.
+
+CONTEXT: Both sections do not distinguish expanding an existing
+subject from adding a new subject subdirectory.
+ACTION: In `sessions/llm_wiki.md`, add Phase-4-expansion vs.
+new-subject framing to "Coherent Home.md Growth"; rewrite
+"Optional Extension" as a numbered new-subject workflow:
+create `GroupMeetup/` subdirectory, adapt SiliconAndAI/plan.md,
+add event_organizer.md, run Phases 1–4; reference README.md.
+CONSTRAINTS: Do not touch Phase 1–4 content.
+OUTPUT: Coherent section mentions "subject's subdirectory";
+Optional Extension has numbered steps + README.md reference.
+TEST: `grep -n "subdirectory\|GroupMeetup" sessions/llm_wiki.md`
+returns matches in both sections.
+
+### Step 21.5: Mark LLM Wiki Reclean complete
+
+CONTEXT: Steps 21.1–21.4 are all executed and committed.
+ACTION: `sdw/prompt_history.md`: mark
+`## [ ] LLM Wiki Reclean` → `## [x]`. `sdw/replan.md`: update
+pointer to `#improve-setup-skills-rag`. Append Phase 21 steps
+to `sdw/plan.md`. Commit + tag.
+CONSTRAINTS: Do not modify other lines in prompt_history.md.
+OUTPUT: `## [x] LLM Wiki Reclean` in prompt_history.md;
+replan.md points to next section; commit tagged and pushed.
+TEST: `grep "\[ \] LLM Wiki Reclean" sdw/prompt_history.md`
+→ 0 matches.
+
+## Phase 22
+
+### Step 22.1: Create `pristine/` directory with clean copies
+
+CONTEXT: `SiliconAndAI/` has no `pristine/` subdirectory;
+working `plan.md` has all Phase 1–4 boxes `[x]`; `articles.md`
+entries are `[✓]`.
+ACTION: Create `pristine/plan.md` (all Phase 1–4 `[x]` → `[ ]`,
+strip `✅ COMPLETED` from headings, Phase 5 unchanged, add
+`pristine/` to Required Folder Structure). Update working
+`plan.md` Required Folder Structure with `pristine/` entry.
+Create `pristine/articles.md` (`[✓]` → `[ ]`, URLs unchanged).
+In `README.md`: add `pristine/` to `## Repository Layout`
+fenced block; add step 5 to `### Adding a New Subject`
+workflow for creating `pristine/` copies; renumber steps 5–9
+→ 6–10.
+CONSTRAINTS: Only add `pristine/` entry to working `plan.md`
+Required Folder Structure — do not change any other line.
+OUTPUT: `pristine/plan.md` zero task-checkbox `[x]`, zero
+`COMPLETED`; `pristine/` in Required Folder Structure of both
+plan.md files; `pristine/articles.md` zero `[✓]`/`[x]`;
+`README.md` mentions `pristine/` in ≥2 places.
+TEST: `grep "^- \[x\]"
+projects/llm_wiki/SiliconAndAI/pristine/plan.md` → 0 matches;
+`grep "pristine" projects/llm_wiki/README.md | wc -l` → ≥2.
+
+### Step 22.2: Add "Before You Begin" section to sessions/llm_wiki.md
+
+CONTEXT: `sessions/llm_wiki.md` has no instruction to restore
+pristine files before Phase 1.
+ACTION: Insert `### Before You Begin: Reset to Pristine State`
+immediately before `### Phase 1: The First Ingest` with `cp`
+commands for `pristine/plan.md` and `pristine/articles.md`.
+CONSTRAINTS: Insert only; do not touch Phase 1–4 content.
+OUTPUT: `sessions/llm_wiki.md` contains "Before You Begin"
+heading before "Phase 1: The First Ingest".
+TEST: `grep -n "Before You Begin\|Phase 1: The First"
+sessions/llm_wiki.md` — "Before You Begin" line < "Phase 1".
+
+### Step 22.3: Add prompt entry to sdw/prompt_history.md
+
+CONTEXT: No `Pristine Plan Reset` entry in prompt_history.md.
+ACTION: Append `## [ ] Pristine Plan Reset` block at end of
+prompt_history.md describing all changes: pristine/ files,
+Required Folder Structure updates in both plan.md files,
+README.md layout and workflow updates, and the
+sessions/llm_wiki.md Before You Begin section.
+CONSTRAINTS: Append only; do not modify existing lines.
+OUTPUT: `sdw/prompt_history.md` ends with
+`## [ ] Pristine Plan Reset`.
+TEST: `grep "Pristine Plan Reset" sdw/prompt_history.md`
+→ one match.
+
+### Step 22.4: Mark Pristine Plan Reset complete
+
+CONTEXT: Steps 22.1–22.3 executed and committed.
+ACTION: Mark `## [x] Pristine Plan Reset` in prompt_history.md.
+Replan.md pointer stays at `#improve-setup-skills-rag`.
+Append Phase 22 to sdw/plan.md. Commit + tag.
+CONSTRAINTS: Do not modify other lines in prompt_history.md.
+OUTPUT: `## [x] Pristine Plan Reset` in prompt_history.md;
+sdw/plan.md has Phase 22; commit tagged and pushed.
+TEST: `grep "\[ \] Pristine Plan Reset" sdw/prompt_history.md`
+→ 0 matches.

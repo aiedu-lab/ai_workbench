@@ -42,131 +42,175 @@ knowledge graph.
 
 We will watch the AI connect two seemingly unrelated articles.
 
+### The Framework
+
+The LLM Wiki uses **Specification Driven PKM**: each subject
+lives in its own subdirectory with a dedicated `Home.md`,
+`plan.md`, and taxonomy folders (`concepts/`, `people/`,
+`tech/`). `raw_sources/` holds fetched articles locally
+(gitignored); `analysis/` stores synthesis outputs.
+
+Three workflows cover every update scenario:
+
+| Scenario | Workflow |
+|---|---|
+| New subject | Create subdirectory; adapt `plan.md`; run Phases 1–4 |
+| New article, existing subject | Register in `articles.md`; run Phase 5 |
+| Updated article | Uncheck `[✓]→[ ]` in `articles.md`; re-run Phase 5 |
+
+> For the full directory layout and workflow steps, see
+> [projects/llm_wiki/README.md](
+> ../projects/llm_wiki/README.md).
+
+### Before You Begin: Reset to Pristine State
+
+The `plan.md` and `articles.md` in your subject directory may
+already have completed checkboxes from a prior run. Copy the
+pristine versions to reset them before starting Phase 1:
+
+```bash
+cp projects/llm_wiki/SiliconAndAI/pristine/plan.md \
+   projects/llm_wiki/SiliconAndAI/plan.md
+cp projects/llm_wiki/SiliconAndAI/pristine/articles.md \
+   projects/llm_wiki/SiliconAndAI/articles.md
+```
+
+> The `pristine/` directory is committed to git and never
+> modified during execution — always safe to copy from.
+
 ### Phase 1: The First Ingest
 
-**Concept:** Download a source article (e.g. the "Moore's Law"
-Wikipedia page) into `raw_sources/` and prompt Claude Code to
-build an initial structured wiki — separate files for concepts,
-people, and technologies, linked with Obsidian `[[wikilinks]]`.
-Open Obsidian Graph View to see the first cluster of linked
-notes appear.
+**Concept:** Initialise the `SiliconAndAI` vault (Phases 1–2
+of `plan.md`), fetch the Moore's Law Wikipedia article to
+`raw_sources/public/`, then run Phase 3 (Data Ingestion):
+Claude creates concept, people, and technology notes linked
+with Obsidian `[[wikilinks]]`. Open Obsidian Graph View to
+see the first cluster of linked notes appear.
 
-> For exact download commands and prompts, see
-> [Phase 2: First Ingestion](
-> ../projects/llm_wiki/plan_template.md#phase-2-first-ingestion-moores-law)
-> in the detailed plan.
+> For commands and prompts, see
+> [Phases 1–3 of the detailed plan](
+> ../projects/llm_wiki/SiliconAndAI/plan.md).
 
 ### Phase 2: The Compound Effect
 
-**Concept:** Download a second article (e.g. "History of
-Artificial Intelligence") and ingest it into the existing wiki.
-Claude cross-references the new content with existing notes
-automatically — watch the Obsidian Graph View draw connections
-between Moore's Law and AI breakthroughs without any manual
-linking.
+**Concept:** Register the History of AI article in
+`articles.md` (state `[ ]`), fetch it via Phase 2 of
+`plan.md`, then run Phase 5 (Incremental Ingestion). Claude
+enriches existing notes and draws explicit cross-links —
+watch Obsidian Graph View connect Moore's Law breakthroughs
+to AI milestones without any manual linking.
 
-> For exact download commands and prompts, see
-> [Phase 3: Second Ingestion](
-> ../projects/llm_wiki/plan_template.md#phase-3-second-ingestion-history-of-ai)
-> in the detailed plan.
+> For commands and prompts, see
+> [Phase 5: Incremental Ingestion](
+> ../projects/llm_wiki/SiliconAndAI/plan.md).
 
 ### Phase 3: The Synthesis
 
-**Concept:** Query your personal knowledge graph for a
-synthesized answer (e.g. "How did hardware limitations dictate
-the timeline of AI advancements?"). Claude answers using only
-the notes it built — no internet search — and saves the
-response as a new markdown file in the wiki.
+**Concept:** Run Phase 4 (Verification) of `plan.md` to
+check for orphaned notes, then issue the synthesis prompt.
+Claude saves the analysis to `analysis/` — no internet
+search; synthesis is drawn entirely from the curated
+knowledge graph it built.
 
-**Key Takeaway:** The AI is not searching the open internet; it
-is synthesizing from the curated knowledge graph it built.
+**Key Takeaway:** The AI is not searching the open internet;
+it is synthesizing from the curated knowledge graph it built.
 
-> For the exact synthesis prompt, see
-> [Phase 4: Synthesis](
-> ../projects/llm_wiki/plan_template.md#phase-4-synthesis)
-> in the detailed plan.
+> For the synthesis prompt and verification steps, see
+> [Phase 4: Verification](
+> ../projects/llm_wiki/SiliconAndAI/plan.md).
 
 ---
 
-### Phase 4: Expand with a New Topic
+### Phase 4: Expand with a New Article
 
-**Suggested topic: GPU Computing**
-> Why this topic? GPU Computing connects directly to both Moore's Law
-> (billions of transistors packed onto a single chip) and the History
-> of AI (the GPU-powered deep learning revolution of 2012 that ended
-> the second AI Winter). Ingesting it will generate many new cross-links
-> to existing notes — Dennard Scaling, Deep Learning, Transformer
+**Topic: GPU Computing.**
+> Why GPU Computing? It connects directly to both Moore's Law
+> (billions of transistors packed onto a single chip) and the
+> History of AI (the GPU-powered deep learning revolution of
+> 2012 that ended the second AI Winter). Ingesting it generates
+> new cross-links to Dennard Scaling, Deep Learning, Transformer
 > Architecture, Gordon Moore, and more.
 
-You are free to choose any topic you find interesting. If you pick
-your own topic, follow the same four steps below and explore whatever
-connections emerge.
+#### Step 1: Register and fetch the article
 
-#### Step 1: Download the source
+Add a GPU Computing URL to `articles.md` (state `[ ]`).
+Run Phase 2 of `plan.md` to fetch it to
+`raw_sources/public/` and mark it `[x]`.
 
-Download a source article on your chosen topic into
-`raw_sources/`. See [the detailed plan](
-../projects/llm_wiki/plan_template.md) for the exact command.
+> See [Phase 2: Data Fetching](
+> ../projects/llm_wiki/SiliconAndAI/plan.md)
+> for the exact command.
 
-#### Step 2: Ingest and link
+#### Step 2: Incremental ingestion
 
-Prompt Claude Code to ingest the new source, create concept,
-people, and technology notes following the existing wiki
-pattern, and cross-reference with existing notes. Update
-`Home.md`. See [the detailed plan](
-../projects/llm_wiki/plan_template.md) for the exact prompt.
+Run Phase 5 (Incremental Ingestion) of `plan.md`. Claude
+enriches or creates notes, cross-links new content with ALL
+relevant existing notes, updates `Home.md`, and resolves
+any new orphans.
 
-Link verification (zero orphans, zero broken wikilinks) is
-covered in the detailed plan.
+> See [Phase 5: Incremental Ingestion](
+> ../projects/llm_wiki/SiliconAndAI/plan.md)
+> for the exact prompt.
 
 #### Step 3: Explore the knowledge graph
 
-Open **Obsidian Graph View**. Navigate `Home.md` and look for
-connections between GPU Computing and the previous topics. Note
-which existing notes gained new incoming links — this is where
-your knowledge graph compounded.
-
-> **If you chose your own topic:** navigate `Home.md` to
-> discover which previous topics your new topic relates to —
-> the cross-links reveal the connections. Then form your own
-> synthesis question that ties your new topic to at least two
-> existing ones.
+Open **Obsidian Graph View**. Navigate `Home.md` and look
+for connections between GPU Computing and the previous
+topics. Note which existing notes gained new incoming links
+— this is where your knowledge graph compounded.
 
 ---
 
 ### Coherent Home.md Growth
 
-`Home.md` is the **index**, not the encyclopaedia. Each topic that
-enters the vault should add only a small number of canonical entries
-to `Home.md` — one line per major concept, person, or technology.
-The detail lives in the individual notes.
+Each subject's `Home.md` lives in its own subdirectory and
+is the **index** for that subject, not a vault-wide
+encyclopaedia.
 
-**Model:** look at how Moore's Law and AI History were factored in
-(Phases 1–2). Each topic added:
+**Expanding an existing subject (Phase 4):** each new
+article enriches the subject's existing `Home.md` — add
+only a small number of canonical entries, one line per major
+new concept, person, or technology. Niche concepts go as
+sub-bullets.
+
+**Model:** look at how Moore's Law and History of AI were
+factored in (Phases 1–2). Each article added:
 - A handful of entries under **Recent Additions**
 - Key concept titles under **Core Concepts**
 - Names under **People** (grouped by era or field)
 - Key technologies under **Technologies**
 
-Follow the same pattern for every new topic. A cluttered `Home.md`
-defeats the purpose — if a concept is niche, skip it or add it as
-a sub-bullet under an existing entry.
+**Adding a new subject (Optional Extension):** create a new
+subdirectory with its own `Home.md` and `plan.md` — it does
+not modify the existing subject's `Home.md`.
 
-> **Rule:** if removing a `Home.md` entry wouldn't confuse a future
-> reader of the vault, don't add it.
+> **Rule:** if removing a `Home.md` entry wouldn't confuse
+> a future reader of the vault, don't add it.
 
 ---
 
 ### Optional Extension — Group Meetup Organizer PKM
 
-Bridge this session back to the main project arc:
+This is a **new subject** exercise — follow the
+"Adding a New Subject" workflow from
+[projects/llm_wiki/README.md](
+../projects/llm_wiki/README.md),
+not the Phase 4 incremental-ingestion pattern.
 
-```text
-Ingest plans/specs/event_organizer.md. Create concept notes for
-Poller, Selector, and Notifier. Create a technology note for
-Discord Webhooks. Cross-reference with existing AI and systems
-notes where they connect. Update Home.md.
-```
+1. Create a `GroupMeetup/` subdirectory at the vault root.
+2. Copy and adapt `SiliconAndAI/plan.md` for the
+   `GroupMeetup` taxonomy (`concepts/`, `tech/`).
+3. Add `plans/specs/event_organizer.md` as a private article
+   in `GroupMeetup/articles.md` (state `[ ]`).
+4. Run Phases 1–4 of the new `plan.md`:
+   - Initialise dirs, `Home.md`, `articles.md`
+   - Fetch / confirm `event_organizer.md` in `raw_sources/`
+   - Ingest: create notes for Poller, Selector, Notifier,
+     Discord Webhooks; cross-reference with any AI or
+     systems notes that connect
+   - Verify: resolve orphans
 
-This connects the PKM session to the Group Meetup Organizer project
-that runs through every other session in the lab.
+The new `GroupMeetup/Home.md` is created fresh — it does
+not modify `SiliconAndAI/Home.md`. This connects the PKM
+session to the Group Meetup Organizer project running
+through every other session in the lab.

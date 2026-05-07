@@ -6,10 +6,23 @@ node_modules/
 # ignore language specific generated directories
 __pycache__/
 
-# ignore Obsidian vault files except plan.md
-projects/llm_wiki/.obsidian
-projects/llm_wiki/Home.md
-projects/llm_wiki/raw_sources
-projects/llm_wiki/concepts
-projects/llm_wiki/people
-projects/llm_wiki/tech
+# Obsidian workspace state (machine-specific, regenerates automatically)
+projects/llm_wiki/.obsidian/workspace.json
+projects/llm_wiki/.obsidian/workspace-mobile.json
+
+# Analysis outputs are local query results â€” do not commit.
+projects/llm_wiki/**/analysis/
+
+# Raw sources are ephemeral processing inputs â€” do not commit.
+# Public articles can be re-fetched from URLs in articles.md.
+# Private articles are sensitive; delete from disk after ingestion.
+# The knowledge graph (concepts/, people/, tech/, ...) is the
+# durable artifact â€” raw_sources/ is not needed once ingested.
+projects/llm_wiki/**/raw_sources/
+
+# Windows noise
+Thumbs.db
+desktop.ini
+
+# Obsidian temp files
+*.tmp.*
