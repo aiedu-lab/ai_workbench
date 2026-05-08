@@ -128,6 +128,28 @@ All content changes must follow this sequence in strict order:
 
 > **No direct content edits.** All changes originate in
 > `sdw/prompt_history.md` and flow through `sdw/plan.md`.
+
+### SDW Skills
+
+Two project-scoped Claude Code slash-command skills live in
+`.claude/commands/` and are available in any Claude Code session
+opened in this repo.
+
+| Skill | Invocation | Purpose |
+|---|---|---|
+| `/replan` | `/replan` or `/replan <section>` | Run the full Specify→Plan→Approve→Execute cycle. Without argument, targets the last `## [ ]` section in `sdw/prompt_history.md`. With argument, targets the named section. |
+| `/plan-step` | `/plan-step [draft]` | Generate or validate a single plan step against the CONTEXT/ACTION/CONSTRAINTS/OUTPUT/TEST template before appending it to `sdw/plan.md`. |
+
+**Examples:**
+```
+/replan                  # auto-targets last unprocessed section
+/replan Skillify         # targets ## Skillify in prompt_history.md
+/plan-step               # interactive — prompts for each field
+/plan-step add pristine/ to README layout
+```
+
+`/plan-step` is applied internally by `/replan` when generating
+each step — no separate invocation needed during a replan cycle.
 > Contributors may not commit directly to `main`.
 
 ---

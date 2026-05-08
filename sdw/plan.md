@@ -3304,3 +3304,70 @@ OUTPUT: `## [x] Pristine Plan Reset` in prompt_history.md;
 sdw/plan.md has Phase 22; commit tagged and pushed.
 TEST: `grep "\[ \] Pristine Plan Reset" sdw/prompt_history.md`
 → 0 matches.
+
+## Phase 23
+
+### Step 23.1: Create `.claude/commands/replan.md` skill
+[ ] Status
+
+CONTEXT: The "Execute sdw/replan.md" workflow is a multi-step
+manual process with no guardrails and no way to auto-detect the
+next unprocessed section.
+ACTION: Create `.claude/commands/replan.md` encoding the full
+SDW replan cycle. Without argument: scan `sdw/prompt_history.md`
+for the last `## [ ]` heading to auto-detect the target.
+With argument (`/replan <section>`): target that named section.
+Generates Phase N+1 steps using the `/plan-step` template,
+presents for approval, then appends to sdw/plan.md and marks
+the target section `[x]` in prompt_history.md. Delete
+`sdw/replan.md` as it is superseded by this skill.
+CONSTRAINTS: Skill file is a prompt template only — no code.
+Do not touch sdw/ files during skill creation.
+OUTPUT: `.claude/commands/replan.md` exists; `sdw/replan.md`
+deleted from repo.
+TEST: `ls .claude/commands/replan.md` → present;
+`git status | grep "deleted.*replan.md"` → one match.
+
+### Step 23.2: Create `.claude/commands/plan-step.md` skill
+[ ] Status
+
+CONTEXT: Plan step generation has no guardrail enforcing all
+five CONTEXT/ACTION/CONSTRAINTS/OUTPUT/TEST fields.
+ACTION: Create `.claude/commands/plan-step.md`. Without
+argument: interactive mode prompting each field. With argument:
+derives all five fields from `$ARGUMENTS` and presents the
+formatted block. Includes the self-check checklist from
+CLAUDE.md §Plan Update Protocol. Referenced internally by
+`/replan` so no separate invocation is needed during a cycle.
+CONSTRAINTS: Skill file is a prompt template only. No sdw/
+files touched.
+OUTPUT: `.claude/commands/plan-step.md` exists.
+TEST: `ls .claude/commands/plan-step.md` → present.
+
+### Step 23.3: Update README.md Contribution Guidelines
+[ ] Status
+
+CONTEXT: `README.md` §Contribution Guidelines has no mention
+of the two new skills.
+ACTION: Append `### SDW Skills` subsection after
+`### Workbench Update Workflow` in `README.md §Contribution
+Guidelines`. Include a table with `/replan` and `/plan-step`,
+invocation syntax, purpose, and examples.
+CONSTRAINTS: Add subsection only; do not modify existing text.
+OUTPUT: `README.md` contains `### SDW Skills` with table
+and examples inside §Contribution Guidelines.
+TEST: `grep "SDW Skills" README.md` → one match.
+
+### Step 23.4: Mark Skillify complete
+[ ] Status
+
+CONTEXT: Steps 23.1–23.3 executed and staged.
+ACTION: Mark `## [x] Skillify` in prompt_history.md (change
+`## Skillify` + separate `[ ] Status` line → single
+`## [x] Skillify` line). Append Phase 23 to sdw/plan.md.
+Commit + tag `v23.4-skillify-step-completed`. Push tags.
+CONSTRAINTS: Do not modify other lines in prompt_history.md.
+OUTPUT: `## [x] Skillify` in prompt_history.md; sdw/plan.md
+has Phase 23; commit tagged and pushed.
+TEST: `grep "## \[ \] Skillify\|## Skillify$"
+sdw/prompt_history.md` → 0 matches.

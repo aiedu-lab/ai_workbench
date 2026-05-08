@@ -1265,3 +1265,61 @@ In `sessions/llm_wiki.md`, insert a
 `### Before You Begin: Reset to Pristine State` subsection
 immediately before `### Phase 1: The First Ingest` with `cp`
 commands to restore these files before starting execution.
+
+## [x] Skillify
+
+Exploring if few repetitive and templatized prompts can be 
+morphed into skills. Reference below sections.
+
+### Generating Plan Steps
+
+1. Plan changes: After updating the prompt_history.md with ideas 
+on our next objective, we do the following to effect the 
+associated change to `sdw/plan.md`: 
+
+* Update`sdw/replan.md` where we only change the 
+[Replan Prompt](sdw/prompt_history.md#<section>) where the 
+<section> is replaced with the last section appened to 
+`prompt_history.md`. 
+
+* Prompt Claude chat window to "Execute `sdw/replan.md`"
+
+Could the above workflow be encoded as a skill? 
+
+* If so, where should we store the skill? 
+
+* We should add to README.md on the section 
+`Contribution Guidelines` section a subsection on 
+* Instructions on how do we invoke the skill?
+
+2. Generate Plan Step: During the generation of 
+updates to the plan, each steps had to follow 
+a set template as set forth in CLAUDE.md section on 
+`Plan Update Protocol`, namely:
+`Step N: <step name>` with refenences to 
+CONTEXT, ACTION, ...
+
+If the step generation itself should be 
+organized as a templatized skill to ensure that 
+the plan step generation is guardrailed to strictly 
+follows that framework, then please do so and
+guide as to where we store that skill and how do 
+we ensure plan generation always invoke that 
+templatized skill
+
+### Plan-Step Skill Refinement (executed Phase 23)
+
+The `/plan-step` skill template was updated to include a
+`[ ] Status` line immediately after the step heading:
+
+```
+### Step N.K: <step name>
+
+[ ] Status
+
+CONTEXT: ...
+```
+
+This `[ ] Status` line is flipped to `[x] Status` when the
+step is executed, providing an at-a-glance tracker inside
+`sdw/plan.md` without modifying the five-field template.
