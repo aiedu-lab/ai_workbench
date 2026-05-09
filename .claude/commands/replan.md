@@ -25,7 +25,8 @@ Read these files in order:
 2. `sdw/plan.md` — scan all `## Phase N` headings; the new
    phase is the highest N found + 1.
 3. `sdw/prompt_history.md`:
-   - **No argument:** find the last line matching `^## \[ \]`
+   - **No argument:** find the last `## <Title>` heading whose
+     immediately following line is `[ ] Status` 
      (the most recently added unprocessed section). Use that
      section as the target.
    - **With argument:** find the section whose heading contains
@@ -46,8 +47,8 @@ Apply the plan-step self-check to every step before writing it.
 
 The **final step** of every phase must be a "Mark complete" step
 that:
-- Changes `## [ ] <title>` → `## [x] <title>` in
-  `sdw/prompt_history.md`.
+- Changes `[ ] Status` → `[x] Status` on the line after
+  `## <title>` in `sdb/prompt_history.md`
 - Appends the full Phase N+1 block (condensed one-paragraph-per-
   step format) to `sdw/plan.md`.
 - Commits all changed files and tags
@@ -76,10 +77,12 @@ Execute one step per turn following CLAUDE.md §One Step at a Time:
 After the final step, run the verification suite:
 ```bash
 # Target section marked complete
-grep "^## \[ \] <title>" sdw/prompt_history.md  # → 0 matches
+grep -A1 "^## <title>" sdb/prompt_history.md | grep "^\[ \] Status"
+# → 0 matches
 
 # No remaining unprocessed sections before this one
-grep "^## \[ \]" sdw/prompt_history.md | tail -1
+grep -A1 "^## " sdb/prompt_history.md \
+  | grep -B1 "^\[ \] Status" | grep "^## " | tail -1
 
 # Tag pushed
 git tag | grep "v<N+1>\."

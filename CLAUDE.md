@@ -51,6 +51,7 @@ TEST: <the test case name/file that must pass>
 
 #### Validation rule (self-check before appending):
 Before appending any step to plan.md, verify:
+- [ ] STATUS is a checkbox that is flipped to [x] once plan is executed
 - [ ] CONTEXT is a single sentence describing current state
 - [ ] ACTION names specific files, functions, or APIs — no vague verbs like "implement" or "handle"
 - [ ] CONSTRAINTS explicitly names what is out of scope
@@ -59,6 +60,11 @@ Before appending any step to plan.md, verify:
 
 If any field is missing or vague, DO NOT append the step. 
 Ask for clarification instead.
+
+To generate a conforming step interactively, invoke
+`/plan-step [description]`. To append a new phase for the latest
+unprocessed `sdb/prompt_history.md` section, invoke
+`/replan [section-name]`.
 
 ## BEHAVIORAL INVARIANTS
 
