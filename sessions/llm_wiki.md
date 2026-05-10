@@ -46,7 +46,7 @@ We will watch the AI connect two seemingly unrelated articles.
 
 The LLM Wiki uses **Specification Driven PKM**: each subject
 lives in its own subdirectory with a dedicated `Home.md`,
-`plan.md`, and taxonomy folders (`concepts/`, `people/`,
+`proc_article.md`, and taxonomy folders (`concepts/`, `people/`,
 `tech/`). `raw_sources/` holds fetched articles locally
 (gitignored); `analysis/` stores synthesis outputs.
 
@@ -54,7 +54,7 @@ Three workflows cover every update scenario:
 
 | Scenario | Workflow |
 |---|---|
-| New subject | Create subdirectory; adapt `plan.md`; run Phases 1–4 |
+| New subject | Create subdirectory; adapt `proc_article.md`; run Phases 1–4 |
 | New article, existing subject | Register in `articles.md`; run Phase 5 |
 | Updated article | Uncheck `[✓]→[ ]` in `articles.md`; re-run Phase 5 |
 
@@ -64,13 +64,13 @@ Three workflows cover every update scenario:
 
 ### Before You Begin: Reset to Pristine State
 
-The `plan.md` and `articles.md` in your subject directory may
+The `proc_article.md` and `articles.md` in your subject directory may
 already have completed checkboxes from a prior run. Copy the
 pristine versions to reset them before starting Phase 1:
 
 ```bash
-cp projects/llm_wiki/silicon_ai/pristine/plan.md \
-   projects/llm_wiki/silicon_ai/plan.md
+cp projects/llm_wiki/silicon_ai/pristine/proc_article.md \
+   projects/llm_wiki/silicon_ai/proc_article.md
 cp projects/llm_wiki/silicon_ai/pristine/articles.md \
    projects/llm_wiki/silicon_ai/articles.md
 ```
@@ -81,7 +81,7 @@ cp projects/llm_wiki/silicon_ai/pristine/articles.md \
 ### Phase 1: The First Ingest
 
 **Concept:** Initialise the `silicon_ai` vault (Phases 1–2
-of `plan.md`), fetch the Moore's Law Wikipedia article to
+of `proc_article.md`), fetch the Moore's Law Wikipedia article to
 `raw_sources/public/`, then run Phase 3 (Data Ingestion):
 Claude creates concept, people, and technology notes linked
 with Obsidian `[[wikilinks]]`. Open Obsidian Graph View to
@@ -89,24 +89,24 @@ see the first cluster of linked notes appear.
 
 > For commands and prompts, see
 > [Phases 1–3 of the detailed plan](
-> ../projects/llm_wiki/silicon_ai/plan.md).
+> ../projects/llm_wiki/silicon_ai/proc_article.md).
 
 ### Phase 2: The Compound Effect
 
 **Concept:** Register the History of AI article in
 `articles.md` (state `[ ]`), fetch it via Phase 2 of
-`plan.md`, then run Phase 5 (Incremental Ingestion). Claude
+`proc_article.md`, then run Phase 5 (Incremental Ingestion). Claude
 enriches existing notes and draws explicit cross-links —
 watch Obsidian Graph View connect Moore's Law breakthroughs
 to AI milestones without any manual linking.
 
 > For commands and prompts, see
 > [Phase 5: Incremental Ingestion](
-> ../projects/llm_wiki/silicon_ai/plan.md).
+> ../projects/llm_wiki/silicon_ai/proc_article.md).
 
 ### Phase 3: The Synthesis
 
-**Concept:** Run Phase 4 (Verification) of `plan.md` to
+**Concept:** Run Phase 4 (Verification) of `proc_article.md` to
 check for orphaned notes, then issue the synthesis prompt.
 Claude saves the analysis to `analysis/` — no internet
 search; synthesis is drawn entirely from the curated
@@ -117,7 +117,7 @@ it is synthesizing from the curated knowledge graph it built.
 
 > For the synthesis prompt and verification steps, see
 > [Phase 4: Verification](
-> ../projects/llm_wiki/silicon_ai/plan.md).
+> ../projects/llm_wiki/silicon_ai/proc_article.md).
 
 ---
 
@@ -134,22 +134,22 @@ it is synthesizing from the curated knowledge graph it built.
 #### Step 1: Register and fetch the article
 
 Add a GPU Computing URL to `articles.md` (state `[ ]`).
-Run Phase 2 of `plan.md` to fetch it to
+Run Phase 2 of `proc_article.md` to fetch it to
 `raw_sources/public/` and mark it `[x]`.
 
 > See [Phase 2: Data Fetching](
-> ../projects/llm_wiki/silicon_ai/plan.md)
+> ../projects/llm_wiki/silicon_ai/proc_article.md)
 > for the exact command.
 
 #### Step 2: Incremental ingestion
 
-Run Phase 5 (Incremental Ingestion) of `plan.md`. Claude
+Run Phase 5 (Incremental Ingestion) of `proc_article.md`. Claude
 enriches or creates notes, cross-links new content with ALL
 relevant existing notes, updates `Home.md`, and resolves
 any new orphans.
 
 > See [Phase 5: Incremental Ingestion](
-> ../projects/llm_wiki/silicon_ai/plan.md)
+> ../projects/llm_wiki/silicon_ai/proc_article.md)
 > for the exact prompt.
 
 #### Step 3: Explore the knowledge graph
@@ -181,7 +181,7 @@ factored in (Phases 1–2). Each article added:
 - Key technologies under **Technologies**
 
 **Adding a new subject (Optional Extension):** create a new
-subdirectory with its own `Home.md` and `plan.md` — it does
+subdirectory with its own `Home.md` and `proc_article.md` — it does
 not modify the existing subject's `Home.md`.
 
 > **Rule:** if removing a `Home.md` entry wouldn't confuse
@@ -198,11 +198,11 @@ This is a **new subject** exercise — follow the
 not the Phase 4 incremental-ingestion pattern.
 
 1. Create a `GroupMeetup/` subdirectory at the vault root.
-2. Copy and adapt `silicon_ai/plan.md` for the
+2. Copy and adapt `silicon_ai/proc_article.md` for the
    `GroupMeetup` taxonomy (`concepts/`, `tech/`).
 3. Add `plans/specs/event_organizer.md` as a private article
    in `GroupMeetup/articles.md` (state `[ ]`).
-4. Run Phases 1–4 of the new `plan.md`:
+4. Run Phases 1–4 of the new `proc_article.md`:
    - Initialise dirs, `Home.md`, `articles.md`
    - Fetch / confirm `event_organizer.md` in `raw_sources/`
    - Ingest: create notes for Poller, Selector, Notifier,
