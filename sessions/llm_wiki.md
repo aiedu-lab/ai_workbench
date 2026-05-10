@@ -69,10 +69,10 @@ already have completed checkboxes from a prior run. Copy the
 pristine versions to reset them before starting Phase 1:
 
 ```bash
-cp projects/llm_wiki/SiliconAndAI/pristine/plan.md \
-   projects/llm_wiki/SiliconAndAI/plan.md
-cp projects/llm_wiki/SiliconAndAI/pristine/articles.md \
-   projects/llm_wiki/SiliconAndAI/articles.md
+cp projects/llm_wiki/silicon_ai/pristine/plan.md \
+   projects/llm_wiki/silicon_ai/plan.md
+cp projects/llm_wiki/silicon_ai/pristine/articles.md \
+   projects/llm_wiki/silicon_ai/articles.md
 ```
 
 > The `pristine/` directory is committed to git and never
@@ -80,7 +80,7 @@ cp projects/llm_wiki/SiliconAndAI/pristine/articles.md \
 
 ### Phase 1: The First Ingest
 
-**Concept:** Initialise the `SiliconAndAI` vault (Phases 1–2
+**Concept:** Initialise the `silicon_ai` vault (Phases 1–2
 of `plan.md`), fetch the Moore's Law Wikipedia article to
 `raw_sources/public/`, then run Phase 3 (Data Ingestion):
 Claude creates concept, people, and technology notes linked
@@ -89,7 +89,7 @@ see the first cluster of linked notes appear.
 
 > For commands and prompts, see
 > [Phases 1–3 of the detailed plan](
-> ../projects/llm_wiki/SiliconAndAI/plan.md).
+> ../projects/llm_wiki/silicon_ai/plan.md).
 
 ### Phase 2: The Compound Effect
 
@@ -102,7 +102,7 @@ to AI milestones without any manual linking.
 
 > For commands and prompts, see
 > [Phase 5: Incremental Ingestion](
-> ../projects/llm_wiki/SiliconAndAI/plan.md).
+> ../projects/llm_wiki/silicon_ai/plan.md).
 
 ### Phase 3: The Synthesis
 
@@ -117,7 +117,7 @@ it is synthesizing from the curated knowledge graph it built.
 
 > For the synthesis prompt and verification steps, see
 > [Phase 4: Verification](
-> ../projects/llm_wiki/SiliconAndAI/plan.md).
+> ../projects/llm_wiki/silicon_ai/plan.md).
 
 ---
 
@@ -138,7 +138,7 @@ Run Phase 2 of `plan.md` to fetch it to
 `raw_sources/public/` and mark it `[x]`.
 
 > See [Phase 2: Data Fetching](
-> ../projects/llm_wiki/SiliconAndAI/plan.md)
+> ../projects/llm_wiki/silicon_ai/plan.md)
 > for the exact command.
 
 #### Step 2: Incremental ingestion
@@ -149,7 +149,7 @@ relevant existing notes, updates `Home.md`, and resolves
 any new orphans.
 
 > See [Phase 5: Incremental Ingestion](
-> ../projects/llm_wiki/SiliconAndAI/plan.md)
+> ../projects/llm_wiki/silicon_ai/plan.md)
 > for the exact prompt.
 
 #### Step 3: Explore the knowledge graph
@@ -198,7 +198,7 @@ This is a **new subject** exercise — follow the
 not the Phase 4 incremental-ingestion pattern.
 
 1. Create a `GroupMeetup/` subdirectory at the vault root.
-2. Copy and adapt `SiliconAndAI/plan.md` for the
+2. Copy and adapt `silicon_ai/plan.md` for the
    `GroupMeetup` taxonomy (`concepts/`, `tech/`).
 3. Add `plans/specs/event_organizer.md` as a private article
    in `GroupMeetup/articles.md` (state `[ ]`).
@@ -211,6 +211,6 @@ not the Phase 4 incremental-ingestion pattern.
    - Verify: resolve orphans
 
 The new `GroupMeetup/Home.md` is created fresh — it does
-not modify `SiliconAndAI/Home.md`. This connects the PKM
+not modify `silicon_ai/Home.md`. This connects the PKM
 session to the Group Meetup Organizer project running
 through every other session in the lab.

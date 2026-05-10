@@ -10,13 +10,13 @@ separate directory. Cross-links between notes use Obsidian
 ## Methodology
 **Specification Driven PKM** where distinct Subjects are contained
 in a subdirectory. For example, all **Knowledge Graph (KG)** on
-`Silicon and AI relation and evolution` are in `SiliconAndAI`.
+`Silicon and AI relation and evolution` are in `silicon_ai`.
 
 ## Repository Layout
 ```
 PKM/
   README.md             # This file
-  SiliconAndAI/         # Subject — silicon scaling & AI history
+  silicon_ai/           # Subject — silicon scaling & AI history
     articles.md
     Home.md
     plan.md
