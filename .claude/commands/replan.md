@@ -70,7 +70,7 @@ Reply "Approve" to execute step by step.
 Execute one step per turn following CLAUDE.md §One Step at a Time:
 
 1. Make only the changes described in the current step.
-2. Run the TEST command; confirm it passes.
+2. Run the VERIFY command; confirm it passes.
 3. Commit per CLAUDE.md §Commit Protocol.
 4. Wait for explicit approval before the next step.
 

@@ -43,11 +43,13 @@ No step may be written, reviewed, or executed unless all five fields are present
 
 ### Step N: <step name>
 
+[ ] Status
+
 CONTEXT: <one line — what exists before this step>
 ACTION: <exactly what Claude should do — files, functions, APIs>
 CONSTRAINTS: <what NOT to touch, scope limits>
 OUTPUT: <what done looks like — specific files changed, interfaces created>
-TEST: <the test case name/file that must pass>
+VERIFY: <shell command or manual check with expected result>
 
 #### Validation rule (self-check before appending):
 Before appending any step to plan.md, verify:
@@ -56,7 +58,7 @@ Before appending any step to plan.md, verify:
 - [ ] ACTION names specific files, functions, or APIs — no vague verbs like "implement" or "handle"
 - [ ] CONSTRAINTS explicitly names what is out of scope
 - [ ] OUTPUT lists concrete artifacts (file names, interface signatures)
-- [ ] TEST references an exact test file or test case name that will be run
+- [ ] VERIFY is a runnable shell command or manual check with expected result
 
 If any field is missing or vague, DO NOT append the step. 
 Ask for clarification instead.

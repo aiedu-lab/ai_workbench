@@ -35,7 +35,7 @@ ACTION: <exact files, functions, or APIs to change — no vague
 CONSTRAINTS: <what NOT to touch; explicit scope limits>
 OUTPUT: <concrete artifacts — file names, content, interface
         signatures>
-TEST: <exact shell command with expected output>
+VERIFY: <exact shell command or manual check with expected result>
 ```
 
 The `[ ] Status` line is flipped to `[x] Status` when the step
@@ -48,8 +48,8 @@ is executed, providing an at-a-glance execution tracker inside
 - [ ] ACTION names specific files or functions — zero vague verbs.
 - [ ] CONSTRAINTS explicitly lists what is out of scope.
 - [ ] OUTPUT lists concrete file names or interface signatures.
-- [ ] TEST is a runnable shell command with the expected result
-      stated.
+- [ ] VERIFY is a runnable shell command or manual check with the
+      expected result stated.
 
 If any field fails the check, ask for clarification rather than
 guessing. Do not append a step that fails the self-check.
