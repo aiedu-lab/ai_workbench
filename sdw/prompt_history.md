@@ -1323,3 +1323,30 @@ CONTEXT: ...
 This `[ ] Status` line is flipped to `[x] Status` when the
 step is executed, providing an at-a-glance tracker inside
 `sdw/plan.md` without modifying the five-field template.
+
+## LLM Wiki Update
+[x] Status
+
+### Process Article
+
+* Rename `SiliconAndAI` in `projects/llm_wiki/` to `silicon_ai`
+
+* Rename `plan.md` in `projects/llm_wiki/SiliconAndAI/` to 
+`proc_article.md`.
+
+* Rename `plan.md` in ``projects/llm_wiki/SiliconAndAI/pristine`
+
+* Rename all references to TEST in CLAUDE.md and other files
+to VERIFY that describes a concrete manuual check (link scan, 
+orphan check, wiki review), etc. Note that TEST is typically 
+limited in its use to only validation of software code, not 
+necessarily to content, documents, etc. 
+<what to check manually — links resolving, orphan scan, wiki updated>
+
+* Validate skill `/proc-article <subject>` to ensure that it reruns 
+the specification plan that processes the contents in `articles.md`
+in the <subject> within `projects/llm_wiki`.
+
+* Ensure after all these file and directory rename and skill changes 
+all contents and references (e.g. from README.md or CLAUDE.md) are 
+consistent.

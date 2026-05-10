@@ -3371,3 +3371,97 @@ OUTPUT: `## [x] Skillify` in prompt_history.md; sdw/plan.md
 has Phase 23; commit tagged and pushed.
 TEST: `grep "## \[ \] Skillify\|## Skillify$"
 sdw/prompt_history.md` → 0 matches.
+
+## Phase 24
+
+### Step 24.1: Rename SiliconAndAI/ → silicon_ai/
+
+[ ] Status
+
+CONTEXT: `projects/llm_wiki/SiliconAndAI/` exists; all references
+in README.md and sessions/llm_wiki.md use the old name.
+ACTION: `git mv projects/llm_wiki/SiliconAndAI
+projects/llm_wiki/silicon_ai`; replace every `SiliconAndAI`
+string in `projects/llm_wiki/README.md` and
+`sessions/llm_wiki.md`.
+CONSTRAINTS: Do not rename any other directory; do not modify
+file content beyond the name-change references.
+OUTPUT: `projects/llm_wiki/silicon_ai/` exists; zero
+`SiliconAndAI` matches in README.md and sessions/llm_wiki.md.
+VERIFY: `grep -r "SiliconAndAI"
+projects/llm_wiki/README.md sessions/llm_wiki.md`
+→ 0 matches.
+
+### Step 24.2: Rename plan.md → proc_article.md
+
+[ ] Status
+
+CONTEXT: `silicon_ai/plan.md` and `silicon_ai/pristine/plan.md`
+exist; all path references in sessions/llm_wiki.md and
+projects/llm_wiki/README.md point to `plan.md`.
+ACTION: `git mv silicon_ai/plan.md silicon_ai/proc_article.md`;
+`git mv silicon_ai/pristine/plan.md
+silicon_ai/pristine/proc_article.md`; replace every `plan.md`
+path reference (prose and URLs) in both documents.
+CONSTRAINTS: Do not touch sdw/plan.md (append-only). Do not
+rename any other files.
+OUTPUT: Both `proc_article.md` files exist; zero stale `plan.md`
+path references in sessions/llm_wiki.md or README.md.
+VERIFY: `ls projects/llm_wiki/silicon_ai/proc_article.md
+projects/llm_wiki/silicon_ai/pristine/proc_article.md`;
+`grep -n "plan\.md" sessions/llm_wiki.md
+projects/llm_wiki/README.md` → 0 matches.
+
+### Step 24.3: Rename TEST → VERIFY in CLAUDE.md and skills
+
+[ ] Status
+
+CONTEXT: CLAUDE.md step template uses `TEST:` field; plan-step.md
+and replan.md also reference `TEST`; sdw/plan.md is append-only
+and must not change.
+ACTION: In `CLAUDE.md`: rename `TEST:` → `VERIFY:` in step
+template and validation rule; add `[ ] Status` line to template.
+In `.claude/commands/plan-step.md`: rename `TEST:` → `VERIFY:`
+in template and self-check. In `.claude/commands/replan.md`:
+rename "Run the TEST command" → "Run the VERIFY command".
+CONSTRAINTS: Do not touch sdw/plan.md.
+OUTPUT: Zero `^TEST:` occurrences in CLAUDE.md, plan-step.md,
+replan.md; `[ ] Status` present in CLAUDE.md template.
+VERIFY: `grep -n "^TEST:" CLAUDE.md
+.claude/commands/plan-step.md
+.claude/commands/replan.md` → 0 matches.
+
+### Step 24.4: Fix proc-article.md silicon_ai paths
+
+[ ] Status
+
+CONTEXT: `.claude/commands/proc-article.md` lists
+`sdlw/silicon_ai_plan.md` and `silicon_ai/proc_article_history.md`
+— both are wrong after the renames.
+ACTION: Replace `sdlw/silicon_ai_plan.md` →
+`projects/llm_wiki/silicon_ai/proc_article.md` and
+`silicon_ai/proc_article_history.md` →
+`projects/llm_wiki/silicon_ai/proc_article_history.md`.
+CONSTRAINTS: Do not modify any other section of proc-article.md.
+OUTPUT: `proc-article.md` Plan and History table has correct paths
+for silicon_ai.
+VERIFY: `grep "sdlw\|silicon_ai_plan"
+.claude/commands/proc-article.md` → 0 matches.
+
+### Step 24.5: Mark LLM Wiki Update complete, append Phase 24,
+commit + tag
+
+[ ] Status
+
+CONTEXT: Steps 24.1–24.4 executed and committed.
+ACTION: Change `[ ] Status` → `[x] Status` under
+`## LLM Wiki Update` in `sdw/prompt_history.md`. Append Phase 24
+block to `sdw/plan.md`. Commit with message
+`chore: Phase 24: Step 24.5 - mark LLM Wiki Update complete`.
+Tag `v24.5-llm-wiki-update-step-completed`. Push tags.
+CONSTRAINTS: Do not modify any other line in prompt_history.md.
+OUTPUT: `[x] Status` under `## LLM Wiki Update`; Phase 24
+appended to sdw/plan.md; tag pushed.
+VERIFY: `grep "\[ \] Status" sdw/prompt_history.md | tail -1`
+→ no `LLM Wiki Update` match;
+`git tag | grep v24.5` → one match.
