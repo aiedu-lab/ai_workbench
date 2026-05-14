@@ -27,43 +27,44 @@ import pathlib
 import numpy as np
 import matplotlib
 
-# Jupyter/VS Code → inline; terminal → WebAgg (manual URL) or Agg
+# Jupyter/VS Code: ipykernel defaults to inline — don't override it.
+# Terminal only: WebAgg (open URL manually) or Agg (saves PNG).
 def _setup_backend():
   try:
-    ip = get_ipython()  # type: ignore[name-defined]
-    if ip is not None:
-      matplotlib.use('module://matplotlib_inline.backend_inline')
+    if get_ipython() is not None:  # type: ignore[name-defined]
       return
   except NameError:
     pass
   try:
     import tornado  # noqa: F401
     matplotlib.use('WebAgg')
-    # suppress xdg-open in WSL2 — open the printed URL manually
     matplotlib.rcParams['webagg.open_in_browser'] = False
   except ImportError:
     matplotlib.use('Agg')
 
 _setup_backend()
-print(f"Backend: {matplotlib.get_backend()}")
+print(f"[1/4] backend: {matplotlib.get_backend()}")
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch
 from sklearn.decomposition import PCA
 from gensim.models import KeyedVectors
 import gensim.downloader
+print("[2/4] imports done")
 
 # Absolute path — works regardless of VS Code working directory
 CACHE = str(pathlib.Path(__file__).parent / "glove_50.bin")
 if os.path.exists(CACHE):
-  print(f"Loading from cache: {CACHE}")
+  print(f"[3/4] loading cache: {CACHE}")
   model = KeyedVectors.load_word2vec_format(CACHE, binary=True)
 else:
-  print("Downloading GloVe (~65 MB)…")
+  print("[3/4] downloading GloVe (~65 MB)…")
   model = gensim.downloader.load("glove-wiki-gigaword-50")
   model.save_word2vec_format(CACHE, binary=True)
+print(f"[4/4] ready — {len(model)} words")
 
 # %%
+print("[Cell 1] building figure…")
 # --- Multi-panel figure: 2 rows × 3 cols ---
 fig, axs = plt.subplots(2, 3, figsize=(15, 9))
 
@@ -199,10 +200,12 @@ ax.set_title("(6) Concept Direction Result")
 
 plt.suptitle(
   "GloVe 50-dim Word Embedding Visualizations",
-  fontsize=13, y=1.01,
+  fontsize=13,
 )
-plt.tight_layout()
+# rect leaves headroom at top so suptitle doesn't overlap panels
+plt.tight_layout(rect=[0, 0, 1, 0.95])
 
+print(f"[Cell 1] calling plt.show(), backend={matplotlib.get_backend()}")
 _b = matplotlib.get_backend().lower()
 if _b == 'agg':
   plt.savefig("embedding_map.png", bbox_inches='tight')
@@ -214,5 +217,6 @@ elif 'webagg' in _b:
   plt.show()
 else:
   plt.show()
+  print("[Cell 1] plt.show() returned")
 
 # %%
