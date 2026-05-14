@@ -50,9 +50,19 @@ python3 -m ipykernel install --user --name .venv \
   --display-name "Python3 (.venv)"
 ```
 
-**VS Code:** open a `# %%`-annotated `.py` file; VS Code
-detects Jupyter cells and shows **Run Cell** buttons. Select
-the `Python3 (.venv)` kernel when prompted.
+**VS Code (recommended — `.ipynb`):** convert the `.py`
+source to a notebook once, then open the `.ipynb` file.
+Output appears inline per cell and the Restart button is
+clearly visible in the toolbar.
+
+```bash
+cd projects/embedding && source .venv/bin/activate
+jupytext --to notebook embed.py   # creates embed.ipynb
+```
+
+Open `embed.ipynb` in VS Code. Select the `Python3 (.venv)`
+kernel when prompted. Click **"Restart Kernel and Run All
+Cells"** to run everything.
 
 **JupyterLab:** run `jupyter lab` from the project directory,
 then select the `Python3 (.venv)` kernel for your notebook.
@@ -74,13 +84,14 @@ For the Embeddings project specifically:
 
 ```bash
 cd projects/embedding
-# WSL2: set BROWSER so WebAgg can open the browser window
-export BROWSER='/mnt/c/Program Files/Google/Chrome/Application/chrome.exe'
 python3 embed.py
+# → prints: Open in browser: http://127.0.0.1:<port>
+# Open that URL in any browser (e.g. Windows Chrome)
 ```
 
-Expected: a 2×3 panel figure opens in the browser (WebAgg)
-or saves as `embedding_map.png` (Agg fallback).
+Expected: terminal prints the WebAgg URL; open it in your
+browser to see the 2×3 panel figure. Or if no display
+is available, saves `embedding_map.png` (Agg fallback).
 
 > First run downloads the GloVe model (~65 MB) and caches
 > it as `glove_50.bin` inside the project directory
