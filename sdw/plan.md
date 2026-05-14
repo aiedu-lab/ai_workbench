@@ -3465,3 +3465,82 @@ appended to sdw/plan.md; tag pushed.
 VERIFY: `grep "\[ \] Status" sdw/prompt_history.md | tail -1`
 → no `LLM Wiki Update` match;
 `git tag | grep v24.5` → one match.
+
+## Phase 25
+
+### Step 25.1: Update /replan to auto-enter plan mode
+
+CONTEXT: `.claude/commands/replan.md` Orient step does not
+call `EnterPlanMode`; user must enter plan mode manually.
+ACTION: Prepend "call the `EnterPlanMode` tool" bullet as
+the first item under `### 1. Orient` in replan.md.
+CONSTRAINTS: Do not alter other sections; do not touch
+sdw/plan.md.
+OUTPUT: replan.md contains `EnterPlanMode` instruction.
+VERIFY: `grep "EnterPlanMode" .claude/commands/replan.md`
+→ 1 match.
+
+### Step 25.2: Create projects/embedding/ with multi-plot
+embed.py
+
+CONTEXT: `.tmp/embedding/embed.py` has one PCA scatter;
+`.tmp/polar_plots/coord.py` shows jupytext `# %%` cells and
+`plt.subplots()` grid pattern.
+ACTION: Create `projects/embedding/embed.py` (jupytext, 2×3
+subplot grid: embedding map, clustering, concept-direction
+scatter, similarity bar chart, nearest-neighbor text,
+concept-direction result text). Create
+`projects/embedding/requirements.in` (gensim, matplotlib,
+sklearn, tornado, jupyterlab, ipykernel, jupytext). Append
+`projects/embedding/*.bin` and `*.png` to .gitignore.
+CONSTRAINTS: Do not modify .tmp/. No requirements.txt.
+OUTPUT: embed.py, requirements.in exist; .gitignore covers
+*.bin.
+VERIFY: `grep "subplots\|most_similar\|similarity"
+projects/embedding/embed.py | wc -l` → ≥ 4.
+
+### Step 25.3: Add Embedding section to dev_workbench.md +
+create tools/dev_workbench/venv.md
+
+CONTEXT: dev_workbench.md has no Embedding section; actual
+setup commands belong in tools/ per the multimodel pattern.
+ACTION: In dev_workbench.md append `## Embedding` →
+`### Set Up` (reference link to venv.md) → `### Test`
+(reference link to venv.md#validation). Create
+`tools/dev_workbench/venv.md` with venv creation,
+pip-tools install/compile/sync, kernel registration, and
+validation commands.
+CONSTRAINTS: Append only; no inline commands in
+dev_workbench.md.
+OUTPUT: dev_workbench.md has `## Embedding`; venv.md exists.
+VERIFY: `grep "^## Embedding" sessions/dev_workbench.md`
+→ 1 match.
+
+### Step 25.4: Create sessions/embedding.md + add README
+agenda row
+
+CONTEXT: No sessions/embedding.md; no embedding agenda row.
+ACTION: Create sessions/embedding.md (Objective, Core
+Concept, Setup reference link, 5 exercises ≈40 min, RAG
+bridge). Insert agenda row after Advanced Prompting in
+README.md.
+CONSTRAINTS: No inline install commands in embedding.md;
+80-col; reference projects/embedding/embed.py not code.
+OUTPUT: embedding.md with 5 ### Exercise headings; README
+links to sessions/embedding.md.
+VERIFY: `grep -c "### Exercise" sessions/embedding.md` → 5;
+`grep "embedding\.md" README.md` → 1 match.
+
+### Step 25.5: Mark Embedding complete, append Phase 25,
+commit + tag
+
+CONTEXT: Steps 25.1–25.4 executed and committed.
+ACTION: Mark `[x] Status` under `## Embedding` in
+prompt_history.md. Append Phase 25 to sdw/plan.md. Commit.
+Tag `v25.5-embedding-step-completed`. Push tags.
+CONSTRAINTS: Append only; do not modify other lines.
+OUTPUT: `[x] Status` under `## Embedding`; Phase 25 in
+sdw/plan.md; tag pushed.
+VERIFY: `grep -A1 "^## Embedding" sdw/prompt_history.md
+| grep "\[ \] Status"` → 0 matches;
+`git tag | grep v25.5` → 1 match.
