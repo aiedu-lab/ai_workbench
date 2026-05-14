@@ -3514,7 +3514,7 @@ projects/embedding/embed.py | wc -l` → ≥ 4.
 ### Step 25.3: Add Embedding section to dev_workbench.md +
 create tools/dev_workbench/venv.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: dev_workbench.md has no Embedding section; actual
 setup commands belong in tools/ per the multimodel pattern.
