@@ -20,6 +20,10 @@ __pycache__/
 # durable artifact â€” raw_sources/ is not needed once ingested.
 **/raw_sources/
 
+# Embedding — GloVe cache and plot outputs
+projects/embedding/*.bin
+projects/embedding/*.png
+
 # Windows noise
 Thumbs.db
 desktop.ini

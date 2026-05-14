@@ -1,0 +1,9 @@
+# embedding/requirements.in
+
+gensim
+matplotlib
+scikit-learn
+tornado
+jupyterlab
+ipykernel
+jupytext
