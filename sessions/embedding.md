@@ -42,13 +42,12 @@ session, then run:
 ```bash
 cd projects/embedding
 source .venv/bin/activate
-# WSL2 only — set BROWSER so the plot opens in Chrome:
-export BROWSER='/mnt/c/Program Files/Google/Chrome/Application/chrome.exe'
 python3 embed.py
 ```
 
-A 2 × 3 panel figure appears in the browser (WebAgg) or
-saves as `embedding_map.png` (Agg fallback if no display).
+In VS Code, run cells individually — the 2 × 3 figure renders
+inline in the output panel. Running as a plain script saves
+`embedding_map.png` in the same directory.
 
 > **VS Code cell-by-cell:** open `projects/embedding/embed.py`
 > in VS Code. It is annotated with `# %%` markers (jupytext

@@ -26,16 +26,16 @@ import math
 import numpy as np
 import matplotlib
 
-# --- Backend: WebAgg for WSL2/remote; Agg fallback ---
+# Jupyter/VS Code kernel → inline; plain script → Agg (saves PNG)
 def _setup_backend():
-  if os.environ.get('DISPLAY', '') == '':
-    matplotlib.use('Agg')
-    return
   try:
-    import tornado  # noqa: F401
-    matplotlib.use('WebAgg')
-  except ImportError:
-    matplotlib.use('Agg')
+    ip = get_ipython()  # type: ignore[name-defined]
+    if ip is not None:
+      ip.run_line_magic('matplotlib', 'inline')
+      return
+  except NameError:
+    pass
+  matplotlib.use('Agg')
 
 _setup_backend()
 
@@ -201,3 +201,5 @@ if matplotlib.get_backend() == 'Agg':
   print("Saved: embedding_map.png")
 else:
   plt.show()
+
+# %%
