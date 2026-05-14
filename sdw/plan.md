@@ -3550,7 +3550,7 @@ VERIFY: `grep -c "### Exercise" sessions/embedding.md` → 5;
 ### Step 25.5: Mark Embedding complete, append Phase 25,
 commit + tag
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 25.1–25.4 executed and committed.
 ACTION: Mark `[x] Status` under `## Embedding` in
