@@ -19,6 +19,9 @@ cycle — orient, generate, approve, execute, commit.
 
 ### 1. Orient
 
+Before reading any file, call the `EnterPlanMode` tool so
+that phase-step generation and approval happen in plan mode.
+
 Read these files in order:
 
 1. `CLAUDE.md` — operating protocol and step template.
