@@ -52,8 +52,11 @@ The **final step** of every phase must be a "Mark complete" step
 that:
 - Changes `[ ] Status` → `[x] Status` on the line after
   `## <title>` in `sdb/prompt_history.md`
-- Appends the full Phase N+1 block (condensed one-paragraph-per-
-  step format) to `sdw/plan.md`.
+- Appends the full Phase N+1 block to `sdw/plan.md`. Each
+  step in the appended block must follow the plan-step
+  template exactly — including the `[ ] Status` line after
+  the step heading — using a condensed (one-paragraph) body
+  per field rather than multi-line.
 - Commits all changed files and tags
   `vN+1.K-<brief-summary>-step-completed`.
 

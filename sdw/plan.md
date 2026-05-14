@@ -3244,6 +3244,8 @@ TEST: `grep "\[ \] LLM Wiki Reclean" sdw/prompt_history.md`
 
 ### Step 22.1: Create `pristine/` directory with clean copies
 
+[x] Status
+
 CONTEXT: `SiliconAndAI/` has no `pristine/` subdirectory;
 working `plan.md` has all Phase 1–4 boxes `[x]`; `articles.md`
 entries are `[✓]`.
@@ -3268,6 +3270,8 @@ projects/llm_wiki/SiliconAndAI/pristine/plan.md` → 0 matches;
 
 ### Step 22.2: Add "Before You Begin" section to sessions/llm_wiki.md
 
+[x] Status
+
 CONTEXT: `sessions/llm_wiki.md` has no instruction to restore
 pristine files before Phase 1.
 ACTION: Insert `### Before You Begin: Reset to Pristine State`
@@ -3280,6 +3284,8 @@ TEST: `grep -n "Before You Begin\|Phase 1: The First"
 sessions/llm_wiki.md` — "Before You Begin" line < "Phase 1".
 
 ### Step 22.3: Add prompt entry to sdw/prompt_history.md
+
+[x] Status
 
 CONTEXT: No `Pristine Plan Reset` entry in prompt_history.md.
 ACTION: Append `## [ ] Pristine Plan Reset` block at end of
@@ -3295,6 +3301,8 @@ TEST: `grep "Pristine Plan Reset" sdw/prompt_history.md`
 
 ### Step 22.4: Mark Pristine Plan Reset complete
 
+[x] Status
+
 CONTEXT: Steps 22.1–22.3 executed and committed.
 ACTION: Mark `## [x] Pristine Plan Reset` in prompt_history.md.
 Replan.md pointer stays at `#improve-setup-skills-rag`.
@@ -3308,7 +3316,7 @@ TEST: `grep "\[ \] Pristine Plan Reset" sdw/prompt_history.md`
 ## Phase 23
 
 ### Step 23.1: Create `.claude/commands/replan.md` skill
-[ ] Status
+[x] Status
 
 CONTEXT: The "Execute sdw/replan.md" workflow is a multi-step
 manual process with no guardrails and no way to auto-detect the
@@ -3329,7 +3337,7 @@ TEST: `ls .claude/commands/replan.md` → present;
 `git status | grep "deleted.*replan.md"` → one match.
 
 ### Step 23.2: Create `.claude/commands/plan-step.md` skill
-[ ] Status
+[x] Status
 
 CONTEXT: Plan step generation has no guardrail enforcing all
 five CONTEXT/ACTION/CONSTRAINTS/OUTPUT/TEST fields.
@@ -3345,7 +3353,7 @@ OUTPUT: `.claude/commands/plan-step.md` exists.
 TEST: `ls .claude/commands/plan-step.md` → present.
 
 ### Step 23.3: Update README.md Contribution Guidelines
-[ ] Status
+[x] Status
 
 CONTEXT: `README.md` §Contribution Guidelines has no mention
 of the two new skills.
@@ -3359,7 +3367,7 @@ and examples inside §Contribution Guidelines.
 TEST: `grep "SDW Skills" README.md` → one match.
 
 ### Step 23.4: Mark Skillify complete
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 23.1–23.3 executed and staged.
 ACTION: Mark `## [x] Skillify` in prompt_history.md (change
@@ -3376,7 +3384,7 @@ sdw/prompt_history.md` → 0 matches.
 
 ### Step 24.1: Rename SiliconAndAI/ → silicon_ai/
 
-[ ] Status
+[x] Status
 
 CONTEXT: `projects/llm_wiki/SiliconAndAI/` exists; all references
 in README.md and sessions/llm_wiki.md use the old name.
@@ -3394,7 +3402,7 @@ projects/llm_wiki/README.md sessions/llm_wiki.md`
 
 ### Step 24.2: Rename plan.md → proc_article.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: `silicon_ai/plan.md` and `silicon_ai/pristine/plan.md`
 exist; all path references in sessions/llm_wiki.md and
@@ -3414,7 +3422,7 @@ projects/llm_wiki/README.md` → 0 matches.
 
 ### Step 24.3: Rename TEST → VERIFY in CLAUDE.md and skills
 
-[ ] Status
+[x] Status
 
 CONTEXT: CLAUDE.md step template uses `TEST:` field; plan-step.md
 and replan.md also reference `TEST`; sdw/plan.md is append-only
@@ -3433,7 +3441,7 @@ VERIFY: `grep -n "^TEST:" CLAUDE.md
 
 ### Step 24.4: Fix proc-article.md silicon_ai paths
 
-[ ] Status
+[x] Status
 
 CONTEXT: `.claude/commands/proc-article.md` lists
 `sdlw/silicon_ai_plan.md` and `silicon_ai/proc_article_history.md`
@@ -3451,7 +3459,7 @@ VERIFY: `grep "sdlw\|silicon_ai_plan"
 ### Step 24.5: Mark LLM Wiki Update complete, append Phase 24,
 commit + tag
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 24.1–24.4 executed and committed.
 ACTION: Change `[ ] Status` → `[x] Status` under
@@ -3470,6 +3478,8 @@ VERIFY: `grep "\[ \] Status" sdw/prompt_history.md | tail -1`
 
 ### Step 25.1: Update /replan to auto-enter plan mode
 
+[ ] Status
+
 CONTEXT: `.claude/commands/replan.md` Orient step does not
 call `EnterPlanMode`; user must enter plan mode manually.
 ACTION: Prepend "call the `EnterPlanMode` tool" bullet as
@@ -3482,6 +3492,8 @@ VERIFY: `grep "EnterPlanMode" .claude/commands/replan.md`
 
 ### Step 25.2: Create projects/embedding/ with multi-plot
 embed.py
+
+[ ] Status
 
 CONTEXT: `.tmp/embedding/embed.py` has one PCA scatter;
 `.tmp/polar_plots/coord.py` shows jupytext `# %%` cells and
@@ -3502,6 +3514,8 @@ projects/embedding/embed.py | wc -l` → ≥ 4.
 ### Step 25.3: Add Embedding section to dev_workbench.md +
 create tools/dev_workbench/venv.md
 
+[ ] Status
+
 CONTEXT: dev_workbench.md has no Embedding section; actual
 setup commands belong in tools/ per the multimodel pattern.
 ACTION: In dev_workbench.md append `## Embedding` →
@@ -3519,6 +3533,8 @@ VERIFY: `grep "^## Embedding" sessions/dev_workbench.md`
 ### Step 25.4: Create sessions/embedding.md + add README
 agenda row
 
+[ ] Status
+
 CONTEXT: No sessions/embedding.md; no embedding agenda row.
 ACTION: Create sessions/embedding.md (Objective, Core
 Concept, Setup reference link, 5 exercises ≈40 min, RAG
@@ -3533,6 +3549,8 @@ VERIFY: `grep -c "### Exercise" sessions/embedding.md` → 5;
 
 ### Step 25.5: Mark Embedding complete, append Phase 25,
 commit + tag
+
+[ ] Status
 
 CONTEXT: Steps 25.1–25.4 executed and committed.
 ACTION: Mark `[x] Status` under `## Embedding` in
