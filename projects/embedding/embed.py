@@ -23,6 +23,7 @@
 # %%
 import os
 import math
+import pathlib
 import numpy as np
 import matplotlib
 
@@ -52,8 +53,8 @@ from sklearn.decomposition import PCA
 from gensim.models import KeyedVectors
 import gensim.downloader
 
-# --- Load GloVe with local cache ---
-CACHE = "glove_50.bin"
+# Absolute path — works regardless of VS Code working directory
+CACHE = str(pathlib.Path(__file__).parent / "glove_50.bin")
 if os.path.exists(CACHE):
   print(f"Loading from cache: {CACHE}")
   model = KeyedVectors.load_word2vec_format(CACHE, binary=True)
@@ -213,3 +214,5 @@ elif 'webagg' in _b:
   plt.show()
 else:
   plt.show()
+
+# %%
