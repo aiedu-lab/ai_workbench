@@ -20,10 +20,11 @@ __pycache__/
 # durable artifact â€” raw_sources/ is not needed once ingested.
 **/raw_sources/
 
-# Embedding — venv, GloVe cache, and plot outputs
+# Embedding — venv, GloVe cache, plot outputs, generated notebook
 projects/embedding/.venv/
 projects/embedding/*.bin
 projects/embedding/*.png
+projects/embedding/*.ipynb
 
 # Windows noise
 Thumbs.db
