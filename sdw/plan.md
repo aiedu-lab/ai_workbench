@@ -3478,7 +3478,7 @@ VERIFY: `grep "\[ \] Status" sdw/prompt_history.md | tail -1`
 
 ### Step 25.1: Update /replan to auto-enter plan mode
 
-[ ] Status
+[x] Status
 
 CONTEXT: `.claude/commands/replan.md` Orient step does not
 call `EnterPlanMode`; user must enter plan mode manually.
