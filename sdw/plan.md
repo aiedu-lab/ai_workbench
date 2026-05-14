@@ -3493,7 +3493,7 @@ VERIFY: `grep "EnterPlanMode" .claude/commands/replan.md`
 ### Step 25.2: Create projects/embedding/ with multi-plot
 embed.py
 
-[ ] Status
+[x] Status
 
 CONTEXT: `.tmp/embedding/embed.py` has one PCA scatter;
 `.tmp/polar_plots/coord.py` shows jupytext `# %%` cells and
