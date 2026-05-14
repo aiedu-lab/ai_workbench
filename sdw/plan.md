@@ -3533,7 +3533,7 @@ VERIFY: `grep "^## Embedding" sessions/dev_workbench.md`
 ### Step 25.4: Create sessions/embedding.md + add README
 agenda row
 
-[ ] Status
+[x] Status
 
 CONTEXT: No sessions/embedding.md; no embedding agenda row.
 ACTION: Create sessions/embedding.md (Objective, Core
