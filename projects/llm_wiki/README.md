@@ -10,16 +10,16 @@ separate directory. Cross-links between notes use Obsidian
 ## Methodology
 **Specification Driven PKM** where distinct Subjects are contained
 in a subdirectory. For example, all **Knowledge Graph (KG)** on
-`Silicon and AI relation and evolution` are in `SiliconAndAI`.
+`Silicon and AI relation and evolution` are in `silicon_ai`.
 
 ## Repository Layout
 ```
 PKM/
   README.md             # This file
-  SiliconAndAI/         # Subject — silicon scaling & AI history
+  silicon_ai/           # Subject — silicon scaling & AI history
     articles.md
     Home.md
-    plan.md
+    proc_article.md
     concepts/
     people/
     raw_sources/        # gitignored
@@ -27,7 +27,7 @@ PKM/
       private/
     tech/
     analysis/           # gitignored — query outputs and synthesis
-    pristine/           # clean plan.md + articles.md; copy to
+    pristine/           # clean proc_article.md + articles.md; copy to
                         # subject root before starting Phase 1
   <NextSubject>/        # Template for future subjects
 ```
@@ -51,15 +51,15 @@ PKM/
    ## Public Articles
    ## Private Articles
    ```
-4. **Copy `plan.md`** from an existing subject and adapt:
+4. **Copy `proc_article.md`** from an existing subject and adapt:
    - Update the required folder structure list to match your taxonomy.
    - Update Phase 3 directory scan steps to match your taxonomy.
    - Update the Phase 4 synthesis prompt to reflect the subject.
-5. **Create `pristine/`** copies: copy the adapted `plan.md` and
+5. **Create `pristine/`** copies: copy the adapted `proc_article.md` and
    the empty `articles.md` into `pristine/` with all checkboxes
    `[ ]`. These are never modified during execution — students
    copy from them before each run to reset to a clean state.
-6. **Run Phase 1** of `plan.md` — creates subdirs, `raw_sources/`,
+6. **Run Phase 1** of `proc_article.md` — creates subdirs, `raw_sources/`,
    and a skeleton `Home.md`.
 7. **Add initial articles** to `articles.md` (`[ ]` state).
 8. **Run Phase 2** — fetches public URLs to `raw_sources/public/`;

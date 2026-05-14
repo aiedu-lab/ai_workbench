@@ -1265,3 +1265,155 @@ In `sessions/llm_wiki.md`, insert a
 `### Before You Begin: Reset to Pristine State` subsection
 immediately before `### Phase 1: The First Ingest` with `cp`
 commands to restore these files before starting execution.
+
+## [x] Skillify
+
+Exploring if few repetitive and templatized prompts can be 
+morphed into skills. Reference below sections.
+
+### Generating Plan Steps
+
+1. Plan changes: After updating the prompt_history.md with ideas 
+on our next objective, we do the following to effect the 
+associated change to `sdw/plan.md`: 
+
+* Update`sdw/replan.md` where we only change the 
+[Replan Prompt](sdw/prompt_history.md#<section>) where the 
+<section> is replaced with the last section appened to 
+`prompt_history.md`. 
+
+* Prompt Claude chat window to "Execute `sdw/replan.md`"
+
+Could the above workflow be encoded as a skill? 
+
+* If so, where should we store the skill? 
+
+* We should add to README.md on the section 
+`Contribution Guidelines` section a subsection on 
+* Instructions on how do we invoke the skill?
+
+2. Generate Plan Step: During the generation of 
+updates to the plan, each steps had to follow 
+a set template as set forth in CLAUDE.md section on 
+`Plan Update Protocol`, namely:
+`Step N: <step name>` with refenences to 
+CONTEXT, ACTION, ...
+
+If the step generation itself should be 
+organized as a templatized skill to ensure that 
+the plan step generation is guardrailed to strictly 
+follows that framework, then please do so and
+guide as to where we store that skill and how do 
+we ensure plan generation always invoke that 
+templatized skill
+
+### Plan-Step Skill Refinement (executed Phase 23)
+
+The `/plan-step` skill template was updated to include a
+`[ ] Status` line immediately after the step heading:
+
+```
+### Step N.K: <step name>
+
+[ ] Status
+
+CONTEXT: ...
+```
+
+This `[ ] Status` line is flipped to `[x] Status` when the
+step is executed, providing an at-a-glance tracker inside
+`sdw/plan.md` without modifying the five-field template.
+
+## LLM Wiki Update
+[x] Status
+
+### Process Article
+
+* Rename `SiliconAndAI` in `projects/llm_wiki/` to `silicon_ai`
+
+* Rename `plan.md` in `projects/llm_wiki/SiliconAndAI/` to 
+`proc_article.md`.
+
+* Rename `plan.md` in ``projects/llm_wiki/SiliconAndAI/pristine`
+
+* Rename all references to TEST in CLAUDE.md and other files
+to VERIFY that describes a concrete manuual check (link scan, 
+orphan check, wiki review), etc. Note that TEST is typically 
+limited in its use to only validation of software code, not 
+necessarily to content, documents, etc. 
+<what to check manually — links resolving, orphan scan, wiki updated>
+
+* Validate skill `/proc-article <subject>` to ensure that it reruns 
+the specification plan that processes the contents in `articles.md`
+in the <subject> within `projects/llm_wiki`.
+
+* Ensure after all these file and directory rename and skill changes 
+all contents and references (e.g. from README.md or CLAUDE.md) are 
+consistent.
+
+## Embedding
+[x] Status
+
+### Skill Update
+Update the /replan skill so that it automatically set the mode to 
+`Planning` whenever the skill is run.
+
+### Embedding Session
+The objective of this exercise is to 
+* Create a session in 'embedding` and introduce the concept with 
+visualizations as embedding is the underpinning concept of 
+generative AI. Reference:
+[embedding](https://www.3blue1brown.com/?topic=neural-networks&lesson=gpt)
+* Demonstrate the ability to show multiple plots using matplotlib.pyplot
+* Demonstrate how jupyter can be directly executed from VSCode (IDE) to
+run through the different use cases.
+
+#### Concept and Exercise
+References:
+* `.tmp/embedding` for embedding concept and exercises.
+* `.tmp/polar_plots` for showing multiple plots and integrating 
+`jupyter` and `ipykernel` in python virtual environment.
+
+1. Add a concept and an exercise section that crystallizes the 
+concept of embedding. Add toy exercises that visualizes via different 
+prompts: 
+* embedding: take few example words and see where they land
+* clustering: how words cluster around similar words. 
+* concept direction: how gender and plurality is captured
+* attention: how embedding is influenced via neighborhood words.
+* similarity: how similar words have high dot products versus 
+orthogonal words have low dot products versus reverse 
+words have negative dot products. 
+
+Use matplotlib, jupyter, ipykernel (.venv), etc. from IDE (VSCode).
+
+2. Add to .gitignore to ignore `*.bin` or any data related asset 
+created to capture the word and phrase vectors.
+
+3. Craft the workbench session so that we can complete it in 
+30-45 mins for high school or undergrad non-CS grads.
+
+4. Add reference to this session in agenda of README.md, and create
+the project in projects folder.
+
+5. If there is any setup, please add it to dev_workbench.md and 
+reference the link to that setup in the `embedding` session.
+
+### Install and Setup
+
+1. Add a seciton to `dev_workbench.md` for creating python venv 
+for the embedding session, installing pip-install, ensuring
+requirements.in is compiled and requiremement.txt is pip-sync etc.
+The installations instructions of `.tmp/embedding` and 
+`.tmp/polar_plots` should be consolidated into one for this session,
+such as consolidating the requirements.in and ensuring
+`Jupyter` sees the virtual environment as available engine.   
+
+Ensure that all setup steps are completed and the `embedding` session 
+`Setup` section references the `dev_workbench.md` section just to 
+be consistent with other sessions.
+
+2. Add a section to `dev_workbench.md` for Setup/Install of 
+`OpenClaw` - with actual commands in `tools/openclaw/` - 
+to ensure that the other sessions (`client_agent.md` 
+and `server_multiagent.md`) references are consistent.

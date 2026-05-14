@@ -7,18 +7,24 @@ node_modules/
 __pycache__/
 
 # Obsidian workspace state (machine-specific, regenerates automatically)
-projects/llm_wiki/.obsidian/workspace.json
-projects/llm_wiki/.obsidian/workspace-mobile.json
+**/.obsidian/workspace.json
+**/.obsidian/workspace-mobile.json
 
 # Analysis outputs are local query results â€” do not commit.
-projects/llm_wiki/**/analysis/
+**/analysis/
 
 # Raw sources are ephemeral processing inputs â€” do not commit.
 # Public articles can be re-fetched from URLs in articles.md.
 # Private articles are sensitive; delete from disk after ingestion.
 # The knowledge graph (concepts/, people/, tech/, ...) is the
 # durable artifact â€” raw_sources/ is not needed once ingested.
-projects/llm_wiki/**/raw_sources/
+**/raw_sources/
+
+# Embedding — venv, GloVe cache, plot outputs, generated notebook
+projects/embedding/.venv/
+projects/embedding/*.bin
+projects/embedding/*.png
+projects/embedding/*.ipynb
 
 # Windows noise
 Thumbs.db

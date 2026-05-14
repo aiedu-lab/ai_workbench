@@ -210,3 +210,22 @@ ollama run gemma:2b "Hello, who are you?"
 
 Expected: a short reply from the local model. Type `/bye`
 to exit and free RAM.
+
+## Embedding
+
+Python environment for the Embeddings Visualization session.
+See [Exercise: Embeddings Visualization](embedding.md) for
+the full session.
+
+### Set Up
+
+Install the Python virtual environment and GloVe dependencies
+once before session day — see
+[Python venv Setup](../tools/dev_workbench/venv.md) for the
+exact commands.
+
+### Test
+
+Verify the environment is ready — see the
+[Validation](../tools/dev_workbench/venv.md#validation)
+section in the venv setup guide.

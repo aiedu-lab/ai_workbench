@@ -38,6 +38,7 @@ audit trail from intent to implementation.
 | [**Exercise: Presentation & Design**](sessions/presentation_n_design.md) | Generate slide decks and visual designs with AI in minutes. | 60 mins | [Gamma](https://gamma.app/), [Claude Design](https://claude.ai/design) | 15 mins |
 | [**Exercise: Create/Run Web Site on Laptop/Lovable**](sessions/web_site.md) | Build and deploy a working web page using AI code generation. | 60 mins | [Lovable.dev](https://lovable.ai), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
 | [**Concept: Advanced Prompting Techniques**](sessions/prompting_advanced.md) | Master skills, few-shot examples, chain-of-thought, RAG, and agent patterns. | 90 mins | [Claude Chat](tools/claude/desktop.md) |  |
+| [**Exercise: Embeddings Visualization**](sessions/embedding.md) | Visualize word vectors: map, cluster, concept direction, similarity, and nearest-neighbor context with GloVe. | 40 mins | Python, GloVe | 10 mins |
 | [**Concept: Spec Driven Development (SDD)**](sessions/sdd_basics.md) | Write a specification first, then let AI generate matching code reliably. | 45 mins | [Claude Code (CLI)](tools/claude/cli.md) | |
 | [**Exercise: Create Group Meetup Organizer using SDD, App runs on Laptop**](sessions/client_application.md) | Implement the Poller → Selector → Notifier pipeline with AI-generated code. | 45 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) | 15 mins |
 | [**Concept: Code Review**](sessions/code_review.md) | Use AI to catch bugs, enforce style, and explain unfamiliar code. | 30 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) |  |
@@ -128,6 +129,28 @@ All content changes must follow this sequence in strict order:
 
 > **No direct content edits.** All changes originate in
 > `sdw/prompt_history.md` and flow through `sdw/plan.md`.
+
+### SDW Skills
+
+Two project-scoped Claude Code slash-command skills live in
+`.claude/commands/` and are available in any Claude Code session
+opened in this repo.
+
+| Skill | Invocation | Purpose |
+|---|---|---|
+| `/replan` | `/replan` or `/replan <section>` | Run the full Specify→Plan→Approve→Execute cycle. Without argument, targets the last `## [ ]` section in `sdw/prompt_history.md`. With argument, targets the named section. |
+| `/plan-step` | `/plan-step [draft]` | Generate or validate a single plan step against the CONTEXT/ACTION/CONSTRAINTS/OUTPUT/TEST template before appending it to `sdw/plan.md`. |
+
+**Examples:**
+```
+/replan                  # auto-targets last unprocessed section
+/replan Skillify         # targets ## Skillify in prompt_history.md
+/plan-step               # interactive — prompts for each field
+/plan-step add pristine/ to README layout
+```
+
+`/plan-step` is applied internally by `/replan` when generating
+each step — no separate invocation needed during a replan cycle.
 > Contributors may not commit directly to `main`.
 
 ---
