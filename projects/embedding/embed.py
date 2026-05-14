@@ -26,18 +26,25 @@ import math
 import numpy as np
 import matplotlib
 
-# Jupyter/VS Code kernel → inline; plain script → Agg (saves PNG)
+# Jupyter/VS Code → inline; terminal → WebAgg (manual URL) or Agg
 def _setup_backend():
   try:
     ip = get_ipython()  # type: ignore[name-defined]
     if ip is not None:
-      ip.run_line_magic('matplotlib', 'inline')
+      matplotlib.use('module://matplotlib_inline.backend_inline')
       return
   except NameError:
     pass
-  matplotlib.use('Agg')
+  try:
+    import tornado  # noqa: F401
+    matplotlib.use('WebAgg')
+    # suppress xdg-open in WSL2 — open the printed URL manually
+    matplotlib.rcParams['webagg.open_in_browser'] = False
+  except ImportError:
+    matplotlib.use('Agg')
 
 _setup_backend()
+print(f"Backend: {matplotlib.get_backend()}")
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch
@@ -195,11 +202,14 @@ plt.suptitle(
 )
 plt.tight_layout()
 
-# %%
-if matplotlib.get_backend() == 'Agg':
+_b = matplotlib.get_backend().lower()
+if _b == 'agg':
   plt.savefig("embedding_map.png", bbox_inches='tight')
   print("Saved: embedding_map.png")
+elif 'webagg' in _b:
+  _port = matplotlib.rcParams.get('webagg.port', 8988)
+  print(f"Open in browser: http://127.0.0.1:{_port}")
+  print("Press Ctrl+C to exit.")
+  plt.show()
 else:
   plt.show()
-
-# %%
