@@ -1,0 +1,71 @@
+{
+  "root": {
+    "id": "root",
+    "label": "Book Title",
+    "what": "One-sentence description of the book's core idea.",
+    "why": "Why this book matters as a whole."
+  },
+  "branches": [
+    {
+      "id": "b1",
+      "label": "Branch One",
+      "what": "Top-level branch summary.",
+      "why": "Why this branch matters.",
+      "emphasis": true
+    }
+  ],
+  "layer2": [
+    {
+      "id": "m1",
+      "branchId": "b1",
+      "label": "Layer 2 Node",
+      "what": "Durable concept.",
+      "why": "Why it belongs at Layer 2.",
+      "emphasis": false
+    }
+  ],
+  "layer3": {
+    "m1": [
+      {
+        "id": "m1-l3a",
+        "label": "Layer 3 Node",
+        "what": "Mechanism, tactic, or consequence.",
+        "why": "Why this deeper node matters.",
+        "emphasis": false
+      }
+    ]
+  },
+  "layer4": {
+    "m1-l3a": [
+      {
+        "id": "m1-l4a1",
+        "label": "Layer 4 Node",
+        "what": "Optional deeper clarification.",
+        "why": "Why this extra depth is worth keeping.",
+        "emphasis": false
+      }
+    ]
+  },
+  "layer5": {
+    "m1-l4a1": [
+      {
+        "id": "m1-l5a1",
+        "label": "Layer 5 Node",
+        "what": "Rare deeper clarification.",
+        "why": "Why Layer 5 is justified instead of moving this to notes.",
+        "emphasis": false
+      }
+    ]
+  },
+  "layer6": {
+    "m1-l5a1": [
+      {
+        "id": "m1-l6a1",
+        "label": "Layer 6 Node",
+        "what": "Very rare deepest clarification.",
+        "why": "Why Layer 6 is still map-worthy.",
+        "emphasis": false
+      }
+    ]
+  }
+}

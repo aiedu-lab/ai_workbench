@@ -1417,3 +1417,24 @@ be consistent with other sessions.
 `OpenClaw` - with actual commands in `tools/openclaw/` - 
 to ensure that the other sessions (`client_agent.md` 
 and `server_multiagent.md`) references are consistent.
+
+## General Skills
+[ ] Status
+
+### Extremes
+* Human Structures Product - built Top to Down
+  * Modularization, Interfaces, Changes, Bugs - all human guided
+* Human Structures Specification - built via Plan
+  * Human owns structure of specification - multi-phased, multi-step, exit criteria
+  * Human and AI cooperate to build specification, execution is AI owned
+* Vibe Coded 
+  * AI owns delivery with Humans specifying outcome in "free style" conversations
+* Add an Agenda after the exercise on `Personal Knowledge Managemetn` on client_multiagent_advanced where we'll go over how to speed read books
+and create mindmaps using different agents specialized on different aspects
+of the work but cooperatively working to get the work done.
+speed-reading exercise in projects/client_multiagent_advanced/speed-reading. 
+
+### Manage
+* [Read Books]
+* [Company Lifecycle](https://linas.substack.com/p/anthropic-claude-study-ai-startup-playbook)
+* [Company Infrastructure](https://x.com/benln/status/2054546806516654263?s=46&t=5Wh9qORxgNovMlyxUN25YA)
