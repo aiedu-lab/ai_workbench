@@ -73,3 +73,25 @@ CNC machines, or IoT actuators — LLMs can drive activities that
 span both digital and physical realms, using MCP or APIs as the
 digital interface to the physical world. The specification is
 always the contract; the interface is always the boundary.
+
+---
+
+## Human-Driven vs Spec-Driven vs Vibe-Coded
+
+| Mode | Human owns | AI owns |
+|---|---|---|
+| **Human-Driven (HDD)** | Module design, API contracts, data flow | Function bodies, tests, boilerplate |
+| **Spec-Driven (SDD)** | Specification document, acceptance criteria | Code, structure, iteration |
+| **Vibe-Coded** | High-level intent | Everything else |
+
+**HDD** is the safest pattern for high-penalty domains (finance,
+safety-critical systems) where a hallucinated API contract causes
+data loss or harm — the human locks every interface before any code
+is written.
+
+**SDD** is the default for structured delivery: the spec is the
+contract, the AI generates from it, and the human reviews diffs.
+
+**Vibe-Coded** maximises speed and is appropriate for exploration,
+prototypes, and throwaway scripts where correctness is not
+critical — iterate fast, throw away when done.
