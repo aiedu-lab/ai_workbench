@@ -3713,3 +3713,36 @@ steps [x]; tag pushed.
 VERIFY: `grep -A1 "^## General Skills"
 sdw/prompt_history.md | grep "\[ \] Status" || echo
 "PASS"` and `git tag | grep v26.9`.
+
+### Step 26.10: Restructure dev_workbench.md + expand
+labsetup/preflight for PKM tools
+
+[ ] Status
+
+CONTEXT: dev_workbench.md has numbered sections and places
+Run Lab Setup Script before the integration test section;
+labsetup.py and preflight_check.py cover only SSH/GitHub/git
+tools; speed-reading pipeline needs poppler-utils
+(pdftotext) and html2text. Step 26.8 is superseded by this
+step.
+ACTION: (1) Rewrite sessions/dev_workbench.md: remove
+"Section N —" prefixes from all headings; move ## Run Lab
+Setup Script to the end (after all optional sections);
+add ## PKM section before ## Run Lab Setup Script referencing
+projects/llm_wiki/speed-reading/README.md with Set Up
+(labsetup.py installs automatically) and Test (which
+pdftotext && which html2text). (2) Expand
+_install_poppler() in labsetup.py to also run
+apt install html2text (one combined apt call
+poppler-utils html2text). (3) Add html2text cmd_exists check
+alongside pdftotext in preflight_check.py.
+CONSTRAINTS: Preserve all existing dev_workbench.md content;
+no logic changes in labsetup.py or preflight_check.py beyond
+adding html2text to install and check; 80-col; 2-space.
+OUTPUT: dev_workbench.md has unnumbered headings + ## PKM +
+## Run Lab Setup Script at end; labsetup.py installs both;
+preflight_check.py checks both.
+VERIFY: `grep "^## Section" sessions/dev_workbench.md ||
+echo PASS` (0 matches); `grep "html2text"
+projects/group_meetup/labsetup.py &&
+grep "html2text" projects/group_meetup/preflight_check.py`.
