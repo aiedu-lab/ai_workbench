@@ -3562,3 +3562,154 @@ sdw/plan.md; tag pushed.
 VERIFY: `grep -A1 "^## Embedding" sdw/prompt_history.md
 | grep "\[ \] Status"` → 0 matches;
 `git tag | grep v25.5` → 1 match.
+
+## Phase 26
+
+### Step 26.1: Create sessions/hdd.md + README agenda row
+
+[x] Status
+
+CONTEXT: No sessions/hdd.md; projects/tower_of_hanoi/ has
+exercise code; README.md has no HDD row.
+ACTION: Create sessions/hdd.md (Objective, Concept table,
+Exercise referencing projects/tower_of_hanoi/, Discussion).
+Insert agenda row after Advanced Prompting in README.md.
+CONSTRAINTS: Do not touch projects/tower_of_hanoi/; 80-col.
+OUTPUT: sessions/hdd.md and updated README.md.
+VERIFY: `grep "hdd\.md" README.md && grep -c "##"
+sessions/hdd.md`.
+
+### Step 26.2: Fix projects/tower_of_hanoi/ — code + docs
+
+[ ] Status
+
+CONTEXT: main.py missing shebang + sys.exit(main());
+tower.py uses typing.Optional; toh_prompt.md references
+Python 3.10+; README.md shows flat tree without src/.
+ACTION: (1) src/main.py: shebang + import sys +
+sys.exit(main()); (2) src/tower.py: remove typing import,
+T | None; (3) toh_prompt.md: Python 3.12+, src/ layout,
+run commands, style rules; (4) README.md: fix tree + paths.
+CONSTRAINTS: No logic changes; 80-col; 2-space indent.
+OUTPUT: main.py has shebang + sys.exit; tower.py no typing;
+toh_prompt.md and README.md accurate.
+VERIFY: `head -1 projects/tower_of_hanoi/src/main.py &&
+grep "sys.exit" projects/tower_of_hanoi/src/main.py &&
+grep "typing" projects/tower_of_hanoi/src/tower.py ||
+echo PASS`.
+
+### Step 26.3: Append HDD vs SDD vs Vibe-Coded to
+sessions/sdd_basics.md
+
+[ ] Status
+
+CONTEXT: sdd_basics.md ends after SDD-beyond-code table;
+no HDD/Vibe comparison exists.
+ACTION: Append ## Human-Driven vs Spec-Driven vs Vibe-Coded
+with 3-row table (Human/AI owns columns) + 2-3 sentences on
+when each mode applies.
+CONSTRAINTS: Append only; 80-col.
+OUTPUT: sdd_basics.md ends with comparison section.
+VERIFY: `grep -n "Vibe\|HDD" sessions/sdd_basics.md |
+tail -5`.
+
+### Step 26.4: Create build_mindmap.sh
+
+[ ] Status
+
+CONTEXT: No build_mindmap.sh in
+projects/llm_wiki/speed-reading/; piper.sh not yet created.
+ACTION: Create executable build_mindmap.sh: set -euo
+pipefail; parse <book_url_or_file> + [output_file]; validate
+ext {pdf,html,htm,txt,md}; convert pdf→pdftotext,
+html→html2text, txt/md pass-through; call piper.sh.
+CONSTRAINTS: bash; ≤80-col; $(dirname "$0") for paths.
+OUTPUT: executable build_mindmap.sh passing bash -n.
+VERIFY: `bash -n projects/llm_wiki/speed-reading/
+build_mindmap.sh && echo PASS`.
+
+### Step 26.5: Create piper.sh
+
+[ ] Status
+
+CONTEXT: No piper.sh; experimental/speed_reading/overview.md
+has reference implementation; agents/ dir exists.
+ACTION: Create executable piper.sh: set -euo pipefail; args
+<notes_file> [output_html]; run Seth→Leo→Quinn via
+claude --print --system-prompt-file; retry Leo+Quinn ≤3
+times if Quinn output contains NOT APPROVED.
+CONSTRAINTS: bash; ≤80-col; AGENT_DIR=$(dirname "$0")/agents.
+OUTPUT: executable piper.sh passing bash -n.
+VERIFY: `bash -n projects/llm_wiki/speed-reading/piper.sh
+&& echo PASS`.
+
+### Step 26.6: Create projects/llm_wiki/speed-reading/
+README.md
+
+[ ] Status
+
+CONTEXT: No README.md in speed-reading/;
+experimental/speed_reading/overview.md has pipeline diagram.
+ACTION: Create README.md: Overview, Pipeline Architecture
+(ASCII + agent table), Usage (build_mindmap.sh example),
+Manual Run, Agents, Templates.
+CONSTRAINTS: Absorb from overview.md; do not modify
+README-mindmap-system.md; 80-col.
+OUTPUT: README.md with ## Usage + build_mindmap.sh example.
+VERIFY: `grep "## Usage\|build_mindmap"
+projects/llm_wiki/speed-reading/README.md`.
+
+### Step 26.7: Append Speed Reading section to
+sessions/llm_wiki.md
+
+[ ] Status
+
+CONTEXT: llm_wiki.md ends with GroupMeetup extension; no
+Speed Reading section.
+ACTION: Append ## Optional Extension — Speed Reading Mindmap:
+2-sentence concept; link to speed-reading/README.md; run
+command: cd projects/llm_wiki/speed-reading &&
+./build_mindmap.sh <book.pdf>.
+CONSTRAINTS: Append only; ≤80-col.
+OUTPUT: llm_wiki.md ends with Speed Reading section.
+VERIFY: `grep -n "Speed Reading" sessions/llm_wiki.md`.
+
+### Step 26.8: Update Setup — dev_workbench.md +
+labsetup.py + preflight_check.py
+
+[ ] Status
+
+CONTEXT: dev_workbench.md has ## Embedding as last section;
+labsetup.py automates SSH/GitHub but not poppler-utils;
+preflight_check.py doesn't check pdftotext.
+ACTION: (1) Append ## Speed Reading to dev_workbench.md;
+(2) Add _install_poppler() to labsetup.py (shutil.which +
+subprocess apt install, idempotent); call from main();
+(3) Add cmd_exists("pdftotext") check to preflight_check.py.
+CONSTRAINTS: Append only to dev_workbench.md; add only new
+function + one main() call to labsetup.py; one check line to
+preflight_check.py; no refactor; 80-col.
+OUTPUT: dev_workbench.md ## Speed Reading; labsetup.py
+installs poppler; preflight_check.py checks pdftotext.
+VERIFY: `grep "Speed Reading" sessions/dev_workbench.md &&
+grep "pdftotext\|poppler"
+projects/group_meetup/labsetup.py &&
+grep "pdftotext" projects/group_meetup/preflight_check.py`.
+
+### Step 26.9: Mark General Skills complete + commit + tag
+
+[ ] Status
+
+CONTEXT: Steps 26.1–26.8 executed; Phase 26 already in
+sdw/plan.md (appended before execution began).
+ACTION: sdw/prompt_history.md: [ ] → [x] Status under
+## General Skills. Flip all Phase 26 step checkboxes in
+sdw/plan.md to [x]. Commit. Tag
+v26.9-general-skills-step-completed. Push.
+CONSTRAINTS: sdw/plan.md is append-only for new content;
+only flip [x] on existing Phase 26 checkboxes.
+OUTPUT: [x] Status under ## General Skills; all Phase 26
+steps [x]; tag pushed.
+VERIFY: `grep -A1 "^## General Skills"
+sdw/prompt_history.md | grep "\[ \] Status" || echo
+"PASS"` and `git tag | grep v26.9`.
