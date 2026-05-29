@@ -299,12 +299,19 @@ def _install_ollama() -> None:
     print("  OK   ollama already installed (skipping)")
     return
   print("  INST installing ollama via official script...")
-  subprocess.run(
-    ["bash", "-c",
-     "curl -fsSL https://ollama.com/install.sh | sh"],
-    check=True,
-  )
-  print("  OK   ollama installed")
+  try:
+    subprocess.run(
+      ["bash", "-c",
+       "curl -fsSL https://ollama.com/install.sh | sh"],
+      check=True,
+    )
+    print("  OK   ollama installed")
+  except subprocess.CalledProcessError:
+    print(
+      "  WARN ollama install failed — install manually:\n"
+      "       curl -fsSL https://ollama.com/install.sh | sh",
+      file=sys.stderr,
+    )
 
 
 def _setup_embedding_venv() -> None:
@@ -371,12 +378,39 @@ def _install_pkm_tools() -> None:
   print("  OK   PKM CLI tools installed")
 
 
+def _sudo_precheck() -> bool:
+  """Authenticate sudo credentials upfront.
+
+  Runs sudo -v to prompt for password once before any apt-install
+  steps so subsequent sudo calls succeed without re-prompting.
+  Returns True if sudo is available; False if unavailable (e.g.,
+  passwordless sudo not configured — apt steps are skipped with
+  manual-install instructions).
+  """
+  print(
+    "  SUDO this script installs system packages via sudo.\n"
+    "       Enter your password if prompted."
+  )
+  result = subprocess.run(["sudo", "-v"])
+  if result.returncode != 0:
+    print(
+      "  WARN sudo unavailable — package installs will be skipped.\n"
+      "  Install manually: "
+      "sudo apt install poppler-utils html2text",
+      file=sys.stderr,
+    )
+    return False
+  return True
+
+
 def main() -> None:
   env = _load_env()
   _set_env(env)
-  _install_ollama()
-  _setup_embedding_venv()
-  _install_pkm_tools()
+  sudo_ok = _sudo_precheck()
+  if sudo_ok:
+    _install_ollama()
+    _install_pkm_tools()
+  _setup_embedding_venv()  # pure Python venv — no sudo needed
 
   ssh_real = all(
     k in env and not _is_placeholder(env[k]) for k in SSH_KEYS

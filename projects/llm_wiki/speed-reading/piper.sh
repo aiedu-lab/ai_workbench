@@ -1,44 +1,37 @@
 #!/usr/bin/env bash
 # piper.sh — multi-agent mindmap pipeline orchestrator.
-# Usage: ./piper.sh <detailed_notes_file> [output.html]
+# Usage: ./piper.sh <work_dir>
 #
-# Runs Seth → Leo → Quinn in sequence.
-# If Quinn outputs NOT APPROVED, retries Leo → Quinn up to 3 times.
+# work_dir must contain detailed-notes.md.
+# Agents cd to work_dir so Claude's file tools stay within
+# the allowed working directory.
 set -euo pipefail
 
-AGENT_DIR="$(dirname "$0")/agents"
-SCRIPT_DIR="$(dirname "$0")"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+AGENT_DIR="$SCRIPT_DIR/agents"
 
 # ── Argument parsing ────────────────────────────────────────────
 if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 <detailed_notes_file> [output.html]" >&2
+  echo "Usage: $0 <work_dir>" >&2
   exit 1
 fi
 
-NOTES_FILE="$1"
-OUTPUT="${2:-mindmap.html}"
+WORK_DIR="$(realpath "$1")"
 
-if [[ ! -f "$NOTES_FILE" ]]; then
-  echo "Error: notes file not found: $NOTES_FILE" >&2
+if [[ ! -f "$WORK_DIR/detailed-notes.md" ]]; then
+  echo "Error: $WORK_DIR/detailed-notes.md not found" >&2
   exit 1
 fi
 
-# ── Temp files ──────────────────────────────────────────────────
-CONTENT_JSON="$(mktemp /tmp/mindmap_content_XXXXXX.json)"
-QA_REPORT="$(mktemp /tmp/mindmap_qa_XXXXXX.md)"
-trap 'rm -f "$CONTENT_JSON" "$QA_REPORT"' EXIT
+# cd so Claude file tools stay within the allowed directory
+cd "$WORK_DIR"
 
 # ── Step 1: Seth — synthesise notes → JSON ──────────────────────
 echo "[piper] Step 1: Seth — synthesising content..."
 claude --print \
-  "Read the detailed notes below and synthesise them into a
-mindmap content structure. Output valid JSON matching the
-mindmap-content template.
-
-$(cat "$NOTES_FILE")" \
-  --system-prompt-file \
-  "$AGENT_DIR/seth-content-synthesizer.md" \
-  > "$CONTENT_JSON"
+  "Synthesize $WORK_DIR/detailed-notes.md \
+into $WORK_DIR/mindmap-content.json" \
+  --system-prompt-file "$AGENT_DIR/seth-content-synthesizer.md"
 
 if [[ $? -ne 0 ]]; then
   echo "[piper] Seth failed — aborting pipeline." >&2
@@ -56,13 +49,9 @@ while true; do
   # Step 2: Leo — render JSON → HTML
   echo "[piper] Step 2 (attempt $attempt): Leo — rendering HTML..."
   claude --print \
-    "Read the mindmap JSON below and render it as a
-self-contained mindmap HTML file.
-
-$(cat "$CONTENT_JSON")" \
-    --system-prompt-file \
-    "$AGENT_DIR/leo-layout-engineer.md" \
-    > "$OUTPUT"
+    "Render $WORK_DIR/mindmap-content.json \
+into $WORK_DIR/mindmap.html" \
+    --system-prompt-file "$AGENT_DIR/leo-layout-engineer.md"
 
   if [[ $? -ne 0 ]]; then
     echo "[piper] Leo failed — aborting pipeline." >&2
@@ -70,15 +59,11 @@ $(cat "$CONTENT_JSON")" \
   fi
   echo "[piper] Leo complete."
 
-  # Step 3: Quinn — QA review of HTML
+  # Step 3: Quinn — QA review; output captured to detect NOT APPROVED
   echo "[piper] Step 3 (attempt $attempt): Quinn — reviewing..."
   quinn_output="$(claude --print \
-    "Review the mindmap HTML below and report any issues.
-Output NOT APPROVED if the mindmap fails quality checks.
-
-$(cat "$OUTPUT")" \
-    --system-prompt-file \
-    "$AGENT_DIR/quinn-qa-reviewer.md")"
+    "Review $WORK_DIR/mindmap.html for quality issues." \
+    --system-prompt-file "$AGENT_DIR/quinn-qa-reviewer.md")"
 
   if [[ $? -ne 0 ]]; then
     echo "[piper] Quinn failed — aborting pipeline." >&2
@@ -100,4 +85,4 @@ $(cat "$OUTPUT")" \
   break
 done
 
-echo "[piper] Pipeline complete. Output: $OUTPUT"
+echo "[piper] Pipeline complete. Output: $WORK_DIR/mindmap.html"

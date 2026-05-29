@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 # build_mindmap.sh — convert a book file/URL to a mindmap HTML.
 # Usage: ./build_mindmap.sh <book_url_or_file> [output.html]
+#
+# Creates a tmp/ working directory next to the output file,
+# converts the input to plain text (detailed-notes.md), then
+# runs piper.sh from that directory.
 set -euo pipefail
 
-SCRIPT_DIR="$(dirname "$0")"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # ── Argument parsing ────────────────────────────────────────────
 if [[ $# -lt 1 ]]; then
@@ -14,18 +18,9 @@ fi
 INPUT="$1"
 OUTPUT="${2:-./mindmap.html}"
 
-# ── Validation: existence ───────────────────────────────────────
-if [[ "$INPUT" =~ ^https?:// ]]; then
-  if ! curl -fsS --head "$INPUT" > /dev/null 2>&1; then
-    echo "Error: URL not reachable: $INPUT" >&2
-    exit 1
-  fi
-else
-  if [[ ! -f "$INPUT" ]]; then
-    echo "Error: file not found: $INPUT" >&2
-    exit 1
-  fi
-fi
+# Resolve output to an absolute path so the copy at the end works
+OUTPUT="$(mkdir -p "$(dirname "$OUTPUT")" && \
+  realpath "$(dirname "$OUTPUT")")/$(basename "$OUTPUT")"
 
 # ── Validation: extension ───────────────────────────────────────
 EXT="${INPUT##*.}"
@@ -39,10 +34,29 @@ case "$EXT" in
     ;;
 esac
 
-# ── Convert to plain text ───────────────────────────────────────
-NOTES_FILE="$(mktemp /tmp/book_notes_XXXXXX.md)"
-trap 'rm -f "$NOTES_FILE"' EXIT
+# ── Validation: existence ───────────────────────────────────────
+if [[ "$INPUT" =~ ^https?:// ]]; then
+  if ! curl -fsS --head "$INPUT" > /dev/null 2>&1; then
+    echo "Error: URL not reachable: $INPUT" >&2
+    exit 1
+  fi
+else
+  if [[ ! -f "$INPUT" ]]; then
+    echo "Error: file not found: $INPUT" >&2
+    exit 1
+  fi
+  INPUT="$(realpath "$INPUT")"
+fi
 
+# ── Create tmp working directory next to output ─────────────────
+OUTPUT_DIR="$(dirname "$OUTPUT")"
+WORK_DIR="$OUTPUT_DIR/.tmp"
+mkdir -p "$WORK_DIR"
+
+NOTES_FILE="$WORK_DIR/detailed-notes.md"
+
+# ── Convert input to plain text ─────────────────────────────────
+echo "[build] Converting input to plain text..."
 case "$EXT" in
   pdf)
     if ! command -v pdftotext &> /dev/null; then
@@ -68,6 +82,11 @@ case "$EXT" in
     cp "$INPUT" "$NOTES_FILE"
     ;;
 esac
+echo "[build] Notes written to $NOTES_FILE"
 
 # ── Run the agent pipeline ──────────────────────────────────────
-"$SCRIPT_DIR/piper.sh" "$NOTES_FILE" "$OUTPUT"
+"$SCRIPT_DIR/piper.sh" "$WORK_DIR"
+
+# ── Copy final HTML to requested output path ────────────────────
+cp "$WORK_DIR/mindmap.html" "$OUTPUT"
+echo "[build] Mindmap saved: $OUTPUT"
