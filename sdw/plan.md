@@ -3746,3 +3746,82 @@ VERIFY: `grep "^## Section" sessions/dev_workbench.md ||
 echo PASS` (0 matches); `grep "html2text"
 projects/group_meetup/labsetup.py &&
 grep "html2text" projects/group_meetup/preflight_check.py`.
+
+### Step 26.11: Consolidate piper.sh → build_mindmap.sh with
+phases, --help, --from-phase, book-name prefix
+
+[ ] Status
+
+CONTEXT: build_mindmap.sh delegates to piper.sh; piper.sh is
+a separate script; intermediate files use fixed names without
+book prefix; no --help or --from-phase support.
+ACTION: Rewrite build_mindmap.sh as single self-contained
+pipeline script with phases sanitizer→setup→converter→seth→
+leo. (1) --help: print usage, flags, defaults, phase names.
+(2) --from-phase <phase>: skip phases before it; sanity-check
+prior phase artifact ($BOOK_NAME-mindmap-content.json) before
+skipping to leo. (3) Phase banners echo [phase-name] to
+stdout. (4) BOOK_NAME from basename strip dir+ext. (5)
+Intermediate files $WORK_DIR/$BOOK_NAME-detailed-notes.md,
+$BOOK_NAME-mindmap-content.json, $BOOK_NAME-mindmap.html.
+(6) Agent prompts use $WORK_DIR/$BOOK_NAME-* paths; cd to
+$WORK_DIR before agents. (7) Leo+Quinn retry loop (max 3)
+in leo phase. (8) Delete piper.sh.
+CONSTRAINTS: bash; ≤80-col; no piper.sh after this step;
+do not change agent .md files; simple short prompts.
+OUTPUT: single build_mindmap.sh; piper.sh removed; bash -n
+passes; --help shows from-phase flag.
+VERIFY: `bash -n projects/llm_wiki/speed-reading/
+build_mindmap.sh && echo PASS` and
+`! test -f projects/llm_wiki/speed-reading/piper.sh &&
+echo "piper gone"` and
+`cd projects/llm_wiki/speed-reading &&
+./build_mindmap.sh --help | grep from-phase`.
+
+### Step 26.12: Create speed-reading README.md
+
+[ ] Status
+
+CONTEXT: No README.md in speed-reading/; piper.sh eliminated
+by 26.11; build_mindmap.sh has --help, --from-phase, phases.
+ACTION: Create projects/llm_wiki/speed-reading/README.md:
+(1) ## Overview 3-sentence summary. (2) ## Pipeline Phases
+table: phase name + artifact produced. (3) ## Usage with
+--help, worked examples (PDF/md/URL), --from-phase leo for
+resuming. (4) ## Agents one line each linking to agents/*.md.
+(5) ## Templates brief note.
+CONSTRAINTS: No piper.sh references; 80-col; absorb relevant
+content from experimental/speed_reading/overview.md.
+OUTPUT: README.md with ## Usage and --from-phase docs.
+VERIFY: `grep "from-phase\|## Usage"
+projects/llm_wiki/speed-reading/README.md`.
+
+### Step 26.13: Add --help to tower_of_hanoi/src/main.py
+
+[ ] Status
+
+CONTEXT: src/main.py uses argparse but ArgumentParser has no
+description or epilog; --help output is bare.
+ACTION: Update ArgumentParser(...) in projects/tower_of_hanoi/
+src/main.py to add description= (one sentence: what the
+solver does) and epilog= (two example commands: basic run +
+step-through). Keep positional num_discs and --step unchanged.
+CONSTRAINTS: Do not change logic; ≤80-col; 2-space indent.
+OUTPUT: python3 src/main.py --help shows description + examples.
+VERIFY: `cd projects/tower_of_hanoi &&
+python3 src/main.py --help | grep -i "tower\|example\|step"`.
+
+### Step 26.14: Append Speed Reading to sessions/llm_wiki.md
+
+[ ] Status
+
+CONTEXT: sessions/llm_wiki.md has no Speed Reading section;
+piper.sh eliminated; build_mindmap.sh has --help/--from-phase.
+ACTION: Append ## Optional Extension — Speed Reading Mindmap
+at end of sessions/llm_wiki.md: 2-sentence concept; reference
+projects/llm_wiki/speed-reading/README.md; run commands with
+--help and basic usage; note --from-phase for resuming.
+CONSTRAINTS: Append only; no piper.sh reference; ≤80-col.
+OUTPUT: sessions/llm_wiki.md ends with Speed Reading section.
+VERIFY: `grep -n "Speed Reading\|from-phase"
+sessions/llm_wiki.md`.
