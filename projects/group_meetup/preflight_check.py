@@ -3,7 +3,7 @@
 before starting the lab.
 
 Checks for:
-- Python 3.10+
+- Python 3.12+
 - git, gh, and claude CLIs in PATH
 - requests and pyyaml packages installed
 - Non-confidential vars present in labenv.yaml with real values
@@ -14,6 +14,10 @@ Checks for:
 - GitHub SSH key exists at ~/.ssh/<username>_id_ed25519_github
 - GitHub SSH authentication (ssh git@github.com)
 - git global user.name and user.email configured
+- ollama CLI in PATH (AI Local session)
+- projects/embedding/.venv with gensim/sklearn/matplotlib
+  (Embeddings Visualization session)
+- pdftotext (poppler-utils) and html2text CLIs in PATH (PKM)
 
 Non-confidential vars (DISCORD_SERVER, DOCKER_SERVER_*) are read
 directly from labenv.yaml so this script works without requiring
@@ -75,9 +79,9 @@ def pkg_exists(name):
 
 
 def check_python():
-  if sys.version_info < (3, 10):
+  if sys.version_info < (3, 12):
     raise RuntimeError(
-      f"need 3.10+, got "
+      f"need 3.12+, got "
       f"{sys.version_info.major}.{sys.version_info.minor}"
     )
 
@@ -187,10 +191,33 @@ def check_git_identity():
     )
 
 
+_EMBEDDING_VENV_PY = (
+  Path(__file__).parent.parent
+  / "projects" / "embedding" / ".venv" / "bin" / "python3"
+)
+
+
+def check_embedding_venv():
+  """Check that the embedding venv has gensim/sklearn/matplotlib."""
+  if not _EMBEDDING_VENV_PY.exists():
+    raise RuntimeError(
+      "projects/embedding/.venv not found — run labsetup.py"
+    )
+  result = subprocess.run(
+    [str(_EMBEDDING_VENV_PY), "-c",
+     "import gensim, sklearn, matplotlib"],
+    capture_output=True,
+  )
+  if result.returncode != 0:
+    raise RuntimeError(
+      "gensim/sklearn/matplotlib missing in embedding venv"
+    )
+
+
 def main():
   env = _labenv()
   print("=== Preflight Check ===\n")
-  check("Python >= 3.10", check_python)
+  check("Python >= 3.12", check_python)
   check("git", lambda: cmd_exists("git"))
   check("gh (GitHub CLI)", lambda: cmd_exists("gh"))
   check("claude (Claude Code CLI)", lambda: cmd_exists("claude"))
@@ -206,6 +233,10 @@ def main():
   check(f"GitHub SSH key {GITHUB_SSH_KEY.name}", check_github_ssh_key)
   check("GitHub SSH authentication", check_github_ssh)
   check("git global identity", check_git_identity)
+  check("ollama", lambda: cmd_exists("ollama"))
+  check("embedding venv", check_embedding_venv)
+  check("pdftotext (poppler-utils)", lambda: cmd_exists("pdftotext"))
+  check("html2text", lambda: cmd_exists("html2text"))
   print("\nAll items must show PASS before the lab begins.")
 
 

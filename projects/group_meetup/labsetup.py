@@ -3,18 +3,23 @@
 
 Steps performed:
 1. Load non-confidential env vars from labenv.yaml.
-2. Generate ~/.ssh/<username>_id_ed25519 key pair if it does not
+2. Install Ollama if absent (idempotent).
+3. Create projects/embedding/.venv, pip-compile, pip-sync,
+   and register Jupyter kernel if venv absent (idempotent).
+4. Install PKM CLI tools (poppler-utils, html2text) if absent
+   (idempotent — skipped if both are already on PATH).
+5. Generate ~/.ssh/<username>_id_ed25519 key pair if it does not
    exist (idempotent — skipped if the key is already present).
-3. Post the public key to #meetup-notifications so the instructor
+4. Post the public key to #meetup-notifications so the instructor
    can install it on the Docker server (instructor.md Section 3).
-4. Write a ~/.ssh/config entry (Host ai-lab) for the lab server
+5. Write a ~/.ssh/config entry (Host ai-lab) for the lab server
    (idempotent — skipped if the entry already exists).
-5. Validate SSH connectivity to ai-lab.
-6. Validate that DISCORD_WEBHOOK_URL is set.
-7. If `gh auth status` exits 0: generate ~/.ssh/<username>_id_ed25519_github,
+6. Validate SSH connectivity to ai-lab.
+8. Validate that DISCORD_WEBHOOK_URL is set.
+9. If `gh auth status` exits 0: generate ~/.ssh/<username>_id_ed25519_github,
    upload public key to GitHub, write Host github.com config entry,
    and validate GitHub SSH authentication. Skipped with WARN if not
-   authenticated — run `gh auth login` first (dev_workbench.md Section 3).
+   authenticated — run `gh auth login` first (dev_workbench.md).
 
 Steps 2–5 are skipped when labenv.yaml still contains placeholder
 values (strings wrapped in < >). DISCORD_WEBHOOK_URL must be set
@@ -23,6 +28,7 @@ message posted by the instructor (instructor.md Section 2).
 """
 import getpass
 import os
+import shutil
 import subprocess
 import sys
 import yaml
@@ -276,9 +282,101 @@ def _validate_secret() -> None:
   print(f"  OK   {SECRET_KEY} is set (value hidden)")
 
 
+_EMBEDDING_DIR = (
+  Path(__file__).parent.parent / "projects" / "embedding"
+)
+_EMBEDDING_VENV = _EMBEDDING_DIR / ".venv"
+
+
+def _install_ollama() -> None:
+  """Install Ollama via the official install script if absent.
+
+  Required by the AI Local session for running open-weight LLMs
+  (Llama, Gemma) locally. Idempotent — skips when ollama is
+  already on PATH.
+  """
+  if shutil.which("ollama"):
+    print("  OK   ollama already installed (skipping)")
+    return
+  print("  INST installing ollama via official script...")
+  subprocess.run(
+    ["bash", "-c",
+     "curl -fsSL https://ollama.com/install.sh | sh"],
+    check=True,
+  )
+  print("  OK   ollama installed")
+
+
+def _setup_embedding_venv() -> None:
+  """Create the embedding Python venv and install dependencies.
+
+  Required by the Embeddings Visualization session. Creates
+  projects/embedding/.venv, runs pip-compile + pip-sync, and
+  registers the Jupyter kernel. Idempotent — skips when the
+  venv Python binary already exists.
+  """
+  venv_py = _EMBEDDING_VENV / "bin" / "python3"
+  if venv_py.exists():
+    print("  OK   embedding venv already exists (skipping)")
+    return
+  print("  VENV creating projects/embedding/.venv …")
+  subprocess.run(
+    ["python3", "-m", "venv", str(_EMBEDDING_VENV)],
+    check=True,
+  )
+  pip = str(_EMBEDDING_VENV / "bin" / "pip")
+  subprocess.run([pip, "install", "pip-tools"], check=True)
+  subprocess.run(
+    [str(_EMBEDDING_VENV / "bin" / "pip-compile"),
+     "requirements.in"],
+    check=True,
+    cwd=str(_EMBEDDING_DIR),
+  )
+  subprocess.run(
+    [str(_EMBEDDING_VENV / "bin" / "pip-sync"),
+     "requirements.txt"],
+    check=True,
+    cwd=str(_EMBEDDING_DIR),
+  )
+  subprocess.run(
+    [
+      str(venv_py), "-m", "ipykernel", "install",
+      "--user", "--name", ".venv",
+      "--display-name", "Python3 (.venv)",
+    ],
+    check=True,
+  )
+  print("  OK   embedding venv ready")
+
+
+def _install_pkm_tools() -> None:
+  """Install poppler-utils and html2text if not already on PATH.
+
+  Required by the Speed Reading Mindmap pipeline (build_mindmap.sh):
+  pdftotext converts PDFs; html2text converts HTML pages to plain text.
+  Idempotent — skips the apt call when both CLIs are already present.
+  """
+  missing = [
+    t for t in ("pdftotext", "html2text")
+    if not shutil.which(t)
+  ]
+  if not missing:
+    print("  OK   pdftotext and html2text already installed (skipping)")
+    return
+  print(f"  APT  installing: {', '.join(missing)}")
+  subprocess.run(
+    ["sudo", "apt", "install", "-y", "poppler-utils", "html2text"],
+    check=True,
+  )
+  print("  OK   PKM CLI tools installed")
+
+
 def main() -> None:
   env = _load_env()
   _set_env(env)
+  _install_ollama()
+  _setup_embedding_venv()
+  _install_pkm_tools()
 
   ssh_real = all(
     k in env and not _is_placeholder(env[k]) for k in SSH_KEYS

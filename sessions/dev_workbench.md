@@ -17,7 +17,7 @@ plugin experience, and the same SSH access to the shared lab server.
 
 ---
 
-## Section 0 — Platform Overview
+## Platform Overview
 
 | Layer | Win11 | macOS |
 |-------|-------|-------|
@@ -37,7 +37,7 @@ guide for that tool — no content is duplicated here.
 
 ---
 
-## Section 1 — VM / Container Setup
+## VM / Container Setup
 
 [VM Setup Guide](../tools/VM/setup.md)
 
@@ -47,7 +47,7 @@ guide for that tool — no content is duplicated here.
 
 ---
 
-## Section 2 — GitHub Account and SSH Setup
+## GitHub Account and SSH Setup
 
 [GitHub Setup Guide](../tools/dev_workbench/github.md)
 
@@ -67,7 +67,7 @@ guide for that tool — no content is duplicated here.
 
 ---
 
-## Section 3 — LLM Provider Setup
+## LLM Provider Setup
 
 - [Claude Account Setup](../tools/claude/cloud.md)
 - [LLM Provider Cost Control](
@@ -96,7 +96,7 @@ Install shared Python dependencies — see
 
 ---
 
-## Section 4 — VSCode Setup
+## VSCode Setup
 
 [VSCode Setup Guide](../tools/dev_workbench/vscode.md)
 
@@ -120,24 +120,7 @@ Subscription (default) and PAYG API. See
 
 ---
 
-## Section 5 — Run Lab Setup Script
-
-Retrieve the Discord webhook URL from `#meetup-notifications`,
-then run both scripts from inside Ubuntu:
-
-```bash
-export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
-python3 projects/group_meetup/labsetup.py
-python3 projects/group_meetup/preflight_check.py
-```
-
-`labsetup.py` generates your SSH key pair, posts your public key
-to Discord, and writes the `ai-lab` SSH config entry.
-Every item in `preflight_check.py` output must show **PASS**.
-
----
-
-## Section 6 — Test VSCode + GitHub + Claude Code Integration
+## Test VSCode + GitHub + Claude Code Integration
 
 Validate the full round-trip: Pull → Claude edits → Push → PR.
 
@@ -195,9 +178,9 @@ exercises. See [AI Local](ai_local.md) for the full session.
 
 ### Set Up
 
-Ollama lets you run open-weight LLMs (Llama, Gemma) entirely
-on your laptop — no cloud, no API key, no cost after download.
-Follow the guide for your OS:
+`labsetup.py` installs Ollama automatically.
+
+To install manually, follow the guide for your OS:
 [Local AI Setup Guide](../tools/ollama/setup.md).
 
 ### Test
@@ -219,13 +202,61 @@ the full session.
 
 ### Set Up
 
-Install the Python virtual environment and GloVe dependencies
-once before session day — see
-[Python venv Setup](../tools/dev_workbench/venv.md) for the
-exact commands.
+`labsetup.py` creates the Python virtual environment, installs
+all dependencies, and registers the Jupyter kernel automatically.
+
+To set up manually, see
+[Python venv Setup](../tools/dev_workbench/venv.md).
 
 ### Test
 
 Verify the environment is ready — see the
 [Validation](../tools/dev_workbench/venv.md#validation)
 section in the venv setup guide.
+
+## PKM
+
+Speed Reading Mindmap converts a PDF or text book into an
+interactive HTML mind-map using a multi-agent pipeline.
+See [LLM Wiki — Speed Reading Extension](llm_wiki.md) for
+the full session.
+
+### Set Up
+
+`labsetup.py` installs the required CLI tools automatically:
+`poppler-utils` (provides `pdftotext`) and `html2text`.
+
+To install manually:
+
+```bash
+sudo apt install poppler-utils html2text
+```
+
+### Test
+
+After installation verify both CLIs are on the PATH:
+
+```bash
+which pdftotext && which html2text
+```
+
+Expected: both commands print their full paths.
+
+---
+
+## Run Lab Setup Script
+
+Retrieve the Discord webhook URL from `#meetup-notifications`,
+then run both scripts from inside Ubuntu:
+
+```bash
+export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
+python3 projects/group_meetup/labsetup.py
+python3 projects/group_meetup/preflight_check.py
+```
+
+`labsetup.py` generates your SSH key pair, posts your public key
+to Discord, writes the `ai-lab` SSH config entry, and installs
+CLI tools required by optional sessions (poppler-utils,
+html2text).
+Every item in `preflight_check.py` output must show **PASS**.
