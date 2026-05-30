@@ -3581,7 +3581,7 @@ sessions/hdd.md`.
 
 ### Step 26.2: Fix projects/tower_of_hanoi/ — code + docs
 
-[ ] Status
+[x] Status
 
 CONTEXT: main.py missing shebang + sys.exit(main());
 tower.py uses typing.Optional; toh_prompt.md references
@@ -3601,7 +3601,7 @@ echo PASS`.
 ### Step 26.3: Append HDD vs SDD vs Vibe-Coded to
 sessions/sdd_basics.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: sdd_basics.md ends after SDD-beyond-code table;
 no HDD/Vibe comparison exists.
@@ -3615,7 +3615,7 @@ tail -5`.
 
 ### Step 26.4: Create build_mindmap.sh
 
-[ ] Status
+[x] Status
 
 CONTEXT: No build_mindmap.sh in
 projects/llm_wiki/speed-reading/; piper.sh not yet created.
@@ -3630,7 +3630,7 @@ build_mindmap.sh && echo PASS`.
 
 ### Step 26.5: Create piper.sh
 
-[ ] Status
+[x] Status
 
 CONTEXT: No piper.sh; experimental/speed_reading/overview.md
 has reference implementation; agents/ dir exists.
@@ -3646,7 +3646,7 @@ VERIFY: `bash -n projects/llm_wiki/speed-reading/piper.sh
 ### Step 26.6: Create projects/llm_wiki/speed-reading/
 README.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: No README.md in speed-reading/;
 experimental/speed_reading/overview.md has pipeline diagram.
@@ -3662,7 +3662,7 @@ projects/llm_wiki/speed-reading/README.md`.
 ### Step 26.7: Append Speed Reading section to
 sessions/llm_wiki.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: llm_wiki.md ends with GroupMeetup extension; no
 Speed Reading section.
@@ -3677,7 +3677,7 @@ VERIFY: `grep -n "Speed Reading" sessions/llm_wiki.md`.
 ### Step 26.8: Update Setup — dev_workbench.md +
 labsetup.py + preflight_check.py
 
-[ ] Status
+[x] Status
 
 CONTEXT: dev_workbench.md has ## Embedding as last section;
 labsetup.py automates SSH/GitHub but not poppler-utils;
@@ -3717,7 +3717,7 @@ sdw/prompt_history.md | grep "\[ \] Status" || echo
 ### Step 26.10: Restructure dev_workbench.md + expand
 labsetup/preflight for PKM tools
 
-[ ] Status
+[x] Status
 
 CONTEXT: dev_workbench.md has numbered sections and places
 Run Lab Setup Script before the integration test section;
@@ -3750,7 +3750,7 @@ grep "html2text" projects/group_meetup/preflight_check.py`.
 ### Step 26.11: Consolidate piper.sh → build_mindmap.sh with
 phases, --help, --from-phase, book-name prefix
 
-[ ] Status
+[x] Status
 
 CONTEXT: build_mindmap.sh delegates to piper.sh; piper.sh is
 a separate script; intermediate files use fixed names without
@@ -3780,7 +3780,7 @@ echo "piper gone"` and
 
 ### Step 26.12: Create speed-reading README.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: No README.md in speed-reading/; piper.sh eliminated
 by 26.11; build_mindmap.sh has --help, --from-phase, phases.
@@ -3798,7 +3798,7 @@ projects/llm_wiki/speed-reading/README.md`.
 
 ### Step 26.13: Add --help to tower_of_hanoi/src/main.py
 
-[ ] Status
+[x] Status
 
 CONTEXT: src/main.py uses argparse but ArgumentParser has no
 description or epilog; --help output is bare.
@@ -3813,7 +3813,7 @@ python3 src/main.py --help | grep -i "tower\|example\|step"`.
 
 ### Step 26.14: Append Speed Reading to sessions/llm_wiki.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: sessions/llm_wiki.md has no Speed Reading section;
 piper.sh eliminated; build_mindmap.sh has --help/--from-phase.
@@ -3828,7 +3828,7 @@ sessions/llm_wiki.md`.
 
 ### Step 26.15: Add sentinel final-guard phase + docs
 
-[ ] Status
+[x] Status
 
 CONTEXT: Quinn is the only QA gate; piper-pipeline-
 orchestrator.md describes a stricter Piper verification step
@@ -3859,7 +3859,7 @@ echo PASS`.
 
 ### Step 26.16: Add ## Motivation table to main README.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: Main README.md has ## Objective but no motivation
 section; ### Motivation spec in prompt_history.md (lines
@@ -3873,3 +3873,31 @@ CONSTRAINTS: Insert only; do not modify other sections; ≤80-
 col prose outside table.
 OUTPUT: README.md ## Motivation table after ## Objective.
 VERIFY: `grep "## Motivation\|AI NATIVE" README.md`.
+
+### Step 26.17: Add cross-references — build_mindmap.sh ↔
+piper-pipeline-orchestrator.md ↔ README.md
+
+[ ] Status
+
+CONTEXT: piper-pipeline-orchestrator.md is doctrine for the
+pipeline; build_mindmap.sh implements that doctrine; neither
+file currently cross-references the other; README.md does not
+explicitly state that build_mindmap.sh is the implementation
+of the piper doctrine.
+ACTION: (1) Add a comment near the top of build_mindmap.sh
+(after the shebang/description block) that it implements the
+pipeline doctrine from agents/piper-pipeline-orchestrator.md.
+(2) In projects/llm_wiki/speed-reading/README.md, update the
+"Reference / Doctrine" entry for piper-pipeline-orchestrator.md
+to explicitly state that build_mindmap.sh is its implementation.
+(3) In agents/piper-pipeline-orchestrator.md, append a one-line
+cross-reference note at the top: "This file is doctrine for the
+pipeline orchestrated by build_mindmap.sh."
+CONSTRAINTS: No logic changes; comment/docs only; ≤80-col.
+OUTPUT: build_mindmap.sh has doctrine reference comment; README.md
+and piper-pipeline-orchestrator.md cross-reference each other.
+VERIFY: `grep "piper-pipeline-orchestrator"
+projects/llm_wiki/speed-reading/build_mindmap.sh &&
+grep "build_mindmap"
+projects/llm_wiki/speed-reading/agents/piper-pipeline-
+orchestrator.md`.
