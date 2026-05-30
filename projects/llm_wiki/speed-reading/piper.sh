@@ -158,14 +158,17 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --help)
       cat <<'HELP'
-Usage: piper.sh [OPTIONS] <input> [output.html]
+Usage: piper.sh [OPTIONS] --input <book> [--output <mindmap.html>]
 
 Convert a book file or URL to a self-contained HTML mindmap.
 
 OPTIONS
-  --help              Show this help and exit.
-  --from-phase <name> Skip phases before <name>; verifies that
-                      prior-phase artifacts exist first.
+  --help                Show this help and exit.
+  --input  <path|url>   Book file or URL (required).
+                        Supported: pdf html htm txt md
+  --output <path>       Output HTML path (default: ./mindmap.html).
+  --from-phase <name>   Skip phases before <name>; verifies that
+                        prior-phase artifacts exist first.
 
 PHASES (run in order)
   sanitizer      Parse args, validate input, resolve paths.
@@ -175,37 +178,43 @@ PHASES (run in order)
   validator-loop Leo+Quinn+Sentinel → <book>-mindmap.html.
                  Retries Leo when Quinn or Sentinel rejects.
 
-INPUTS  pdf  html  htm  txt  md  (file or https:// URL)
-
-DEFAULT output: ./mindmap.html
-
 Intermediate files are written to <output-dir>/.tmp/ with the
 book filename as prefix (e.g. TheComingWave-detailed-notes.md).
 
 EXAMPLES
-  ./piper.sh TheComingWave.pdf
-  ./piper.sh book.pdf out/mindmap.html
-  ./piper.sh --from-phase validator-loop book.pdf out.html
+  # Full run from scratch
+  ./piper.sh \
+    --input  example/TheComingWave.pdf \
+    --output example/TheComingWave_mindmap.html
+
+  # Resume from validator-loop (Seth already wrote JSON)
+  ./piper.sh \
+    --from-phase validator-loop \
+    --input  example/TheComingWave.pdf \
+    --output example/TheComingWave_mindmap.html
 HELP
       exit 0
       ;;
+    --input)
+      [[ $# -ge 2 ]] || {
+        echo "Error: --input requires an argument" >&2; exit 1
+      }
+      INPUT="$2"; shift 2 ;;
+    --output)
+      [[ $# -ge 2 ]] || {
+        echo "Error: --output requires an argument" >&2; exit 1
+      }
+      OUTPUT="$2"; shift 2 ;;
     --from-phase)
       [[ $# -ge 2 ]] || {
         echo "Error: --from-phase requires an argument" >&2
         exit 1
       }
       FROM_PHASE="$2"; shift 2 ;;
-    -*)
-      echo "Error: unknown option '$1'" >&2
+    *)
+      echo "Error: unknown argument '$1'" >&2
       echo "Run: $0 --help" >&2
       exit 1 ;;
-    *)
-      if [[ -z "$INPUT" ]]; then INPUT="$1"
-      elif [[ "$OUTPUT" == "./mindmap.html" ]]; then OUTPUT="$1"
-      else
-        echo "Error: unexpected argument '$1'" >&2; exit 1
-      fi
-      shift ;;
   esac
 done
 

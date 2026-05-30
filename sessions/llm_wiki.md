@@ -237,10 +237,13 @@ cd projects/llm_wiki/speed-reading
 ./piper.sh --help
 
 # Convert a PDF book to a mindmap
-./piper.sh example/TheComingWave.pdf \
-  example/TheComingWave_mindmap.html
+./piper.sh \
+  --input  example/TheComingWave.pdf \
+  --output example/TheComingWave_mindmap.html
 
-# Resume an interrupted run (e.g. Seth done, Leo failed)
-./piper.sh --from-phase leo \
-  example/TheComingWave.pdf example/TheComingWave_mindmap.html
+# Resume if Seth wrote JSON but validator-loop failed
+./piper.sh \
+  --from-phase validator-loop \
+  --input  example/TheComingWave.pdf \
+  --output example/TheComingWave_mindmap.html
 ```

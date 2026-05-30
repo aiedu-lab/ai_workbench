@@ -46,41 +46,50 @@ cd projects/llm_wiki/speed-reading
 
 # Show all options and phase names
 ./piper.sh --help
-
-# From a PDF book
-./piper.sh example/TheComingWave.pdf \
-  example/TheComingWave_mindmap.html
-
-# From a plain-text or Markdown notes file
-./piper.sh my-notes.md mindmap.html
-
-# From an HTML article (URL)
-./piper.sh https://example.com/article.html mindmap.html
 ```
 
-Open the output `.html` file in any browser to explore the
-mindmap.
+### Worked example — The Coming Wave (PDF)
+
+```bash
+# Full run from scratch
+./piper.sh \
+  --input  example/TheComingWave.pdf \
+  --output example/TheComingWave_mindmap.html
+
+# Resume if Seth completed but Leo/Quinn/Sentinel failed
+# (Seth artifact: example/.tmp/TheComingWave-mindmap-content.json)
+./piper.sh \
+  --from-phase validator-loop \
+  --input  example/TheComingWave.pdf \
+  --output example/TheComingWave_mindmap.html
+```
+
+Open `example/TheComingWave_mindmap.html` in any browser.
+
+### Other input types
+
+```bash
+# From a plain-text or Markdown notes file
+./piper.sh --input my-notes.md --output mindmap.html
+
+# From an HTML article (URL)
+./piper.sh \
+  --input  https://example.com/article.html \
+  --output article_mindmap.html
+```
 
 ### Resuming with `--from-phase`
 
 Each phase writes a named artifact to `.tmp/`. If a run is
-interrupted (e.g. API rate limit), resume from the first
-incomplete phase — the script checks the prior-phase artifact
-before skipping. For example, if Seth has completed for
-`TheComingWave.pdf` but Leo failed, resume at `leo`:
+interrupted (e.g. API rate limit), check which artifact was
+last written and resume from the next phase:
 
-```bash
-# Seth already produced:
-#   example/.tmp/TheComingWave-mindmap-content.json
-# Resume at Leo (runs Leo + Quinn + Sentinel):
-./piper.sh --from-phase leo \
-  example/TheComingWave.pdf example/TheComingWave_mindmap.html
-```
+| Last artifact written | Resume flag |
+|---|---|
+| `<book>-detailed-notes.md` | `--from-phase seth` |
+| `<book>-mindmap-content.json` | `--from-phase validator-loop` |
 
-For a different book `my-notes.md`, the same pattern applies
-— Seth would produce `<output-dir>/.tmp/my-notes-mindmap-
-content.json` and `--from-phase leo` would verify it exists
-before proceeding.
+The script verifies the prior artifact exists before skipping.
 
 ---
 
