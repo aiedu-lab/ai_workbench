@@ -87,3 +87,7 @@ eliminates ambiguity.
   of following the spec?
 - Where would bugs be harder to trace — in a vibe-coded version or
   in this HDD version?
+
+## Credits
+
+**How to use AI to generate production code**: by Mohit Aron 10-May-2026
