@@ -3698,7 +3698,7 @@ grep "pdftotext" projects/group_meetup/preflight_check.py`.
 
 ### Step 26.9: Mark General Skills complete + commit + tag
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 26.1–26.8 executed; Phase 26 already in
 sdw/plan.md (appended before execution began).

@@ -1419,7 +1419,7 @@ to ensure that the other sessions (`client_agent.md`
 and `server_multiagent.md`) references are consistent.
 
 ## General Skills
-[ ] Status
+[x] Status
 
 We will update the agenda in README.md and add 
 few sesions and associated projects.
@@ -1738,3 +1738,23 @@ into a focused final-guard system prompt.
 Update `README.md` (speed-reading) phases table to include
 the sentinel row. Update `README-mindmap-system.md` workflow
 step 8 to reference Sentinel (not Piper).
+
+### Sanitize
+* Mark the General Skills complete *after* explicitly documenting 
+in `projects/llm_wiki/speed-reading/README.md` as well as in 
+`build-pipeline.sh` that it is the representation of the objective 
+as set forth in `piper-pipeline-orchestrator.md` - cross reference 
+in `piper-pipeline-orchestrator.md` that `build-mindmap.sh` 
+represents the mindmap pipeline or implementation of the 
+metadata file. 
+* Extract the `## Setup` subsection of 
+`experimental/speed_reading/overview.md` and record the sanitized 
+version of the waterfall ascii diagram into 
+`projects/llm_wiki/speed-reading/README.md` subsection 
+`## Pipeline Phases` showing the orchestrator as the 
+central coordinator that feeds the different phases.
+* Extract any ofhter section of 
+`experimental/speed_reading/overview.md` and migrate into 
+`projects/llm_wiki/speed-reading/README.md`.
+* Git rid of `experimental/speed_reading` directory and 
+its contents as they is no longer needed
