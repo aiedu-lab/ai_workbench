@@ -211,7 +211,7 @@ else
   }
 fi
 
-# ── Phase: Leo Renderer + Quinn Validator ────────────────────────
+# ── Phase: Leo Renderer + Quinn Validator + Sentinel Guard ──────
 
 MAX_RETRIES=3
 attempt=0
@@ -245,11 +245,35 @@ while true; do
       echo "$quinn_out" >&2
       exit 1
     fi
-    echo "[quinn] Retrying Leo + Quinn..."
+    echo "[quinn] Retrying Leo + Quinn + Sentinel..."
+    continue
+  fi
+  echo "[quinn] APPROVED."
+
+  # Sentinel independently verifies Quinn's approval —
+  # overrules if it finds failures Quinn missed.
+  echo "[sentinel] Final verification (attempt $attempt)..."
+  sentinel_out="$(claude --print \
+    "Final verification of $HTML_FILE. Quinn approved. \
+Independently verify — overrule if you see any failure." \
+    --system-prompt-file \
+    "$AGENT_DIR/sentinel-final-guardian.md")"
+  [[ $? -eq 0 ]] || {
+    echo "[sentinel] Failed — aborting." >&2; exit 1
+  }
+
+  if echo "$sentinel_out" | grep -q "NOT APPROVED"; then
+    echo "[sentinel] NOT APPROVED (attempt $attempt)."
+    if [[ $attempt -ge $MAX_RETRIES ]]; then
+      echo "[sentinel] Max retries ($MAX_RETRIES) reached." >&2
+      echo "$sentinel_out" >&2
+      exit 1
+    fi
+    echo "[sentinel] Overruling Quinn — retrying Leo..."
     continue
   fi
 
-  echo "[quinn] APPROVED."
+  echo "[sentinel] APPROVED."
   break
 done
 

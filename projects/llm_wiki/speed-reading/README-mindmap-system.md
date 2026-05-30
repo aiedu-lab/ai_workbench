@@ -3,20 +3,41 @@
 This directory stores reusable doctrine, agent instructions, and templates for building book mind maps.
 
 ## Files
-- `ai-mindmap.md`: global doctrine and non-negotiable map rules
-- `agents/seth-content-synthesizer.md`: Seth, the content synthesizer who derives and prunes concepts
-- `agents/leo-layout-engineer.md`: Leo, the layout engineer who places and renders the map
-- `agents/quinn-qa-reviewer.md`: Quinn, the QA reviewer who inspects the rendered result
-- `agents/piper-pipeline-orchestrator.md`: Piper, the pipeline orchestrator who coordinates the workflow
-- `templates/mindmap-content.template.json`: starter content schema
-- `templates/mindmap-layout.template.json`: starter layout schema
-- `templates/detailed-notes.template.md`: starter chapter-notes file
+
+### Active Agent Prompts (used by `build_mindmap.sh`)
+- `agents/seth-content-synthesizer.md`: Seth — distils book
+  notes into structured mindmap JSON.
+- `agents/leo-layout-engineer.md`: Leo — renders JSON into a
+  self-contained HTML mindmap.
+- `agents/quinn-qa-reviewer.md`: Quinn — QA-reviews the
+  rendered HTML; outputs NOT APPROVED with failures.
+- `agents/sentinel-final-guardian.md`: Sentinel — final
+  independent verification; overrules Quinn approval if any
+  layout, hierarchy, or rendering failure is present.
+
+### Reference / Doctrine (not used as agent prompts)
+- `ai-mindmap.md`: global doctrine and non-negotiable map
+  rules.
+- `agents/piper-pipeline-orchestrator.md`: Piper pipeline
+  doctrine — multi-agent coordination rules, layer policies,
+  task scope locking. Referenced when extending the pipeline
+  or debugging coordination issues. The bash orchestrator
+  (`build_mindmap.sh`) implements this doctrine.
+
+### Templates
+- `templates/mindmap-content.template.json`: starter content
+  schema
+- `templates/mindmap-layout.template.json`: starter layout
+  schema
+- `templates/detailed-notes.template.md`: starter chapter-
+  notes file
 
 ## Recommended Per-Book Files
-- `mindmap-content.json`
-- `mindmap-layout.json`
-- `mindmap.html`
-- `detailed-notes.md`
+All intermediate files are prefixed with the book name and
+written to `<output-dir>/.tmp/` by `build_mindmap.sh`:
+- `<book>-detailed-notes.md`
+- `<book>-mindmap-content.json`
+- `<book>-mindmap.html`
 
 ## Depth Policy
 - Layer 2 to Layer 4 are the normal working depths.
@@ -32,8 +53,9 @@ This directory stores reusable doctrine, agent instructions, and templates for b
 6. Only introduce custom edge drawing after a demonstrated `vis-network` limitation
    or another very important reason.
 7. Have Quinn review the rendered result.
-8. Have Piper independently double-check any Quinn approval against the same render,
-   including breathing room between dense nodes, not just literal overlap.
+8. Have Sentinel independently verify Quinn's approval —
+   Sentinel overrules if it finds any failure Quinn missed,
+   including cramped nodes or subtle layout defects.
 9. Review screenshots and iterate.
 10. Promote only genuine new doctrine into `ai-mindmap.md`.
 

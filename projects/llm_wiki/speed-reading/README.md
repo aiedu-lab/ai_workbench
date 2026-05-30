@@ -1,51 +1,50 @@
 # Speed Reading Mindmap
 
-Convert any PDF or text book into an interactive HTML mind-map
-using a three-agent pipeline. The human reads and takes notes;
-the AI pipeline synthesises, renders, and QA-reviews the result.
+Convert any PDF, web page, or text file into an interactive
+HTML mindmap using a four-agent AI pipeline. A single script
+(`build_mindmap.sh`) orchestrates all phases — from input
+conversion through synthesis, rendering, QA review, and final
+independent verification.
 
 ---
 
-## Pipeline Architecture
+## Pipeline Phases
 
-```
-build_mindmap.sh
-      │
-      │ (converts PDF/HTML/text → plain notes)
-      ▼
-  piper.sh (orchestrator)
-      │
-      ├─── Seth (content-synthesizer)
-      │         notes → mindmap-content.json
-      │
-      ├─── Leo (layout-engineer)
-      │         mindmap-content.json → mindmap.html
-      │
-      └─── Quinn (qa-reviewer)
-                mindmap.html → APPROVED / NOT APPROVED
-                (Leo+Quinn retry up to 3 times)
-```
-
-| Agent | File | Role |
+| Phase | Name | Artifact / role |
 |---|---|---|
-| Seth | `agents/seth-content-synthesizer.md` | Distils notes into structured JSON |
-| Leo | `agents/leo-layout-engineer.md` | Renders JSON to self-contained HTML |
-| Quinn | `agents/quinn-qa-reviewer.md` | QA-reviews the rendered mindmap |
-| Piper | `agents/piper-pipeline-orchestrator.md` | Pipeline doctrine reference |
+| 1 | `sanitizer` | Validates args; sets `BOOK_NAME`, paths |
+| 2 | `setup` | Checks CLI tools (`pdftotext`, `html2text`) |
+| 3 | `converter` | `<book>-detailed-notes.md` in `.tmp/` |
+| 4 | `seth` | `<book>-mindmap-content.json` (Seth agent) |
+| 5 | `leo` | `<book>-mindmap.html` — Leo renders, Quinn reviews, Sentinel verifies (all in one retry loop) |
+
+**Book-name prefix**: all intermediate files in `.tmp/` are
+prefixed with the book filename (without extension). For
+`example/TheComingWave.pdf` the files are:
+
+```
+example/.tmp/TheComingWave-detailed-notes.md
+example/.tmp/TheComingWave-mindmap-content.json
+example/.tmp/TheComingWave-mindmap.html
+```
+
+The `leo` phase runs Leo → Quinn → Sentinel in sequence. If
+Quinn or Sentinel outputs `NOT APPROVED`, Leo re-renders and
+the full trio retries (up to 3 times).
 
 ---
 
 ## Usage
 
-The main entry point is `build_mindmap.sh`. It accepts a PDF,
-HTML page, or plain-text/Markdown file and produces a
-`mindmap.html` you can open in any browser.
-
 ```bash
 cd projects/llm_wiki/speed-reading
 
+# Show all options and phase names
+./build_mindmap.sh --help
+
 # From a PDF book
-./build_mindmap.sh TheComingWave.pdf mindmap.html
+./build_mindmap.sh example/TheComingWave.pdf \
+  example/TheComingWave_mindmap.html
 
 # From a plain-text or Markdown notes file
 ./build_mindmap.sh my-notes.md mindmap.html
@@ -54,35 +53,52 @@ cd projects/llm_wiki/speed-reading
 ./build_mindmap.sh https://example.com/article.html mindmap.html
 ```
 
-Open `mindmap.html` in a browser to explore the mind-map.
+Open the output `.html` file in any browser to explore the
+mindmap.
 
----
+### Resuming with `--from-phase`
 
-## Manual Run
-
-To run the agent pipeline directly (if you already have
-plain-text notes):
+Each phase writes a named artifact to `.tmp/`. If a run is
+interrupted (e.g. API rate limit), resume from the first
+incomplete phase — the script checks the prior-phase artifact
+before skipping. For example, if Seth has completed for
+`TheComingWave.pdf` but Leo failed, resume at `leo`:
 
 ```bash
-./piper.sh detailed-notes.md mindmap.html
+# Seth already produced:
+#   example/.tmp/TheComingWave-mindmap-content.json
+# Resume at Leo (runs Leo + Quinn + Sentinel):
+./build_mindmap.sh --from-phase leo \
+  example/TheComingWave.pdf example/TheComingWave_mindmap.html
 ```
 
-`piper.sh` runs Seth → Leo → Quinn and retries Leo+Quinn up to
-3 times if Quinn outputs `NOT APPROVED`.
+For a different book `my-notes.md`, the same pattern applies
+— Seth would produce `<output-dir>/.tmp/my-notes-mindmap-
+content.json` and `--from-phase leo` would verify it exists
+before proceeding.
 
 ---
 
 ## Agents
 
-- **Seth** (`agents/seth-content-synthesizer.md`) — reads
-  detailed notes, extracts key concepts, outputs structured
-  JSON matching `templates/mindmap-content.template.json`.
-- **Leo** (`agents/leo-layout-engineer.md`) — reads the
-  JSON and renders a self-contained `mindmap.html` using the
-  vis-network library.
-- **Quinn** (`agents/quinn-qa-reviewer.md`) — reviews the
-  rendered HTML; outputs `NOT APPROVED` with issues if quality
-  checks fail.
+Active agent prompts used by `build_mindmap.sh`:
+
+| Agent | System prompt | Role |
+|---|---|---|
+| Seth | `agents/seth-content-synthesizer.md` | Distils notes into structured JSON |
+| Leo | `agents/leo-layout-engineer.md` | Renders JSON to self-contained HTML |
+| Quinn | `agents/quinn-qa-reviewer.md` | QA-reviews the rendered mindmap |
+| Sentinel | `agents/sentinel-final-guardian.md` | Final independent verification; overrules Quinn on any missed failure |
+
+### Reference / Doctrine Files
+
+These files are NOT used as agent system prompts; they contain
+pipeline doctrine and design rules for human reference:
+
+| File | Purpose |
+|---|---|
+| `agents/piper-pipeline-orchestrator.md` | Multi-agent coordination doctrine: task scope locking, layer policies, workflow rules. Referenced when extending the pipeline or debugging coordination issues. |
+| `ai-mindmap.md` | Non-negotiable map rules and global doctrine for content and layout quality. |
 
 ---
 
@@ -94,7 +110,7 @@ plain-text notes):
 | `templates/mindmap-layout.template.json` | Layout parameters for Leo |
 | `templates/detailed-notes.template.md` | Starter note-taking format |
 
-Fill `templates/detailed-notes.template.md` while reading the
+Use `templates/detailed-notes.template.md` while reading a
 book, then run `build_mindmap.sh` on the resulting notes file.
 
 ---
