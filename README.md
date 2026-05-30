@@ -1,8 +1,9 @@
 # AI Workbench
 
 ## Objective
-A hands-on, community-driven program to learn about agentic solutions, 
-such as AI tools, AI driven workflows, etc. through exercises. 
+A hands-on, community-driven program to learn about generative AI solutions, 
+such as agentic AI applications, AI driven workflows and intelligence, 
+etc. through exercises. 
 The program is structured as a series of sessions, each focusing on a 
 specific tool or concept with the objective to learn how agents work 
 for various use cases, such as coding, automation, etc. using:
@@ -10,6 +11,28 @@ for various use cases, such as coding, automation, etc. using:
 * Planning (plan.md)
 * Agent execution
 * Reflection and debugging
+
+## 🌐 Motivation
+
+Generative AI is reshaping every industry. This table shows
+how AI-native approaches are transforming — not just
+improving — the way work gets done:
+
+| Domain | Legacy | AI Native | Objective | Transformation |
+| :--- | :--- | :--- | :--- | :--- |
+| Internet Search | Google keyword ranking | ChatGPT / Claude | How to best prepare for Multivariable Calculus | Knowledge fully reasoned, correlated, and synthesised — not a list of keyword matches |
+| Photography | Photoshop manual editing | Midjourney / Adobe Firefly | Make our event photos look professional | Describe the result in words; AI handles composition, lighting, and style |
+| Software Development | IDE + Stack Overflow | Claude Code / Cursor | Ship quality software faster | Coding agents generate, test, and debug code end-to-end across the entire codebase |
+| Manufacturing Planning | ERP + spreadsheets | Hadrian / Machina Labs | Optimise production scheduling for custom parts | AI reads CAD files, programs CNC machines, and schedules jobs autonomously |
+| Customer Relationships | Salesforce CRM manual entry | Auracell | Sell more with less manual tracking | Automated pipeline management and customer records updated from conversation context |
+| Conversational Intelligence | Gong call recording + analytics | 1mind | Close the deal with this customer | Real-time AI agent offers live intelligence and suggested responses, not just post-call analysis |
+| Running a Company | Human-in-the-loop for every decision | [Autonomous AI orgs](https://x.com/benln/status/2054546806516654263) | Scale operations without scaling headcount | AI agents own workflows end-to-end; humans set goals and review exceptions |
+
+The sessions in this workbench are designed to give you
+hands-on experience with the tools that make AI-native
+approaches possible.
+
+---
 
 ## 🔧 Specification Driven Workbench (SDW)
 
