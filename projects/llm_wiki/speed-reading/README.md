@@ -8,29 +8,34 @@ independent verification.
 
 ---
 
-## Pipeline Phases
+## Pipeline — Waterfall View
 
-| Phase | Name | Artifact / role |
-|---|---|---|
-| 1 | `sanitizer` | Validates args; sets `BOOK_NAME`, paths |
-| 2 | `setup` | Checks CLI tools (`pdftotext`, `html2text`) |
-| 3 | `converter` | `<book>-detailed-notes.md` in `.tmp/` |
-| 4 | `seth` | `<book>-mindmap-content.json` (Seth agent) |
-| 5 | `leo` | `<book>-mindmap.html` — Leo renders, Quinn reviews, Sentinel verifies (all in one retry loop) |
+`piper.sh` prints a 3-column waterfall at each phase transition.
+Symbols: `[✓]` done · `[⟳]` active · `[~]` skipped · `[ ]`
+pending. A stderr spinner animates during every active agent call.
 
-**Book-name prefix**: all intermediate files in `.tmp/` are
-prefixed with the book filename (without extension). For
-`example/TheComingWave.pdf` the files are:
+```
+Phase                                          Function                Artifact
+─────────────────────────────────────────────  ──────────────────────  ──────────
+[✓] sanitizer                                  arg parser              n/a
+└─ [✓] setup                                   tool checker            n/a
+     └─ [✓] converter                          note taker              .tmp/<book>-detailed-notes.md
+          └─ [✓] Seth                          synthesizer             .tmp/<book>-mindmap-content.json
+               └─ [⟳] validator                loop until success
+                    |  Leo · Quinn · Sentinel  (attempt 2 of 3)
+                    └─ [⟳] Leo                  map creator             .tmp/<book>-mindmap.html
+                         └─ [ ] Quinn            QA reviewer             qa
+                              └─ [ ] Sentinel    final gate              qa
+```
+
+**Book-name prefix**: all `.tmp/` files use the book filename.
+For `example/TheComingWave.pdf`:
 
 ```
 example/.tmp/TheComingWave-detailed-notes.md
 example/.tmp/TheComingWave-mindmap-content.json
 example/.tmp/TheComingWave-mindmap.html
 ```
-
-The `leo` phase runs Leo → Quinn → Sentinel in sequence. If
-Quinn or Sentinel outputs `NOT APPROVED`, Leo re-renders and
-the full trio retries (up to 3 times).
 
 ---
 

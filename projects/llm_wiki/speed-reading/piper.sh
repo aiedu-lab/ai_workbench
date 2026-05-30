@@ -7,10 +7,19 @@
 # task scope locking, agent sequencing, retry policy, and
 # independent final verification via Sentinel.
 #
-# Waterfall pipeline display (5 phases, validator-loop expanded):
-#   sanitizer → setup → converter → seth
-#                                    └─ validator-loop
-#                                         └─ leo → quinn → sentinel
+# Waterfall progress display (printed at each phase transition):
+#
+# Phase                                           Function                Artifact
+# ─────                                           ────────                ────────
+# [✓] sanitizer                                  arg parser              n/a
+# └─ [✓] setup                                   tool checker            n/a
+#      └─ [✓] converter                          note taker              .tmp/<book>-detailed-notes.md
+#           └─ [✓] Seth                          synthesizer             .tmp/<book>-mindmap-content.json
+#                └─ [⟳] validator                loop until success
+#                     |  Leo · Quinn · Sentinel  (attempt 2 of 3)
+#                     └─ [⟳] Leo                 map creator             .tmp/<book>-mindmap.html
+#                          └─ [ ] Quinn           QA reviewer             qa
+#                               └─ [ ] Sentinel   final gate              qa
 #
 # Usage: ./piper.sh [OPTIONS] <input> [output.html]
 set -euo pipefail
@@ -19,18 +28,17 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 AGENT_DIR="$SCRIPT_DIR/agents"
 
 # ── Waterfall activity display ───────────────────────────────────
-# 5 main-phase states (indices 0-4):
-#   0=sanitizer 1=setup 2=converter 3=seth 4=validator-loop
-# 3 validator-loop sub-step states (indices 0-2): leo quinn sentinel
+# 5 main-phase states (0=sanitizer 1=setup 2=converter 3=seth 4=validator)
+# 3 validator sub-step states (0=leo 1=quinn 2=sentinel)
 # States: pending | active | done | skip
 _PH_ST=(pending pending pending pending pending)
 _VL_ST=(pending pending pending)
 _VL_ATTEMPT=0   # current attempt number
-_VL_MAX=0       # max retries (set before entering the loop)
+_VL_MAX=0       # max retries set before entering the loop
 
-# Tree-prefix per display level (5-char indentation step).
-# Levels: 0=sanitizer 1=setup 2=converter 3=seth
-#         4=validator-loop 5=leo 6=quinn 7=sentinel
+# Tree-prefix per display level (5-char indentation step):
+#   L0=sanitizer  L1=setup    L2=converter  L3=Seth
+#   L4=validator  L5=Leo      L6=Quinn      L7=Sentinel
 _PFX=(
   ""
   "└─ "
@@ -41,8 +49,11 @@ _PFX=(
   "                         └─ "
   "                              └─ "
 )
+# Connector printed between validator and Leo rows
+# (aligned with Leo's └─ prefix, uses | instead of └─)
+_VL_CONN="                    |  "
 
-_mark() {   # emit [ ] [⟳] [✓] [~] for a given state
+_mark() {   # emit status symbol for a given state
   case "$1" in
     done)   printf "[✓]" ;;
     active) printf "[⟳]" ;;
@@ -51,42 +62,62 @@ _mark() {   # emit [ ] [⟳] [✓] [~] for a given state
   esac
 }
 
-# Print the full waterfall to stdout at each phase transition.
+# Build the left (phase-tree) column string for a row.
+# Args: level  state  display-name
+_ptree() {
+  printf "%s%s %s" "${_PFX[$1]}" "$(_mark "$2")" "$3"
+}
+
+# Print the full 3-column waterfall to stdout.
+# Columns: Phase (45) · Function (22) · Artifact
 _waterfall() {
+  local B="${BOOK_NAME:-<book>}"
   printf "\n"
-  local ph=("sanitizer" "setup" "converter" "seth")
-  local ag=("arg parser" "tool checker" "text extractor" \
-            "Seth — synthesizer")
-  local i
-  for i in 0 1 2 3; do
-    printf "%s%s %-14s  %s\n" \
-      "${_PFX[$i]}" "$(_mark "${_PH_ST[$i]}")" \
-      "${ph[$i]}" "${ag[$i]}"
-  done
+  printf "%-45s  %-22s  %s\n" "Phase" "Function" "Artifact"
+  printf "%-45s  %-22s  %s\n" \
+    "─────────────────────────────────────────────" \
+    "──────────────────────" \
+    "──────────────────────────────────"
 
-  # validator-loop line: show attempt counter when active
-  local vl_sfx=""
+  printf "%-45s  %-22s  %s\n" \
+    "$(_ptree 0 "${_PH_ST[0]}" "sanitizer")" \
+    "arg parser" "n/a"
+  printf "%-45s  %-22s  %s\n" \
+    "$(_ptree 1 "${_PH_ST[1]}" "setup")" \
+    "tool checker" "n/a"
+  printf "%-45s  %-22s  %s\n" \
+    "$(_ptree 2 "${_PH_ST[2]}" "converter")" \
+    "note taker" ".tmp/$B-detailed-notes.md"
+  printf "%-45s  %-22s  %s\n" \
+    "$(_ptree 3 "${_PH_ST[3]}" "Seth")" \
+    "synthesizer" ".tmp/$B-mindmap-content.json"
+
+  # validator row (no artifact)
+  printf "%-45s  %-22s\n" \
+    "$(_ptree 4 "${_PH_ST[4]}" "validator")" \
+    "loop until success"
+
+  # connector: shows what is looping and current attempt
+  local conn_sfx=""
   [[ $_VL_ATTEMPT -gt 0 ]] && \
-    vl_sfx="  (attempt $_VL_ATTEMPT of $_VL_MAX)"
-  printf "%s%s %-14s  Leo ─► Quinn ─► Sentinel%s\n" \
-    "${_PFX[4]}" "$(_mark "${_PH_ST[4]}")" \
-    "validator-loop" "$vl_sfx"
+    conn_sfx="  (attempt $_VL_ATTEMPT of $_VL_MAX)"
+  printf "%sLeo · Quinn · Sentinel%s\n" "$_VL_CONN" "$conn_sfx"
 
-  # Sub-steps: leo (5), quinn (6), sentinel (7)
-  local vl_ph=("leo" "quinn" "sentinel")
-  local vl_ag=("Leo — renderer" "Quinn — QA reviewer" \
-               "Sentinel — final guard")
-  for i in 0 1 2; do
-    printf "%s%s %-14s  %s\n" \
-      "${_PFX[$((i + 5))]}" "$(_mark "${_VL_ST[$i]}")" \
-      "${vl_ph[$i]}" "${vl_ag[$i]}"
-  done
+  printf "%-45s  %-22s  %s\n" \
+    "$(_ptree 5 "${_VL_ST[0]}" "Leo")" \
+    "map creator" ".tmp/$B-mindmap.html"
+  printf "%-45s  %-22s  %s\n" \
+    "$(_ptree 6 "${_VL_ST[1]}" "Quinn")" \
+    "QA reviewer" "qa"
+  printf "%-45s  %-22s  %s\n" \
+    "$(_ptree 7 "${_VL_ST[2]}" "Sentinel")" \
+    "final gate" "qa"
   printf "\n"
 }
 
 # ── Spinner ──────────────────────────────────────────────────────
 # Animates on stderr during every active agent call so the user
-# always sees live progress regardless of captured stdout.
+# sees live progress. Stderr keeps spinner separate from waterfall.
 _SPIN_CHARS='/-\|'
 _SPIN_PID=""
 
@@ -109,11 +140,11 @@ _spin_stop() {
     kill "$_SPIN_PID" 2>/dev/null || true
     wait "$_SPIN_PID" 2>/dev/null || true
     _SPIN_PID=""
-    printf "%-70s\r" "" >&2   # clear spinner line
+    printf "%-70s\r" "" >&2
   fi
 }
 
-trap '_spin_stop' EXIT   # clean up on any exit path
+trap '_spin_stop' EXIT
 
 # ── Phase: Argument Sanitizer ────────────────────────────────────
 
@@ -142,7 +173,7 @@ PHASES (run in order)
   converter      Convert input → <book>-detailed-notes.md.
   seth           Seth agent → <book>-mindmap-content.json.
   validator-loop Leo+Quinn+Sentinel → <book>-mindmap.html.
-                 (Retries Leo if Quinn or Sentinel rejects.)
+                 Retries Leo when Quinn or Sentinel rejects.
 
 INPUTS  pdf  html  htm  txt  md  (file or https:// URL)
 
@@ -278,8 +309,7 @@ fi
 if [[ $FROM_IDX -le 2 ]]; then
   _PH_ST[2]="active"
   _waterfall
-  _spin_start \
-    "Converting $(basename "$INPUT") to plain text..."
+  _spin_start "Converting $(basename "$INPUT") to plain text..."
   case "$EXT" in
     pdf)   pdftotext "$INPUT" "$NOTES_FILE" ;;
     html|htm)
@@ -303,23 +333,27 @@ fi
 cd "$WORK_DIR"
 
 # ── Phase: Seth Synthesizer ──────────────────────────────────────
-# Seth's stdout (conversational) is captured; the JSON artifact
-# is written by Seth's Write tool directly to CONTENT_JSON.
+# Seth's stdout is captured so the spinner can animate freely.
+# The JSON artifact is written by Seth's Write tool to CONTENT_JSON.
 
 if [[ $FROM_IDX -le 3 ]]; then
   _PH_ST[3]="active"
   _waterfall
-  _spin_start \
-    "Seth · synthesising book concepts into mindmap JSON..."
+  _spin_start "Seth · synthesising concepts → mindmap JSON..."
   # shellcheck disable=SC2034
   _seth="$(claude --print \
     "Synthesize $NOTES_FILE into $CONTENT_JSON" \
+    --permission-mode bypassPermissions \
     --system-prompt-file \
     "$AGENT_DIR/seth-content-synthesizer.md")" || {
     _spin_stop
     echo "Error: Seth failed — aborting." >&2; exit 1
   }
   _spin_stop
+  [[ -f "$CONTENT_JSON" ]] || {
+    echo "Error: Seth did not produce $CONTENT_JSON." >&2
+    exit 1
+  }
   _PH_ST[3]="done"
 else
   [[ -f "$CONTENT_JSON" ]] || {
@@ -330,9 +364,8 @@ else
 fi
 
 # ── Phase: Validator Loop (Leo → Quinn → Sentinel) ───────────────
-# Leo renders; Quinn and Sentinel review independently.
-# If either rejects, Leo re-renders (up to MAX_RETRIES times).
-# All agent stdout is captured; spinner shows live progress.
+# Leo renders; Quinn then Sentinel review independently.
+# On rejection by either, Leo re-renders (up to VL_MAX retries).
 
 _PH_ST[4]="active"
 _VL_MAX=3
@@ -344,10 +377,11 @@ while true; do
   _VL_ST=(active pending pending)
   _waterfall
 
-  _spin_start "Leo · building vis-network HTML from JSON..."
+  _spin_start "Leo · rendering vis-network mindmap HTML..."
   # shellcheck disable=SC2034
   _leo="$(claude --print \
     "Render $CONTENT_JSON into $HTML_FILE" \
+    --permission-mode bypassPermissions \
     --system-prompt-file \
     "$AGENT_DIR/leo-layout-engineer.md")" || {
     _spin_stop
@@ -361,6 +395,7 @@ while true; do
   _spin_start "Quinn · reviewing layout, hierarchy, content..."
   _quinn="$(claude --print \
     "Review $HTML_FILE for quality issues." \
+    --permission-mode bypassPermissions \
     --system-prompt-file \
     "$AGENT_DIR/quinn-qa-reviewer.md")" || {
     _spin_stop
@@ -371,9 +406,8 @@ while true; do
   if echo "$_quinn" | grep -q "NOT APPROVED"; then
     _VL_ST=(done skip skip)
     if [[ $attempt -ge $_VL_MAX ]]; then
-      _PH_ST[4]="active"   # still active (max reached)
-      _waterfall
-      echo "Error: Quinn NOT APPROVED — max retries." >&2
+      _PH_ST[4]="active"; _waterfall
+      echo "Error: Quinn NOT APPROVED — max retries reached." >&2
       echo "$_quinn" >&2; exit 1
     fi
     _waterfall
@@ -383,11 +417,11 @@ while true; do
   _VL_ST=(done done active)
   _waterfall
 
-  _spin_start \
-    "Sentinel · checking spacing, completeness, hierarchy..."
+  _spin_start "Sentinel · final guard: spacing, completeness..."
   _sentinel="$(claude --print \
     "Final verification of $HTML_FILE. Quinn approved. \
 Independently verify — overrule if you see any failure." \
+    --permission-mode bypassPermissions \
     --system-prompt-file \
     "$AGENT_DIR/sentinel-final-guardian.md")" || {
     _spin_stop
@@ -398,8 +432,7 @@ Independently verify — overrule if you see any failure." \
   if echo "$_sentinel" | grep -q "NOT APPROVED"; then
     _VL_ST=(done done skip)
     if [[ $attempt -ge $_VL_MAX ]]; then
-      _PH_ST[4]="active"
-      _waterfall
+      _PH_ST[4]="active"; _waterfall
       echo "Error: Sentinel NOT APPROVED — max retries." >&2
       echo "$_sentinel" >&2; exit 1
     fi
