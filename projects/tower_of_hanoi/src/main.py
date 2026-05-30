@@ -16,8 +16,18 @@ from orchestrator import Orchestrator
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Tower of Hanoi solver",
+        description=(
+          "Solve the Tower of Hanoi puzzle with N discs, "
+          "displaying each move as ASCII art on the terminal."
+        ),
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        epilog=(
+          "Examples:\n"
+          "  python3 src/main.py                      "
+          "# 3 discs, interactive step-by-step\n"
+          "  python3 src/main.py --number-discs 5 "
+          "--no-step-by-step  # 5 discs, all moves at once"
+        ),
     )
     parser.add_argument(
         "--number-discs",
