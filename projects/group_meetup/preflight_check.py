@@ -214,6 +214,26 @@ def check_embedding_venv():
     )
 
 
+_PIPER_PY = (
+  Path(__file__).parent.parent
+  / "projects" / "llm_wiki" / "speed-reading"
+  / "src" / "piper.py"
+)
+
+
+def check_piper_py():
+  """Check that src/piper.py exists and is executable."""
+  if not _PIPER_PY.exists():
+    raise RuntimeError(
+      f"{_PIPER_PY} not found — run labsetup.py"
+    )
+  if not os.access(_PIPER_PY, os.X_OK):
+    raise RuntimeError(
+      f"{_PIPER_PY} is not executable — run: "
+      f"chmod +x {_PIPER_PY}"
+    )
+
+
 def main():
   env = _labenv()
   print("=== Preflight Check ===\n")
@@ -237,6 +257,7 @@ def main():
   check("embedding venv", check_embedding_venv)
   check("pdftotext (poppler-utils)", lambda: cmd_exists("pdftotext"))
   check("html2text", lambda: cmd_exists("html2text"))
+  check("piper.py executable", check_piper_py)
   print("\nAll items must show PASS before the lab begins.")
 
 

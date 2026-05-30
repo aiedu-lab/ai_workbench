@@ -287,6 +287,12 @@ _EMBEDDING_DIR = (
 )
 _EMBEDDING_VENV = _EMBEDDING_DIR / ".venv"
 
+_SPEED_READING_DIR = (
+  Path(__file__).parent.parent
+  / "projects" / "llm_wiki" / "speed-reading"
+)
+_PIPER_VENV = _SPEED_READING_DIR / ".venv"
+
 
 def _install_ollama() -> None:
   """Install Ollama via the official install script if absent.
@@ -356,6 +362,28 @@ def _setup_embedding_venv() -> None:
   print("  OK   embedding venv ready")
 
 
+def _setup_piper_venv() -> None:
+  """Create the speed-reading venv for piper.py if absent.
+
+  Required by the Speed Reading Mindmap session (src/piper.py).
+  All pipeline deps are stdlib; the venv is created for
+  environment isolation and future extensibility. Idempotent —
+  skips when the venv Python binary already exists.
+  """
+  venv_py = _PIPER_VENV / "bin" / "python3"
+  if venv_py.exists():
+    print(
+      "  OK   speed-reading venv already exists (skipping)"
+    )
+    return
+  print("  VENV creating projects/llm_wiki/speed-reading/.venv")
+  subprocess.run(
+    ["python3", "-m", "venv", str(_PIPER_VENV)],
+    check=True,
+  )
+  print("  OK   speed-reading venv ready")
+
+
 def _install_pkm_tools() -> None:
   """Install poppler-utils and html2text if not already on PATH.
 
@@ -411,6 +439,7 @@ def main() -> None:
     _install_ollama()
     _install_pkm_tools()
   _setup_embedding_venv()  # pure Python venv — no sudo needed
+  _setup_piper_venv()     # speed-reading venv — no sudo needed
 
   ssh_real = all(
     k in env and not _is_placeholder(env[k]) for k in SSH_KEYS

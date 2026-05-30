@@ -223,24 +223,36 @@ the full session.
 
 ### Set Up
 
-`labsetup.py` installs the required CLI tools automatically:
-`poppler-utils` (provides `pdftotext`) and `html2text`.
+`labsetup.py` handles all PKM dependencies automatically:
 
-To install manually:
+- Installs `poppler-utils` (`pdftotext`) and `html2text`
+  CLI tools via `apt`.
+- Creates `projects/llm_wiki/speed-reading/.venv` for
+  `src/piper.py` (Python stdlib only — no pip packages).
+
+To install CLI tools manually:
 
 ```bash
 sudo apt install poppler-utils html2text
 ```
 
+To create the piper venv manually:
+
+```bash
+python3 -m venv projects/llm_wiki/speed-reading/.venv
+```
+
 ### Test
 
-After installation verify both CLIs are on the PATH:
+After setup, verify CLIs and piper.py are ready:
 
 ```bash
 which pdftotext && which html2text
+python3 projects/llm_wiki/speed-reading/src/piper.py --help
 ```
 
-Expected: both commands print their full paths.
+Expected: both CLIs print their paths; `piper.py --help`
+prints the PHASES section.
 
 ---
 
