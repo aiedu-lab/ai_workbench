@@ -3877,7 +3877,7 @@ VERIFY: `grep "## Motivation\|AI NATIVE" README.md`.
 ### Step 26.17: Add cross-references — build_mindmap.sh ↔
 piper-pipeline-orchestrator.md ↔ README.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: piper-pipeline-orchestrator.md is doctrine for the
 pipeline; build_mindmap.sh implements that doctrine; neither
