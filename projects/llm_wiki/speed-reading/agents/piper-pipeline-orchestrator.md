@@ -1,6 +1,6 @@
 # Piper: Pipeline Orchestrator
 
-> **Implementation**: `piper.sh` is the concrete
+> **Implementation**: `src/piper.py` is the concrete
 > implementation of this doctrine. The coordination rules,
 > agent sequencing, retry policy, and Sentinel verification
 > described here are all realised in that script.

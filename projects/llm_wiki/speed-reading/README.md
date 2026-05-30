@@ -2,7 +2,7 @@
 
 Convert any PDF, web page, or text file into an interactive
 HTML mindmap using a four-agent AI pipeline. A single script
-(`piper.sh`) orchestrates all phases — from input
+(`src/piper.py`) orchestrates all phases — from input
 conversion through synthesis, rendering, QA review, and final
 independent verification.
 
@@ -10,9 +10,10 @@ independent verification.
 
 ## Pipeline — Waterfall View
 
-`piper.sh` prints a 3-column waterfall at each phase transition.
-Symbols: `[✓]` done · `[⟳]` active · `[~]` skipped · `[ ]`
-pending. A stderr spinner animates during every active agent call.
+`src/piper.py` prints a 3-column waterfall at each phase
+transition. Symbols: `[✓]` done · `[⟳]` active · `[~]`
+skipped · `[ ]` pending. A stderr spinner animates during
+every active agent call.
 
 ```
 Phase                                          Function                Artifact
@@ -45,37 +46,37 @@ example/.tmp/TheComingWave-mindmap.html
 cd projects/llm_wiki/speed-reading
 
 # Show all options and phase names
-./piper.sh --help
+python3 src/piper.py --help
 ```
 
 ### Worked example — The Coming Wave (PDF)
 
 ```bash
 # Full run from scratch
-./piper.sh \
+python3 src/piper.py \
   --input  example/TheComingWave.pdf \
-  --output example/TheComingWave_mindmap.html
+  --output example/TheComingWave-mindmap.html
 
 # Resume if Seth completed but Leo/Quinn/Sentinel failed
 # (Seth artifact: example/.tmp/TheComingWave-mindmap-content.json)
-./piper.sh \
+python3 src/piper.py \
   --from-phase validator-loop \
   --input  example/TheComingWave.pdf \
-  --output example/TheComingWave_mindmap.html
+  --output example/TheComingWave-mindmap.html
 ```
 
-Open `example/TheComingWave_mindmap.html` in any browser.
+Open `example/TheComingWave-mindmap.html` in any browser.
 
 ### Other input types
 
 ```bash
 # From a plain-text or Markdown notes file
-./piper.sh --input my-notes.md --output mindmap.html
+python3 src/piper.py --input my-notes.md --output mindmap.html
 
 # From an HTML article (URL)
-./piper.sh \
+python3 src/piper.py \
   --input  https://example.com/article.html \
-  --output article_mindmap.html
+  --output article-mindmap.html
 ```
 
 ### Resuming with `--from-phase`
@@ -93,9 +94,28 @@ The script verifies the prior artifact exists before skipping.
 
 ---
 
+## Code Layout
+
+```
+src/
+  piper.py        CLI entry point; argument parsing; invokes Piper
+  orchestrator.py Piper class; all five pipeline phases
+  display.py      PhaseDisplay class; 3-column waterfall renderer
+  spinner.py      Spinner class; threaded stderr progress indicator
+```
+
+| Module | Class | Responsibility |
+|---|---|---|
+| `piper.py` | — | Parses `--input/--output/--from-phase/--help`; runs `Piper` |
+| `orchestrator.py` | `Piper` | Sequences sanitizer → setup → converter → Seth → validator-loop; retry logic |
+| `display.py` | `PhaseDisplay` | Renders the 3-column Unicode waterfall at each phase transition |
+| `spinner.py` | `Spinner` | Daemon thread that animates `/-\|` on stderr while agents run |
+
+---
+
 ## Agents
 
-Active agent prompts used by `piper.sh`:
+Active agent prompts used by `src/piper.py`:
 
 | Agent | System prompt | Role |
 |---|---|---|
@@ -111,7 +131,7 @@ pipeline doctrine and design rules for human reference:
 
 | File | Purpose |
 |---|---|
-| `agents/piper-pipeline-orchestrator.md` | Pipeline doctrine: task scope locking, layer policies, agent coordination rules. **`piper.sh` is the concrete implementation of this doctrine.** Reference when extending the pipeline or debugging coordination issues. |
+| `agents/piper-pipeline-orchestrator.md` | Pipeline doctrine: task scope locking, layer policies, agent coordination rules. **`src/piper.py` is the concrete implementation of this doctrine.** Reference when extending the pipeline or debugging coordination issues. |
 | `ai-mindmap.md` | Non-negotiable map rules and global doctrine for content and layout quality. |
 
 ---
@@ -125,7 +145,7 @@ pipeline doctrine and design rules for human reference:
 | `templates/detailed-notes.template.md` | Starter note-taking format |
 
 Use `templates/detailed-notes.template.md` while reading a
-book, then run `piper.sh` on the resulting notes file.
+book, then run `src/piper.py` on the resulting notes file.
 
 ---
 

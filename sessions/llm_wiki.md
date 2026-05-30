@@ -234,16 +234,16 @@ Full documentation and usage examples:
 cd projects/llm_wiki/speed-reading
 
 # Show all options and phase names
-./piper.sh --help
+python3 src/piper.py --help
 
 # Convert a PDF book to a mindmap
-./piper.sh \
+python3 src/piper.py \
   --input  example/TheComingWave.pdf \
-  --output example/TheComingWave_mindmap.html
+  --output example/TheComingWave-mindmap.html
 
 # Resume if Seth wrote JSON but validator-loop failed
-./piper.sh \
+python3 src/piper.py \
   --from-phase validator-loop \
   --input  example/TheComingWave.pdf \
-  --output example/TheComingWave_mindmap.html
+  --output example/TheComingWave-mindmap.html
 ```

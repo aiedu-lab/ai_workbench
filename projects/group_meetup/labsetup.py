@@ -387,7 +387,7 @@ def _setup_piper_venv() -> None:
 def _install_pkm_tools() -> None:
   """Install poppler-utils and html2text if not already on PATH.
 
-  Required by the Speed Reading Mindmap pipeline (piper.sh):
+  Required by the Speed Reading Mindmap pipeline (src/piper.py):
   pdftotext converts PDFs; html2text converts HTML pages to plain text.
   Idempotent — skips the apt call when both CLIs are already present.
   """
