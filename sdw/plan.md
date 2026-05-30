@@ -3825,3 +3825,51 @@ CONSTRAINTS: Append only; no piper.sh reference; ≤80-col.
 OUTPUT: sessions/llm_wiki.md ends with Speed Reading section.
 VERIFY: `grep -n "Speed Reading\|from-phase"
 sessions/llm_wiki.md`.
+
+### Step 26.15: Add sentinel final-guard phase + docs
+
+[ ] Status
+
+CONTEXT: Quinn is the only QA gate; piper-pipeline-
+orchestrator.md describes a stricter Piper verification step
+that is unused; no sentinel phase in build_mindmap.sh.
+ACTION: (1) Create agents/sentinel-final-guardian.md — system
+prompt: overrule Quinn approval on any rendering failure,
+cramped nodes, broken layout, hierarchy violation; output NOT
+APPROVED with reason. Distill verification rules from piper-
+pipeline-orchestrator.md. (2) In build_mindmap.sh, add
+sentinel step INSIDE Leo+Quinn retry loop — after Quinn APPROVED,
+run sentinel; if NOT APPROVED, retry Leo+Quinn+Sentinel (same
+MAX_RETRIES). --from-phase leo resumes full loop. (3) Create
+README.md (speed-reading) with phases table including sentinel
+row; ## Usage with examples + --from-phase; ## Agents including
+sentinel. (4) Update README-mindmap-system.md Files list and
+Workflow step 8 to reference sentinel. (5) Append
+### Sentinel Phase subsection to sdw/prompt_history.md.
+CONSTRAINTS: Do not rename/delete piper-pipeline-orchestrator.md;
+keep MAX_RETRIES=3; ≤80-col; Leo+Quinn+Sentinel in one loop.
+OUTPUT: sentinel-final-guardian.md; build_mindmap.sh sentinel
+step; README.md; README-mindmap-system.md updated.
+VERIFY: `grep sentinel
+projects/llm_wiki/speed-reading/build_mindmap.sh &&
+test -f projects/llm_wiki/speed-reading/agents/
+sentinel-final-guardian.md &&
+bash -n projects/llm_wiki/speed-reading/build_mindmap.sh &&
+echo PASS`.
+
+### Step 26.16: Add ## Motivation table to main README.md
+
+[ ] Status
+
+CONTEXT: Main README.md has ## Objective but no motivation
+section; ### Motivation spec in prompt_history.md (lines
+1693-1716) calls for a domain-transformation table.
+ACTION: Insert ## Motivation section after ## Objective in
+README.md with 5-column table: DOMAIN | LEGACY | AI NATIVE |
+OBJECTIVE | TRANSFORMATION. Fill rows from spec examples
+(Internet Search, Photography, Coding, Manufacturing, CRM,
+Conversational Intelligence). Use existing emoji heading style.
+CONSTRAINTS: Insert only; do not modify other sections; ≤80-
+col prose outside table.
+OUTPUT: README.md ## Motivation table after ## Objective.
+VERIFY: `grep "## Motivation\|AI NATIVE" README.md`.

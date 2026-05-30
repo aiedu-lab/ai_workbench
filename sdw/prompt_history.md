@@ -1633,3 +1633,108 @@ Material changes requested during Phase 26 execution:
    the Speed Reading Mindmap pipeline. `labsetup.py` should
    automate both installs; `preflight_check.py` should
    validate both CLIs.
+
+### Arguments
+
+1. Reference `projects/llm_wiki/speed-reading/`
+
+* Consolidate the contents of `piper.sh` into
+`build_mindmap.sh` as it does not make sense creating 
+a separate shell just for `piper.sh`
+
+* Add `--help` argument to `build_mindmap.sh` for users
+to understand usage, arguments supported, default values, 
+etc.
+
+* Comment and Annotate the `build_mindmap.sh` execution
+in different phases, named appropriately. Example
+names of the phases of the shell just as an example: 
+`Argument Sanitizer`, `Utility Setup`, `File Converter`, 
+`Seth Synthesizer`, `Leo Renderer`, `Quinn Validator`... 
+
+* Add `--from-phase` to `build_mindmap.sh` for users
+to resume activity from a specific phase with a basic
+sanity to ensure that prior phase has completed. This is
+important as often we run out of tokens trying to complete
+work while some workflow was already completed and need
+not be redone from scratch. 
+
+For example, say the basic install phase was completed and 
+then Seth agent completed the work by generating the
+detailed-notes.md. However, Leo agent could
+not, then we need not start from the beginning. 
+
+Comment the script and `README.md` accordingly.
+
+* Ensure all intermediate files are created with a 
+prefix of book name. For example, for the book
+`example/TheComingWave.pdf`, ensure the intermediate file 
+detailed-notes.md created in `.tmp/` subfolder 
+is created as `example/.tmp/TheComingWave-detailed-notes.md`.
+Same prefix holds for the `.json` files created.
+
+* Update contents of `README.md` to reflect the 
+consolidation.
+
+* Update the reference to speed-reading in 
+`Personal Knowledge Management` session 
+(`sessions/llm_wiki.md`) to ensure all references
+are consistent. 
+
+2. Reference `projects/tower_of_hanoi`:
+
+* Add `--help` argument to `src/main.py` - 
+add appropriate comment to teach students
+the general hygiene that every program and script 
+that is entrypoint for users should support a 
+to understand usage, arguments supported, default values, 
+etc.
+
+### Motivation
+
+Add a section `## Motivation` right at the top to main repo 
+`README.md` in the form of a table in the form of 5 columns?:
+* Domain where generative AI is transforming 
+* Example of a legacy approach or company.
+* Example of an `AI native` approach and company. 
+* Description of why and what is `AI native` approach 
+disrupting or transforming.
+
+Few suggested examples below - fill the rows and
+columns:
+
+| DOMAIN | LEGACY | AI NATIVE | OBJECTIVE | TRANSFORMATION |
+| :--- | :--- | :---: | :--- | :---: |
+| Internet Search | Google | Chat GPT | How to best prepare for Multivariable Calculus | Offer knowledge fully reasoned, correlated, and organized rather than bunch of keyword matches | 
+| Photograph | Photoshop |  | How to make our event memorable | Make pictures taken from my iphone look awesome |
+| Coding | IDE | Claude Code | How to quickly ship my next software products with high quality | Coding agents generates code and tested with browsers and terminal |
+| Manufacturing Plans |  |  |  |  | 
+| Customer Relationship Management | Sales Force | Auracell | How to sell more and fast, but with less people | Automated Customer Records and Pipeline Management |
+| Conversational Intelligence | Gong | 1mind | How can I close the deal with this customer | Offer intelligence, not just analysis | 
+| Running Company | https://x.com/benln/status/2054546806516654263/photo/1 |   |   |   |
+| AI Startup Playbook | https://linas.substack.com/p/anthropic-claude-study-ai-startup-playbook) |   |   |   |
+
+
+### Sentinel Phase
+
+Add a `sentinel` final-guard phase to the speed-reading
+mindmap pipeline in `build_mindmap.sh`.
+
+The sentinel is an independent verification agent that runs
+AFTER Quinn approves the rendered mindmap. Its role:
+
+* Use `agents/sentinel-final-guardian.md` as system prompt.
+* Independently review the HTML — overrule Quinn if any
+  rendering failure, cramped/overlapping nodes, broken
+  layout, or hierarchy violation is present.
+* If Sentinel outputs `NOT APPROVED`, retry Leo+Quinn+Sentinel
+  (same `MAX_RETRIES=3` cap).
+* `--from-phase leo` resumes the full Leo+Quinn+Sentinel loop.
+
+Create `agents/sentinel-final-guardian.md` distilling the
+strict verification rules from `piper-pipeline-orchestrator.md`
+into a focused final-guard system prompt.
+
+Update `README.md` (speed-reading) phases table to include
+the sentinel row. Update `README-mindmap-system.md` workflow
+step 8 to reference Sentinel (not Piper).
