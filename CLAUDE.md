@@ -132,14 +132,21 @@ git commit -m "feat: Phase 1: Step 2 - add history list to index.html"
 
 ### 5. Update Plan, Tag, and Push
 
-After each committed step, mark it COMPLETED in `plan.md`. If the
-plan uses checkbox tasks (`- [ ]`), also flip every checkbox in the
-completed phase to `- [x]` before committing — not just the phase
-heading. Then:
+**Per step:** after each step's VERIFY command passes, flip that
+step's `[ ] Status` → `[x] Status` in `sdw/plan.md` and include
+the update in the same commit as the step's code changes:
 
 ```bash
-git add plan.md
-git commit -m "chore: Phase X: Step Y - mark step completed in plan.md"
+# In sdw/plan.md, change the step's status line:
+# [ ] Status  →  [x] Status
+git add sdw/plan.md <changed-files>
+git commit -m "<type>: Phase X: Step Y - <summary>"
+```
+
+**Per phase (final step only):** after ALL steps in the phase are
+committed and verified, tag and push:
+
+```bash
 git tag -a vX.Y-<brief-summary>-step-completed \
     -m "Completed Phase X Step Y: <summary>"
 git push origin <output-branch> --tags
@@ -147,6 +154,10 @@ git push origin <output-branch> --tags
 
 Tags use the format: `vX.Y-brief-summary-step-completed`
 Example: `v1.2-add-history-list-step-completed`
+
+**If the plan also uses `- [ ]` checkbox tasks** (not the
+`[ ] Status` lines), flip every `- [ ]` → `- [x]` in the
+completed phase before the final commit.
 
 ### 6. Branching and Merging
 
