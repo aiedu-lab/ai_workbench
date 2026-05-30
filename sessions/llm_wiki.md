@@ -214,3 +214,33 @@ The new `GroupMeetup/Home.md` is created fresh — it does
 not modify `silicon_ai/Home.md`. This connects the PKM
 session to the Group Meetup Organizer project running
 through every other session in the lab.
+
+---
+
+## Optional Extension — Speed Reading Mindmap
+
+Transform any book or article into an interactive HTML
+mindmap using a four-agent AI pipeline (Seth → Leo → Quinn →
+Sentinel). The pipeline converts the input to plain text,
+synthesises the key concepts into structured JSON, renders
+a navigable mindmap, and runs two independent QA passes
+before producing the final HTML.
+
+Full documentation and usage examples:
+[`projects/llm_wiki/speed-reading/README.md`](
+../projects/llm_wiki/speed-reading/README.md)
+
+```bash
+cd projects/llm_wiki/speed-reading
+
+# Show all options and phase names
+./build_mindmap.sh --help
+
+# Convert a PDF book to a mindmap
+./build_mindmap.sh example/TheComingWave.pdf \
+  example/TheComingWave_mindmap.html
+
+# Resume an interrupted run (e.g. Seth done, Leo failed)
+./build_mindmap.sh --from-phase leo \
+  example/TheComingWave.pdf example/TheComingWave_mindmap.html
+```
