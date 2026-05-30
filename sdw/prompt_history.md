@@ -1758,3 +1758,98 @@ central coordinator that feeds the different phases.
 `projects/llm_wiki/speed-reading/README.md`.
 * Git rid of `experimental/speed_reading` directory and 
 its contents as they is no longer needed
+
+## Speed Reading
+[x] Status
+
+## Revamp piper
+Reference `projects/llm_wiki/speed-reading`:
+
+* `piper.sh` is about 473 lines which is a lot of lines of code for shell script. 
+
+* Reimplement `projects/llm_wiki/speed-reading/piper.sh` as a python 
+program `projects/llm_wiki/speed-reading/src/piper.py` with 
+main function and other associated python programs that is 
+implemented using python 3.12+ using modern constructs with 
+2 tabs a spaces and every line no more than 80 columns.
+
+* `piper.py` should have the `#! /usr/bin/env python3` and
+executable mode so that is can be invoked as 
+`piper argumets ...`
+
+* Modularize the logic into classes, methods, etc. with 
+a main method invoked as 
+---
+if __name__ == "__main__":
+    sys.exit(main())
+---
+* Ensure that any supporting python/pip utilities are captured 
+in requirements.in that is installed inside a .venv in the 
+`projects/llm_wiki/speed-reading/` directory. 
+These installations can be captured in 
+`projects/group_meetup/labsetup.py` and validated in 
+`projects/group_meetup/preflight_check.py`.
+
+* Review and update `projects/llm_wiki/speed-reading/README.md` 
+to reflect the change from `piper.sh` to `piper.py` as well
+as any other reference to `piper.sh` in any other file.
+
+* Reference `projects/llm_wiki/speed-reading/.tmp/` has 
+file `detailed-notes.md` - examine why files are still 
+created without the `<book>-` prefix. For example, file
+created should be `TheComingWave-detailed-notes.md`.
+
+* Update the contents of `sessions/llm_wiki.md` to ensure 
+that the exercise summary is taking `TheComingWave.pdf` to build
+a mindmap for the book as `TheComingWave-mindmap.html`. 
+The mechanisms and commands are captured in 
+`projects/llm_wiki/speed-reading/README.md` 
+
+* Run through an actual exercise of invoking the piper 
+starting with the validator loop (as the previous
+loops have run and are validated) i.e. 
+Leo (map-creator) -> Quinn(QA) -> Sentinel (QA Final Gate).
+
+* Once the mindmap creation is validated (as a test case
+that the plan execution was success): 
+  * Remove any files and content inside 
+    `experimental/speed_reading/` as those Are not needed.
+  * Remove `piper.sh` as that is not needed anymore.
+
+### Track and Log
+
+Current challenges in `piper.py`is tracking and resuming i.e.
+agents may take a long time processing a long book. we may 
+run out of token credits while we are in the middle. hence:  
+* tracking: agents are run without an option to capture log
+  track and understand what has happened. that is add a 
+  mechanism to OPTIONALLY allow running agent with
+  ability to stream agent (Seth, Leo, Quinn, Sentinel) 
+  output to agent specific log. Note that the mechanism
+  to show a summarized view of where we are in the waterfall
+  agent phase should continue to work and is bare minimum.
+  That way if any phase takes a super long time, we can 
+  track whether and what it is doing by tailing the log file.
+* resuming: we need a way to resume then from wherever 
+  we were left hanging once token credits are refreshed
+* ensure `--help` of `piper.py` is updated to clearly 
+  explain the option to log.
+
+Reference `projects/llm_wiki/speed-reading/README.md`. Update the 
+`## Worked example - The Coming Wave (PDF)` section: 
+* how the agent can be run with the option to log.
+* how the agent's summary output in stdout of seeing the 
+  waterfall continues to work without a lot of log output
+  in the way.
+
+#### Validate
+* Review `projects/llm_wiki/speed-reading/README.md` to validate 
+  that the manual way to run the `piper.py` to create a mindmap 
+  for a book is accurate.
+* Rename `projects/llm_wiki/speed-reading/example` to 
+  `projects/llm_wiki/speed-reading/examples`. Run through 
+  `piper.py` for URL 
+  https://www.dench.com/blog/the-ai-native-company-playbook
+  with current working directory as 
+  `projects/llm_wiki/speed-reading/examples` to test that mindmap 
+  works end to end.

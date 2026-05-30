@@ -39,7 +39,7 @@ Usage: python3 src/piper.py [OPTIONS]
 import argparse
 import sys
 
-from orchestrator import Piper, _PHASE_IDX
+from orchestrator import Piper, _PHASE_MAP
 
 _HELP_TEXT = """\
 Usage: piper.py [OPTIONS]
@@ -53,30 +53,52 @@ OPTIONS
   --output <path>       Output HTML path (default: ./mindmap.html).
   --from-phase <name>   Skip phases before <name>; verifies that
                         prior-phase artifacts exist first.
+  --log-dir <dir>       Write per-agent stdout to <dir>/<agent>.log
+                        in real time. Waterfall display is unaffected.
+                        Use: tail -f <dir>/leo.log to track progress.
 
 PHASES (run in order)
-  sanitizer      Parse args, validate input, resolve paths.
-  setup          Verify CLI tools (pdftotext, html2text).
-  converter      Convert input → <book>-detailed-notes.md.
-  seth           Seth agent → <book>-mindmap-content.json.
-  validator-loop Leo+Quinn+Sentinel → <book>-mindmap.html.
-                 Retries Leo when Quinn or Sentinel rejects.
-  leo / quinn / sentinel — aliases for validator-loop.
+  sanitizer           Parse args, validate input, resolve paths.
+  setup               Verify CLI tools (pdftotext, html2text).
+  converter           Convert input → <book>-detailed-notes.md.
+  seth                Seth agent → <book>-mindmap-content.json.
+  validator-loop|leo  Start the full Leo+Quinn+Sentinel loop.
+                      Both names are identical — use either.
+                      Retries Leo when Quinn or Sentinel rejects.
+  quinn               Resume from Quinn; skip Leo (HTML must exist).
+  sentinel            Resume from Sentinel; skip Leo+Quinn.
 
 Intermediate files are written to <output-dir>/.tmp/ with the
 book filename as prefix (e.g. TheComingWave-detailed-notes.md).
 
 EXAMPLES
-  # Full run from scratch
+  # Full run from scratch with agent logging
   python3 src/piper.py \\
-    --input  example/TheComingWave.pdf \\
-    --output example/TheComingWave-mindmap.html
+    --input  examples/TheComingWave.pdf \\
+    --output examples/TheComingWave-mindmap.html \\
+    --log-dir examples
+
+  # In a second terminal, monitor Leo's progress
+  tail -f examples/leo.log
 
   # Resume from validator-loop (Seth already wrote JSON)
   python3 src/piper.py \\
     --from-phase validator-loop \\
-    --input  example/TheComingWave.pdf \\
-    --output example/TheComingWave-mindmap.html
+    --input  examples/TheComingWave.pdf \\
+    --output examples/TheComingWave-mindmap.html \\
+    --log-dir examples
+
+  # Resume from Quinn (Leo's HTML exists, ran out of tokens)
+  python3 src/piper.py \\
+    --from-phase quinn \\
+    --input  examples/TheComingWave.pdf \\
+    --output examples/TheComingWave-mindmap.html
+
+  # Resume from Sentinel (Leo+Quinn already done)
+  python3 src/piper.py \\
+    --from-phase sentinel \\
+    --input  examples/TheComingWave.pdf \\
+    --output examples/TheComingWave-mindmap.html
 """
 
 
@@ -98,6 +120,11 @@ def main() -> int:
     "--from-phase", metavar="<name>",
     default="sanitizer", dest="from_phase",
   )
+  parser.add_argument(
+    "--log-dir", metavar="<dir>",
+    default=None, dest="log_dir",
+    help="Directory for per-agent log files.",
+  )
   args = parser.parse_args()
 
   if args.help:
@@ -110,8 +137,8 @@ def main() -> int:
       file=sys.stderr,
     )
     return 1
-  if args.from_phase not in _PHASE_IDX:
-    valid = " ".join(sorted(set(_PHASE_IDX)))
+  if args.from_phase not in _PHASE_MAP:
+    valid = " ".join(sorted(set(_PHASE_MAP)))
     print(
       f"Error: unknown phase '{args.from_phase}'.\n"
       f"  Valid: {valid}",
@@ -119,7 +146,10 @@ def main() -> int:
     )
     return 1
 
-  return Piper(args.input, args.output, args.from_phase).run()
+  return Piper(
+    args.input, args.output, args.from_phase,
+    log_dir=args.log_dir,
+  ).run()
 
 
 if __name__ == "__main__":

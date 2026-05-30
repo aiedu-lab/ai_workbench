@@ -3901,3 +3901,123 @@ projects/llm_wiki/speed-reading/build_mindmap.sh &&
 grep "build_mindmap"
 projects/llm_wiki/speed-reading/agents/piper-pipeline-
 orchestrator.md`.
+
+## Phase 27
+
+### Step 27.1: Create src/piper.py — Python rewrite of piper.sh
+
+[x] Status
+
+CONTEXT: piper.sh is the 473-line bash orchestrator; no src/ or
+piper.py exist. ACTION: Create src/piper.py (Python 3.12+,
+#!/usr/bin/env python3, argparse for --input/--output/--from-phase/
+--help); split into display.py (PhaseDisplay), spinner.py (Spinner),
+orchestrator.py (Piper class with all 5 phases), piper.py (main()).
+CONSTRAINTS: Same CLI flags, phase names, artifact paths, retry
+cap=3 as piper.sh; do not modify agents/ or templates/; ≤80 cols.
+OUTPUT: src/{piper,orchestrator,display,spinner}.py all executable
+and passing py_compile.
+VERIFY: `python3 -m py_compile src/piper.py && python3 src/piper.py
+--help | grep -q PHASES && echo PASS`.
+
+### Step 27.2: Create requirements.in, .venv, update labsetup.py +
+preflight_check.py
+
+[x] Status
+
+CONTEXT: No requirements.in or .venv in speed-reading/; labsetup.py
+and preflight_check.py do not reference piper.py. ACTION: Create
+requirements.in (stdlib-only, no pip packages); add
+_setup_piper_venv() to labsetup.py; add check_piper_py() to
+preflight_check.py; update dev_workbench.md PKM section.
+CONSTRAINTS: Only extend labsetup.py and preflight_check.py; no
+logic changes to existing steps; ≤80 cols.
+OUTPUT: requirements.in; labsetup.py has venv step; preflight.py
+has piper.py executable check.
+VERIFY: `grep -n "speed-reading" projects/group_meetup/labsetup.py
+&& grep -n "piper" projects/group_meetup/preflight_check.py`.
+
+### Step 27.3: Update all piper.sh references to src/piper.py
+
+[x] Status
+
+CONTEXT: speed-reading/README.md, sessions/llm_wiki.md, and
+other files reference piper.sh. ACTION: Replace all piper.sh usage
+examples with python3 src/piper.py; add Code Layout section to
+README.md; fix output filename TheComingWave_mindmap.html →
+TheComingWave-mindmap.html; update README-mindmap-system.md and
+agents/piper-pipeline-orchestrator.md references.
+CONSTRAINTS: Do not delete piper.sh yet; ≤80 cols.
+OUTPUT: README.md, llm_wiki.md, and related files reference piper.py;
+no piper.sh usage examples in active docs.
+VERIFY: `grep -n "piper\.sh" projects/llm_wiki/speed-reading/
+README.md sessions/llm_wiki.md || echo NO_REFS`.
+
+### Step 27.4: Track and Log — agent log streaming + sub-phase resume
+
+[x] Status
+
+CONTEXT: _run_agent uses capture_output=True (no real-time log);
+quinn/sentinel map to index 4 (restart Leo on resume); no --log-dir.
+ACTION: Replace _PHASE_IDX with _PHASE_MAP tuples (quinn→(4,1),
+sentinel→(4,2)); add _vl_start and _log_dir to Piper.__init__;
+change _run_agent to subprocess.Popen streaming stdout to
+{log_dir}/{agent}.log per line; update _phase_validator_loop and
+_validator_attempt for sub-phase skip; add --log-dir to piper.py
+and _HELP_TEXT; update README.md worked example with logging and
+resume table (quinn/sentinel rows).
+CONSTRAINTS: Waterfall stdout and spinner stderr unaffected; logs
+only written when --log-dir given; ≤80 cols, 2-space indent.
+OUTPUT: _run_agent streams to logs; piper.py has --log-dir; --help
+shows log-dir and validator-loop|leo as equivalent.
+VERIFY: `python3 -m py_compile src/orchestrator.py src/piper.py
+&& python3 src/piper.py --help | grep -q log-dir && echo PASS`.
+
+### Step 27.5: Validate — review README.md, rename examples/,
+run URL mindmap end-to-end
+
+[ ] Status
+
+CONTEXT: piper.py has logging and sub-phase resume; example/ holds
+TheComingWave artifacts; need end-to-end URL validation.
+ACTION: (1) Review README.md to confirm manual piper.py instructions
+are accurate. (2) Rename example/ → examples/; update all references
+in README.md and sessions/llm_wiki.md. (3) Run full pipeline:
+`python3 src/piper.py --input https://www.dench.com/blog/
+the-ai-native-company-playbook --output examples/ai-native-company-
+playbook-mindmap.html --log-dir examples/.tmp` from speed-reading/.
+(4) Confirm waterfall prints correctly, logs appear in
+examples/.tmp/*.log, HTML produced.
+CONSTRAINTS: Do not modify agents/; rename directory only, preserve
+contents; ≤80 cols.
+OUTPUT: examples/ directory present; ai-native-company-playbook-
+mindmap.html ≥1 KB; examples/.tmp/leo.log present.
+VERIFY: `ls -lh projects/llm_wiki/speed-reading/examples/
+ai-native-company-playbook-mindmap.html &&
+ls projects/llm_wiki/speed-reading/examples/.tmp/leo.log && echo PASS`.
+
+### Step 27.6: Remove experimental/speed_reading/ and piper.sh
+
+[ ] Status
+
+CONTEXT: piper.py validated; experimental/speed_reading/ is obsolete;
+piper.sh replaced by src/piper.py. ACTION: rm -rf
+experimental/speed_reading/; remove piper.sh; scan for remaining
+piper.sh references and fix. CONSTRAINTS: Only after Step 27.5
+passes; do not touch agents/, templates/.
+OUTPUT: experimental/speed_reading/ absent; piper.sh absent.
+VERIFY: `[[ ! -d experimental/speed_reading ]] && [[ ! -f
+projects/llm_wiki/speed-reading/piper.sh ]] && echo PASS`.
+
+### Step 27.7: Mark Speed Reading complete in prompt_history.md +
+plan.md, commit + tag
+
+[ ] Status
+
+CONTEXT: All Phase 27 steps done; prompt_history.md ## Speed Reading
+already shows [x] Status (committed in Step 27.4 commit). ACTION:
+Flip every [ ] Status in Phase 27 to [x] Status in sdw/plan.md;
+commit; tag v27.7-piper-rewrite-step-completed; push branch + tags.
+CONSTRAINTS: Append-only to plan.md; ≤80 cols in entries.
+OUTPUT: plan.md Phase 27 all [x]; tag pushed.
+VERIFY: `git tag | grep "v27\." && echo PASS`.

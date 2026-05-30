@@ -14,16 +14,18 @@ from pathlib import Path
 from display import PhaseDisplay
 from spinner import Spinner
 
-# Map phase name → numeric skip index.
-_PHASE_IDX: dict[str, int] = {
-  "sanitizer":      0,
-  "setup":          1,
-  "converter":      2,
-  "seth":           3,
-  "validator-loop": 4,
-  "leo":            4,  # alias: start the full validator loop
-  "quinn":          4,  # alias: start the full validator loop
-  "sentinel":       4,  # alias: start the full validator loop
+# Maps phase name → (main_phase_idx, vl_sub_idx).
+# vl_sub_idx: 0=start from Leo, 1=skip Leo (quinn resume),
+#             2=skip Leo+Quinn (sentinel resume).
+_PHASE_MAP: dict[str, tuple[int, int]] = {
+  "sanitizer":      (0, 0),
+  "setup":          (1, 0),
+  "converter":      (2, 0),
+  "seth":           (3, 0),
+  "validator-loop": (4, 0),
+  "leo":            (4, 0),
+  "quinn":          (4, 1),
+  "sentinel":       (4, 2),
 }
 _VALID_EXT = {"pdf", "html", "htm", "txt", "md"}
 
@@ -38,9 +40,17 @@ class Piper:
     input_path: str,
     output_path: str,
     from_phase: str,
+    log_dir: str | None = None,
   ) -> None:
+    main_idx, vl_start = _PHASE_MAP[from_phase]
     self._input = input_path
-    self._from_idx = _PHASE_IDX[from_phase]
+    self._from_idx = main_idx
+    self._vl_start = vl_start
+    self._log_dir: Path | None = (
+      Path(log_dir).resolve() if log_dir else None
+    )
+    if self._log_dir:
+      self._log_dir.mkdir(parents=True, exist_ok=True)
     self._script_dir = Path(__file__).resolve().parent.parent
     self._agent_dir = self._script_dir / "agents"
     self._display = PhaseDisplay()
@@ -221,32 +231,47 @@ class Piper:
 
   def _phase_validator_loop(self) -> None:
     self._display.ph[4] = "active"
+    # When resuming from quinn/sentinel, Leo's HTML must exist.
+    if self._vl_start > 0:
+      self._require_artifact(self._html_file)
     for attempt in range(1, self.MAX_RETRIES + 1):
       self._display.vl_attempt = attempt
-      if self._validator_attempt(attempt):
+      skip_leo = (attempt == 1 and self._vl_start > 0)
+      skip_quinn = (attempt == 1 and self._vl_start > 1)
+      if self._validator_attempt(attempt, skip_leo, skip_quinn):
         self._display.ph[4] = "done"
         return
     self._abort("Error: max retries reached.")
 
-  def _validator_attempt(self, attempt: int) -> bool:
+  def _validator_attempt(
+    self,
+    attempt: int,
+    skip_leo: bool = False,
+    skip_quinn: bool = False,
+  ) -> bool:
     """Run one Leo→Quinn→Sentinel cycle. True if approved."""
-    self._display.vl = ["active", "pending", "pending"]
-    self._display.waterfall()
-    self._run_leo()
-    self._display.vl = ["done", "active", "pending"]
-    self._display.waterfall()
-    quinn_out = self._run_quinn()
-    if "NOT APPROVED" in quinn_out:
-      self._display.vl = ["done", "skip", "skip"]
-      if attempt >= self.MAX_RETRIES:
-        self._display.ph[4] = "active"
-        self._display.waterfall()
-        self._abort(
-          "Error: Quinn NOT APPROVED — max retries.\n"
-          + quinn_out
-        )
+    if skip_leo:
+      self._display.vl = ["done", "active", "pending"]
       self._display.waterfall()
-      return False
+    else:
+      self._display.vl = ["active", "pending", "pending"]
+      self._display.waterfall()
+      self._run_leo()
+      self._display.vl = ["done", "active", "pending"]
+      self._display.waterfall()
+    if not skip_quinn:
+      quinn_out = self._run_quinn()
+      if "NOT APPROVED" in quinn_out:
+        self._display.vl = ["done", "skip", "skip"]
+        if attempt >= self.MAX_RETRIES:
+          self._display.ph[4] = "active"
+          self._display.waterfall()
+          self._abort(
+            "Error: Quinn NOT APPROVED — max retries.\n"
+            + quinn_out
+          )
+        self._display.waterfall()
+        return False
     self._display.vl = ["done", "done", "active"]
     self._display.waterfall()
     sent_out = self._run_sentinel()
@@ -310,20 +335,38 @@ class Piper:
   def _run_agent(
     self, prompt: str, system_file: str, name: str
   ) -> str:
-    """Invoke claude --print for one agent; abort on failure."""
-    result = subprocess.run(
-      [
-        "claude", "--print", prompt,
-        "--permission-mode", "bypassPermissions",
-        "--system-prompt-file",
-        str(self._agent_dir / system_file),
-      ],
-      capture_output=True,
-      cwd=str(self._work_dir),
+    """Invoke claude --print; stream stdout to log if --log-dir set.
+
+    Log file: {log_dir}/{name}.log — tail it to track progress.
+    Waterfall (stdout) and spinner (stderr) are unaffected.
+    """
+    cmd = [
+      "claude", "--print", prompt,
+      "--permission-mode", "bypassPermissions",
+      "--system-prompt-file",
+      str(self._agent_dir / system_file),
+    ]
+    chunks: list[bytes] = []
+    log_path = (
+      self._log_dir / f"{name.lower()}.log"
+      if self._log_dir else None
     )
-    if result.returncode != 0:
+    with subprocess.Popen(
+      cmd, stdout=subprocess.PIPE,
+      stderr=subprocess.DEVNULL,
+      cwd=str(self._work_dir),
+    ) as proc:
+      if log_path:
+        with log_path.open("wb") as lf:
+          for line in proc.stdout:
+            lf.write(line)
+            lf.flush()
+            chunks.append(line)
+      else:
+        chunks = list(proc.stdout)
+    if proc.returncode != 0:
       self._abort(f"Error: {name} failed — aborting.")
-    return result.stdout.decode(errors="replace")
+    return b"".join(chunks).decode(errors="replace")
 
   def _require_artifact(self, path: Path) -> None:
     if not path.is_file():

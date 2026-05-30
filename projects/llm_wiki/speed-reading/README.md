@@ -49,23 +49,50 @@ cd projects/llm_wiki/speed-reading
 python3 src/piper.py --help
 ```
 
-### Worked example — The Coming Wave (PDF)
+### Worked example — AI-Native Company Playbook (URL)
 
 ```bash
-# Full run from scratch
+# Full run with agent logging (recommended)
+# Logs go to examples/.tmp/ — already gitignored.
 python3 src/piper.py \
-  --input  example/TheComingWave.pdf \
-  --output example/TheComingWave-mindmap.html
+  --input   https://www.dench.com/blog/the-ai-native-company-playbook \
+  --output  examples/ai-native-company-playbook-mindmap.html \
+  --log-dir examples/.tmp
 
-# Resume if Seth completed but Leo/Quinn/Sentinel failed
-# (Seth artifact: example/.tmp/TheComingWave-mindmap-content.json)
-python3 src/piper.py \
-  --from-phase validator-loop \
-  --input  example/TheComingWave.pdf \
-  --output example/TheComingWave-mindmap.html
+# In a second terminal — monitor Leo in real time:
+tail -f examples/.tmp/leo.log
+# Other logs: seth.log  quinn.log  sentinel.log  (same dir)
 ```
 
-Open `example/TheComingWave-mindmap.html` in any browser.
+The waterfall display (stdout) is unaffected; logs go only to
+`examples/.tmp/*.log` files.
+
+```bash
+# Resume if Seth done but validator-loop / leo failed
+# (validator-loop and leo are identical — use either name)
+python3 src/piper.py \
+  --from-phase leo \
+  --input   https://www.dench.com/blog/the-ai-native-company-playbook \
+  --output  examples/ai-native-company-playbook-mindmap.html \
+  --log-dir examples/.tmp
+
+# Resume from Quinn — Leo's HTML exists, session ran out of tokens
+python3 src/piper.py \
+  --from-phase quinn \
+  --input   https://www.dench.com/blog/the-ai-native-company-playbook \
+  --output  examples/ai-native-company-playbook-mindmap.html \
+  --log-dir examples/.tmp
+
+# Resume from Sentinel — Leo + Quinn done, only Sentinel left
+python3 src/piper.py \
+  --from-phase sentinel \
+  --input   https://www.dench.com/blog/the-ai-native-company-playbook \
+  --output  examples/ai-native-company-playbook-mindmap.html \
+  --log-dir examples/.tmp
+```
+
+Open `examples/ai-native-company-playbook-mindmap.html` in
+any browser.
 
 ### Other input types
 
@@ -88,7 +115,9 @@ last written and resume from the next phase:
 | Last artifact written | Resume flag |
 |---|---|
 | `<book>-detailed-notes.md` | `--from-phase seth` |
-| `<book>-mindmap-content.json` | `--from-phase validator-loop` |
+| `<book>-mindmap-content.json` | `--from-phase validator-loop` or `--from-phase leo` |
+| `<book>-mindmap.html` (Leo done) | `--from-phase quinn` |
+| HTML exists, Quinn approved | `--from-phase sentinel` |
 
 The script verifies the prior artifact exists before skipping.
 
