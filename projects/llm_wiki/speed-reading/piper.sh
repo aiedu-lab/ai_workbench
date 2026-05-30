@@ -62,54 +62,66 @@ _mark() {   # emit status symbol for a given state
   esac
 }
 
-# Build the left (phase-tree) column string for a row.
+# Build the phase-tree column string padded to exactly 45 display cols.
 # Args: level  state  display-name
+# Unicode chars └ ─ ✓ ⟳ are each 3 UTF-8 bytes but 1 display column.
+# printf %-Ns pads by bytes, not display width, so we compute the gap:
+#   level ≥ 1: └─ in prefix = 2 chars × 2 extra bytes = 4 extra
+#   done/active mark: ✓ or ⟳ = 1 char × 2 extra bytes = 2 extra
 _ptree() {
-  printf "%s%s %s" "${_PFX[$1]}" "$(_mark "$2")" "$3"
+  local level="$1" state="$2" name="$3"
+  local str="${_PFX[$level]}$(_mark "$state") $name"
+  local extra=0
+  [[ $level -ge 1 ]] && extra=$(( extra + 4 ))
+  case "$state" in done|active) extra=$(( extra + 2 )) ;; esac
+  local pad=$(( 45 + extra - ${#str} ))
+  [[ $pad -lt 0 ]] && pad=0
+  printf "%s%*s" "$str" "$pad" ""
 }
 
 # Print the full 3-column waterfall to stdout.
-# Columns: Phase (45) · Function (22) · Artifact
+# Column widths: Phase=45 display cols · Function=22 · Artifact=rest
 _waterfall() {
   local B="${BOOK_NAME:-<book>}"
   printf "\n"
-  printf "%-45s  %-22s  %s\n" "Phase" "Function" "Artifact"
-  printf "%-45s  %-22s  %s\n" \
+  printf "%s  %-22s  %s\n" \
+    "Phase                                        " "Function" "Artifact"
+  printf "%s  %-22s  %s\n" \
     "─────────────────────────────────────────────" \
     "──────────────────────" \
     "──────────────────────────────────"
 
-  printf "%-45s  %-22s  %s\n" \
+  printf "%s  %-22s  %s\n" \
     "$(_ptree 0 "${_PH_ST[0]}" "sanitizer")" \
     "arg parser" "n/a"
-  printf "%-45s  %-22s  %s\n" \
+  printf "%s  %-22s  %s\n" \
     "$(_ptree 1 "${_PH_ST[1]}" "setup")" \
     "tool checker" "n/a"
-  printf "%-45s  %-22s  %s\n" \
+  printf "%s  %-22s  %s\n" \
     "$(_ptree 2 "${_PH_ST[2]}" "converter")" \
     "note taker" ".tmp/$B-detailed-notes.md"
-  printf "%-45s  %-22s  %s\n" \
+  printf "%s  %-22s  %s\n" \
     "$(_ptree 3 "${_PH_ST[3]}" "Seth")" \
     "synthesizer" ".tmp/$B-mindmap-content.json"
 
   # validator row (no artifact)
-  printf "%-45s  %-22s\n" \
+  printf "%s  %-22s\n" \
     "$(_ptree 4 "${_PH_ST[4]}" "validator")" \
     "loop until success"
 
-  # connector: shows what is looping and current attempt
+  # connector line: shows looping agents + current attempt
   local conn_sfx=""
   [[ $_VL_ATTEMPT -gt 0 ]] && \
     conn_sfx="  (attempt $_VL_ATTEMPT of $_VL_MAX)"
   printf "%sLeo · Quinn · Sentinel%s\n" "$_VL_CONN" "$conn_sfx"
 
-  printf "%-45s  %-22s  %s\n" \
+  printf "%s  %-22s  %s\n" \
     "$(_ptree 5 "${_VL_ST[0]}" "Leo")" \
     "map creator" ".tmp/$B-mindmap.html"
-  printf "%-45s  %-22s  %s\n" \
+  printf "%s  %-22s  %s\n" \
     "$(_ptree 6 "${_VL_ST[1]}" "Quinn")" \
     "QA reviewer" "qa"
-  printf "%-45s  %-22s  %s\n" \
+  printf "%s  %-22s  %s\n" \
     "$(_ptree 7 "${_VL_ST[2]}" "Sentinel")" \
     "final gate" "qa"
   printf "\n"
