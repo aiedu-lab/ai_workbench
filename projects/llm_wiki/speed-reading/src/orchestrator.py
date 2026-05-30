@@ -6,6 +6,7 @@ coordination doctrine from agents/piper-pipeline-orchestrator.md:
 task scope locking, agent sequencing, retry policy (up to 3),
 and independent final verification via Sentinel.
 """
+import json
 import shutil
 import subprocess
 import sys
@@ -57,6 +58,7 @@ class Piper:
     self._display.vl_max = self.MAX_RETRIES
     self._spinner = Spinner()
     # Resolved during sanitizer phase
+    self._book_name: str = ""
     self._ext: str = ""
     self._is_url: bool = False
     self._abs_input: str = ""
@@ -88,14 +90,26 @@ class Piper:
 
   def _phase_sanitizer(self) -> None:
     inp = self._input
-    ext = inp.rsplit(".", 1)[-1].lower() if "." in inp else ""
-    if ext not in _VALID_EXT:
-      self._abort(
-        f"Error: unsupported extension '.{ext}'.\n"
-        f"  Supported: {' '.join(sorted(_VALID_EXT))}"
-      )
-    self._ext = ext
     self._is_url = inp.startswith(("http://", "https://"))
+    if self._is_url:
+      # Extract extension from URL path; default html for
+      # extensionless web pages (e.g. /blog/article-title).
+      from urllib.parse import urlparse
+      path = urlparse(inp).path
+      ext = (
+        path.rsplit(".", 1)[-1].lower()
+        if "." in path else ""
+      )
+      if ext not in _VALID_EXT:
+        ext = "html"
+    else:
+      ext = inp.rsplit(".", 1)[-1].lower() if "." in inp else ""
+      if ext not in _VALID_EXT:
+        self._abort(
+          f"Error: unsupported extension '.{ext}'.\n"
+          f"  Supported: {' '.join(sorted(_VALID_EXT))}"
+        )
+    self._ext = ext
     if self._is_url:
       r = subprocess.run(
         ["curl", "-fsS", "--head", inp], capture_output=True
@@ -118,6 +132,7 @@ class Piper:
     self._display.waterfall()
 
   def _resolve_paths(self, book_name: str) -> None:
+    self._book_name = book_name
     out = self._abs_output
     out.parent.mkdir(parents=True, exist_ok=True)
     self._abs_output = out.parent.resolve() / out.name
@@ -132,6 +147,11 @@ class Piper:
     self._html_file = (
       self._work_dir / f"{book_name}-mindmap.html"
     )
+    # Delete stale book logs before any agent starts so
+    # watchers (tail -f) see a clean break between runs.
+    if self._log_dir:
+      for stale in self._log_dir.glob(f"{book_name}-*.log"):
+        stale.unlink(missing_ok=True)
 
   # ── Phase: Utility Setup ──────────────────────────────────────
 
@@ -337,36 +357,53 @@ class Piper:
   ) -> str:
     """Invoke claude --print; stream stdout to log if --log-dir set.
 
-    Log file: {log_dir}/{name}.log — tail it to track progress.
-    Waterfall (stdout) and spinner (stderr) are unaffected.
+    Uses --output-format stream-json for real-time line emission.
+    Extracts text from assistant events; checks result.subtype for
+    success. Log: {log_dir}/{book}-{agent}.log — tail to track
+    progress. Waterfall and spinner are unaffected.
     """
     cmd = [
       "claude", "--print", prompt,
+      "--output-format", "stream-json",
       "--permission-mode", "bypassPermissions",
       "--system-prompt-file",
       str(self._agent_dir / system_file),
     ]
-    chunks: list[bytes] = []
     log_path = (
-      self._log_dir / f"{name.lower()}.log"
+      self._log_dir / f"{self._book_name}-{name.lower()}.log"
       if self._log_dir else None
     )
-    with subprocess.Popen(
-      cmd, stdout=subprocess.PIPE,
-      stderr=subprocess.DEVNULL,
-      cwd=str(self._work_dir),
-    ) as proc:
-      if log_path:
-        with log_path.open("wb") as lf:
-          for line in proc.stdout:
-            lf.write(line)
-            lf.flush()
-            chunks.append(line)
-      else:
-        chunks = list(proc.stdout)
-    if proc.returncode != 0:
+    parts: list[str] = []
+    failed = False
+    lf = log_path.open("w", encoding="utf-8") if log_path else None
+    try:
+      with subprocess.Popen(
+        cmd, stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        cwd=str(self._work_dir),
+      ) as proc:
+        for raw in proc.stdout:
+          try:
+            evt = json.loads(raw)
+          except json.JSONDecodeError:
+            continue
+          if evt.get("type") == "assistant":
+            for blk in evt.get("message", {}).get("content", []):
+              if blk.get("type") == "text":
+                text = blk["text"]
+                parts.append(text)
+                if lf:
+                  lf.write(text)
+                  lf.flush()
+          elif evt.get("type") == "result":
+            if evt.get("subtype") != "success":
+              failed = True
+    finally:
+      if lf:
+        lf.close()
+    if failed:
       self._abort(f"Error: {name} failed — aborting.")
-    return b"".join(chunks).decode(errors="replace")
+    return "".join(parts)
 
   def _require_artifact(self, path: Path) -> None:
     if not path.is_file():

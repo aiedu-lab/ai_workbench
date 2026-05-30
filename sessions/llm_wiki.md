@@ -238,12 +238,12 @@ python3 src/piper.py --help
 
 # Convert a PDF book to a mindmap
 python3 src/piper.py \
-  --input  example/TheComingWave.pdf \
-  --output example/TheComingWave-mindmap.html
+  --input  examples/TheComingWave.pdf \
+  --output examples/TheComingWave-mindmap.html
 
 # Resume if Seth wrote JSON but validator-loop failed
 python3 src/piper.py \
   --from-phase validator-loop \
-  --input  example/TheComingWave.pdf \
-  --output example/TheComingWave-mindmap.html
+  --input  examples/TheComingWave.pdf \
+  --output examples/TheComingWave-mindmap.html
 ```

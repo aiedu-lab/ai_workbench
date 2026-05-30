@@ -30,12 +30,12 @@ Phase                                          Function                Artifact
 ```
 
 **Book-name prefix**: all `.tmp/` files use the book filename.
-For `example/TheComingWave.pdf`:
+For `examples/TheComingWave.pdf`:
 
 ```
-example/.tmp/TheComingWave-detailed-notes.md
-example/.tmp/TheComingWave-mindmap-content.json
-example/.tmp/TheComingWave-mindmap.html
+examples/.tmp/TheComingWave-detailed-notes.md
+examples/.tmp/TheComingWave-mindmap-content.json
+examples/.tmp/TheComingWave-mindmap.html
 ```
 
 ---
@@ -60,12 +60,18 @@ python3 src/piper.py \
   --log-dir examples/.tmp
 
 # In a second terminal — monitor Leo in real time:
-tail -f examples/.tmp/leo.log
-# Other logs: seth.log  quinn.log  sentinel.log  (same dir)
+tail -f examples/.tmp/ai-native-company-playbook-leo.log
+# All logs use <book>-<agent>.log pattern (same dir):
+#   ai-native-company-playbook-seth.log
+#   ai-native-company-playbook-quinn.log
+#   ai-native-company-playbook-sentinel.log
 ```
 
-The waterfall display (stdout) is unaffected; logs go only to
-`examples/.tmp/*.log` files.
+Log files are prefixed with the book name — consistent with all
+other `.tmp/` artifacts — so multiple books share the same
+directory without collision. Stale logs for a book are deleted
+automatically at the start of each new run.
+The waterfall display (stdout) is unaffected.
 
 ```bash
 # Resume if Seth done but validator-loop / leo failed
