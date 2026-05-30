@@ -1,6 +1,12 @@
 # Piper: Pipeline Orchestrator
 
-Purpose: coordinate the workflow across specialized agents without mixing responsibilities.
+> **Implementation**: `piper.sh` is the concrete
+> implementation of this doctrine. The coordination rules,
+> agent sequencing, retry policy, and Sentinel verification
+> described here are all realised in that script.
+
+Purpose: coordinate the workflow across specialized agents
+without mixing responsibilities.
 
 ## Standard Pipeline
 1. Reader or summarizer updates `detailed-notes.md` from the source material.

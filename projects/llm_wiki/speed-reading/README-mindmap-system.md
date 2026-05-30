@@ -4,7 +4,7 @@ This directory stores reusable doctrine, agent instructions, and templates for b
 
 ## Files
 
-### Active Agent Prompts (used by `build_mindmap.sh`)
+### Active Agent Prompts (used by `piper.sh`)
 - `agents/seth-content-synthesizer.md`: Seth — distils book
   notes into structured mindmap JSON.
 - `agents/leo-layout-engineer.md`: Leo — renders JSON into a
@@ -22,7 +22,7 @@ This directory stores reusable doctrine, agent instructions, and templates for b
   doctrine — multi-agent coordination rules, layer policies,
   task scope locking. Referenced when extending the pipeline
   or debugging coordination issues. The bash orchestrator
-  (`build_mindmap.sh`) implements this doctrine.
+  (`piper.sh`) implements this doctrine.
 
 ### Templates
 - `templates/mindmap-content.template.json`: starter content
@@ -34,7 +34,7 @@ This directory stores reusable doctrine, agent instructions, and templates for b
 
 ## Recommended Per-Book Files
 All intermediate files are prefixed with the book name and
-written to `<output-dir>/.tmp/` by `build_mindmap.sh`:
+written to `<output-dir>/.tmp/` by `piper.sh`:
 - `<book>-detailed-notes.md`
 - `<book>-mindmap-content.json`
 - `<book>-mindmap.html`

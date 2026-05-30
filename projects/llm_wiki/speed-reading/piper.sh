@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
-# build_mindmap.sh — convert a book file/URL to an HTML mindmap.
+# piper.sh — convert a book file/URL to an HTML mindmap.
+#
+# This script IS the pipeline orchestrator described in:
+#   agents/piper-pipeline-orchestrator.md
+# It implements the coordination doctrine defined there:
+# task scope locking, agent sequencing, retry policy, and
+# independent final verification via Sentinel.
 #
 # 5-phase pipeline: sanitizer → setup → converter → seth → leo
 # Each phase echoes [phase-name] progress to stdout.
 # Use --from-phase to resume after a partial run.
 #
-# Usage: ./build_mindmap.sh [OPTIONS] <input> [output.html]
+# Usage: ./piper.sh [OPTIONS] <input> [output.html]
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -21,7 +27,7 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --help)
       cat <<'HELP'
-Usage: build_mindmap.sh [OPTIONS] <input> [output.html]
+Usage: piper.sh [OPTIONS] <input> [output.html]
 
 Convert a book file or URL to a self-contained HTML mindmap.
 
@@ -46,9 +52,9 @@ Intermediate files are written to <output-dir>/.tmp/ with the
 book filename as prefix (e.g. TheComingWave-detailed-notes.md).
 
 EXAMPLES
-  ./build_mindmap.sh TheComingWave.pdf
-  ./build_mindmap.sh book.pdf out/mindmap.html
-  ./build_mindmap.sh --from-phase leo book.pdf out/mindmap.html
+  ./piper.sh TheComingWave.pdf
+  ./piper.sh book.pdf out/mindmap.html
+  ./piper.sh --from-phase leo book.pdf out/mindmap.html
 HELP
       exit 0
       ;;

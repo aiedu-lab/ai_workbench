@@ -2,7 +2,7 @@
 
 Convert any PDF, web page, or text file into an interactive
 HTML mindmap using a four-agent AI pipeline. A single script
-(`build_mindmap.sh`) orchestrates all phases — from input
+(`piper.sh`) orchestrates all phases — from input
 conversion through synthesis, rendering, QA review, and final
 independent verification.
 
@@ -40,17 +40,17 @@ the full trio retries (up to 3 times).
 cd projects/llm_wiki/speed-reading
 
 # Show all options and phase names
-./build_mindmap.sh --help
+./piper.sh --help
 
 # From a PDF book
-./build_mindmap.sh example/TheComingWave.pdf \
+./piper.sh example/TheComingWave.pdf \
   example/TheComingWave_mindmap.html
 
 # From a plain-text or Markdown notes file
-./build_mindmap.sh my-notes.md mindmap.html
+./piper.sh my-notes.md mindmap.html
 
 # From an HTML article (URL)
-./build_mindmap.sh https://example.com/article.html mindmap.html
+./piper.sh https://example.com/article.html mindmap.html
 ```
 
 Open the output `.html` file in any browser to explore the
@@ -68,7 +68,7 @@ before skipping. For example, if Seth has completed for
 # Seth already produced:
 #   example/.tmp/TheComingWave-mindmap-content.json
 # Resume at Leo (runs Leo + Quinn + Sentinel):
-./build_mindmap.sh --from-phase leo \
+./piper.sh --from-phase leo \
   example/TheComingWave.pdf example/TheComingWave_mindmap.html
 ```
 
@@ -81,7 +81,7 @@ before proceeding.
 
 ## Agents
 
-Active agent prompts used by `build_mindmap.sh`:
+Active agent prompts used by `piper.sh`:
 
 | Agent | System prompt | Role |
 |---|---|---|
@@ -97,7 +97,7 @@ pipeline doctrine and design rules for human reference:
 
 | File | Purpose |
 |---|---|
-| `agents/piper-pipeline-orchestrator.md` | Multi-agent coordination doctrine: task scope locking, layer policies, workflow rules. Referenced when extending the pipeline or debugging coordination issues. |
+| `agents/piper-pipeline-orchestrator.md` | Pipeline doctrine: task scope locking, layer policies, agent coordination rules. **`piper.sh` is the concrete implementation of this doctrine.** Reference when extending the pipeline or debugging coordination issues. |
 | `ai-mindmap.md` | Non-negotiable map rules and global doctrine for content and layout quality. |
 
 ---
@@ -111,7 +111,7 @@ pipeline doctrine and design rules for human reference:
 | `templates/detailed-notes.template.md` | Starter note-taking format |
 
 Use `templates/detailed-notes.template.md` while reading a
-book, then run `build_mindmap.sh` on the resulting notes file.
+book, then run `piper.sh` on the resulting notes file.
 
 ---
 

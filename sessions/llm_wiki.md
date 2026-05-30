@@ -234,13 +234,13 @@ Full documentation and usage examples:
 cd projects/llm_wiki/speed-reading
 
 # Show all options and phase names
-./build_mindmap.sh --help
+./piper.sh --help
 
 # Convert a PDF book to a mindmap
-./build_mindmap.sh example/TheComingWave.pdf \
+./piper.sh example/TheComingWave.pdf \
   example/TheComingWave_mindmap.html
 
 # Resume an interrupted run (e.g. Seth done, Leo failed)
-./build_mindmap.sh --from-phase leo \
+./piper.sh --from-phase leo \
   example/TheComingWave.pdf example/TheComingWave_mindmap.html
 ```
