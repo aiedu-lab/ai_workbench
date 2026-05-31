@@ -208,8 +208,11 @@ class Piper:
     if ext == "pdf":
       subprocess.run(["pdftotext", inp, notes], check=True)
     elif ext in ("html", "htm") and self._is_url:
-      # Download to output_dir for corpus archival, then convert.
-      local = self._output_dir / f"{self._book_name}.html"
+      # Download to contents/ subfolder for corpus archival.
+      # Keeps raw source separate from generated mindmap output.
+      contents = self._output_dir / "contents"
+      contents.mkdir(exist_ok=True)
+      local = contents / f"{self._book_name}.html"
       curl = subprocess.run(
         ["curl", "-fsSL", inp],
         capture_output=True, check=True,

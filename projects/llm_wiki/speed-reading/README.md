@@ -104,15 +104,16 @@ any browser.
 
 ### URL corpus archival
 
-When `--input` is a URL, `piper.py` downloads the HTML to the
-output directory before converting it, preserving a local copy
-of the source material alongside the mindmap:
+When `--input` is a URL, `piper.py` downloads the HTML to a
+`contents/` subfolder within the output directory, keeping raw
+source separate from generated mindmap output:
 
 ```
 examples/
-  ai-native-company-playbook.html      ← downloaded corpus
-  ai-native-company-playbook-mindmap.html  ← mindmap output
-  read-list.md                         ← processing record
+  contents/
+    the-ai-native-company-playbook.html  ← downloaded corpus
+  the-ai-native-company-playbook-mindmap.html  ← mindmap output
+  read-list.md                           ← processing record
 ```
 
 This means you can re-run the pipeline from `--from-phase seth`
