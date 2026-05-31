@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The AI-Native Company Playbook — Mind Map</title>
+  <script
+    src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+  ></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #f8f8f8;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      overflow: hidden;
+    }
+    #network-container { position: absolute; inset: 0; }
+
+    /* ── Validation panel — top-left ─────────────────────────────── */
+    #val-panel {
+      position: fixed; top: 14px; left: 14px; z-index: 100;
+      background: rgba(255,255,255,0.96);
+      border: 1.5px solid #ccc; border-radius: 8px;
+      padding: 8px 12px; font-size: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      min-width: 180px;
+    }
+    #val-panel .vt {
+      font-weight: 700; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: #555; margin-bottom: 4px;
+    }
+    #val-result { font-weight: 600; font-size: 13px; }
+    #val-result.pass { color: #00c853; }
+    #val-result.fail { color: #ff1744; }
+
+    /* ── Inspector — right side, hidden until a node is clicked ──── */
+    #inspector {
+      display: none;
+      position: fixed; top: 50%; right: 18px;
+      transform: translateY(-50%); z-index: 200;
+      background: rgba(255,255,255,0.97);
+      border: 1.5px solid #ddd; border-radius: 10px;
+      padding: 16px 18px; width: 300px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      max-height: 70vh; overflow-y: auto;
+    }
+    #inspector h3 {
+      font-size: 14px; font-weight: 700;
+      color: #222; margin-bottom: 10px; line-height: 1.35;
+    }
+    .sl {
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: #888; margin-top: 10px; margin-bottom: 3px;
+    }
+    .st { font-size: 12px; color: #333; line-height: 1.55; }
+    #insp-close {
+      position: absolute; top: 8px; right: 10px;
+      background: none; border: none;
+      font-size: 16px; cursor: pointer; color: #888;
+    }
+    #insp-close:hover { color: #222; }
+
+    /* ── Legend — bottom-right ───────────────────────────────────── */
+    #legend {
+      position: fixed; bottom: 14px; right: 14px; z-index: 100;
+      background: rgba(255,255,255,0.96);
+      border: 1.5px solid #ccc; border-radius: 8px;
+      padding: 8px 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      font-size: 12px;
+    }
+    #leg-hdr {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      cursor: pointer; user-select: none;
+    }
+    #leg-title {
+      font-weight: 700; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: #555; margin-right: 10px;
+    }
+    #leg-btn {
+      font-size: 11px; color: #888;
+      border: none; background: none; cursor: pointer; padding: 0;
+    }
+    #leg-body { margin-top: 6px; }
+    .leg-row { display: flex; align-items: center; margin-bottom: 4px; }
+    .leg-sw {
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 2px solid; margin-right: 7px;
+      flex-shrink: 0; background: #fff;
+    }
+    .leg-lbl { font-size: 12px; color: #444; }
+  </style>
+</head>
+<body>
+
+<div id="network-container"></div>
+
+<div id="val-panel">
+  <div class="vt">Layout Validation</div>
+  <div id="val-result">Checking…</div>
+</div>
+
+<div id="inspector">
+  <button id="insp-close" title="Close">&#x2715;</button>
+  <h3 id="insp-label"></h3>
+  <div class="sl">What</div>
+  <div class="st" id="insp-what"></div>
+  <div class="sl">Why</div>
+  <div class="st" id="insp-why"></div>
+</div>
+
+<div id="legend">
+  <div id="leg-hdr">
+    <span id="leg-title">Legend</span>
+    <button id="leg-btn">&#x25BC;</button>
+  </div>
+  <div id="leg-body">
+    <div class="leg-row">
+      <div class="leg-sw" style="border-color:#222;background:#222;"></div>
+      <span class="leg-lbl">Root</span>
+    </div>
+    <div class="leg-row">
+      <div class="leg-sw" style="border-color:#00c853;"></div>
+      <span class="leg-lbl">Branch anchors (Layer 2)</span>
+    </div>
+    <div class="leg-row">
+      <div class="leg-sw" style="border-color:#ff9100;"></div>
+      <span class="leg-lbl">Detail anchors (Layer 3)</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── FALLBACK_CONTENT ──────────────────────────────────────────────────
+// Zero Truncation Rule: 1:1 mirror of mindmap-content.json.
+// Every node from the source JSON must be present here.
+const FALLBACK_CONTENT = [
+  {
+    id: "root", parent: null, layer: 1,
+    label: "The AI-Native Company Playbook",
+    what: "A structural playbook for building companies where AI is the" +
+      " operating model — not a feature added to existing workflows —" +
+      " so humans focus exclusively on judgment, relationships, and" +
+      " novel problems",
+    why: "The efficiency gap between AI-native and AI-using companies" +
+      " is categorical, not marginal; companies that get the structure" +
+      " right operate at a fundamentally different level than those" +
+      " that merely add tools to existing processes",
+    emphasis: "high"
+  },
+  {
+    id: "distinction", parent: "root", layer: 2,
+    label: "Structural vs. Additive",
+    what: "AI-native means structuring the company around AI capability;" +
+      " AI-using means layering tools onto existing workflows — the" +
+      " difference is not philosophical but structural",
+    why: "Most companies claiming to 'use AI' do none of the three" +
+      " defining things: they neither offload operational overhead to" +
+      " agents, nor invest in context as an asset, nor redesign" +
+      " processes around what AI can actually handle",
+    emphasis: "high"
+  },
+  {
+    id: "context-architecture", parent: "root", layer: 2,
+    label: "Context as Designed Asset",
+    what: "The most important infrastructure investment for an AI-native" +
+      " company is the context architecture — the four-layer system" +
+      " that keeps the agent's knowledge current, accurate, and" +
+      " comprehensive",
+    why: "AI agents are only as useful as the context they operate in;" +
+      " companies that treat context as a byproduct rather than a" +
+      " designed asset get marginal gains at best and unreliable" +
+      " agents at worst",
+    emphasis: "high"
+  },
+  {
+    id: "org-design", parent: "root", layer: 2,
+    label: "Org and Operating Redesign",
+    what: "AI-native companies restructure roles into strategic and" +
+      " builder tracks, designate an AI systems owner, establish" +
+      " explicit human judgment gates, and operate on a layered" +
+      " daily/weekly/monthly/quarterly cadence",
+    why: "Without deliberate role and rhythm redesign, AI tools get" +
+      " absorbed into the old structure and the efficiency gains are" +
+      " erased by the same operational overhead the agents were meant" +
+      " to eliminate",
+    emphasis: null
+  },
+  {
+    id: "autonomy-ladder", parent: "root", layer: 2,
+    label: "Autonomy Ladder",
+    what: "A repeating six-step pattern — identify mechanical workflow," +
+      " map context requirements, verify context, deploy supervised," +
+      " establish 90%+ reliability, move to autonomous with periodic" +
+      " audit — applied progressively across the company",
+    why: "The ladder prevents both under-deployment (staying forever in" +
+      " pilot mode) and over-deployment (granting autonomy before" +
+      " reliability is proven), and provides a concrete, repeatable" +
+      " path to systematic AI-native operation",
+    emphasis: null
+  },
+  {
+    id: "context-moat", parent: "root", layer: 2,
+    label: "Compounding Context Moat",
+    what: "Every interaction, correction, captured decision, and enriched" +
+      " record makes the AI system more accurate; a competitor starting" +
+      " later starts with zero context and zero calibration",
+    why: "The moat is not the raw data — it is system quality: a" +
+      " calibrated agent, maintained memory, tuned workflows, and" +
+      " accumulated organizational knowledge of how to work with AI" +
+      " effectively; these compound in a way that cannot be shortcut",
+    emphasis: "high"
+  },
+  {
+    id: "operational-overhead", parent: "distinction", layer: 3,
+    label: "AI Handles Operational Overhead",
+    what: "Repetitive, consistent, information-processing work — CRM" +
+      " maintenance, lead enrichment, report generation, follow-up" +
+      " drafting, scheduling coordination — is handled by AI agents" +
+      " rather than humans",
+    why: "Freeing humans from operational overhead is the precondition" +
+      " for them to spend time on judgment and relationships; without" +
+      " this shift, human capacity remains consumed by work that does" +
+      " not require human judgment",
+    emphasis: null
+  },
+  {
+    id: "process-first-design", parent: "distinction", layer: 3,
+    label: "Process Designed Around AI Capability",
+    what: "The question is not 'how do we add AI to our process' but" +
+      " 'what is the right process given that AI can handle these" +
+      " specific tasks?' — often requiring significant workflow" +
+      " restructuring, not tool addition",
+    why: "Bolt-on AI leaves the underlying process architecture intact" +
+      " and thus leaves intact the inefficiencies AI was meant to" +
+      " address; structural redesign is what produces categorical" +
+      " rather than marginal gains",
+    emphasis: "high"
+  },
+  {
+    id: "four-layer-stack", parent: "context-architecture", layer: 3,
+    label: "Four-Layer Context Stack",
+    what: "Data layer (structured CRM, deal history, pipeline status)," +
+      " memory layer (agent's accumulated preferences and conventions)," +
+      " document layer (meeting notes, decision records, correspondence)," +
+      " and integration layer (email, calendar, browser, external sources)",
+    why: "Each layer provides a different kind of context; richer" +
+      " integration across all four gives the agent the knowledge it" +
+      " needs to operate accurately — gaps in any layer produce errors" +
+      " and require human correction that negates autonomy gains",
+    emphasis: null
+  },
+  {
+    id: "active-maintenance", parent: "context-architecture", layer: 3,
+    label: "Context Requires Active Maintenance",
+    what: "The memory layer requires periodic review to stay current;" +
+      " monthly audits correct miscalibration, update context, and" +
+      " adjust workflows — this is infrastructure maintenance, not" +
+      " optional cleanup",
+    why: "Context that was accurate six months ago drifts; an agent" +
+      " operating on stale memory makes increasingly confident but" +
+      " increasingly wrong decisions, eroding the trust that took" +
+      " weeks of supervised mode to build",
+    emphasis: null
+  },
+  {
+    id: "roles-restructuring", parent: "org-design", layer: 3,
+    label: "Strategic and Builder Roles Replace Operators",
+    what: "Operational work moves to agents; humans become either" +
+      " strategic (judgment, relationships, decisions) or builders" +
+      " (designing, configuring, and improving AI systems); in" +
+      " companies of 5+ a dedicated AI systems owner is warranted",
+    why: "Without explicit role redesign, people default to doing the" +
+      " operational work alongside the agent rather than delegating" +
+      " it fully — the AI operations role prevents this by assigning" +
+      " clear ownership of agent accuracy and workflow expansion",
+    emphasis: null
+  },
+  {
+    id: "human-judgment-gates", parent: "org-design", layer: 3,
+    label: "Human Judgment Gates",
+    what: "Explicitly named categories of decisions that always require" +
+      " human judgment: key strategic decisions, relationship-sensitive" +
+      " actions, novel situations, and high-stakes commitments —" +
+      " everything else is a candidate for AI delegation",
+    why: "The biggest risk of AI-native structure is over-delegating" +
+      " judgment; explicit gates maintained through regular auditing" +
+      " are the primary safeguard against consequential decisions" +
+      " drifting into autonomous agent territory",
+    emphasis: null
+  },
+  {
+    id: "operating-cadence", parent: "org-design", layer: 3,
+    label: "Layered Operating Cadence",
+    what: "Daily: agent handles operations, humans read briefing and" +
+      " handle 2-3 judgment items. Weekly: agent generates pipeline" +
+      " review, team reviews async, sync is about decisions not status." +
+      " Monthly: audit and recalibrate. Quarterly: reassess AI" +
+      " architecture and plan autonomy expansion.",
+    why: "The cadence replaces status-update overhead with structured" +
+      " audit and decision points — weekly syncs become strategy" +
+      " sessions because operational status is already handled; the" +
+      " rhythm is itself a form of organizational redesign",
+    emphasis: null
+  },
+  {
+    id: "context-inventory-first", parent: "autonomy-ladder", layer: 3,
+    label: "Context Inventory Is the Prerequisite",
+    what: "Before deploying any agent, map what context it will need —" +
+      " contact data, deal history, communication history, preferences" +
+      " and conventions — and close the gaps between what exists and" +
+      " what is required",
+    why: "Most companies have messy, incomplete data and no structured" +
+      " communication history; deploying an agent into this environment" +
+      " produces unreliable outputs that destroy trust and require more" +
+      " correction work than the agent saves — fixing context first is" +
+      " not optional",
+    emphasis: "high"
+  },
+  {
+    id: "supervised-to-autonomous", parent: "autonomy-ladder", layer: 3,
+    label: "Supervised Mode → 90%+ Accuracy → Autonomous",
+    what: "Agents first run in supervised mode where humans review all" +
+      " outputs; after reaching 90%+ accuracy without significant" +
+      " correction in a given workflow, the agent moves to autonomous" +
+      " operation with periodic spot-checks",
+    why: "The 90% threshold prevents premature autonomy that erodes" +
+      " trust; supervised mode is also the mechanism by which the" +
+      " agent learns company-specific conventions through explicit" +
+      " feedback — it is calibration, not just evaluation",
+    emphasis: null
+  },
+  {
+    id: "compounding-mechanism", parent: "context-moat", layer: 3,
+    label: "Every Interaction Enriches the System",
+    what: "Each correction, captured decision, enriched record, and" +
+      " feedback cycle improves agent accuracy for the specific" +
+      " company's context; a two-year-old AI system is significantly" +
+      " better than the same company's six-month-old system",
+    why: "The improvement comes not only from product updates but from" +
+      " accumulated context and calibration — the compounding is" +
+      " company-specific and cannot be replicated by a later entrant" +
+      " purchasing the same tools",
+    emphasis: null
+  },
+  {
+    id: "system-quality-moat", parent: "context-moat", layer: 3,
+    label: "System Quality, Not Data, Is the Moat",
+    what: "The underlying data (a DuckDB file) is portable and" +
+      " exportable — not defensible. The moat is the calibrated agent," +
+      " maintained memory, tuned workflows, and organizational" +
+      " capability for working with AI effectively.",
+    why: "Late entrants are not just late to technology; they are late" +
+      " to compounding — the answer to 'why not wait for AI to mature" +
+      " more' is that companies starting now are building the system" +
+      " quality and organizational knowledge that makes every" +
+      " subsequent year of AI-native operation more effective",
+    emphasis: "high"
+  }
+];
+
+// ── Color palette and styling ─────────────────────────────────────────
+// Layer 1 (root) = near-black; 2 = vivid green; 3 = electric orange.
+// Doctrine uses 0-based layers; this JSON uses 1-based — adapted here.
+const LAYER_COLOR = { 1: "#222", 2: "#00c853", 3: "#ff9100" };
+function lc(layer) { return LAYER_COLOR[layer] || "#888"; }
+function isEmph(n) { return n.emphasis === "high"; }
+
+// Emphasized: full-opacity color, large font, thick border.
+// Baseline:   88%-alpha color, small font, thin border.
+// This establishes the Core Reading Path contrast per doctrine.
+function nodeStyle(n) {
+  const c = lc(n.layer), e = isEmph(n);
+  return {
+    borderColor: e ? c : c + "88",
+    fontColor:   e ? c : c + "88",
+    fontSize:    e ? 18 : 13,
+    borderWidth: e ? 3  : 1.5
+  };
+}
+
+// ── Build lookup maps ─────────────────────────────────────────────────
+const nodeMap = {};
+FALLBACK_CONTENT.forEach(n => { nodeMap[n.id] = n; });
+
+const l2Nodes = FALLBACK_CONTENT.filter(n => n.layer === 2);
+const l3All   = FALLBACK_CONTENT.filter(n => n.layer === 3);
+const l3ByParent = {};
+l3All.forEach(n => {
+  if (!l3ByParent[n.parent]) l3ByParent[n.parent] = [];
+  l3ByParent[n.parent].push(n);
+});
+
+// ── Layer 2: evenly-spaced ellipse, starting at top (–π/2) ───────────
+// RX2=480, RY2=300 keeps the ring tight around the root without
+// creating an over-large gap between root and branch nodes.
+const RX2 = 480, RY2 = 300, N2 = l2Nodes.length;
+
+l2Nodes.forEach((n, i) => {
+  n._angle = -Math.PI / 2 + (2 * Math.PI * i) / N2;
+  n._x = RX2 * Math.cos(n._angle);
+  n._y = RY2 * Math.sin(n._angle);
+});
+
+nodeMap["root"]._x = 0;
+nodeMap["root"]._y = 0;
+
+// ── Layer 3: sub-sector placement outside the L2 ring ────────────────
+// R3=680 keeps L3 nodes visually attached to their L2 parents while
+// providing enough clearance for the 3-child org-design branch.
+// This is tighter than a naive large R3 to honor the doctrine's
+// "tighten parent-child distances when possible" rule.
+const R3 = 680;
+
+l2Nodes.forEach((parent, pi) => {
+  const kids = l3ByParent[parent.id] || [];
+  const nc   = kids.length;
+  if (!nc) return;
+
+  // Sub-sector confinement: derive max half-span from neighbor gaps
+  // so children never spill into an adjacent branch's territory.
+  const prevA = l2Nodes[(pi - 1 + N2) % N2]._angle;
+  const nextA = l2Nodes[(pi + 1) % N2]._angle;
+  let gPrev = parent._angle - prevA;
+  if (gPrev <= 0) gPrev += 2 * Math.PI;
+  let gNext = nextA - parent._angle;
+  if (gNext <= 0) gNext += 2 * Math.PI;
+
+  // 42% of the smaller gap → ~0.264 rad for uniform 72° sectors.
+  const maxHalf  = Math.min(gPrev, gNext) * 0.42;
+  // Per-child spread: 0.30 rad per child, capped by sub-sector limit.
+  const halfSpan = Math.max(Math.min(maxHalf, nc * 0.30 / 2), 0.18);
+
+  kids.forEach((kid, ci) => {
+    const angle = nc === 1
+      ? parent._angle
+      : parent._angle - halfSpan + (2 * halfSpan * ci) / (nc - 1);
+    kid._angle = angle;
+    kid._x = R3 * Math.cos(angle);
+    kid._y = R3 * Math.sin(angle);
+  });
+});
+
+// ── Collision resolution for L3 (cross-branch separation pass) ───────
+// MIN_DIST3 is a conservative footprint estimate for the widest L3 node.
+// Push factor 0.55 keeps nodes within their branch sector.
+const MIN_DIST3 = 160;
+
+for (let iter = 0; iter < 20; iter++) {
+  let moved = false;
+  for (let i = 0; i < l3All.length; i++) {
+    for (let j = i + 1; j < l3All.length; j++) {
+      const a = l3All[i], b = l3All[j];
+      const dx = b._x - a._x, dy = b._y - a._y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < MIN_DIST3 && dist > 0.001) {
+        const push = (MIN_DIST3 - dist) / 2;
+        const nx = dx / dist, ny = dy / dist;
+        a._x -= nx * push * 0.55;
+        a._y -= ny * push * 0.55;
+        b._x += nx * push * 0.55;
+        b._y += ny * push * 0.55;
+        moved = true;
+      }
+    }
+  }
+  if (!moved) break;
+}
+
+// ── Label wrapping ────────────────────────────────────────────────────
+function wrapLabel(label, maxChars) {
+  const words = label.split(" ");
+  const lines = [];
+  let line = "";
+  for (const w of words) {
+    const cand = line ? line + " " + w : w;
+    if (cand.length <= maxChars) {
+      line = cand;
+    } else {
+      if (line) lines.push(line);
+      line = w;
+    }
+  }
+  if (line) lines.push(line);
+  return lines.join("\n");
+}
+
+// ── Build vis-network nodes ───────────────────────────────────────────
+const visNodes = [];
+
+FALLBACK_CONTENT.forEach(n => {
+  const s = nodeStyle(n);
+  // Max chars per line controls ellipse width: root 20, L2 16, L3 18.
+  const maxC = n.layer === 1 ? 20 : (n.layer === 2 ? 16 : 18);
+  const wrapped = wrapLabel(n.label, maxC);
+
+  visNodes.push({
+    id: n.id,
+    label: wrapped,
+    x: n._x ?? 0,
+    y: n._y ?? 0,
+    fixed: { x: true, y: true },
+    physics: false,
+    shape: "ellipse",
+    color: {
+      background: "#ffffff",
+      border: s.borderColor,
+      highlight: { background: "#fffde7", border: s.borderColor },
+      hover:      { background: "#fffde7", border: s.borderColor }
+    },
+    font: {
+      color: s.fontColor,
+      size:  s.fontSize,
+      face:  "Segoe UI, system-ui, sans-serif",
+      bold:  { color: s.fontColor, size: s.fontSize, mod: "bold" }
+    },
+    borderWidth: s.borderWidth,
+    borderWidthSelected: s.borderWidth + 1,
+    widthConstraint: {
+      minimum: 90,
+      maximum: n.layer === 1 ? 210 : 170
+    }
+  });
+});
+
+// ── Build vis-network edges ───────────────────────────────────────────
+// Single Arrow OR Edges Rule: these nodes have no directed sequence,
+// only hierarchy — so all edges are plain (no arrowheads).
+//
+// Parallel Bowing Mandate: all sibling fan edges use curvedCW so arcs
+// bow in the same direction and never cross within a branch fan.
+//
+// Edge emphasis mirrors child node emphasis: Core Reading Path edges
+// are thick (3.5px) and fully opaque; baseline edges are thin (1px)
+// and faded (88% alpha) to push non-critical paths into background.
+const visEdges = [];
+
+FALLBACK_CONTENT.forEach(n => {
+  if (!n.parent) return;
+  const e = isEmph(n);
+  const c = lc(n.layer);
+  visEdges.push({
+    from: n.parent,
+    to:   n.id,
+    arrows: "",
+    color: {
+      color:     e ? c : c + "88",
+      highlight: e ? c : c + "88",
+      hover:     e ? c : c + "88"
+    },
+    width: e ? 3.5 : 1.0,
+    smooth: { enabled: true, type: "curvedCW", roundness: 0.12 }
+  });
+});
+
+// ── Initialise vis-network ────────────────────────────────────────────
+const container = document.getElementById("network-container");
+const network = new vis.Network(
+  container,
+  {
+    nodes: new vis.DataSet(visNodes),
+    edges: new vis.DataSet(visEdges)
+  },
+  {
+    nodes: { shape: "ellipse", borderWidth: 1.5, font: { size: 13 } },
+    edges: {
+      smooth: { enabled: true, type: "curvedCW", roundness: 0.12 },
+      arrows: { to: { enabled: false } }
+    },
+    physics: { enabled: false },
+    interaction: {
+      hover: true,
+      tooltipDelay: 200,
+      zoomView: true,
+      dragView: true,
+      dragNodes: false
+    }
+  }
+);
+
+// ── Post-draw: fit viewport then validate ─────────────────────────────
+// Single afterDrawing handler — consolidating fit + validation avoids
+// the race condition of two competing `once` registrations.
+network.once("afterDrawing", () => {
+  network.fit({
+    animation: { duration: 400, easingFunction: "easeInOutQuad" }
+  });
+  // Validation runs after fit animation so viewport is stable.
+  // Positions are fixed and don't change with fit, so reading them
+  // immediately after scheduling fit is safe.
+  setTimeout(runValidation, 500);
+});
+
+// ── Inspector (selection drawer) ──────────────────────────────────────
+let activeId = null;
+const inspector = document.getElementById("inspector");
+const inspLabel = document.getElementById("insp-label");
+const inspWhat  = document.getElementById("insp-what");
+const inspWhy   = document.getElementById("insp-why");
+
+document.getElementById("insp-close").addEventListener("click", () => {
+  inspector.style.display = "none";
+  activeId = null;
+});
+
+network.on("click", params => {
+  if (params.nodes.length > 0) {
+    const id = params.nodes[0];
+    if (id === activeId) {
+      // Toggle off when the same node is clicked again.
+      inspector.style.display = "none";
+      activeId = null;
+    } else {
+      const n = nodeMap[id];
+      if (n) {
+        // Use original (unwrapped) label in inspector heading.
+        inspLabel.textContent = n.label;
+        inspWhat.textContent  = n.what;
+        inspWhy.textContent   = n.why;
+        inspector.style.display = "block";
+        activeId = id;
+      }
+    }
+  } else {
+    inspector.style.display = "none";
+    activeId = null;
+  }
+});
+
+// ── Legend toggle ─────────────────────────────────────────────────────
+let legOpen = true;
+const legBody = document.getElementById("leg-body");
+const legBtn  = document.getElementById("leg-btn");
+document.getElementById("leg-hdr").addEventListener("click", () => {
+  legOpen = !legOpen;
+  legBody.style.display = legOpen ? "block" : "none";
+  legBtn.innerHTML      = legOpen ? "&#x25BC;" : "&#x25B2;";
+});
+
+// ── Geometry validation ───────────────────────────────────────────────
+// Checks center-to-center distances across all nodes at the same layer.
+// Thresholds are conservative ellipse footprint estimates.
+// Runs against computed _x/_y (fixed positions) for determinism.
+function runValidation() {
+  let fails = 0;
+
+  function checkLayer(nodes, minDist) {
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        if (Math.hypot(b._x - a._x, b._y - a._y) < minDist) fails++;
+      }
+    }
+  }
+
+  // L2: min 110px (nodes up to ~170px wide at max constraint).
+  checkLayer(l2Nodes, 110);
+  // L3: min 140px (nodes up to ~170px wide, could be 3 lines tall).
+  checkLayer(l3All, 140);
+
+  const el = document.getElementById("val-result");
+  if (fails === 0) {
+    el.textContent = "PASS — no collisions";
+    el.className   = "pass";
+  } else {
+    el.textContent = "FAIL — " + fails + " collision(s)";
+    el.className   = "fail";
+  }
+}
+</script>
+</body>
+</html>
