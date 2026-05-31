@@ -100,6 +100,40 @@ python3 src/piper.py \
 Open `examples/ai-native-company-playbook-mindmap.html` in
 any browser.
 
+### URL corpus archival
+
+When `--input` is a URL, `piper.py` downloads the HTML to the
+output directory before converting it, preserving a local copy
+of the source material alongside the mindmap:
+
+```
+examples/
+  ai-native-company-playbook.html      ← downloaded corpus
+  ai-native-company-playbook-mindmap.html  ← mindmap output
+  read-list.md                         ← processing record
+```
+
+This means you can re-run the pipeline from `--from-phase seth`
+or later without network access.
+
+### Processed materials record
+
+`read-list.md` in the output directory tracks every book or
+article processed by `piper.py`. Status symbols:
+
+| Symbol | Meaning |
+|---|---|
+| `[ ]` | Not yet started |
+| `[converter]` / `[seth]` / `[leo]` / `[quinn]` | Last completed phase |
+| `[✓]` | Mindmap fully built |
+
+`piper.py` updates this file automatically at each completed phase.
+To see all processed materials and their status:
+
+```bash
+cat examples/read-list.md
+```
+
 ### Other input types
 
 ```bash

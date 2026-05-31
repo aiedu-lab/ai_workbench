@@ -63,6 +63,7 @@ class Piper:
     self._is_url: bool = False
     self._abs_input: str = ""
     self._abs_output = Path(output_path)
+    self._output_dir: Path = Path()
     self._work_dir: Path = Path()
     self._notes_file: Path = Path()
     self._content_json: Path = Path()
@@ -84,6 +85,7 @@ class Piper:
       self._spinner.stop()
     shutil.copy(str(self._html_file), str(self._abs_output))
     print(f"[done] Mindmap saved: {self._abs_output}")
+    self._update_read_list("done")
     return 0
 
   # ── Phase: Argument Sanitizer ─────────────────────────────────
@@ -137,6 +139,7 @@ class Piper:
     out.parent.mkdir(parents=True, exist_ok=True)
     self._abs_output = out.parent.resolve() / out.name
     output_dir = self._abs_output.parent
+    self._output_dir = output_dir
     self._work_dir = output_dir / ".tmp"
     self._notes_file = (
       self._work_dir / f"{book_name}-detailed-notes.md"
@@ -197,6 +200,7 @@ class Piper:
     finally:
       self._spinner.stop()
     self._display.ph[2] = "done"
+    self._update_read_list("converter")
 
   def _convert_input(self) -> None:
     ext, inp = self._ext, self._abs_input
@@ -204,15 +208,18 @@ class Piper:
     if ext == "pdf":
       subprocess.run(["pdftotext", inp, notes], check=True)
     elif ext in ("html", "htm") and self._is_url:
+      # Download to output_dir for corpus archival, then convert.
+      local = self._output_dir / f"{self._book_name}.html"
       curl = subprocess.run(
         ["curl", "-fsSL", inp],
         capture_output=True, check=True,
       )
-      h2t = subprocess.run(
-        ["html2text"], input=curl.stdout,
+      local.write_bytes(curl.stdout)
+      out = subprocess.run(
+        ["html2text", str(local)],
         capture_output=True, check=True,
       )
-      self._notes_file.write_bytes(h2t.stdout)
+      self._notes_file.write_bytes(out.stdout)
     elif ext in ("html", "htm"):
       out = subprocess.run(
         ["html2text", inp], capture_output=True, check=True
@@ -246,6 +253,7 @@ class Piper:
         f"Error: Seth did not produce {self._content_json}."
       )
     self._display.ph[3] = "done"
+    self._update_read_list("seth")
 
   # ── Phase: Validator Loop (Leo → Quinn → Sentinel) ────────────
 
@@ -404,6 +412,43 @@ class Piper:
     if failed:
       self._abort(f"Error: {name} failed — aborting.")
     return "".join(parts)
+
+  def _update_read_list(self, phase: str) -> None:
+    """Upsert a status line in read-list.md for this book.
+
+    Status symbols:
+      [ ]        — not yet started
+      [<phase>]  — last completed phase (converter/seth/leo/quinn)
+      [✓]        — mindmap fully built and saved
+    Finds the existing line by book_name and updates in place,
+    or appends a new entry if none exists.
+    """
+    rl = self._output_dir / "read-list.md"
+    status = "[✓]" if phase == "done" else f"[{phase}]"
+    mindmap_name = self._abs_output.name
+    entry = (
+      f"- {status} [{self._book_name}]({mindmap_name})"
+      f" — `{self._abs_input}`\n"
+    )
+    header = (
+      "# Speed Reading — Processed Materials\n\n"
+      "<!-- Status: [ ] not started"
+      " · [<phase>] last phase done"
+      " · [✓] mindmap complete -->\n\n"
+    )
+    if rl.exists():
+      lines = rl.read_text(encoding="utf-8").splitlines(
+        keepends=True
+      )
+      for i, line in enumerate(lines):
+        if f"[{self._book_name}]" in line:
+          lines[i] = entry
+          rl.write_text("".join(lines), encoding="utf-8")
+          return
+      with rl.open("a", encoding="utf-8") as f:
+        f.write(entry)
+    else:
+      rl.write_text(header + entry, encoding="utf-8")
 
   def _require_artifact(self, path: Path) -> None:
     if not path.is_file():
