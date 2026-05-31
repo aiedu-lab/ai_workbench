@@ -59,12 +59,14 @@ python3 src/piper.py \
   --output  examples/ai-native-company-playbook-mindmap.html \
   --log-dir examples/.tmp
 
-# In a second terminal — monitor Leo in real time:
-tail -f examples/.tmp/ai-native-company-playbook-leo.log
-# All logs use <book>-<agent>.log pattern (same dir):
+# In a second terminal — monitor Leo attempt 1 in real time:
+tail -f examples/.tmp/ai-native-company-playbook-leo-1.log
+# Validator-loop agents include attempt number (retries get -2, -3):
+#   ai-native-company-playbook-leo-1.log
+#   ai-native-company-playbook-quinn-1.log
+#   ai-native-company-playbook-sentinel-1.log
+# Seth has no retries, so no attempt suffix:
 #   ai-native-company-playbook-seth.log
-#   ai-native-company-playbook-quinn.log
-#   ai-native-company-playbook-sentinel.log
 ```
 
 Log files are prefixed with the book name — consistent with all

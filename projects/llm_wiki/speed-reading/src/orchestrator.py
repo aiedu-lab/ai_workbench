@@ -284,11 +284,11 @@ class Piper:
     else:
       self._display.vl = ["active", "pending", "pending"]
       self._display.waterfall()
-      self._run_leo()
+      self._run_leo(attempt)
       self._display.vl = ["done", "active", "pending"]
       self._display.waterfall()
     if not skip_quinn:
-      quinn_out = self._run_quinn()
+      quinn_out = self._run_quinn(attempt)
       if "NOT APPROVED" in quinn_out:
         self._display.vl = ["done", "skip", "skip"]
         if attempt >= self.MAX_RETRIES:
@@ -302,7 +302,7 @@ class Piper:
         return False
     self._display.vl = ["done", "done", "active"]
     self._display.waterfall()
-    sent_out = self._run_sentinel()
+    sent_out = self._run_sentinel(attempt)
     if "NOT APPROVED" in sent_out:
       self._display.vl = ["done", "done", "skip"]
       if attempt >= self.MAX_RETRIES:
@@ -317,7 +317,7 @@ class Piper:
     self._display.vl = ["done", "done", "done"]
     return True
 
-  def _run_leo(self) -> None:
+  def _run_leo(self, attempt: int) -> None:
     self._spinner.start(
       "Leo · rendering vis-network mindmap HTML..."
     )
@@ -326,11 +326,12 @@ class Piper:
         f"Render {self._content_json} into {self._html_file}",
         "leo-layout-engineer.md",
         "Leo",
+        attempt=attempt,
       )
     finally:
       self._spinner.stop()
 
-  def _run_quinn(self) -> str:
+  def _run_quinn(self, attempt: int) -> str:
     self._spinner.start(
       "Quinn · reviewing layout, hierarchy, content..."
     )
@@ -339,11 +340,12 @@ class Piper:
         f"Review {self._html_file} for quality issues.",
         "quinn-qa-reviewer.md",
         "Quinn",
+        attempt=attempt,
       )
     finally:
       self._spinner.stop()
 
-  def _run_sentinel(self) -> str:
+  def _run_sentinel(self, attempt: int) -> str:
     self._spinner.start(
       "Sentinel · final guard: spacing, completeness..."
     )
@@ -354,6 +356,7 @@ class Piper:
         " — overrule if you see any failure.",
         "sentinel-final-guardian.md",
         "Sentinel",
+        attempt=attempt,
       )
     finally:
       self._spinner.stop()
@@ -361,13 +364,17 @@ class Piper:
   # ── Utilities ─────────────────────────────────────────────────
 
   def _run_agent(
-    self, prompt: str, system_file: str, name: str
+    self,
+    prompt: str,
+    system_file: str,
+    name: str,
+    attempt: int | None = None,
   ) -> str:
     """Invoke claude --print; stream stdout to log if --log-dir set.
 
     Uses --output-format stream-json for real-time line emission.
     Extracts text from assistant events; checks result.subtype for
-    success. Log: {log_dir}/{book}-{agent}.log — tail to track
+    success. Log: {book}-{agent}[-{attempt}].log — tail to track
     progress. Waterfall and spinner are unaffected.
     """
     cmd = [
@@ -377,8 +384,10 @@ class Piper:
       "--system-prompt-file",
       str(self._agent_dir / system_file),
     ]
+    suffix = f"-{attempt}" if attempt is not None else ""
     log_path = (
-      self._log_dir / f"{self._book_name}-{name.lower()}.log"
+      self._log_dir
+      / f"{self._book_name}-{name.lower()}{suffix}.log"
       if self._log_dir else None
     )
     parts: list[str] = []
