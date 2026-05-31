@@ -104,16 +104,22 @@ any browser.
 
 ### URL corpus archival
 
-When `--input` is a URL, `piper.py` downloads the HTML to a
-`contents/` subfolder within the output directory, keeping raw
-source separate from generated mindmap output:
+All source materials live in a `contents/` subfolder within the
+output directory, keeping raw corpus separate from generated
+mindmap HTML:
+
+- **URL inputs**: `piper.py` downloads the HTML automatically
+  to `contents/{book}.html`.
+- **PDF inputs**: place the PDF in `contents/` manually before
+  running, then pass `--input contents/TheComingWave.pdf`.
 
 ```
 examples/
   contents/
-    the-ai-native-company-playbook.html  ← downloaded corpus
+    the-coming-wave.pdf                     ← PDF source corpus
+    the-ai-native-company-playbook.html     ← downloaded HTML corpus
   the-ai-native-company-playbook-mindmap.html  ← mindmap output
-  read-list.md                           ← processing record
+  read-list.md                             ← processing record
 ```
 
 This means you can re-run the pipeline from `--from-phase seth`
@@ -143,10 +149,11 @@ cat examples/read-list.md
 # From a plain-text or Markdown notes file
 python3 src/piper.py --input my-notes.md --output mindmap.html
 
-# From an HTML article (URL)
+# From a URL (HTML auto-downloaded to examples/contents/)
 python3 src/piper.py \
-  --input  https://example.com/article.html \
-  --output article-mindmap.html
+  --input   https://www.dench.com/blog/the-ai-native-company-playbook \
+  --output  examples/the-ai-native-company-playbook-mindmap.html \
+  --log-dir examples/.tmp
 ```
 
 ### Resuming with `--from-phase`
