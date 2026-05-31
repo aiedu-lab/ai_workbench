@@ -3976,7 +3976,7 @@ VERIFY: `python3 -m py_compile src/orchestrator.py src/piper.py
 ### Step 27.5: Validate — review README.md, rename examples/,
 run URL mindmap end-to-end
 
-[ ] Status
+[x] Status
 
 CONTEXT: piper.py has logging and sub-phase resume; example/ holds
 TheComingWave artifacts; need end-to-end URL validation.
@@ -3998,7 +3998,7 @@ ls projects/llm_wiki/speed-reading/examples/.tmp/leo.log && echo PASS`.
 
 ### Step 27.6: Remove experimental/speed_reading/ and piper.sh
 
-[ ] Status
+[x] Status
 
 CONTEXT: piper.py validated; experimental/speed_reading/ is obsolete;
 piper.sh replaced by src/piper.py. ACTION: rm -rf
@@ -4012,7 +4012,7 @@ projects/llm_wiki/speed-reading/piper.sh ]] && echo PASS`.
 ### Step 27.7: Mark Speed Reading complete in prompt_history.md +
 plan.md, commit + tag
 
-[ ] Status
+[x] Status
 
 CONTEXT: All Phase 27 steps done; prompt_history.md ## Speed Reading
 already shows [x] Status (committed in Step 27.4 commit). ACTION:
