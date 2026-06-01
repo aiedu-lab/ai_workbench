@@ -24,7 +24,7 @@ Phase                                          Function               Artifact
           └─ [✓] Seth                          synthesizer            .tmp/<book>-mindmap-content.json
                └─ [⟳] validator               loop until success
                     |  Leo · Quinn · Sentinel  (attempt 2 of 3)
-                    └─ [⟳] Leo                map creator            .tmp/<book>-mindmap.html
+                    └─ [⟳] Leo                map creator            .tmp/<book>-mindmap-<N>.html
                          └─ [ ] Quinn          QA reviewer            qa
                               └─ [ ] Sentinel  final gate             qa
 

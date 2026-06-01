@@ -91,8 +91,10 @@ class PhaseDisplay:
       if self.vl_attempt > 0 else ""
     )
     emit(f"{_VL_CONN}Leo · Quinn · Sentinel{conn_sfx}")
+    sfx = f"-{self.vl_attempt}" if self.vl_attempt > 0 else ""
     self._emit_row(emit, 5, self.vl[0], "Leo",
-                   "map creator", f".tmp/{b}-mindmap.html")
+                   "map creator",
+                   f".tmp/{b}-mindmap{sfx}.html")
     self._emit_row(emit, 6, self.vl[1], "Quinn",
                    "QA reviewer", "qa")
     self._emit_row(emit, 7, self.vl[2], "Sentinel",

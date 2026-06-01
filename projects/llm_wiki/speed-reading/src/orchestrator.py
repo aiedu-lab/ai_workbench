@@ -150,9 +150,9 @@ class Piper:
     self._content_json = (
       self._work_dir / f"{book_name}-mindmap-content.json"
     )
-    # HTML lives in .tmp/ during the validator loop so an
-    # unapproved Leo draft never lands in the output dir.
-    # run() copies it to output_dir only after Sentinel approves.
+    # Placeholder — overridden per attempt in _phase_validator_loop
+    # to .tmp/<book>-mindmap-{N}.html so each attempt is versioned.
+    # run() copies the approved attempt to output_dir.
     self._html_file = (
       self._work_dir / f"{book_name}-mindmap.html"
     )
@@ -270,14 +270,20 @@ class Piper:
 
   def _phase_validator_loop(self) -> None:
     self._display.ph[4] = "active"
-    # When resuming from quinn/sentinel, Leo's HTML must exist.
-    if self._vl_start > 0:
-      self._require_artifact(self._html_file)
-      self._validate_html(self._html_file)
     for attempt in range(1, self.MAX_RETRIES + 1):
+      # Version HTML by attempt so the draft history is preserved.
+      # run() copies the approved file to output_dir after success.
+      self._html_file = (
+        self._work_dir
+        / f"{self._book_name}-mindmap-{attempt}.html"
+      )
       self._display.vl_attempt = attempt
       skip_leo = (attempt == 1 and self._vl_start > 0)
       skip_quinn = (attempt == 1 and self._vl_start > 1)
+      # When resuming, the attempt-1 HTML must already exist.
+      if attempt == 1 and self._vl_start > 0:
+        self._require_artifact(self._html_file)
+        self._validate_html(self._html_file)
       if self._validator_attempt(attempt, skip_leo, skip_quinn):
         self._display.ph[4] = "done"
         return
