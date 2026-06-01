@@ -1417,3 +1417,439 @@ be consistent with other sessions.
 `OpenClaw` - with actual commands in `tools/openclaw/` - 
 to ensure that the other sessions (`client_agent.md` 
 and `server_multiagent.md`) references are consistent.
+
+## General Skills
+[x] Status
+
+We will update the agenda in README.md and add 
+few sesions and associated projects.
+
+### Human Driven Development (HDD)
+
+Add a session with `Human Driven Development (HDD)` 
+with a Concept and Exercise section as below.
+
+#### Concept
+
+Human conceptualizes the high level plan, drives the 
+execution of each phase and step of the plan as well as the 
+important activities of the plan. AI is used only as an aide
+to fulfill details of each activity. 
+
+This structure builds confidence on use cases with very 
+high penalty of mistakes - missile attack system, enterprise
+infrastructure - and customers demanding very stringent SLAs.
+
+#### Ownership
+
+* Human Structures Product Definition - conceptualized 
+from Top to Down including modules, APIs/interfaces, 
+interaction sequence, etc. - all human guided
+* Building the meat of the individual modules, test cases, 
+etc. are AI driven.
+
+#### Exercise
+
+Create a `Tower of Hanoi` game exercise in python that
+accept the number of discs as one argument, and whether
+the game should be played one step at a time via keystroke
+or just all the moves are displayed at one shot.
+The configuration after each move is rendered in ascii. 
+
+### Specification Driven Development (SDD)
+
+* Clarify the concept of SDD in the session on 
+`Specification Driven Development (SDD)` as below
+
+#### Concept
+
+Human oversess while AI owns the activity
+* Human Structures Specification - built via Plan
+  * Human owns structure of specification - multi-phased, multi-step, 
+  exit criteria
+  * Human and AI cooperate to build specification, execution is AI owned
+* Vibe Coded 
+  * AI owns delivery with Humans specifying outcome in "free style" 
+  conversations
+
+### Update `Personal Knowledge Management (PKM)`
+
+Reference 
+1. `projects/llm_wiki/speed-reading/`
+2. `experimental/speed_reading/`
+3. [The Coming Wave](projects/llm_wiki/speed_reading/TheComingWave.pdf)
+
+* Add the exercise on the session on `Personal Knowledge Management`
+to include `Speed Reading` as below.
+
+* In this exercise, we'll go over how to speed read books and create 
+mindmaps using different agents specialized on different aspects of 
+the work but cooperatively working to get the work done. 
+
+Specifically we'll fill in all the missing pieces by going through 
+an exercise that create a mindmap of the book `TheComingWave.pdf`.
+
+Our belief of what the speed reading exercise is activiated is 
+in experimental/speed_reading/overview.md - this may or may not be 
+accurate and needs validation.
+
+Reference the below steps which we believe is the right way to 
+go through the entire mindmap exercise.
+
+### build_mindmap.sh
+
+Create a shell script 
+`projects/llm_wiki/speed-reading/build_mindmap.sh`
+that accepts as a mandatory argument a URL or a 
+filename (qualified with directory) the book. 
+Sanity check existence of URL or filename as 
+well that the type of the argument are limited
+to well known types, such as html, pdf, text, etc.
+2. Default filename location is current directory.
+3. Another argument is the output filename. 
+Default filename location (directory) is current 
+directory and default filename if `mindmap.html`  
+i.e. filename is `./mindmap.html`.
+
+Then the sequence is as below:
+* Convert book to text
+  * if in PDF/HTML/.. format → plain text - 
+  pdftotext book.pdf book.txt or any PDF-to-markdown tool
+* Fill templates/detailed-notes.template.md with the book's 
+content - manually or via a pre-processing agent
+* invoke `projects/llm_wiki/speed-reading/piper.sh` that 
+orchestrates the remaining pipeline as below. 
+
+### piper.sh
+
+The `piper.sh` starts by invoking `Seth` where
+`Seth` reads that file and produces mindmap-content.json and then
+orchestrates the remaning agents.
+
+piper-pipeline-orchestrator.md is Piper's system prompt 
+(it describes what Piper should do). 
+* The actual sequencing is a shell script `piper.sh`
+* Assess whether we need to create the `piper.sh` using 
+`piper-pipeline-orchestrator.md` instead of `piper.sh` 
+calling 
+`claude --system-prompt-file piper-pipeline-orchestrator.md` 
+as its entry point. 
+* Assume the workflow steps are executed using `Claude CLI` - 
+`claude --print ...` with the next sequential step 
+executed checking that the previous step completed 
+successfully.
+* Once we have made the `piper.sh` work correctly and 
+the mindmap is created and reviewed manually, 
+create a `README.md` with a very clearly articulated
+`usage` section with an example workflow so that a
+nyone can use this one to create a mindmap of any 
+content.
+
+#### Agents
+
+We've a 3-agent pipeline driven by a shell script piper.sh that turns a 
+book into an interactive HTML mindmap. Agents hand off work through 
+local files — no network calls.
+
+| Agent | Role | Input → Output |
+| :--- | :---: | :---: |
+| Seth | Content synthesizer | source notes → mindmap-content.json |
+| Leo	| Layout engineer | content JSON → mindmap.html |
+| Quinn |	QA reviewer	| HTML → APPROVED or NOT APPROVED with checklist |
+| Piper | Orchestrator | sequences Seth→Leo→Quinn; loops on rejection |
+
+#### Reconcile and Consolidate
+With the above workflow validated to work, review and validate 
+that the contents in 
+`experimental/speed_reading/overview.md` is a fair representation of 
+the entire pipeline. Absorb the content into 
+`projects/llm_wiki/speed-reading/README.md`. Add the conceptual 
+description of `build_mindmap.sh` in the `README.md` file as well.
+The goal is that any student can read the `README.md` as a 
+"usage guide" so that they can take any book or article and 
+create a mindmap as a "utility".
+
+#### Validation Test Cases
+This section is just meant to be a comment for records as it has 
+no bearing on the plan.
+We'll *manually* run the `build_mindmap` on the below documents to 
+validate that the entire pipeline is working as expected.
+* [Company Lifecycle](https://linas.substack.com/p/anthropic-claude-study-ai-startup-playbook)
+* [Company Infrastructure](https://x.com/benln/status/2054546806516654263?s=46&t=5Wh9qORxgNovMlyxUN25YA)
+
+### Tower of Hanoi
+Reference `projects/tower_of_hanoi/'
+* Ensure `toh_prompt.md` and `README.md` is updated 
+to reflect: 
+  * All source code is in src directory and all 
+t   ests are in src/tests and the below are honored. 
+  * All test files imports are structured to realize that
+    source python files are in src/ whereas tests are in 
+    src/tests.
+  * Command to actually run main.py.
+  * Command to actually run all the test case.
+  * All generated files formatted to have all columns no more 
+  than 80 files and tabs to be 2 spaces only. 
+  * All python files to use Python 3.12+ - ensure 
+  `toh_prompt.md` reflects this requirement and `README.md` 
+  is updated accordingly. 
+  * 
+  * For the generated python src and src/tests file do NOT use 
+      * `from typing import ...` (use `from collections.abc import ...`)
+      * `Optional` (use `type | None`), 
+      * `Any` (`object` instead)
+    * always use named parameters in methods
+* main.py should have a `#!/usr/bin/env python3` starter; end invokes
+```markdown
+if __name__ == "__main__":
+  sys.exit(main()) 
+
+### Update Setup
+Reference the below files and ensure that the utility scripts in 
+group_meetup that sets up the environment for students are 
+updated and consistent to make as much of the setup automated. 
+* `sessions/dev_workbench.bd`
+* `projects/group_meetup/`:
+  * `labsetup.py`
+  * `preflight_check.py`
+
+
+### Dev Workbench Restructure
+
+Material changes requested during Phase 26 execution:
+
+1. **Remove section numbering** — `## Section N — Title` →
+   `## Title` throughout `sessions/dev_workbench.md`.
+   Rationale: numbered sections require renumbering whenever
+   sections are added or removed.
+
+2. **Move Run Lab Setup Script to end** — currently Section 5
+   (before the integration test section); move to the very
+   last section so students complete all tool-specific setup
+   before running `labsetup.py` + `preflight_check.py`.
+
+3. **Add `## PKM` section** — install dependencies
+   `poppler-utils` (pdftotext) and `html2text` needed for
+   the Speed Reading Mindmap pipeline. `labsetup.py` should
+   automate both installs; `preflight_check.py` should
+   validate both CLIs.
+
+### Arguments
+
+1. Reference `projects/llm_wiki/speed-reading/`
+
+* Consolidate the contents of `piper.sh` into
+`build_mindmap.sh` as it does not make sense creating 
+a separate shell just for `piper.sh`
+
+* Add `--help` argument to `build_mindmap.sh` for users
+to understand usage, arguments supported, default values, 
+etc.
+
+* Comment and Annotate the `build_mindmap.sh` execution
+in different phases, named appropriately. Example
+names of the phases of the shell just as an example: 
+`Argument Sanitizer`, `Utility Setup`, `File Converter`, 
+`Seth Synthesizer`, `Leo Renderer`, `Quinn Validator`... 
+
+* Add `--from-phase` to `build_mindmap.sh` for users
+to resume activity from a specific phase with a basic
+sanity to ensure that prior phase has completed. This is
+important as often we run out of tokens trying to complete
+work while some workflow was already completed and need
+not be redone from scratch. 
+
+For example, say the basic install phase was completed and 
+then Seth agent completed the work by generating the
+detailed-notes.md. However, Leo agent could
+not, then we need not start from the beginning. 
+
+Comment the script and `README.md` accordingly.
+
+* Ensure all intermediate files are created with a 
+prefix of book name. For example, for the book
+`example/TheComingWave.pdf`, ensure the intermediate file 
+detailed-notes.md created in `.tmp/` subfolder 
+is created as `example/.tmp/TheComingWave-detailed-notes.md`.
+Same prefix holds for the `.json` files created.
+
+* Update contents of `README.md` to reflect the 
+consolidation.
+
+* Update the reference to speed-reading in 
+`Personal Knowledge Management` session 
+(`sessions/llm_wiki.md`) to ensure all references
+are consistent. 
+
+2. Reference `projects/tower_of_hanoi`:
+
+* Add `--help` argument to `src/main.py` - 
+add appropriate comment to teach students
+the general hygiene that every program and script 
+that is entrypoint for users should support a 
+to understand usage, arguments supported, default values, 
+etc.
+
+### Motivation
+
+Add a section `## Motivation` right at the top to main repo 
+`README.md` in the form of a table in the form of 5 columns?:
+* Domain where generative AI is transforming 
+* Example of a legacy approach or company.
+* Example of an `AI native` approach and company. 
+* Description of why and what is `AI native` approach 
+disrupting or transforming.
+
+Few suggested examples below - fill the rows and
+columns:
+
+| DOMAIN | LEGACY | AI NATIVE | OBJECTIVE | TRANSFORMATION |
+| :--- | :--- | :---: | :--- | :---: |
+| Internet Search | Google | Chat GPT | How to best prepare for Multivariable Calculus | Offer knowledge fully reasoned, correlated, and organized rather than bunch of keyword matches | 
+| Photograph | Photoshop |  | How to make our event memorable | Make pictures taken from my iphone look awesome |
+| Coding | IDE | Claude Code | How to quickly ship my next software products with high quality | Coding agents generates code and tested with browsers and terminal |
+| Manufacturing Plans |  |  |  |  | 
+| Customer Relationship Management | Sales Force | Auracell | How to sell more and fast, but with less people | Automated Customer Records and Pipeline Management |
+| Conversational Intelligence | Gong | 1mind | How can I close the deal with this customer | Offer intelligence, not just analysis | 
+| Running Company | https://x.com/benln/status/2054546806516654263/photo/1 |   |   |   |
+| AI Startup Playbook | https://linas.substack.com/p/anthropic-claude-study-ai-startup-playbook) |   |   |   |
+
+
+### Sentinel Phase
+
+Add a `sentinel` final-guard phase to the speed-reading
+mindmap pipeline in `build_mindmap.sh`.
+
+The sentinel is an independent verification agent that runs
+AFTER Quinn approves the rendered mindmap. Its role:
+
+* Use `agents/sentinel-final-guardian.md` as system prompt.
+* Independently review the HTML — overrule Quinn if any
+  rendering failure, cramped/overlapping nodes, broken
+  layout, or hierarchy violation is present.
+* If Sentinel outputs `NOT APPROVED`, retry Leo+Quinn+Sentinel
+  (same `MAX_RETRIES=3` cap).
+* `--from-phase leo` resumes the full Leo+Quinn+Sentinel loop.
+
+Create `agents/sentinel-final-guardian.md` distilling the
+strict verification rules from `piper-pipeline-orchestrator.md`
+into a focused final-guard system prompt.
+
+Update `README.md` (speed-reading) phases table to include
+the sentinel row. Update `README-mindmap-system.md` workflow
+step 8 to reference Sentinel (not Piper).
+
+### Sanitize
+* Mark the General Skills complete *after* explicitly documenting 
+in `projects/llm_wiki/speed-reading/README.md` as well as in 
+`build-pipeline.sh` that it is the representation of the objective 
+as set forth in `piper-pipeline-orchestrator.md` - cross reference 
+in `piper-pipeline-orchestrator.md` that `build-mindmap.sh` 
+represents the mindmap pipeline or implementation of the 
+metadata file. 
+* Extract the `## Setup` subsection of 
+`experimental/speed_reading/overview.md` and record the sanitized 
+version of the waterfall ascii diagram into 
+`projects/llm_wiki/speed-reading/README.md` subsection 
+`## Pipeline Phases` showing the orchestrator as the 
+central coordinator that feeds the different phases.
+* Extract any ofhter section of 
+`experimental/speed_reading/overview.md` and migrate into 
+`projects/llm_wiki/speed-reading/README.md`.
+* Git rid of `experimental/speed_reading` directory and 
+its contents as they is no longer needed
+
+## Speed Reading
+[x] Status
+
+## Revamp piper
+Reference `projects/llm_wiki/speed-reading`:
+
+* `piper.sh` is about 473 lines which is a lot of lines of code for shell script. 
+
+* Reimplement `projects/llm_wiki/speed-reading/piper.sh` as a python 
+program `projects/llm_wiki/speed-reading/src/piper.py` with 
+main function and other associated python programs that is 
+implemented using python 3.12+ using modern constructs with 
+2 tabs a spaces and every line no more than 80 columns.
+
+* `piper.py` should have the `#! /usr/bin/env python3` and
+executable mode so that is can be invoked as 
+`piper argumets ...`
+
+* Modularize the logic into classes, methods, etc. with 
+a main method invoked as 
+---
+if __name__ == "__main__":
+    sys.exit(main())
+---
+* Ensure that any supporting python/pip utilities are captured 
+in requirements.in that is installed inside a .venv in the 
+`projects/llm_wiki/speed-reading/` directory. 
+These installations can be captured in 
+`projects/group_meetup/labsetup.py` and validated in 
+`projects/group_meetup/preflight_check.py`.
+
+* Review and update `projects/llm_wiki/speed-reading/README.md` 
+to reflect the change from `piper.sh` to `piper.py` as well
+as any other reference to `piper.sh` in any other file.
+
+* Reference `projects/llm_wiki/speed-reading/.tmp/` has 
+file `detailed-notes.md` - examine why files are still 
+created without the `<book>-` prefix. For example, file
+created should be `TheComingWave-detailed-notes.md`.
+
+* Update the contents of `sessions/llm_wiki.md` to ensure 
+that the exercise summary is taking `TheComingWave.pdf` to build
+a mindmap for the book as `TheComingWave-mindmap.html`. 
+The mechanisms and commands are captured in 
+`projects/llm_wiki/speed-reading/README.md` 
+
+* Run through an actual exercise of invoking the piper 
+starting with the validator loop (as the previous
+loops have run and are validated) i.e. 
+Leo (map-creator) -> Quinn(QA) -> Sentinel (QA Final Gate).
+
+* Once the mindmap creation is validated (as a test case
+that the plan execution was success): 
+  * Remove any files and content inside 
+    `experimental/speed_reading/` as those Are not needed.
+  * Remove `piper.sh` as that is not needed anymore.
+
+### Track and Log
+
+Current challenges in `piper.py`is tracking and resuming i.e.
+agents may take a long time processing a long book. we may 
+run out of token credits while we are in the middle. hence:  
+* tracking: agents are run without an option to capture log
+  track and understand what has happened. that is add a 
+  mechanism to OPTIONALLY allow running agent with
+  ability to stream agent (Seth, Leo, Quinn, Sentinel) 
+  output to agent specific log. Note that the mechanism
+  to show a summarized view of where we are in the waterfall
+  agent phase should continue to work and is bare minimum.
+  That way if any phase takes a super long time, we can 
+  track whether and what it is doing by tailing the log file.
+* resuming: we need a way to resume then from wherever 
+  we were left hanging once token credits are refreshed
+* ensure `--help` of `piper.py` is updated to clearly 
+  explain the option to log.
+
+Reference `projects/llm_wiki/speed-reading/README.md`. Update the 
+`## Worked example - The Coming Wave (PDF)` section: 
+* how the agent can be run with the option to log.
+* how the agent's summary output in stdout of seeing the 
+  waterfall continues to work without a lot of log output
+  in the way.
+
+#### Validate
+* Review `projects/llm_wiki/speed-reading/README.md` to validate 
+  that the manual way to run the `piper.py` to create a mindmap 
+  for a book is accurate.
+* Rename `projects/llm_wiki/speed-reading/example` to 
+  `projects/llm_wiki/speed-reading/examples`. Run through 
+  `piper.py` for URL 
+  https://www.dench.com/blog/the-ai-native-company-playbook
+  with current working directory as 
+  `projects/llm_wiki/speed-reading/examples` to test that mindmap 
+  works end to end.

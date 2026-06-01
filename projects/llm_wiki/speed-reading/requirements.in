@@ -1,0 +1,10 @@
+# requirements.in — Speed Reading Mindmap pipeline dependencies
+#
+# src/piper.py uses only Python standard-library modules:
+#   argparse, shutil, subprocess, sys, threading, time, pathlib
+#
+# No pip packages required.
+# System CLIs (not pip): pdftotext (poppler-utils), html2text, claude
+#
+# To create the venv (idempotent — handled by labsetup.py):
+#   python3 -m venv .venv

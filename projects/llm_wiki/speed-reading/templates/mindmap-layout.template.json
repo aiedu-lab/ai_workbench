@@ -1,0 +1,33 @@
+{
+  "branchRing": {
+    "rx": 980,
+    "ry": 660,
+    "startAngle": -1.57079632679,
+    "margin": 0.18
+  },
+  "radii": {
+    "layer2": 468,
+    "layer3": 276,
+    "layer4Base": 222,
+    "layer5Base": 184,
+    "layer6Base": 154
+  },
+  "stagger": {
+    "layer2SiblingOffset": 34,
+    "layer3AltOffsetInner": -12,
+    "layer3AltOffsetOuter": 14,
+    "layer4AltOffsetInner": -12,
+    "layer4AltOffsetOuter": 20,
+    "layer5AltOffsetInner": -10,
+    "layer5AltOffsetOuter": 16,
+    "layer6AltOffsetInner": -8,
+    "layer6AltOffsetOuter": 12
+  },
+  "collision": {
+    "layer3PushFactor": 0.6,
+    "layer4PushFactor": 0.82,
+    "layer5PushFactor": 0.88,
+    "layer6PushFactor": 0.94,
+    "maxIterations": 14
+  }
+}

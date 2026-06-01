@@ -3562,3 +3562,462 @@ sdw/plan.md; tag pushed.
 VERIFY: `grep -A1 "^## Embedding" sdw/prompt_history.md
 | grep "\[ \] Status"` → 0 matches;
 `git tag | grep v25.5` → 1 match.
+
+## Phase 26
+
+### Step 26.1: Create sessions/hdd.md + README agenda row
+
+[x] Status
+
+CONTEXT: No sessions/hdd.md; projects/tower_of_hanoi/ has
+exercise code; README.md has no HDD row.
+ACTION: Create sessions/hdd.md (Objective, Concept table,
+Exercise referencing projects/tower_of_hanoi/, Discussion).
+Insert agenda row after Advanced Prompting in README.md.
+CONSTRAINTS: Do not touch projects/tower_of_hanoi/; 80-col.
+OUTPUT: sessions/hdd.md and updated README.md.
+VERIFY: `grep "hdd\.md" README.md && grep -c "##"
+sessions/hdd.md`.
+
+### Step 26.2: Fix projects/tower_of_hanoi/ — code + docs
+
+[x] Status
+
+CONTEXT: main.py missing shebang + sys.exit(main());
+tower.py uses typing.Optional; toh_prompt.md references
+Python 3.10+; README.md shows flat tree without src/.
+ACTION: (1) src/main.py: shebang + import sys +
+sys.exit(main()); (2) src/tower.py: remove typing import,
+T | None; (3) toh_prompt.md: Python 3.12+, src/ layout,
+run commands, style rules; (4) README.md: fix tree + paths.
+CONSTRAINTS: No logic changes; 80-col; 2-space indent.
+OUTPUT: main.py has shebang + sys.exit; tower.py no typing;
+toh_prompt.md and README.md accurate.
+VERIFY: `head -1 projects/tower_of_hanoi/src/main.py &&
+grep "sys.exit" projects/tower_of_hanoi/src/main.py &&
+grep "typing" projects/tower_of_hanoi/src/tower.py ||
+echo PASS`.
+
+### Step 26.3: Append HDD vs SDD vs Vibe-Coded to
+sessions/sdd_basics.md
+
+[x] Status
+
+CONTEXT: sdd_basics.md ends after SDD-beyond-code table;
+no HDD/Vibe comparison exists.
+ACTION: Append ## Human-Driven vs Spec-Driven vs Vibe-Coded
+with 3-row table (Human/AI owns columns) + 2-3 sentences on
+when each mode applies.
+CONSTRAINTS: Append only; 80-col.
+OUTPUT: sdd_basics.md ends with comparison section.
+VERIFY: `grep -n "Vibe\|HDD" sessions/sdd_basics.md |
+tail -5`.
+
+### Step 26.4: Create build_mindmap.sh
+
+[x] Status
+
+CONTEXT: No build_mindmap.sh in
+projects/llm_wiki/speed-reading/; piper.sh not yet created.
+ACTION: Create executable build_mindmap.sh: set -euo
+pipefail; parse <book_url_or_file> + [output_file]; validate
+ext {pdf,html,htm,txt,md}; convert pdf→pdftotext,
+html→html2text, txt/md pass-through; call piper.sh.
+CONSTRAINTS: bash; ≤80-col; $(dirname "$0") for paths.
+OUTPUT: executable build_mindmap.sh passing bash -n.
+VERIFY: `bash -n projects/llm_wiki/speed-reading/
+build_mindmap.sh && echo PASS`.
+
+### Step 26.5: Create piper.sh
+
+[x] Status
+
+CONTEXT: No piper.sh; experimental/speed_reading/overview.md
+has reference implementation; agents/ dir exists.
+ACTION: Create executable piper.sh: set -euo pipefail; args
+<notes_file> [output_html]; run Seth→Leo→Quinn via
+claude --print --system-prompt-file; retry Leo+Quinn ≤3
+times if Quinn output contains NOT APPROVED.
+CONSTRAINTS: bash; ≤80-col; AGENT_DIR=$(dirname "$0")/agents.
+OUTPUT: executable piper.sh passing bash -n.
+VERIFY: `bash -n projects/llm_wiki/speed-reading/piper.sh
+&& echo PASS`.
+
+### Step 26.6: Create projects/llm_wiki/speed-reading/
+README.md
+
+[x] Status
+
+CONTEXT: No README.md in speed-reading/;
+experimental/speed_reading/overview.md has pipeline diagram.
+ACTION: Create README.md: Overview, Pipeline Architecture
+(ASCII + agent table), Usage (build_mindmap.sh example),
+Manual Run, Agents, Templates.
+CONSTRAINTS: Absorb from overview.md; do not modify
+README-mindmap-system.md; 80-col.
+OUTPUT: README.md with ## Usage + build_mindmap.sh example.
+VERIFY: `grep "## Usage\|build_mindmap"
+projects/llm_wiki/speed-reading/README.md`.
+
+### Step 26.7: Append Speed Reading section to
+sessions/llm_wiki.md
+
+[x] Status
+
+CONTEXT: llm_wiki.md ends with GroupMeetup extension; no
+Speed Reading section.
+ACTION: Append ## Optional Extension — Speed Reading Mindmap:
+2-sentence concept; link to speed-reading/README.md; run
+command: cd projects/llm_wiki/speed-reading &&
+./build_mindmap.sh <book.pdf>.
+CONSTRAINTS: Append only; ≤80-col.
+OUTPUT: llm_wiki.md ends with Speed Reading section.
+VERIFY: `grep -n "Speed Reading" sessions/llm_wiki.md`.
+
+### Step 26.8: Update Setup — dev_workbench.md +
+labsetup.py + preflight_check.py
+
+[x] Status
+
+CONTEXT: dev_workbench.md has ## Embedding as last section;
+labsetup.py automates SSH/GitHub but not poppler-utils;
+preflight_check.py doesn't check pdftotext.
+ACTION: (1) Append ## Speed Reading to dev_workbench.md;
+(2) Add _install_poppler() to labsetup.py (shutil.which +
+subprocess apt install, idempotent); call from main();
+(3) Add cmd_exists("pdftotext") check to preflight_check.py.
+CONSTRAINTS: Append only to dev_workbench.md; add only new
+function + one main() call to labsetup.py; one check line to
+preflight_check.py; no refactor; 80-col.
+OUTPUT: dev_workbench.md ## Speed Reading; labsetup.py
+installs poppler; preflight_check.py checks pdftotext.
+VERIFY: `grep "Speed Reading" sessions/dev_workbench.md &&
+grep "pdftotext\|poppler"
+projects/group_meetup/labsetup.py &&
+grep "pdftotext" projects/group_meetup/preflight_check.py`.
+
+### Step 26.9: Mark General Skills complete + commit + tag
+
+[x] Status
+
+CONTEXT: Steps 26.1–26.8 executed; Phase 26 already in
+sdw/plan.md (appended before execution began).
+ACTION: sdw/prompt_history.md: [ ] → [x] Status under
+## General Skills. Flip all Phase 26 step checkboxes in
+sdw/plan.md to [x]. Commit. Tag
+v26.9-general-skills-step-completed. Push.
+CONSTRAINTS: sdw/plan.md is append-only for new content;
+only flip [x] on existing Phase 26 checkboxes.
+OUTPUT: [x] Status under ## General Skills; all Phase 26
+steps [x]; tag pushed.
+VERIFY: `grep -A1 "^## General Skills"
+sdw/prompt_history.md | grep "\[ \] Status" || echo
+"PASS"` and `git tag | grep v26.9`.
+
+### Step 26.10: Restructure dev_workbench.md + expand
+labsetup/preflight for PKM tools
+
+[x] Status
+
+CONTEXT: dev_workbench.md has numbered sections and places
+Run Lab Setup Script before the integration test section;
+labsetup.py and preflight_check.py cover only SSH/GitHub/git
+tools; speed-reading pipeline needs poppler-utils
+(pdftotext) and html2text. Step 26.8 is superseded by this
+step.
+ACTION: (1) Rewrite sessions/dev_workbench.md: remove
+"Section N —" prefixes from all headings; move ## Run Lab
+Setup Script to the end (after all optional sections);
+add ## PKM section before ## Run Lab Setup Script referencing
+projects/llm_wiki/speed-reading/README.md with Set Up
+(labsetup.py installs automatically) and Test (which
+pdftotext && which html2text). (2) Expand
+_install_poppler() in labsetup.py to also run
+apt install html2text (one combined apt call
+poppler-utils html2text). (3) Add html2text cmd_exists check
+alongside pdftotext in preflight_check.py.
+CONSTRAINTS: Preserve all existing dev_workbench.md content;
+no logic changes in labsetup.py or preflight_check.py beyond
+adding html2text to install and check; 80-col; 2-space.
+OUTPUT: dev_workbench.md has unnumbered headings + ## PKM +
+## Run Lab Setup Script at end; labsetup.py installs both;
+preflight_check.py checks both.
+VERIFY: `grep "^## Section" sessions/dev_workbench.md ||
+echo PASS` (0 matches); `grep "html2text"
+projects/group_meetup/labsetup.py &&
+grep "html2text" projects/group_meetup/preflight_check.py`.
+
+### Step 26.11: Consolidate piper.sh → build_mindmap.sh with
+phases, --help, --from-phase, book-name prefix
+
+[x] Status
+
+CONTEXT: build_mindmap.sh delegates to piper.sh; piper.sh is
+a separate script; intermediate files use fixed names without
+book prefix; no --help or --from-phase support.
+ACTION: Rewrite build_mindmap.sh as single self-contained
+pipeline script with phases sanitizer→setup→converter→seth→
+leo. (1) --help: print usage, flags, defaults, phase names.
+(2) --from-phase <phase>: skip phases before it; sanity-check
+prior phase artifact ($BOOK_NAME-mindmap-content.json) before
+skipping to leo. (3) Phase banners echo [phase-name] to
+stdout. (4) BOOK_NAME from basename strip dir+ext. (5)
+Intermediate files $WORK_DIR/$BOOK_NAME-detailed-notes.md,
+$BOOK_NAME-mindmap-content.json, $BOOK_NAME-mindmap.html.
+(6) Agent prompts use $WORK_DIR/$BOOK_NAME-* paths; cd to
+$WORK_DIR before agents. (7) Leo+Quinn retry loop (max 3)
+in leo phase. (8) Delete piper.sh.
+CONSTRAINTS: bash; ≤80-col; no piper.sh after this step;
+do not change agent .md files; simple short prompts.
+OUTPUT: single build_mindmap.sh; piper.sh removed; bash -n
+passes; --help shows from-phase flag.
+VERIFY: `bash -n projects/llm_wiki/speed-reading/
+build_mindmap.sh && echo PASS` and
+`! test -f projects/llm_wiki/speed-reading/piper.sh &&
+echo "piper gone"` and
+`cd projects/llm_wiki/speed-reading &&
+./build_mindmap.sh --help | grep from-phase`.
+
+### Step 26.12: Create speed-reading README.md
+
+[x] Status
+
+CONTEXT: No README.md in speed-reading/; piper.sh eliminated
+by 26.11; build_mindmap.sh has --help, --from-phase, phases.
+ACTION: Create projects/llm_wiki/speed-reading/README.md:
+(1) ## Overview 3-sentence summary. (2) ## Pipeline Phases
+table: phase name + artifact produced. (3) ## Usage with
+--help, worked examples (PDF/md/URL), --from-phase leo for
+resuming. (4) ## Agents one line each linking to agents/*.md.
+(5) ## Templates brief note.
+CONSTRAINTS: No piper.sh references; 80-col; absorb relevant
+content from experimental/speed_reading/overview.md.
+OUTPUT: README.md with ## Usage and --from-phase docs.
+VERIFY: `grep "from-phase\|## Usage"
+projects/llm_wiki/speed-reading/README.md`.
+
+### Step 26.13: Add --help to tower_of_hanoi/src/main.py
+
+[x] Status
+
+CONTEXT: src/main.py uses argparse but ArgumentParser has no
+description or epilog; --help output is bare.
+ACTION: Update ArgumentParser(...) in projects/tower_of_hanoi/
+src/main.py to add description= (one sentence: what the
+solver does) and epilog= (two example commands: basic run +
+step-through). Keep positional num_discs and --step unchanged.
+CONSTRAINTS: Do not change logic; ≤80-col; 2-space indent.
+OUTPUT: python3 src/main.py --help shows description + examples.
+VERIFY: `cd projects/tower_of_hanoi &&
+python3 src/main.py --help | grep -i "tower\|example\|step"`.
+
+### Step 26.14: Append Speed Reading to sessions/llm_wiki.md
+
+[x] Status
+
+CONTEXT: sessions/llm_wiki.md has no Speed Reading section;
+piper.sh eliminated; build_mindmap.sh has --help/--from-phase.
+ACTION: Append ## Optional Extension — Speed Reading Mindmap
+at end of sessions/llm_wiki.md: 2-sentence concept; reference
+projects/llm_wiki/speed-reading/README.md; run commands with
+--help and basic usage; note --from-phase for resuming.
+CONSTRAINTS: Append only; no piper.sh reference; ≤80-col.
+OUTPUT: sessions/llm_wiki.md ends with Speed Reading section.
+VERIFY: `grep -n "Speed Reading\|from-phase"
+sessions/llm_wiki.md`.
+
+### Step 26.15: Add sentinel final-guard phase + docs
+
+[x] Status
+
+CONTEXT: Quinn is the only QA gate; piper-pipeline-
+orchestrator.md describes a stricter Piper verification step
+that is unused; no sentinel phase in build_mindmap.sh.
+ACTION: (1) Create agents/sentinel-final-guardian.md — system
+prompt: overrule Quinn approval on any rendering failure,
+cramped nodes, broken layout, hierarchy violation; output NOT
+APPROVED with reason. Distill verification rules from piper-
+pipeline-orchestrator.md. (2) In build_mindmap.sh, add
+sentinel step INSIDE Leo+Quinn retry loop — after Quinn APPROVED,
+run sentinel; if NOT APPROVED, retry Leo+Quinn+Sentinel (same
+MAX_RETRIES). --from-phase leo resumes full loop. (3) Create
+README.md (speed-reading) with phases table including sentinel
+row; ## Usage with examples + --from-phase; ## Agents including
+sentinel. (4) Update README-mindmap-system.md Files list and
+Workflow step 8 to reference sentinel. (5) Append
+### Sentinel Phase subsection to sdw/prompt_history.md.
+CONSTRAINTS: Do not rename/delete piper-pipeline-orchestrator.md;
+keep MAX_RETRIES=3; ≤80-col; Leo+Quinn+Sentinel in one loop.
+OUTPUT: sentinel-final-guardian.md; build_mindmap.sh sentinel
+step; README.md; README-mindmap-system.md updated.
+VERIFY: `grep sentinel
+projects/llm_wiki/speed-reading/build_mindmap.sh &&
+test -f projects/llm_wiki/speed-reading/agents/
+sentinel-final-guardian.md &&
+bash -n projects/llm_wiki/speed-reading/build_mindmap.sh &&
+echo PASS`.
+
+### Step 26.16: Add ## Motivation table to main README.md
+
+[x] Status
+
+CONTEXT: Main README.md has ## Objective but no motivation
+section; ### Motivation spec in prompt_history.md (lines
+1693-1716) calls for a domain-transformation table.
+ACTION: Insert ## Motivation section after ## Objective in
+README.md with 5-column table: DOMAIN | LEGACY | AI NATIVE |
+OBJECTIVE | TRANSFORMATION. Fill rows from spec examples
+(Internet Search, Photography, Coding, Manufacturing, CRM,
+Conversational Intelligence). Use existing emoji heading style.
+CONSTRAINTS: Insert only; do not modify other sections; ≤80-
+col prose outside table.
+OUTPUT: README.md ## Motivation table after ## Objective.
+VERIFY: `grep "## Motivation\|AI NATIVE" README.md`.
+
+### Step 26.17: Add cross-references — build_mindmap.sh ↔
+piper-pipeline-orchestrator.md ↔ README.md
+
+[x] Status
+
+CONTEXT: piper-pipeline-orchestrator.md is doctrine for the
+pipeline; build_mindmap.sh implements that doctrine; neither
+file currently cross-references the other; README.md does not
+explicitly state that build_mindmap.sh is the implementation
+of the piper doctrine.
+ACTION: (1) Add a comment near the top of build_mindmap.sh
+(after the shebang/description block) that it implements the
+pipeline doctrine from agents/piper-pipeline-orchestrator.md.
+(2) In projects/llm_wiki/speed-reading/README.md, update the
+"Reference / Doctrine" entry for piper-pipeline-orchestrator.md
+to explicitly state that build_mindmap.sh is its implementation.
+(3) In agents/piper-pipeline-orchestrator.md, append a one-line
+cross-reference note at the top: "This file is doctrine for the
+pipeline orchestrated by build_mindmap.sh."
+CONSTRAINTS: No logic changes; comment/docs only; ≤80-col.
+OUTPUT: build_mindmap.sh has doctrine reference comment; README.md
+and piper-pipeline-orchestrator.md cross-reference each other.
+VERIFY: `grep "piper-pipeline-orchestrator"
+projects/llm_wiki/speed-reading/build_mindmap.sh &&
+grep "build_mindmap"
+projects/llm_wiki/speed-reading/agents/piper-pipeline-
+orchestrator.md`.
+
+## Phase 27
+
+### Step 27.1: Create src/piper.py — Python rewrite of piper.sh
+
+[x] Status
+
+CONTEXT: piper.sh is the 473-line bash orchestrator; no src/ or
+piper.py exist. ACTION: Create src/piper.py (Python 3.12+,
+#!/usr/bin/env python3, argparse for --input/--output/--from-phase/
+--help); split into display.py (PhaseDisplay), spinner.py (Spinner),
+orchestrator.py (Piper class with all 5 phases), piper.py (main()).
+CONSTRAINTS: Same CLI flags, phase names, artifact paths, retry
+cap=3 as piper.sh; do not modify agents/ or templates/; ≤80 cols.
+OUTPUT: src/{piper,orchestrator,display,spinner}.py all executable
+and passing py_compile.
+VERIFY: `python3 -m py_compile src/piper.py && python3 src/piper.py
+--help | grep -q PHASES && echo PASS`.
+
+### Step 27.2: Create requirements.in, .venv, update labsetup.py +
+preflight_check.py
+
+[x] Status
+
+CONTEXT: No requirements.in or .venv in speed-reading/; labsetup.py
+and preflight_check.py do not reference piper.py. ACTION: Create
+requirements.in (stdlib-only, no pip packages); add
+_setup_piper_venv() to labsetup.py; add check_piper_py() to
+preflight_check.py; update dev_workbench.md PKM section.
+CONSTRAINTS: Only extend labsetup.py and preflight_check.py; no
+logic changes to existing steps; ≤80 cols.
+OUTPUT: requirements.in; labsetup.py has venv step; preflight.py
+has piper.py executable check.
+VERIFY: `grep -n "speed-reading" projects/group_meetup/labsetup.py
+&& grep -n "piper" projects/group_meetup/preflight_check.py`.
+
+### Step 27.3: Update all piper.sh references to src/piper.py
+
+[x] Status
+
+CONTEXT: speed-reading/README.md, sessions/llm_wiki.md, and
+other files reference piper.sh. ACTION: Replace all piper.sh usage
+examples with python3 src/piper.py; add Code Layout section to
+README.md; fix output filename TheComingWave_mindmap.html →
+TheComingWave-mindmap.html; update README-mindmap-system.md and
+agents/piper-pipeline-orchestrator.md references.
+CONSTRAINTS: Do not delete piper.sh yet; ≤80 cols.
+OUTPUT: README.md, llm_wiki.md, and related files reference piper.py;
+no piper.sh usage examples in active docs.
+VERIFY: `grep -n "piper\.sh" projects/llm_wiki/speed-reading/
+README.md sessions/llm_wiki.md || echo NO_REFS`.
+
+### Step 27.4: Track and Log — agent log streaming + sub-phase resume
+
+[x] Status
+
+CONTEXT: _run_agent uses capture_output=True (no real-time log);
+quinn/sentinel map to index 4 (restart Leo on resume); no --log-dir.
+ACTION: Replace _PHASE_IDX with _PHASE_MAP tuples (quinn→(4,1),
+sentinel→(4,2)); add _vl_start and _log_dir to Piper.__init__;
+change _run_agent to subprocess.Popen streaming stdout to
+{log_dir}/{agent}.log per line; update _phase_validator_loop and
+_validator_attempt for sub-phase skip; add --log-dir to piper.py
+and _HELP_TEXT; update README.md worked example with logging and
+resume table (quinn/sentinel rows).
+CONSTRAINTS: Waterfall stdout and spinner stderr unaffected; logs
+only written when --log-dir given; ≤80 cols, 2-space indent.
+OUTPUT: _run_agent streams to logs; piper.py has --log-dir; --help
+shows log-dir and validator-loop|leo as equivalent.
+VERIFY: `python3 -m py_compile src/orchestrator.py src/piper.py
+&& python3 src/piper.py --help | grep -q log-dir && echo PASS`.
+
+### Step 27.5: Validate — review README.md, rename examples/,
+run URL mindmap end-to-end
+
+[x] Status
+
+CONTEXT: piper.py has logging and sub-phase resume; example/ holds
+TheComingWave artifacts; need end-to-end URL validation.
+ACTION: (1) Review README.md to confirm manual piper.py instructions
+are accurate. (2) Rename example/ → examples/; update all references
+in README.md and sessions/llm_wiki.md. (3) Run full pipeline:
+`python3 src/piper.py --input https://www.dench.com/blog/
+the-ai-native-company-playbook --output examples/ai-native-company-
+playbook-mindmap.html --log-dir examples/.tmp` from speed-reading/.
+(4) Confirm waterfall prints correctly, logs appear in
+examples/.tmp/*.log, HTML produced.
+CONSTRAINTS: Do not modify agents/; rename directory only, preserve
+contents; ≤80 cols.
+OUTPUT: examples/ directory present; ai-native-company-playbook-
+mindmap.html ≥1 KB; examples/.tmp/leo.log present.
+VERIFY: `ls -lh projects/llm_wiki/speed-reading/examples/
+ai-native-company-playbook-mindmap.html &&
+ls projects/llm_wiki/speed-reading/examples/.tmp/leo.log && echo PASS`.
+
+### Step 27.6: Remove experimental/speed_reading/ and piper.sh
+
+[x] Status
+
+CONTEXT: piper.py validated; experimental/speed_reading/ is obsolete;
+piper.sh replaced by src/piper.py. ACTION: rm -rf
+experimental/speed_reading/; remove piper.sh; scan for remaining
+piper.sh references and fix. CONSTRAINTS: Only after Step 27.5
+passes; do not touch agents/, templates/.
+OUTPUT: experimental/speed_reading/ absent; piper.sh absent.
+VERIFY: `[[ ! -d experimental/speed_reading ]] && [[ ! -f
+projects/llm_wiki/speed-reading/piper.sh ]] && echo PASS`.
+
+### Step 27.7: Mark Speed Reading complete in prompt_history.md +
+plan.md, commit + tag
+
+[x] Status
+
+CONTEXT: All Phase 27 steps done; prompt_history.md ## Speed Reading
+already shows [x] Status (committed in Step 27.4 commit). ACTION:
+Flip every [ ] Status in Phase 27 to [x] Status in sdw/plan.md;
+commit; tag v27.7-piper-rewrite-step-completed; push branch + tags.
+CONSTRAINTS: Append-only to plan.md; ≤80 cols in entries.
+OUTPUT: plan.md Phase 27 all [x]; tag pushed.
+VERIFY: `git tag | grep "v27\." && echo PASS`.
