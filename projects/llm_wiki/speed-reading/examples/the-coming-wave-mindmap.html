@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Coming Wave — Mind Map</title>
+  <script
+    src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+  ></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      background: #f8f8f8;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      overflow: hidden;
+    }
+    #network-container { position: absolute; inset: 0; }
+
+    /* ── Validation panel — top-left ──────────────────────── */
+    #val-panel {
+      position: fixed; top: 14px; left: 14px; z-index: 100;
+      background: rgba(255,255,255,0.96);
+      border: 1.5px solid #ccc; border-radius: 8px;
+      padding: 8px 12px; font-size: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      min-width: 180px;
+    }
+    #val-panel .vt {
+      font-weight: 700; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: #555; margin-bottom: 4px;
+    }
+    #val-result { font-weight: 600; font-size: 13px; }
+    #val-result.pass { color: #00c853; }
+    #val-result.fail { color: #ff1744; }
+
+    /* ── Inspector — right side, hidden until node clicked ── */
+    #inspector {
+      display: none;
+      position: fixed; top: 50%; right: 18px;
+      transform: translateY(-50%); z-index: 200;
+      background: rgba(255,255,255,0.97);
+      border: 1.5px solid #ddd; border-radius: 10px;
+      padding: 16px 18px; width: 300px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+      max-height: 70vh; overflow-y: auto;
+    }
+    #inspector h3 {
+      font-size: 14px; font-weight: 700;
+      color: #222; margin-bottom: 10px; line-height: 1.35;
+    }
+    .sl {
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: #888; margin-top: 10px; margin-bottom: 3px;
+    }
+    .st { font-size: 12px; color: #333; line-height: 1.55; }
+    #insp-close {
+      position: absolute; top: 8px; right: 10px;
+      background: none; border: none;
+      font-size: 16px; cursor: pointer; color: #888;
+    }
+    #insp-close:hover { color: #222; }
+
+    /* ── Legend — bottom-right ────────────────────────────── */
+    #legend {
+      position: fixed; bottom: 14px; right: 14px; z-index: 100;
+      background: rgba(255,255,255,0.96);
+      border: 1.5px solid #ccc; border-radius: 8px;
+      padding: 8px 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      font-size: 12px;
+    }
+    #leg-hdr {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      cursor: pointer; user-select: none;
+    }
+    #leg-title {
+      font-weight: 700; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: #555; margin-right: 10px;
+    }
+    #leg-btn {
+      font-size: 11px; color: #888;
+      border: none; background: none; cursor: pointer; padding: 0;
+    }
+    #leg-body { margin-top: 6px; }
+    .leg-row {
+      display: flex; align-items: center; margin-bottom: 4px;
+    }
+    .leg-sw {
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 2px solid; margin-right: 7px;
+      flex-shrink: 0; background: #fff;
+    }
+    .leg-lbl { font-size: 12px; color: #444; }
+  </style>
+</head>
+<body>
+
+<div id="network-container"></div>
+
+<div id="val-panel">
+  <div class="vt">Layout Validation</div>
+  <div id="val-result">Checking…</div>
+</div>
+
+<div id="inspector">
+  <button id="insp-close" title="Close">&#x2715;</button>
+  <h3 id="insp-label"></h3>
+  <div class="sl">What</div>
+  <div class="st" id="insp-what"></div>
+  <div class="sl">Why</div>
+  <div class="st" id="insp-why"></div>
+</div>
+
+<div id="legend">
+  <div id="leg-hdr">
+    <span id="leg-title">Legend</span>
+    <button id="leg-btn">&#x25BC;</button>
+  </div>
+  <div id="leg-body">
+    <div class="leg-row">
+      <div class="leg-sw"
+        style="border-color:#222;background:#222;"></div>
+      <span class="leg-lbl">Root</span>
+    </div>
+    <div class="leg-row">
+      <div class="leg-sw" style="border-color:#00c853;"></div>
+      <span class="leg-lbl">Branch anchors (Layer 2)</span>
+    </div>
+    <div class="leg-row">
+      <div class="leg-sw" style="border-color:#ff9100;"></div>
+      <span class="leg-lbl">Detail anchors (Layer 3)</span>
+    </div>
+    <div class="leg-row">
+      <div class="leg-sw" style="border-color:#ff1744;"></div>
+      <span class="leg-lbl">Deep detail (Layer 4)</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── FALLBACK_CONTENT ─────────────────────────────────────────────────
+// Zero Truncation Rule: 1:1 mirror of mindmap-content.json.
+// Every node from the source JSON must be present here.
+const FALLBACK_CONTENT = [
+  // ── Root ────────────────────────────────────────────────────────────
+  {
+    id: "root", parent: null, layer: 1,
+    label: "The Coming Wave",
+    what: "AI and synthetic biology converging as history's most" +
+      " powerful and potentially uncontainable technology wave",
+    why: "These two general-purpose technologies will simultaneously" +
+      " deliver unprecedented human flourishing and unprecedented" +
+      " existential risk — making containment the defining" +
+      " civilizational challenge of the 21st century",
+    emphasis: "high"
+  },
+  // ── Layer 2 ──────────────────────────────────────────────────────────
+  {
+    id: "homo-technologicus", parent: "root", layer: 2,
+    label: "Technology Spreads by Default",
+    what: "All major general-purpose technologies diffuse to near-" +
+      "universal reach; no wave has ever been permanently stopped",
+    why: "The coming wave is not anomalous in kind — only in scale" +
+      " and speed; understanding why past resistance always failed" +
+      " is prerequisite to understanding what new mechanisms" +
+      " containment requires"
+  },
+  {
+    id: "core-wave-technologies", parent: "root", layer: 2,
+    label: "AI and Synthetic Biology",
+    what: "Two general-purpose technologies that can directly" +
+      " engineer intelligence and life — the two universal" +
+      " foundations of the human world",
+    why: "These are not merely powerful tools; they operate at the" +
+      " foundational level of everything humanity has built," +
+      " making their convergence a qualitative leap beyond all" +
+      " prior waves",
+    emphasis: "high"
+  },
+  {
+    id: "four-features", parent: "root", layer: 2,
+    label: "Four Features That Resist Containment",
+    what: "Asymmetry, hyper-evolution, omni-use, and autonomy are" +
+      " intrinsic properties of this wave that compound the" +
+      " containment problem beyond historical precedent",
+    why: "Each feature independently escalates risk; together they" +
+      " make this wave uniquely resistant to any single containment" +
+      " strategy and explain why this wave is different in kind," +
+      " not just scale",
+    emphasis: "high"
+  },
+  {
+    id: "unstoppable-incentives", parent: "root", layer: 2,
+    label: "Incentives That Drive the Wave",
+    what: "Geopolitical competition, open research culture, and" +
+      " financial reward create structural pressure that overrides" +
+      " individual or institutional restraint",
+    why: "Even actors who recognize the risks are trapped by" +
+      " incentive structures that make slowing down individually" +
+      " equivalent to surrendering strategically — the wave is" +
+      " a dynamic, not a choice"
+  },
+  {
+    id: "states-of-failure", parent: "root", layer: 2,
+    label: "The Nation-State Under Strain",
+    what: "Nation-states are both the primary mechanism of" +
+      " containment and the primary target of the wave's" +
+      " destabilizing force",
+    why: "The political order required to govern these technologies" +
+      " is being hollowed out by the very forces it must contain" +
+      " — a circular failure dynamic that worsens as the wave" +
+      " accelerates",
+    emphasis: "high"
+  },
+  {
+    id: "the-dilemma", parent: "root", layer: 2,
+    label: "The Dilemma: Catastrophe or Dystopia",
+    what: "Both pursuing these technologies and abandoning them" +
+      " leads toward catastrophic or dystopian outcomes; there" +
+      " is no safe default position",
+    why: "This is the book's central claim: the burden of active," +
+      " difficult containment is inescapable — inaction is not" +
+      " neutral but dangerous; the only acceptable path is through",
+    emphasis: "high"
+  },
+  {
+    id: "containment-path", parent: "root", layer: 2,
+    label: "The Narrow Path to Containment",
+    what: "A nested architecture of ten layers — from technical" +
+      " safety to global movements — that must work together as" +
+      " a mutually reinforcing whole",
+    why: "No single intervention is sufficient; containment is an" +
+      " emergent property of all layers operating coherently, and" +
+      " is an ongoing dynamic process, not a destination to be" +
+      " reached"
+  },
+  // ── Layer 3: homo-technologicus ──────────────────────────────────────
+  {
+    id: "proliferation-law",
+    parent: "homo-technologicus", layer: 3,
+    label: "Proliferation Is the Historical Default",
+    what: "Cost falls, demand grows, and mimicry spreads every major" +
+      " general-purpose technology to near-universal reach; from" +
+      " fire to internet, the pattern is invariant",
+    why: "The same cost-reduction and demand-compounding mechanism" +
+      " that drove every prior wave will drive this one — history" +
+      " provides no successful examples of stopping a general-" +
+      "purpose wave once it starts"
+  },
+  {
+    id: "nuclear-partial-exception",
+    parent: "homo-technologicus", layer: 3,
+    label: "Nuclear Is the Best Containment Case — and Still Fragile",
+    what: "Nuclear weapons partially contained through extreme cost" +
+      " and complexity, deterrence, and decades of multilateral" +
+      " treaty-making — yet with hundreds of near-miss incidents",
+    why: "The best historical containment success is itself" +
+      " frighteningly incomplete; coming-wave technologies are far" +
+      " cheaper, more accessible, and omni-use, making the nuclear" +
+      " model insufficient as a template"
+  },
+  // ── Layer 3: core-wave-technologies ─────────────────────────────────
+  {
+    id: "ai-capabilities",
+    parent: "core-wave-technologies", layer: 3,
+    label: "AI: From Pattern Recognition to General Capability",
+    what: "Deep learning unlocked superhuman perception, language," +
+      " and strategic reasoning; ACI (Artificial Capable" +
+      " Intelligence) — able to autonomously pursue real-world" +
+      " goals across most domains — is fast approaching",
+    why: "AI is the first technology that rivals and will surpass" +
+      " human cognition across nearly all tasks, making it the" +
+      " general-purpose substrate for every industry and" +
+      " simultaneously every threat vector",
+    emphasis: "high"
+  },
+  {
+    id: "synthetic-biology-capabilities",
+    parent: "core-wave-technologies", layer: 3,
+    label: "Synthetic Biology: Read, Edit, Write Life",
+    what: "CRISPR made gene editing cheap; DNA synthesis enables" +
+      " printing novel organisms; genome sequencing cost fell a" +
+      " millionfold in 20 years — faster than Moore's Law",
+    why: "Engineering life is approaching software-development" +
+      " accessibility and speed, with the critical added property" +
+      " that biological agents self-replicate, evolve, and spread" +
+      " autonomously beyond the lab"
+  },
+  {
+    id: "ai-synbio-convergence",
+    parent: "core-wave-technologies", layer: 3,
+    label: "AI and Synbio Form a Superwave",
+    what: "AI accelerates biological discovery (protein folding" +
+      " solved in seconds vs. months; AI drug design); synthetic" +
+      " biology provides substrate for biological computation and" +
+      " novel materials",
+    why: "Cross-catalysis between two general-purpose technologies" +
+      " compounds their individual trajectories; the superwave is" +
+      " qualitatively harder to steer than either technology alone"
+  },
+  // ── Layer 3: four-features ───────────────────────────────────────────
+  {
+    id: "asymmetry-feature", parent: "four-features", layer: 3,
+    label: "Asymmetry: Small Investment, Civilization-Scale Impact",
+    what: "Cheap, scalable offensive capability against expensive" +
+      " defense; interconnected systems mean local failures cascade" +
+      " globally; the cost ratio of offense to defense inverts",
+    why: "The state's monopoly on force dissolves when a small" +
+      " group with affordable hardware can halt a military column," +
+      " crash a healthcare system, or trigger a pandemic —" +
+      " governance depends on security it can no longer guarantee"
+  },
+  {
+    id: "hyper-evolution-feature",
+    parent: "four-features", layer: 3,
+    label: "Hyper-Evolution: The World of Atoms Gains Software Speed",
+    what: "AI-assisted design loops compress lab iteration from" +
+      " years to hours; biological evolution becomes subject to" +
+      " directed, software-speed design cycles",
+    why: "Regulatory and safety work are perpetually behind; the" +
+      " lag between technology development and governance is" +
+      " structural, not temporary — by the time a law passes," +
+      " the technology is several generations ahead"
+  },
+  {
+    id: "omni-use-feature", parent: "four-features", layer: 3,
+    label: "Omni-Use: The Same Capability Serves Every Purpose",
+    what: "The AI that finds antibiotics also finds chemical" +
+      " weapons; gene-editing that cures disease also enables" +
+      " engineered pandemics; uses cannot be cleanly separated" +
+      " at the source",
+    why: "Unlike nuclear (single-purpose and prohibitively" +
+      " expensive), omni-use technologies resist containment by" +
+      " use-case — prohibiting harmful applications while" +
+      " permitting beneficial ones is structurally impossible"
+  },
+  {
+    id: "autonomy-feature", parent: "four-features", layer: 3,
+    label: "Autonomy: Technology Self-Directs Beyond Human Oversight",
+    what: "Systems discover novel strategies without instruction;" +
+      " gene drives propagate autonomously through populations;" +
+      " emergent behaviors are by design unpredictable",
+    why: "When technology directs its own evolution and produces" +
+      " inexplicable outputs, the three foundations of containment" +
+      " — prediction, explanation, and correction — all disappear" +
+      " simultaneously"
+  },
+  // ── Layer 3: unstoppable-incentives ─────────────────────────────────
+  {
+    id: "geopolitical-race",
+    parent: "unstoppable-incentives", layer: 3,
+    label: "Geopolitical Arms Race: No State Can Unilaterally Pause",
+    what: "Every major power has explicit AI supremacy strategies;" +
+      " arms-race logic treats restraint as strategic surrender" +
+      " in a zero-sum competition",
+    why: "National security imperatives override safety" +
+      " considerations structurally; the race is already underway" +
+      " and self-reinforcing — calling it an arms race is no" +
+      " longer a self-fulfilling prophecy but an observation"
+  },
+  {
+    id: "open-research-culture",
+    parent: "unstoppable-incentives", layer: 3,
+    label: "Open Research Culture Accelerates Diffusion Beyond Control",
+    what: "Publish-or-perish norms, open-source AI tools, academic" +
+      " citation incentives — knowledge disperses faster than" +
+      " governance can form; openness is both the engine and the" +
+      " vulnerability",
+    why: "The values that make science productive (openness," +
+      " sharing, replication) make dangerous knowledge" +
+      " uncontainable; restricting openness costs more legitimacy" +
+      " than it saves in safety"
+  },
+  {
+    id: "financial-incentives",
+    parent: "unstoppable-incentives", layer: 3,
+    label: "Financial Rewards Overwhelm Individual Restraint",
+    what: "Trillion-dollar markets; intelligence-compounding returns" +
+      " for early movers; capital floods in regardless of safety;" +
+      " first-mover advantages become self-reinforcing monopolies",
+    why: "Profit structures are fundamentally misaligned with" +
+      " containment; the incentives for fast, capable development" +
+      " swamp the incentives for slow, safe development in every" +
+      " commercial context"
+  },
+  // ── Layer 3: states-of-failure ───────────────────────────────────────
+  {
+    id: "grand-bargain-fracture",
+    parent: "states-of-failure", layer: 3,
+    label: "The Grand Bargain Is Fracturing",
+    what: "The state's social contract: monopoly on force in" +
+      " exchange for order and prosperity; the wave attacks the" +
+      " state's capacity to fulfill both sides of this bargain" +
+      " simultaneously",
+    why: "If states cannot protect citizens from AI-enabled attacks," +
+      " mass deepfakes, biorisks, and economic displacement, the" +
+      " social contract loses its foundation precisely when it is" +
+      " most needed for governance"
+  },
+  {
+    id: "fragility-amplifiers",
+    parent: "states-of-failure", layer: 3,
+    label: "Fragility Amplifiers Chip Away at State Functions",
+    what: "AI-enhanced cyberattacks, deepfakes, autonomous weapons," +
+      " and biological threats each specifically target the" +
+      " functional pillars of statehood",
+    why: "These are not side effects but structural attacks on" +
+      " governance, trust, information integrity, and physical" +
+      " security — the four conditions without which no political" +
+      " order can function",
+    emphasis: "high"
+  },
+  {
+    id: "power-concentration-dispersal",
+    parent: "states-of-failure", layer: 3,
+    label: "Power Both Concentrates and Disperses",
+    what: "Intelligence-compounding advantages accrue to mega-" +
+      "corporations that begin to rival nations in reach and" +
+      " capability; simultaneously, bad actors gain civilization-" +
+      "scale destructive capacity",
+    why: "The wave doesn't redistribute power in one direction —" +
+      " simultaneous concentration and dispersal undermines both" +
+      " democratic governance and security architecture at once"
+  },
+  {
+    id: "pessimism-aversion",
+    parent: "states-of-failure", layer: 3,
+    label: "Pessimism Aversion Blocks Clear-Eyed Action",
+    what: "Elites and institutions reflexively dismiss catastrophic" +
+      " risk scenarios as overblown; confronting dark realities" +
+      " produces paralysis disguised as sophistication",
+    why: "The main obstacle to containment is not lack of solutions" +
+      " but lack of willingness to face the problem — a" +
+      " psychological failure that presents itself as rationalism" +
+      " but functions as abdication"
+  },
+  // ── Layer 3: the-dilemma ─────────────────────────────────────────────
+  {
+    id: "catastrophe-scenario",
+    parent: "the-dilemma", layer: 3,
+    label: "Uncontained Wave → Catastrophe",
+    what: "Engineered pandemics, AI-enabled mass violence," +
+      " autonomous warfare, and infrastructure attacks become" +
+      " accessible to any motivated actor regardless of scale",
+    why: "The omni-use, asymmetric, and autonomous features ensure" +
+      " destructive applications proliferate alongside beneficial" +
+      " ones; catastrophe is not a zero-probability event but a" +
+      " compounding fat tail"
+  },
+  {
+    id: "dystopia-scenario",
+    parent: "the-dilemma", layer: 3,
+    label: "Aggressive Containment → Dystopia",
+    what: "Containment regimes strong enough to block worst risks" +
+      " require total surveillance, authoritarian control, and a" +
+      " permanent security state as the price of safety",
+    why: "The cure is as dangerous as the disease: a state with" +
+      " sufficient capability to truly contain these technologies" +
+      " has itself become the dystopian outcome the book warns" +
+      " against"
+  },
+  // ── Layer 3: containment-path ────────────────────────────────────────
+  {
+    id: "technical-containment",
+    parent: "containment-path", layer: 3,
+    label: "Technical Safety: Apollo-Scale Investment in Code and Labs",
+    what: "Air gaps, sandboxes, off-switches, alignment research," +
+      " DNA synthesis screening, adversarial red teams — safety" +
+      " built into architecture before deployment, not patched" +
+      " afterward",
+    why: "Technical measures are the most direct containment form;" +
+      " current safety investment is shockingly small relative to" +
+      " capability development and requires a generational" +
+      " reorientation of priorities"
+  },
+  {
+    id: "choke-points-time",
+    parent: "containment-path", layer: 3,
+    label: "Choke Points: Buy Time by Exploiting Supply Concentrations",
+    what: "Chip supply chain, cloud computing oligopoly, DNA" +
+      " synthesizer markets, and specialist talent pools are" +
+      " leverage points that can slow proliferation without" +
+      " halting it",
+    why: "Time bought through choke-point leverage is the most" +
+      " practical near-term containment lever; the window when" +
+      " these concentrations can be exploited is narrow and" +
+      " closing"
+  },
+  {
+    id: "organizational-containment",
+    parent: "containment-path", layer: 3,
+    label: "Makers + Businesses: Responsible Development and Incentive Alignment",
+    what: "Critics must build, not just comment; corporate" +
+      " structures must inscribe safety as a legal fiduciary" +
+      " duty, not a PR commitment or a corporate values document",
+    why: "Those closest to the technology bear the greatest" +
+      " responsibility and have the greatest leverage; misaligned" +
+      " profit structures are a root cause of risk, not merely" +
+      " a context for it"
+  },
+  {
+    id: "government-alliances-containment",
+    parent: "containment-path", layer: 3,
+    label: "Governments + Treaties: State Capacity and International Cooperation",
+    what: "States must build in-house technical capacity, license" +
+      " advanced systems, reform capital taxation, and forge" +
+      " international agreements modeled on nuclear" +
+      " nonproliferation",
+    why: "No single nation can contain a global wave; coordinated" +
+      " international action is necessary even under arms-race" +
+      " pressure — the nuclear precedent shows patient multilateral" +
+      " effort can achieve partial but real containment"
+  },
+  {
+    id: "culture-movements-coherence",
+    parent: "containment-path", layer: 3,
+    label: "Culture + Movements + Coherence: The Narrow Path",
+    what: "Aviation-style failure-learning culture; popular" +
+      " movements that create political will; containment as an" +
+      " ongoing emergent process, not a destination — each layer" +
+      " reinforcing all the others",
+    why: "Rules without culture fail; culture without political" +
+      " backing is cosmetic; the narrow path between catastrophe" +
+      " and dystopia requires all ten layers working in mutual" +
+      " reinforcement, continuously and indefinitely"
+  },
+  // ── Layer 4 ───────────────────────────────────────────────────────────
+  {
+    id: "aci-threshold",
+    parent: "ai-capabilities", layer: 4,
+    label: "ACI: The Agent Threshold Is Near",
+    what: "Artificial Capable Intelligence — able to autonomously" +
+      " browse, plan, and act across real-world domains, passing" +
+      " a Modern Turing Test — is likely achievable within 3-5" +
+      " years without requiring full AGI",
+    why: "The ACI threshold is where AI transitions from powerful" +
+      " tool to autonomous agent, dramatically accelerating every" +
+      " downstream risk and benefit simultaneously and making" +
+      " human oversight optional rather than automatic"
+  },
+  {
+    id: "gorilla-problem",
+    parent: "autonomy-feature", layer: 4,
+    label: "The Gorilla Problem: Smarter Entities Contain Weaker Ones",
+    what: "Gorillas are physically stronger than humans but are" +
+      " endangered and contained; a sufficiently superior AI" +
+      " inverts the relationship — we become the contained, not" +
+      " the container",
+    why: "AGI is the endpoint where containment by humans becomes" +
+      " structurally impossible: the intelligence advantage that" +
+      " defined human dominance becomes the instrument of our own" +
+      " displacement"
+  },
+  {
+    id: "cyberweapons-evolution",
+    parent: "fragility-amplifiers", layer: 4,
+    label: "AI Cyberweapons: Self-Improving, Adaptive Attacks",
+    what: "Static malware (WannaCry) was stopped by a $10 domain" +
+      " purchase; AI-powered cyberweapons probe, learn, and evolve" +
+      " in real time — no static patch or firewall can hold" +
+      " against a system that adapts",
+    why: "The shift from fixed-code to learning cyberweapons changes" +
+      " the permanent economics of offense vs. defense: offense" +
+      " compounds while defense scrambles, making critical" +
+      " infrastructure durably vulnerable"
+  },
+  {
+    id: "deepfake-epistemic",
+    parent: "fragility-amplifiers", layer: 4,
+    label: "Deepfakes Destroy Epistemic Infrastructure",
+    what: "AI-generated video and audio indistinguishable from" +
+      " reality at near-zero marginal cost, surgically targeted" +
+      " to individual psychology and existing cultural fractures",
+    why: "When no evidence can be trusted, the information systems" +
+      " on which democratic governance, judicial accountability," +
+      " and shared political reality depend collapse — governance" +
+      " fails not through violence but through epistemics"
+  },
+  {
+    id: "chip-supply-chain",
+    parent: "choke-points-time", layer: 4,
+    label: "Semiconductor Choke Point: Three Companies Control Frontier AI",
+    what: "NVIDIA designs the chips, TSMC manufactures them (most" +
+      " advanced in a single building), ASML makes TSMC's machines" +
+      " — the most advanced AI depends on this single fragile" +
+      " chain costing $10B/kg",
+    why: "Export controls on this choke point (demonstrated in" +
+      " 2022) can slow frontier AI development by years — the most" +
+      " concrete and already-proven containment lever available" +
+      " to governments today"
+  },
+  {
+    id: "nuclear-treaty-model",
+    parent: "government-alliances-containment", layer: 4,
+    label: "Nuclear Treaty Model: Patient Diplomacy Achieved Partial Containment",
+    what: "NPT + IAEA + Partial Test Ban Treaty + MAD doctrine =" +
+      " partial but real containment of the most destructive" +
+      " technology, maintained through decades of multilateral" +
+      " effort under adversarial conditions",
+    why: "The nuclear precedent proves that even great-power" +
+      " adversaries can negotiate containment regimes for" +
+      " existential technologies under competitive pressure —" +
+      " partial success is achievable and better than none"
+  }
+];
+
+// ── Color palette and styling ────────────────────────────────────────
+// L1=near-black; L2=vivid green; L3=electric orange; L4=vivid crimson.
+// Palette follows ai-mindmap.md doctrine layer colour table exactly.
+const LAYER_COLOR = {
+  1: "#222", 2: "#00c853", 3: "#ff9100", 4: "#ff1744"
+};
+function lc(layer) { return LAYER_COLOR[layer] || "#888"; }
+function isEmph(n) { return n.emphasis === "high"; }
+
+// Emphasized: full-opacity, large font, thick border (Core Reading Path).
+// Baseline: 88%-alpha, small font, thin border (background detail).
+function nodeStyle(n) {
+  const c = lc(n.layer), e = isEmph(n);
+  return {
+    borderColor: e ? c : c + "88",
+    fontColor:   e ? c : c + "88",
+    fontSize:    e ? 17 : 12,
+    borderWidth: e ? 3  : 1.5
+  };
+}
+
+// ── Build lookup and grouping maps ───────────────────────────────────
+const nodeMap = {};
+FALLBACK_CONTENT.forEach(n => { nodeMap[n.id] = n; });
+
+const l2Nodes = FALLBACK_CONTENT.filter(n => n.layer === 2);
+const l3All   = FALLBACK_CONTENT.filter(n => n.layer === 3);
+const l4All   = FALLBACK_CONTENT.filter(n => n.layer === 4);
+
+// childrenOf[parentId] = [child, …]
+const childrenOf = {};
+[...l3All, ...l4All].forEach(n => {
+  if (!childrenOf[n.parent]) childrenOf[n.parent] = [];
+  childrenOf[n.parent].push(n);
+});
+
+// ── Layer 2: evenly-spaced ellipse ring, starting at top ─────────────
+// RX2=510, RY2=325: tight ring for 7 branch anchors.
+const RX2 = 510, RY2 = 325, N2 = l2Nodes.length;
+
+l2Nodes.forEach((n, i) => {
+  n._angle = -Math.PI / 2 + (2 * Math.PI * i) / N2;
+  n._x = RX2 * Math.cos(n._angle);
+  n._y = RY2 * Math.sin(n._angle);
+});
+
+nodeMap["root"]._x = 0;
+nodeMap["root"]._y = 0;
+
+// ── Layer 3: sub-sector fan outside L2 ring ──────────────────────────
+// R3=750 clears the L2 ellipse even for dense branches (5 children).
+const R3 = 750;
+
+l2Nodes.forEach((parent, pi) => {
+  const kids = childrenOf[parent.id] || [];
+  const nc   = kids.length;
+  if (!nc) return;
+
+  // Neighbor gap computation (handles angle wrap-around).
+  const prevA = l2Nodes[(pi - 1 + N2) % N2]._angle;
+  const nextA = l2Nodes[(pi + 1) % N2]._angle;
+  let gPrev = parent._angle - prevA;
+  if (gPrev <= 0) gPrev += 2 * Math.PI;
+  let gNext = nextA - parent._angle;
+  if (gNext <= 0) gNext += 2 * Math.PI;
+
+  // 40% of the smaller gap keeps children inside their sector.
+  // Per-child spread of 0.27 rad caps dense branches gracefully.
+  const maxHalf  = Math.min(gPrev, gNext) * 0.40;
+  const halfSpan = Math.max(
+    Math.min(maxHalf, nc * 0.27 / 2), 0.14
+  );
+
+  kids.forEach((kid, ci) => {
+    const angle = nc === 1
+      ? parent._angle
+      : parent._angle - halfSpan + (2 * halfSpan * ci) / (nc - 1);
+    kid._angle = angle;
+    kid._x = R3 * Math.cos(angle);
+    kid._y = R3 * Math.sin(angle);
+  });
+});
+
+// ── Layer 4: further-out fan from each L3 parent ─────────────────────
+// R4=975 keeps L4 visually tethered to its L3 parent chain.
+// Small half-span (0.10 rad per extra child) avoids inter-branch sprawl.
+const R4 = 975;
+
+l3All.forEach(parent => {
+  const kids = childrenOf[parent.id] || [];
+  const nc   = kids.length;
+  if (!nc) return;
+
+  const halfSpan = nc === 1 ? 0 : (nc - 1) * 0.10;
+
+  kids.forEach((kid, ci) => {
+    const angle = nc === 1
+      ? parent._angle
+      : parent._angle - halfSpan + (2 * halfSpan * ci) / (nc - 1);
+    kid._angle = angle;
+    kid._x = R4 * Math.cos(angle);
+    kid._y = R4 * Math.sin(angle);
+  });
+});
+
+// ── Collision resolution — L3 + L4 nodes together ───────────────────
+// Cross-branch separation: 155px conservative footprint.
+// Push factor 0.50 distributes displacement symmetrically.
+const MIN_DIST = 155;
+const allOuter = [...l3All, ...l4All];
+
+for (let iter = 0; iter < 30; iter++) {
+  let moved = false;
+  for (let i = 0; i < allOuter.length; i++) {
+    for (let j = i + 1; j < allOuter.length; j++) {
+      const a = allOuter[i], b = allOuter[j];
+      const dx = b._x - a._x, dy = b._y - a._y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < MIN_DIST && dist > 0.001) {
+        const push = (MIN_DIST - dist) / 2;
+        const nx = dx / dist, ny = dy / dist;
+        a._x -= nx * push * 0.50;
+        a._y -= ny * push * 0.50;
+        b._x += nx * push * 0.50;
+        b._y += ny * push * 0.50;
+        moved = true;
+      }
+    }
+  }
+  if (!moved) break;
+}
+
+// ── Label wrapping ────────────────────────────────────────────────────
+function wrapLabel(label, maxChars) {
+  const words = label.split(" ");
+  const lines = [];
+  let line = "";
+  for (const w of words) {
+    const cand = line ? line + " " + w : w;
+    if (cand.length <= maxChars) {
+      line = cand;
+    } else {
+      if (line) lines.push(line);
+      line = w;
+    }
+  }
+  if (line) lines.push(line);
+  return lines.join("\n");
+}
+
+// ── Build vis-network nodes ───────────────────────────────────────────
+// maxC controls ellipse width: root 20, L2 14, L3 17, L4 16.
+const visNodes = [];
+
+FALLBACK_CONTENT.forEach(n => {
+  const s = nodeStyle(n);
+  const maxC = n.layer === 1 ? 20 :
+               n.layer === 2 ? 14 :
+               n.layer === 3 ? 17 : 16;
+  const wrapped = wrapLabel(n.label, maxC);
+
+  visNodes.push({
+    id: n.id,
+    label: wrapped,
+    x: n._x ?? 0,
+    y: n._y ?? 0,
+    fixed: { x: true, y: true },
+    physics: false,
+    shape: "ellipse",
+    color: {
+      background: "#ffffff",
+      border: s.borderColor,
+      highlight: { background: "#fffde7", border: s.borderColor },
+      hover:      { background: "#fffde7", border: s.borderColor }
+    },
+    font: {
+      color: s.fontColor,
+      size:  s.fontSize,
+      face:  "Segoe UI, system-ui, sans-serif",
+      bold:  { color: s.fontColor, size: s.fontSize, mod: "bold" }
+    },
+    borderWidth: s.borderWidth,
+    borderWidthSelected: s.borderWidth + 1,
+    widthConstraint: {
+      minimum: 85,
+      maximum: n.layer === 1 ? 210 : 165
+    }
+  });
+});
+
+// ── Build vis-network edges ───────────────────────────────────────────
+// Single Arrow OR Edges Rule: pure hierarchy — no arrowheads on any edge.
+// Parallel Bowing Mandate: curvedCW on all edges; sibling arcs bow
+// in the same direction and cannot intersect within a branch fan.
+// Edge emphasis mirrors child node: Core Reading Path = thick+opaque;
+// baseline = thin+faded.
+const visEdges = [];
+
+FALLBACK_CONTENT.forEach(n => {
+  if (!n.parent) return;
+  const e = isEmph(n);
+  const c = lc(n.layer);
+  visEdges.push({
+    from: n.parent,
+    to:   n.id,
+    arrows: "",
+    color: {
+      color:     e ? c : c + "88",
+      highlight: e ? c : c + "88",
+      hover:     e ? c : c + "88"
+    },
+    width: e ? 3.5 : 1.0,
+    smooth: { enabled: true, type: "curvedCW", roundness: 0.12 }
+  });
+});
+
+// ── Initialise vis-network ────────────────────────────────────────────
+const container = document.getElementById("network-container");
+const network = new vis.Network(
+  container,
+  {
+    nodes: new vis.DataSet(visNodes),
+    edges: new vis.DataSet(visEdges)
+  },
+  {
+    nodes: { shape: "ellipse", borderWidth: 1.5, font: { size: 13 } },
+    edges: {
+      smooth: { enabled: true, type: "curvedCW", roundness: 0.12 },
+      arrows: { to: { enabled: false } }
+    },
+    physics: { enabled: false },
+    interaction: {
+      hover: true,
+      tooltipDelay: 200,
+      zoomView: true,
+      dragView: true,
+      dragNodes: false
+    }
+  }
+);
+
+// ── Post-draw: fit viewport then run validation ───────────────────────
+// Single afterDrawing handler avoids race conditions between two
+// competing `once` registrations.
+network.once("afterDrawing", () => {
+  network.fit({
+    animation: { duration: 400, easingFunction: "easeInOutQuad" }
+  });
+  // Positions are fixed; validation reads _x/_y, not canvas coords.
+  setTimeout(runValidation, 500);
+});
+
+// ── Inspector (node selection drawer) ────────────────────────────────
+let activeId = null;
+const inspector = document.getElementById("inspector");
+const inspLabel = document.getElementById("insp-label");
+const inspWhat  = document.getElementById("insp-what");
+const inspWhy   = document.getElementById("insp-why");
+
+document.getElementById("insp-close").addEventListener("click", () => {
+  inspector.style.display = "none";
+  activeId = null;
+});
+
+network.on("click", params => {
+  if (params.nodes.length > 0) {
+    const id = params.nodes[0];
+    if (id === activeId) {
+      // Toggle off when same node is clicked again.
+      inspector.style.display = "none";
+      activeId = null;
+    } else {
+      const n = nodeMap[id];
+      if (n) {
+        // Use original (unwrapped) label in inspector heading.
+        inspLabel.textContent = n.label;
+        inspWhat.textContent  = n.what;
+        inspWhy.textContent   = n.why;
+        inspector.style.display = "block";
+        activeId = id;
+      }
+    }
+  } else {
+    inspector.style.display = "none";
+    activeId = null;
+  }
+});
+
+// ── Legend toggle ─────────────────────────────────────────────────────
+let legOpen = true;
+const legBody = document.getElementById("leg-body");
+const legBtn  = document.getElementById("leg-btn");
+document.getElementById("leg-hdr").addEventListener("click", () => {
+  legOpen = !legOpen;
+  legBody.style.display = legOpen ? "block" : "none";
+  legBtn.innerHTML      = legOpen ? "&#x25BC;" : "&#x25B2;";
+});
+
+// ── Geometry validation ───────────────────────────────────────────────
+// Checks center-to-center distances within each layer using computed
+// _x/_y fixed positions. Thresholds are conservative ellipse footprints.
+// L2: 110px  L3: 140px  L4: 130px
+function runValidation() {
+  let fails = 0;
+
+  function checkLayer(nodes, minDist) {
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        if (Math.hypot(b._x - a._x, b._y - a._y) < minDist) fails++;
+      }
+    }
+  }
+
+  checkLayer(l2Nodes, 110);
+  checkLayer(l3All,   140);
+  checkLayer(l4All,   130);
+
+  const el = document.getElementById("val-result");
+  if (fails === 0) {
+    el.textContent = "PASS — no collisions";
+    el.className   = "pass";
+  } else {
+    el.textContent = "FAIL — " + fails + " collision(s)";
+    el.className   = "fail";
+  }
+}
+</script>
+</body>
+</html>

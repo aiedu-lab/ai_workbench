@@ -42,6 +42,7 @@ class Piper:
     output_path: str,
     from_phase: str,
     log_dir: str | None = None,
+    waterfall_log: str | None = None,
   ) -> None:
     main_idx, vl_start = _PHASE_MAP[from_phase]
     self._input = input_path
@@ -54,7 +55,9 @@ class Piper:
       self._log_dir.mkdir(parents=True, exist_ok=True)
     self._script_dir = Path(__file__).resolve().parent.parent
     self._agent_dir = self._script_dir / "agents"
-    self._display = PhaseDisplay()
+    self._display = PhaseDisplay(
+      log_path=waterfall_log,
+    )
     self._display.vl_max = self.MAX_RETRIES
     self._spinner = Spinner()
     # Resolved during sanitizer phase
@@ -147,6 +150,9 @@ class Piper:
     self._content_json = (
       self._work_dir / f"{book_name}-mindmap-content.json"
     )
+    # HTML lives in .tmp/ during the validator loop so an
+    # unapproved Leo draft never lands in the output dir.
+    # run() copies it to output_dir only after Sentinel approves.
     self._html_file = (
       self._work_dir / f"{book_name}-mindmap.html"
     )
@@ -236,6 +242,7 @@ class Piper:
   def _phase_seth(self) -> None:
     if self._from_idx > 3:
       self._require_artifact(self._content_json)
+      self._validate_json(self._content_json)
       return
     self._display.ph[3] = "active"
     self._display.waterfall()
@@ -255,6 +262,7 @@ class Piper:
       self._abort(
         f"Error: Seth did not produce {self._content_json}."
       )
+    self._validate_json(self._content_json)
     self._display.ph[3] = "done"
     self._update_read_list("seth")
 
@@ -265,6 +273,7 @@ class Piper:
     # When resuming from quinn/sentinel, Leo's HTML must exist.
     if self._vl_start > 0:
       self._require_artifact(self._html_file)
+      self._validate_html(self._html_file)
     for attempt in range(1, self.MAX_RETRIES + 1):
       self._display.vl_attempt = attempt
       skip_leo = (attempt == 1 and self._vl_start > 0)
@@ -287,12 +296,32 @@ class Piper:
     else:
       self._display.vl = ["active", "pending", "pending"]
       self._display.waterfall()
-      self._run_leo(attempt)
+      try:
+        self._run_leo(attempt)
+      except SystemExit:
+        pass  # file-validity check below handles retry/abort
+      html_ok = self._html_file.is_file() and self._is_html_ok(
+        self._html_file
+      )
+      if not html_ok:
+        # Remove partial file so resume via --from-phase leo
+        # doesn't silently accept incomplete output.
+        self._html_file.unlink(missing_ok=True)
+        self._display.vl = ["skip", "skip", "skip"]
+        if attempt >= self.MAX_RETRIES:
+          self._display.ph[4] = "active"
+          self._display.waterfall()
+          self._abort(
+            f"Error: Leo did not produce valid HTML"
+            f" in {self._html_file} — max retries."
+          )
+        self._display.waterfall()
+        return False
       self._display.vl = ["done", "active", "pending"]
       self._display.waterfall()
     if not skip_quinn:
       quinn_out = self._run_quinn(attempt)
-      if "NOT APPROVED" in quinn_out:
+      if not quinn_out.strip() or "NOT APPROVED" in quinn_out:
         self._display.vl = ["done", "skip", "skip"]
         if attempt >= self.MAX_RETRIES:
           self._display.ph[4] = "active"
@@ -306,7 +335,7 @@ class Piper:
     self._display.vl = ["done", "done", "active"]
     self._display.waterfall()
     sent_out = self._run_sentinel(attempt)
-    if "NOT APPROVED" in sent_out:
+    if not sent_out.strip() or "NOT APPROVED" in sent_out:
       self._display.vl = ["done", "done", "skip"]
       if attempt >= self.MAX_RETRIES:
         self._display.ph[4] = "active"
@@ -381,7 +410,7 @@ class Piper:
     progress. Waterfall and spinner are unaffected.
     """
     cmd = [
-      "claude", "--print", prompt,
+      "claude", "--print", "--verbose", prompt,
       "--output-format", "stream-json",
       "--permission-mode", "bypassPermissions",
       "--system-prompt-file",
@@ -395,7 +424,17 @@ class Piper:
     )
     parts: list[str] = []
     failed = False
+    result_seen = False
     lf = log_path.open("w", encoding="utf-8") if log_path else None
+    # DEBUG: raw event log to diagnose stream-json format.
+    # Written alongside the text log; remove once format confirmed.
+    raw_log_path = (
+      log_path.with_suffix(".raw.jsonl") if log_path else None
+    )
+    rlf = (
+      raw_log_path.open("w", encoding="utf-8")
+      if raw_log_path else None
+    )
     try:
       with subprocess.Popen(
         cmd, stdout=subprocess.PIPE,
@@ -403,6 +442,9 @@ class Piper:
         cwd=str(self._work_dir),
       ) as proc:
         for raw in proc.stdout:
+          if rlf:
+            rlf.write(raw.decode("utf-8", errors="replace"))
+            rlf.flush()
           try:
             evt = json.loads(raw)
           except json.JSONDecodeError:
@@ -416,12 +458,15 @@ class Piper:
                   lf.write(text)
                   lf.flush()
           elif evt.get("type") == "result":
+            result_seen = True
             if evt.get("subtype") != "success":
               failed = True
     finally:
       if lf:
         lf.close()
-    if failed:
+      if rlf:
+        rlf.close()
+    if failed or not result_seen:
       self._abort(f"Error: {name} failed — aborting.")
     return "".join(parts)
 
@@ -463,11 +508,36 @@ class Piper:
       rl.write_text(header + entry, encoding="utf-8")
 
   def _require_artifact(self, path: Path) -> None:
-    if not path.is_file():
+    if not path.is_file() or path.stat().st_size == 0:
       self._abort(
-        f"Error: {path} not found for resume.\n"
+        f"Error: {path} missing or empty for resume.\n"
         "  Re-run without --from-phase to regenerate."
       )
+
+  def _validate_json(self, path: Path) -> None:
+    try:
+      json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+      self._abort(
+        f"Error: {path} contains invalid JSON.\n"
+        "  Re-run from the seth phase to regenerate."
+      )
+
+  def _validate_html(self, path: Path) -> None:
+    if not self._is_html_ok(path):
+      self._abort(
+        f"Error: {path} is incomplete (missing </html>).\n"
+        "  Re-run with --from-phase leo to regenerate."
+      )
+
+  @staticmethod
+  def _is_html_ok(path: Path) -> bool:
+    """Return True only if file ends with a closing html tag."""
+    try:
+      text = path.read_text(encoding="utf-8", errors="replace")
+      return "</html>" in text.lower()
+    except OSError:
+      return False
 
   @staticmethod
   def _abort(msg: str) -> None:

@@ -56,6 +56,12 @@ OPTIONS
   --log-dir <dir>       Write per-agent stdout to <dir>/<agent>.log
                         in real time. Waterfall display is unaffected.
                         Use: tail -f <dir>/leo.log to track progress.
+  --waterfall-log <path>
+                        Append each waterfall snapshot to <path>.
+                        Use when stdout is unavailable (agent spawn,
+                        backgrounded process). Final entry shows
+                        completion state. Also check read-list.md:
+                        [✓] = fully approved; [<phase>] = last done.
 
 PHASES (run in order)
   sanitizer           Parse args, validate input, resolve paths.
@@ -125,6 +131,11 @@ def main() -> int:
     default=None, dest="log_dir",
     help="Directory for per-agent log files.",
   )
+  parser.add_argument(
+    "--waterfall-log", metavar="<path>",
+    default=None, dest="waterfall_log",
+    help="File to append waterfall snapshots to.",
+  )
   args = parser.parse_args()
 
   if args.help:
@@ -149,6 +160,7 @@ def main() -> int:
   return Piper(
     args.input, args.output, args.from_phase,
     log_dir=args.log_dir,
+    waterfall_log=args.waterfall_log,
   ).run()
 
 

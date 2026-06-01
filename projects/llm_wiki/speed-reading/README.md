@@ -30,12 +30,13 @@ Phase                                          Function                Artifact
 ```
 
 **Book-name prefix**: all `.tmp/` files use the book filename.
-For `examples/TheComingWave.pdf`:
+For `examples/contents/the-coming-wave.pdf`:
 
 ```
-examples/.tmp/TheComingWave-detailed-notes.md
-examples/.tmp/TheComingWave-mindmap-content.json
-examples/.tmp/TheComingWave-mindmap.html
+examples/.tmp/the-coming-wave-detailed-notes.md
+examples/.tmp/the-coming-wave-mindmap-content.json
+examples/.tmp/the-coming-wave-mindmap.html  ← draft (Leo)
+examples/the-coming-wave-mindmap.html       ← final (post-Sentinel)
 ```
 
 ---
@@ -52,15 +53,20 @@ python3 src/piper.py --help
 ### Worked example — AI-Native Company Playbook (URL)
 
 ```bash
-# Full run with agent logging (recommended)
+# Full run with agent + waterfall logging (recommended)
 # Logs go to examples/.tmp/ — already gitignored.
 python3 src/piper.py \
-  --input   https://www.dench.com/blog/the-ai-native-company-playbook \
-  --output  examples/ai-native-company-playbook-mindmap.html \
-  --log-dir examples/.tmp
+  --input         https://www.dench.com/blog/the-ai-native-company-playbook \
+  --output        examples/ai-native-company-playbook-mindmap.html \
+  --log-dir       examples/.tmp \
+  --waterfall-log examples/.tmp/piper-waterfall.log
 
 # In a second terminal — monitor Leo attempt 1 in real time:
 tail -f examples/.tmp/ai-native-company-playbook-leo-1.log
+
+# Check pipeline progress / final status (works even if
+# stdout was unavailable — e.g. launched from an agent):
+tail -30 examples/.tmp/piper-waterfall.log
 # Validator-loop agents include attempt number (retries get -2, -3):
 #   ai-native-company-playbook-leo-1.log
 #   ai-native-company-playbook-quinn-1.log
@@ -125,6 +131,34 @@ examples/
 This means you can re-run the pipeline from `--from-phase seth`
 or later without network access.
 
+### Is the mindmap final or an in-progress draft?
+
+Two authoritative signals:
+
+**`read-list.md`** (most reliable) — updated at each phase
+completion. `[✓]` means all agents approved; any other tag
+means the pipeline stopped at that phase:
+
+```bash
+cat examples/read-list.md
+# - [✓] [the-coming-wave](...) — fully approved
+# - [seth] [the-coming-wave](...) — Seth done, Leo not started
+```
+
+**`--waterfall-log`** (when stdout unavailable) — shows the
+pipeline state at each transition. The last snapshot in the
+file is the final state:
+
+```bash
+tail -30 examples/.tmp/piper-waterfall.log
+# Final snapshot shows [✓]/[~] for every phase when done.
+# Shows [⟳] on the last active phase if interrupted.
+```
+
+Neither the output HTML nor its file-system timestamp is
+reliable alone — Leo writes a draft HTML during the validator
+loop that Quinn/Sentinel may then reject and Leo rewrite.
+
 ### Processed materials record
 
 `read-list.md` in the output directory tracks every book or
@@ -170,6 +204,84 @@ last written and resume from the next phase:
 | HTML exists, Quinn approved | `--from-phase sentinel` |
 
 The script verifies the prior artifact exists before skipping.
+
+---
+
+## Track / Debug / Troubleshoot
+
+### Is the pipeline running?
+
+```bash
+# Is the orchestrator process alive?
+pgrep -a -f "piper.py"
+
+# Is a claude agent subprocess active right now?
+pgrep -a -f "claude.*bypassPermissions" | grep -v pgrep
+```
+
+### Which agent is active, and is it making progress?
+
+Agent logs live in `.tmp/` and are prefixed by book name.
+The `.raw.jsonl` file grows with every event (tool calls,
+thinking, text); the `.log` file grows only when the agent
+emits text output. Compare sizes a few seconds apart:
+
+```bash
+# All agent logs for a book, newest first
+ls -lt examples/.tmp/the-coming-wave-*.log | head -6
+
+# Is the active agent making progress? Run twice ~10s apart;
+# if the byte count grows, the agent is live.
+ls -t examples/.tmp/the-coming-wave-*.raw.jsonl | head -1 \
+  | xargs wc -c
+
+# Stream the active agent's text output in real time
+tail -f examples/.tmp/the-coming-wave-leo-3.log
+```
+
+### Is the mindmap final and fully approved?
+
+**`read-list.md` is the authoritative signal:**
+
+```bash
+cat examples/read-list.md
+# [✓]          mindmap fully approved by Quinn + Sentinel
+# [seth]        Seth done; Leo not yet started
+# [leo]         Leo draft in .tmp/; Quinn/Sentinel not yet run
+# [converter]   Notes extracted; Seth not yet run
+```
+
+The HTML at `examples/<book>-mindmap.html` exists **only
+after Sentinel approves** — Leo writes its drafts to
+`examples/.tmp/<book>-mindmap.html` and rewrites on each
+retry. Do not rely on the file's presence or timestamp alone.
+
+### Why are some agent log files 0 bytes?
+
+Two causes:
+
+1. **Normal** — agent is in thinking/tool-call mode; only
+   the `.raw.jsonl` is growing. The `.log` grows once the
+   agent emits text.
+2. **Bug (historic)** — `claude --print --output-format
+   stream-json` requires `--verbose`; without it the CLI
+   exits silently, leaving both `.log` and `.raw.jsonl` at 0
+   bytes. Fixed: `src/orchestrator.py` now includes
+   `--verbose` in every agent invocation.
+
+### Attempt count and retry history
+
+The validator loop retries Leo up to 3 times when Quinn or
+Sentinel rejects. Logs are numbered by attempt:
+
+```
+.tmp/<book>-seth.log          ← Seth (no retries)
+.tmp/<book>-leo-1.log         ← Leo attempt 1
+.tmp/<book>-quinn-1.log
+.tmp/<book>-sentinel-1.log
+.tmp/<book>-leo-2.log         ← Leo attempt 2 (if 1 rejected)
+...
+```
 
 ---
 
