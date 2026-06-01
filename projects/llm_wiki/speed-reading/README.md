@@ -24,7 +24,7 @@ Phase                                          Function                Artifact
           └─ [✓] Seth                          synthesizer             .tmp/<book>-mindmap-content.json
                └─ [⟳] validator                loop until success
                     |  Leo · Quinn · Sentinel  (attempt 2 of 3)
-                    └─ [⟳] Leo                  map creator             .tmp/<book>-mindmap.html
+                    └─ [⟳] Leo                  map creator             .tmp/<book>-mindmap-<N>.html
                          └─ [ ] Quinn            QA reviewer             qa
                               └─ [ ] Sentinel    final gate              qa
 ```
@@ -35,8 +35,9 @@ For `examples/contents/the-coming-wave.pdf`:
 ```
 examples/.tmp/the-coming-wave-detailed-notes.md
 examples/.tmp/the-coming-wave-mindmap-content.json
-examples/.tmp/the-coming-wave-mindmap.html  ← draft (Leo)
-examples/the-coming-wave-mindmap.html       ← final (post-Sentinel)
+examples/.tmp/the-coming-wave-mindmap-1.html  ← Leo attempt 1
+examples/.tmp/the-coming-wave-mindmap-2.html  ← Leo attempt 2
+examples/the-coming-wave-mindmap.html         ← final (post-Sentinel)
 ```
 
 ---
@@ -200,8 +201,8 @@ last written and resume from the next phase:
 |---|---|
 | `<book>-detailed-notes.md` | `--from-phase seth` |
 | `<book>-mindmap-content.json` | `--from-phase validator-loop` or `--from-phase leo` |
-| `<book>-mindmap.html` (Leo done) | `--from-phase quinn` |
-| HTML exists, Quinn approved | `--from-phase sentinel` |
+| `.tmp/<book>-mindmap-1.html` exists (Leo attempt 1 done) | `--from-phase quinn` |
+| Leo + Quinn done (attempt 1) | `--from-phase sentinel` |
 
 The script verifies the prior artifact exists before skipping.
 
@@ -272,15 +273,18 @@ Two causes:
 ### Attempt count and retry history
 
 The validator loop retries Leo up to 3 times when Quinn or
-Sentinel rejects. Logs are numbered by attempt:
+Sentinel rejects. Logs and HTML drafts are numbered by attempt:
 
 ```
-.tmp/<book>-seth.log          ← Seth (no retries)
-.tmp/<book>-leo-1.log         ← Leo attempt 1
+.tmp/<book>-seth.log            ← Seth (no retries)
+.tmp/<book>-leo-1.log           ← Leo attempt 1
+.tmp/<book>-mindmap-1.html      ← Leo attempt 1 HTML draft
 .tmp/<book>-quinn-1.log
 .tmp/<book>-sentinel-1.log
-.tmp/<book>-leo-2.log         ← Leo attempt 2 (if 1 rejected)
+.tmp/<book>-leo-2.log           ← Leo attempt 2 (if 1 rejected)
+.tmp/<book>-mindmap-2.html      ← Leo attempt 2 HTML draft
 ...
+<book>-mindmap.html             ← final copy (Sentinel approved)
 ```
 
 ---

@@ -1851,5 +1851,36 @@ Reference `projects/llm_wiki/speed-reading/README.md`. Update the
   `piper.py` for URL 
   https://www.dench.com/blog/the-ai-native-company-playbook
   with current working directory as 
-  `projects/llm_wiki/speed-reading/examples` to test that mindmap 
+  `projects/llm_wiki/speed-reading/examples` to test that mindmap
+
+### Debug, Track and Observe
+
+Running `piper.py` against `the-coming-wave.pdf` exposed three
+gaps: (a) agent log files were all 0 bytes despite the pipeline
+appearing to run; (b) Leo wrote draft HTML directly to the
+output directory, making it impossible to distinguish approved
+from unapproved output; (c) when `piper.py` is spawned from
+an agent or backgrounded, stdout is unavailable so the
+waterfall progress view is lost.
+
+Root cause of (a): `claude --print --output-format stream-json`
+requires `--verbose`; without it the CLI exits with an error
+that was suppressed (`stderr=subprocess.DEVNULL`), leaving
+every log file empty.
+
+Fixes applied (commit b06a4f5, feat/sessions):
+* Added `--verbose` to the `claude` invocation in _run_agent.
+* Reverted `_html_file` to `.tmp/` so Leo drafts never reach
+  the output directory until Sentinel approves; `run()` copies
+  the approved file after the validator loop completes.
+* Versioned Leo drafts as `.tmp/<book>-mindmap-{N}.html` (N =
+  attempt number) so the draft history is preserved across
+  retries.
+* Added `--waterfall-log <path>` CLI option; `PhaseDisplay`
+  appends each waterfall snapshot (stdout mirror) to the file.
+* Added **Track / Debug / Troubleshoot** section to README.md
+  documenting: `pgrep` for process liveness, `wc -c` on
+  `.raw.jsonl` for progress, `read-list.md` as authoritative
+  completion signal, 0-byte log diagnosis, and attempt
+  numbering convention.
   works end to end.

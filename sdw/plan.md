@@ -4021,3 +4021,28 @@ commit; tag v27.7-piper-rewrite-step-completed; push branch + tags.
 CONSTRAINTS: Append-only to plan.md; ≤80 cols in entries.
 OUTPUT: plan.md Phase 27 all [x]; tag pushed.
 VERIFY: `git tag | grep "v27\." && echo PASS`.
+
+### Step 27.8: Debug/Observe — --verbose fix, HTML staging,
+versioned drafts, waterfall log
+
+[x] Status
+
+CONTEXT: Pipeline ran silently with 0-byte agent logs; Leo
+drafts overwrote output dir before Sentinel approval; no way
+to see pipeline state when spawned from agent or background.
+ACTION: (1) Add --verbose to claude CLI invocation in
+_run_agent — stream-json requires it with --print; (2) restore
+_html_file to .tmp/ so Leo drafts never reach output_dir until
+Sentinel approves; (3) version Leo drafts as mindmap-{N}.html
+per attempt so draft history is preserved; (4) add
+--waterfall-log <path> option that appends each waterfall
+snapshot to a file; (5) add Track/Debug/Troubleshoot section
+to README.md with pgrep, wc, tail, read-list.md status, and
+0-byte log diagnosis commands.
+CONSTRAINTS: Do not break --from-phase resume paths; ≤80 cols.
+OUTPUT: src/orchestrator.py, src/display.py, src/piper.py,
+README.md updated; commit b06a4f5 on feat/sessions.
+VERIFY: `cd projects/llm_wiki/speed-reading &&
+python3 -m py_compile src/orchestrator.py src/piper.py
+src/display.py && python3 src/piper.py --help
+| grep -q waterfall-log && echo PASS`.
