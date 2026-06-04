@@ -4046,3 +4046,93 @@ VERIFY: `cd projects/llm_wiki/speed-reading &&
 python3 -m py_compile src/orchestrator.py src/piper.py
 src/display.py && python3 src/piper.py --help
 | grep -q waterfall-log && echo PASS`.
+
+## Phase 28: CONSOLIDATE AGENTS
+
+### Step 28.1: Make .agent/rules/always-line-length.md the
+single line-length source
+
+[ ] Status
+
+CONTEXT: CLAUDE.md STYLE section states "80 cols" with Python
+examples — duplicating and conflicting with .agent/rules/
+always-line-length.md (79 chars, Go examples).
+ACTION: (1) Rewrite .agent/rules/always-line-length.md: 79
+chars, Python/Markdown examples matching this repo, remove Go
+content. (2) In CLAUDE.md STYLE & HYGIENE replace the inline
+line-length block with: "Line length: see .agent/rules/
+always-line-length.md (79 chars)." Remove duplicate BAD/GOOD
+examples and enforcement snippet from CLAUDE.md. (3) Update
+enforcement command to use length>79.
+CONSTRAINTS: ≤79 chars/line in edited files; CLAUDE.md ≤200
+lines.
+OUTPUT: .agent/rules/always-line-length.md updated; CLAUDE.md
+line-length block replaced by reference.
+VERIFY: `grep -n "80 col\|80 char\|length>80" CLAUDE.md
+| grep -v "^Binary" && echo FAIL || echo PASS`.
+
+### Step 28.2: Symlink AGENTS.md → CLAUDE.md; update CLAUDE.md
+
+[ ] Status
+
+CONTEXT: Codex CLI and Antigravity both read AGENTS.md from
+repo root; no such file exists so both tools get empty context.
+A symlink is the DRY solution — one file, two tool names.
+ACTION: (1) ln -s CLAUDE.md AGENTS.md in repo root; git add.
+(2) Add comment at top of CLAUDE.md: <!-- Loaded as AGENTS.md
+by Codex/Antigravity via symlink. --> (3) In CLAUDE.md SESSION
+REHYDRATION add step 0: "Read .agent/rules/*.md as additional
+always-on policies (loaded natively by Antigravity; applied
+here by instruction)."
+CONSTRAINTS: ≤79 chars/line; symlink must be committed.
+OUTPUT: AGENTS.md symlink at repo root; CLAUDE.md annotated.
+VERIFY: `[[ -L AGENTS.md ]] && [[ $(readlink AGENTS.md) =
+"CLAUDE.md" ]] && echo PASS`.
+
+### Step 28.3: Annotate agent-specific directives in .agent/
+
+[ ] Status
+
+CONTEXT: .agent/workflows/ls.md has // turbo-all — an
+Antigravity/Gemini-CLI parallel fan-out directive — with no
+explanation. Contributors won't know it is provider-specific.
+ACTION: (1) Add a comment block above // turbo-all in ls.md
+explaining it is an Antigravity/Gemini-CLI directive. (2) In
+.agent/skills/line-length/SKILL.md note that ./tools/check-
+line-length.sh must exist. (3) Confirm name: frontmatter key
+is present in all SKILL.md files (required for /name invoke).
+CONSTRAINTS: ≤79 chars/line; no content changes, annotations
+only.
+OUTPUT: ls.md and skill files annotated.
+VERIFY: `grep -n "Antigravity\|turbo-all"
+.agent/workflows/ls.md && echo PASS`.
+
+### Step 28.4: Add Agent Conventions section to README.md
+
+[ ] Status
+
+CONTEXT: README.md "SDW Skills" covers .claude/commands/ only;
+the multi-provider architecture is undocumented.
+ACTION: Insert ## Agent Conventions immediately before
+## Credits. Include: (1) two-layer model: .agent/ = universal
+canonical layer, provider loader files = thin wrappers; (2)
+table — Construct / Path / Invocation / Read by — rows for
+Rule, Skill, Workflow, Claude-slash-cmd, CLAUDE.md/AGENTS.md;
+(3) "Not yet wired" note for Cursor, Windsurf, Copilot.
+CONSTRAINTS: ≤79 chars/line; no restructure of existing
+sections.
+OUTPUT: README.md with ## Agent Conventions section.
+VERIFY: `grep -n "Agent Conventions" README.md && echo PASS`.
+
+### Step 28.5: Mark Phase 28 complete
+
+[ ] Status
+
+CONTEXT: All Phase 28 steps done.
+ACTION: Flip every [ ] Status → [x] Status in Phase 28 block
+of sdw/plan.md; commit all changed files; tag v28.5-
+consolidate-agents-step-completed; push branch + tags.
+CONSTRAINTS: Append-only to plan.md; tag format
+vN.K-*-step-completed.
+OUTPUT: plan.md Phase 28 all [x]; tag pushed.
+VERIFY: `git tag | grep "v28\." && echo PASS`.

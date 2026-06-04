@@ -1884,3 +1884,62 @@ Fixes applied (commit b06a4f5, feat/sessions):
   completion signal, 0-byte log diagnosis, and attempt
   numbering convention.
   works end to end.
+
+## Consolidate Agents
+[x] Status
+
+Reference `.agent` and `.claude`.
+
+Claude, Codex, Cursor, Antigravity, etc. have different
+conventions for operating protocols, skills, rules,
+workflows.
+
+### Objectives
+
+* Consolidate into a common framework with references where
+  appropriate so that loading the repo in ANY agent gives
+  consistent, non-duplicated context.
+* Specifically, this repo has `CLAUDE.md`, `.agent/`, and
+  `.claude/`. Apply the DRY principle: one authoritative
+  source for each policy; all other files reference it.
+
+### DRY Requirements
+
+* **Line-length rule (79 chars):** `.agent/rules/
+  always-line-length.md` is the single source of truth.
+  Remove the duplicate rule block from `CLAUDE.md` and
+  replace with a one-line reference to the rule file.
+  Update the rule file with Python/Markdown examples to
+  match this repo (replace the Go-centric content).
+
+* **AGENTS.md (Codex + Antigravity loader):** Both Codex
+  CLI and Antigravity read `AGENTS.md` from the repo root.
+  Create `AGENTS.md` as a **symlink to `CLAUDE.md`** —
+  zero duplication; both tools get the same protocol.
+  Add a comment at top of `CLAUDE.md` noting the symlink.
+
+* **No new canonical file:** Honor DRY — do not create yet
+  another standalone file. Use a symlink so there is one
+  file (`CLAUDE.md`) serving multiple tool conventions.
+
+* **Annotate agent-specific directives:** `.agent/workflows/
+  ls.md` contains `// turbo-all` — an Antigravity/Gemini-
+  CLI fan-out directive — with no explanation. Document it
+  inline and in any overview section.
+
+* **CLAUDE.md SESSION REHYDRATION:** Add step 0 instructing
+  Claude Code to also read `.agent/rules/*.md` as always-on
+  policies at session start.
+
+### README.md Agent Conventions section
+
+Generate a section in `README.md` that anyone can reference
+to understand how rules, skills, and workflows apply for
+each agent tool:
+* Two-layer model: `.agent/` = universal canonical layer;
+  `CLAUDE.md` / `AGENTS.md` (symlink) = thin provider
+  loader files.
+* Table: Construct / Canonical path / Invocation / Read by.
+* "Not yet wired" note for Cursor, Windsurf, Copilot with
+  their respective paths (`.cursor/rules/`,
+  `.windsurfrules`, `.github/copilot-instructions.md`).
