@@ -4126,7 +4126,7 @@ VERIFY: `grep -n "Agent Conventions" README.md && echo PASS`.
 
 ### Step 28.5: Mark Phase 28 complete
 
-[ ] Status
+[x] Status
 
 CONTEXT: All Phase 28 steps done.
 ACTION: Flip every [ ] Status → [x] Status in Phase 28 block
