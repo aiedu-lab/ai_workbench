@@ -4091,7 +4091,7 @@ VERIFY: `[[ -L AGENTS.md ]] && [[ $(readlink AGENTS.md) =
 
 ### Step 28.3: Annotate agent-specific directives in .agent/
 
-[ ] Status
+[x] Status
 
 CONTEXT: .agent/workflows/ls.md has // turbo-all — an
 Antigravity/Gemini-CLI parallel fan-out directive — with no
