@@ -4073,7 +4073,7 @@ VERIFY: `grep -n "80 col\|80 char\|length>80" CLAUDE.md
 
 ### Step 28.2: Symlink AGENTS.md → CLAUDE.md; update CLAUDE.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: Codex CLI and Antigravity both read AGENTS.md from
 repo root; no such file exists so both tools get empty context.

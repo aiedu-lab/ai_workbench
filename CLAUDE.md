@@ -1,3 +1,4 @@
+<!-- Loaded as AGENTS.md by Codex/Antigravity via symlink. -->
 # CLAUDE.md — AI Workbench
 
 > **Purpose:** This file is read by provider agent at the start of every
@@ -285,6 +286,9 @@ indentation.
 At the start of every new session, Claude must orient itself by
 reading these files in order before taking any action:
 
+0. `.agent/rules/*.md` — always-on policies (line length, git
+   flags). These apply to all providers; CLAUDE.md rules take
+   precedence on conflict.
 1. `CLAUDE.md` (this file) — operating protocol
 2. `sdw/plan.md` - plan to create content for the lab
 3. `projects/[project_directory]/plan.md` — current phase, active step, 
