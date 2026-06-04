@@ -179,5 +179,50 @@ each step — no separate invocation needed during a replan cycle.
 
 ---
 
+## Agent Conventions
+
+This repo uses a two-layer model so loading it in any AI coding
+tool gives consistent, non-duplicated context.
+
+### Layer 1 — Universal (`.agent/`)
+
+Provider-agnostic content that every compliant tool can read:
+
+| Construct | Path | Invocation | Read by |
+|---|---|---|---|
+| Rule | `.agent/rules/*.md` | Automatic | All (see Layer 2) |
+| Skill | `.agent/skills/<n>/SKILL.md` | `/name` or auto | All (see Layer 2) |
+| Workflow | `.agent/workflows/*.md` | Explicit trigger | Antigravity native |
+
+**Rules in this repo:**
+- `always-line-length.md` — 79-char limit, Python/Markdown
+- `git-output-rules.md` — always use `--no-pager --no-ext-diff`
+
+### Layer 2 — Provider loaders (thin wrappers)
+
+Each tool reads its own loader file, which references Layer 1:
+
+| Tool | Loader file | Notes |
+|---|---|---|
+| Claude Code | `CLAUDE.md` | Full protocol; step 0 reads `.agent/rules/` |
+| Codex CLI | `AGENTS.md` | Symlink → `CLAUDE.md` (zero duplication) |
+| Antigravity | `AGENTS.md` + `.agent/` | Reads both natively |
+| Cursor | `.cursor/rules/*.mdc` | **Not yet wired** |
+| Windsurf | `.windsurfrules` | **Not yet wired** |
+| GitHub Copilot | `.github/copilot-instructions.md` | **Not yet wired** |
+
+### Claude Code-only skills
+
+Project skills in `.claude/commands/` use Claude Code-specific
+tools (plan mode, SDW protocol) and are not portable:
+
+| Skill | Purpose |
+|---|---|
+| `/replan` | Full Specify→Plan→Approve→Execute cycle |
+| `/plan-step` | Generate/validate a single plan.md step |
+| `/proc-article` | Knowledge ingestion pipeline |
+
+---
+
 ## 🙌 Credits
 Inspired by practical AI learning approaches and community collaboration.

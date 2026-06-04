@@ -4109,7 +4109,7 @@ VERIFY: `grep -n "Antigravity\|turbo-all"
 
 ### Step 28.4: Add Agent Conventions section to README.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: README.md "SDW Skills" covers .claude/commands/ only;
 the multi-provider architecture is undocumented.
