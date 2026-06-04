@@ -4052,7 +4052,7 @@ src/display.py && python3 src/piper.py --help
 ### Step 28.1: Make .agent/rules/always-line-length.md the
 single line-length source
 
-[ ] Status
+[x] Status
 
 CONTEXT: CLAUDE.md STYLE section states "80 cols" with Python
 examples — duplicating and conflicting with .agent/rules/
