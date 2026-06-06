@@ -4254,24 +4254,22 @@ has clarifying comment; WHY comments added to src/ files.
 VERIFY: `grep -c '"""' projects/tower_of_hanoi/src/tests/
 test_tower.py` → count ≥ 10
 
-### Step 30.3: Create src_scaffold/ and .gitignore
+### Step 30.3: Create .gitignore and student workflow docs
 
-[ ] Status
+[x] Status
 
 CONTEXT: `src/` is the pristine scaffold; no student working
 directory or `.gitignore` exists in `projects/tower_of_hanoi/`.
-ACTION: (1) Create `projects/tower_of_hanoi/src_scaffold/` as a
-committed copy of `src/` (pristine, never modified). (2) Create
-`projects/tower_of_hanoi/.gitignore` with `src_copy/`. (3) Add
-`## Student Workflow` section to `projects/tower_of_hanoi/
-README.md`: copy `src_scaffold/` → `src_copy/`, implement 4
-skeleton classes, run `pytest src_copy/tests/`.
-CONSTRAINTS: `src_scaffold/` identical to `src/`; `src_copy/`
-never committed; ≤79 chars/line.
-OUTPUT: `src_scaffold/` committed; `.gitignore` has `src_copy/`;
-README.md has `## Student Workflow` section.
-VERIFY: `ls projects/tower_of_hanoi/src_scaffold/disc.py
-&& grep "src_copy" projects/tower_of_hanoi/.gitignore
+ACTION: (1) Create `projects/tower_of_hanoi/.gitignore` with
+`src_copy/` and Python cache patterns. (2) Add `## Student
+Workflow` section to `projects/tower_of_hanoi/README.md`:
+copy `src/` → `src_copy/`, implement 4 skeleton classes,
+run `pytest src_copy/tests/`. Note: `src_scaffold/` was
+proposed but removed — DRY; `src/` itself is the scaffold.
+CONSTRAINTS: `src_copy/` never committed; ≤79 chars/line.
+OUTPUT: `.gitignore` has `src_copy/`; README.md has
+`## Student Workflow` section and updated Project Structure.
+VERIFY: `grep "src_copy" projects/tower_of_hanoi/.gitignore
 && echo PASS`
 
 ### Step 30.4: Create toh_solution_prompt.md; update toh_prompt.md
@@ -4279,20 +4277,19 @@ VERIFY: `ls projects/tower_of_hanoi/src_scaffold/disc.py
 [ ] Status
 
 CONTEXT: No `toh_solution_prompt.md` exists; `toh_prompt.md`
-Output section does not reference `src_scaffold/` or `src_copy/`.
+Output section does not reference `src_copy/`.
 ACTION: (1) Create `projects/tower_of_hanoi/toh_solution_prompt.
 md` with self-contained impl requirements for Disc, Tower, Move,
 Orchestrator (matching toh_prompt.md interface) so `claude -p`
 can fill in the 4 skeleton classes. (2) Update `toh_prompt.md`
-Output section: `src_scaffold/` = pristine scaffold; `src/` =
-reference solution; `src_copy/` = student working area (git-
-ignored).
+Output section: `src/` = pristine scaffold students copy;
+`src_copy/` = student working area (git-ignored).
 CONSTRAINTS: `toh_solution_prompt.md` self-contained for
 `claude -p`; ≤79 chars/line.
 OUTPUT: `toh_solution_prompt.md` exists; `toh_prompt.md` Output
-references `src_scaffold/` and `src_copy/`.
+references `src_copy/`.
 VERIFY: `ls projects/tower_of_hanoi/toh_solution_prompt.md
-&& grep "src_scaffold" projects/tower_of_hanoi/toh_prompt.md
+&& grep "src_copy" projects/tower_of_hanoi/toh_prompt.md
 && echo PASS`
 
 ### Step 30.5: Apply toh_solution_prompt.md; run all tests
@@ -4303,7 +4300,7 @@ CONTEXT: `toh_solution_prompt.md` must be validated end-to-end:
 create `src_copy/` from scaffold, apply prompt to fill in the 4
 skeleton classes, run `pytest src_copy/tests/` to confirm all
 tests pass.
-ACTION: (1) `cp -r projects/tower_of_hanoi/src_scaffold
+ACTION: (1) `cp -r projects/tower_of_hanoi/src
 projects/tower_of_hanoi/src_copy`. (2) From `projects/
 tower_of_hanoi/` run `claude -p "$(cat toh_solution_prompt.md)"
 --allowedTools Write` to fill skeleton classes in `src_copy/`.

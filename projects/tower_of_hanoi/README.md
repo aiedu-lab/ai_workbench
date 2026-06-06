@@ -78,15 +78,16 @@ code block (see `StepWriter` for the Markdown helper).
 tower_of_hanoi/
 ├── README.md
 ├── toh_prompt.md           # HDD spec given to AI
-└── src/
-    ├── main.py             # CLI entry point
-    ├── orchestrator.py     # Orchestrator class
-    ├── tower.py            # Tower class
-    ├── move.py             # Move class
-    ├── disc.py             # Disc value-object
+├── .gitignore              # Excludes src_copy/ and caches
+└── src/                    # Pristine scaffold — do not edit
+    ├── main.py             # CLI entry point (provided)
+    ├── orchestrator.py     # Orchestrator — implement this
+    ├── tower.py            # Tower — implement this
+    ├── move.py             # Move — implement this
+    ├── disc.py             # Disc — implement this
     ├── ascii_renderer.py   # AsciiRenderer (provided)
     ├── step_writer.py      # StepWriter (provided)
-    └── tests/
+    └── tests/              # Full test suite (provided)
         ├── conftest.py
         ├── test_disc.py
         ├── test_tower.py
@@ -94,6 +95,9 @@ tower_of_hanoi/
         ├── test_orchestrator.py
         └── test_integration.py
 ```
+
+`src_copy/` is your personal working directory (git-ignored).
+Copy `src/` to get started; never commit `src_copy/`.
 
 ---
 
@@ -119,3 +123,27 @@ python3 src/main.py
 ```bash
 pytest src/tests/
 ```
+
+---
+
+## Student Workflow
+
+```bash
+# 1. Copy the pristine scaffold to your working directory.
+cp -r src src_copy
+
+# 2. Implement the four skeleton classes in src_copy/:
+#      disc.py  tower.py  move.py  orchestrator.py
+#    Each method body currently raises NotImplementedError.
+
+# 3. Run the tests after each implementation:
+cd projects/tower_of_hanoi
+python -m pytest src_copy/tests/ -v
+
+# 4. Iterate until all tests pass, then try the CLI:
+python3 src_copy/main.py               # 3 discs, interactive
+python3 src_copy/main.py --number-discs 5 --no-step-by-step
+```
+
+`src_copy/` is git-ignored — your work stays local until
+you are ready to share it.
