@@ -2169,3 +2169,56 @@ the plan was approved (recorded per prompt history protocol):
 * Step 30.5 added: apply `toh_solution_prompt.md` via Claude
   CLI, create `src_copy/`, run `pytest src_copy/tests/` to
   validate all tests pass before marking Phase 30 complete.
+
+---
+
+## Restructure TOH Prompts
+
+[x] Status
+
+Restructure the Tower of Hanoi prompt files to follow a 4-step
+HDD (Human-Directed Development) workflow. Replace the two
+existing prompt files with four purpose-specific prompts, one
+per phase. No section is dropped — every section from the
+existing files maps to one of the new files as shown below.
+
+### Section mapping
+
+| Existing section (source file) | → New file |
+|---|---|
+| Teaching note, Context, Solution Approach, Style Rules (toh_prompt.md) | toh_problem_prompt.md |
+| Objective: skeleton classes, utilities, CLI, README (toh_prompt.md) | toh_problem_prompt.md |
+| Output: file list (toh_prompt.md) | toh_problem_prompt.md |
+| Student Workflow (toh_prompt.md) | toh_problem_prompt.md + README.md |
+| Objective: test suite item (toh_prompt.md) | toh_define_tests_prompt.md |
+| Test Requirements table (toh_prompt.md) | toh_define_tests_prompt.md |
+| Intro context, Steps, Constraints (toh_solution_prompt.md) | toh_complete_prompt.md |
+
+### Four new prompt files
+
+1. **toh_problem_prompt.md** — defines the problem; requests
+   architecture: classes with method signatures and
+   `raise NotImplementedError` bodies; utilities, CLI, README.
+
+2. **toh_define_tests_prompt.md** — given the class definitions,
+   produce the test suite structure: test class and method names
+   per class plus integration; no assertions yet.
+
+3. **toh_complete_tests_prompt.md** — given the test structure,
+   fill in all test bodies with assertions.
+
+4. **toh_complete_prompt.md** — given class definitions and
+   complete tests, fill in class implementations one at a time,
+   running tests after each to validate.
+
+### README.md addition
+
+Add a `## Running with a Prompt File` section with a sample
+Claude CLI invocation:
+
+  ```bash
+  claude -p "$(cat ../toh_problem_prompt.md)" \
+    --allowedTools "Bash,Read,Write" 2>&1
+  # Add --dangerously-skip-permissions once the prompt is
+  # well-vetted to skip per-action approval prompts.
+  ```

@@ -4329,3 +4329,128 @@ CONSTRAINTS: Append-only to plan.md; tag format
 vN.K-*-step-completed.
 OUTPUT: plan.md Phase 30 all [x]; tag v30.6-* pushed.
 VERIFY: `git tag | grep "v30\." && echo PASS`
+
+---
+
+<!-- AI-GENERATED [claude:claude-sonnet-4-6]: Phase 31 (prompt_history.md ## Restructure TOH Prompts) -->
+
+## Phase 31: RESTRUCTURE TOH PROMPTS
+
+### Step 31.1: Create toh_problem_prompt.md; delete toh_prompt.md
+
+[ ] Status
+
+CONTEXT: `toh_prompt.md` contains the scaffold-generation spec;
+needs to become `toh_problem_prompt.md` covering architecture only
+(no tests).
+ACTION: Create `projects/tower_of_hanoi/toh_problem_prompt.md`
+from `toh_prompt.md` keeping: teaching note, context, objective
+(items 1–4: skeleton classes + utilities + CLI + README, NOT test
+suite item 5), solution approach, style rules, output file list
+(scaffold files only, no test files), student workflow. Then
+`git rm projects/tower_of_hanoi/toh_prompt.md`.
+CONSTRAINTS: ≤79 chars/line; output file list must NOT include
+test files (those belong in Steps 31.2–31.3).
+OUTPUT: `toh_problem_prompt.md` exists; `toh_prompt.md` deleted.
+VERIFY: `ls projects/tower_of_hanoi/toh_problem_prompt.md
+&& ! ls projects/tower_of_hanoi/toh_prompt.md 2>/dev/null
+&& echo PASS`
+
+---
+
+### Step 31.2: Create toh_define_tests_prompt.md
+
+[ ] Status
+
+CONTEXT: No prompt exists for the "define test structure" phase;
+the test requirements table from `toh_prompt.md` must move here.
+ACTION: Create `projects/tower_of_hanoi/toh_define_tests_prompt.
+md`. Context: given class definitions in `src/`, produce the test
+suite skeleton — one file per class plus integration; test class
+and method names with `raise NotImplementedError` bodies and a
+conftest.py; no assertions yet. Include the test requirements
+table as the specification of what each method must eventually
+cover.
+CONSTRAINTS: Output asks for structure only (names + stubs),
+not implementations; ≤79 chars/line.
+OUTPUT: `toh_define_tests_prompt.md` exists with test requirements
+table and stub-generation instructions.
+VERIFY: `ls projects/tower_of_hanoi/toh_define_tests_prompt.md
+&& grep "test_integration"
+projects/tower_of_hanoi/toh_define_tests_prompt.md && echo PASS`
+
+---
+
+### Step 31.3: Create toh_complete_tests_prompt.md
+
+[ ] Status
+
+CONTEXT: No prompt exists for "fill in test assertions" — new
+step in the HDD workflow with no existing source.
+ACTION: Create `projects/tower_of_hanoi/
+toh_complete_tests_prompt.md`. Context: given test structure from
+Step 31.2, fill in all test bodies with assertions; carry forward
+the test requirements table. One class at a time: fill in, run
+`python3 -m pytest tests/test_<class>.py -v`, fix failures, then
+proceed.
+CONSTRAINTS: Prompt must instruct agent to run tests after each
+file; ≤79 chars/line.
+OUTPUT: `toh_complete_tests_prompt.md` exists.
+VERIFY: `ls projects/tower_of_hanoi/toh_complete_tests_prompt.md
+&& echo PASS`
+
+---
+
+### Step 31.4: Create toh_complete_prompt.md; delete toh_solution_prompt.md
+
+[ ] Status
+
+CONTEXT: `toh_solution_prompt.md` is the student solution prompt;
+it becomes `toh_complete_prompt.md` to match new naming.
+ACTION: Copy content of `toh_solution_prompt.md` into
+`toh_complete_prompt.md` (content unchanged), then
+`git rm projects/tower_of_hanoi/toh_solution_prompt.md`.
+CONSTRAINTS: Content preserved verbatim; ≤79 chars/line.
+OUTPUT: `toh_complete_prompt.md` exists;
+`toh_solution_prompt.md` deleted.
+VERIFY: `ls projects/tower_of_hanoi/toh_complete_prompt.md
+&& ! ls projects/tower_of_hanoi/toh_solution_prompt.md 2>/dev/null
+&& echo PASS`
+
+---
+
+### Step 31.5: Update README.md with CLI example section
+
+[ ] Status
+
+CONTEXT: README.md has no example of applying a prompt file via
+the Claude CLI; called out in the approved prompt_history entry.
+ACTION: Add `## Running with a Prompt File` section to
+`projects/tower_of_hanoi/README.md` after `## Student Workflow`.
+Show the four HDD phases and the sample invocation using
+`toh_problem_prompt.md`; note `--dangerously-skip-permissions`
+for well-vetted prompts.
+CONSTRAINTS: ≤79 chars/line; section placed after Student
+Workflow.
+OUTPUT: README.md contains `## Running with a Prompt File`.
+VERIFY: `grep "Running with a Prompt File"
+projects/tower_of_hanoi/README.md && echo PASS`
+
+---
+
+### Step 31.6: Mark Phase 31 complete
+
+[ ] Status
+
+CONTEXT: All Phase 31 steps done; `sdw/prompt_history.md`
+`## Restructure TOH Prompts` needs `[x] Status`.
+ACTION: (1) Flip `[ ] Status` → `[x] Status` on the line after
+`## Restructure TOH Prompts` in `sdw/prompt_history.md`. (2)
+Confirm every Phase 31 step in `sdw/plan.md` is `[x] Status`.
+(3) Commit. (4) Tag `v31.6-restructure-toh-prompts-step-completed`
+and push branch + tags.
+CONSTRAINTS: Tag format vN.K-*-step-completed; append-only to
+plan.md.
+OUTPUT: `prompt_history.md` `## Restructure TOH Prompts` marked
+`[x]`; plan.md Phase 31 all `[x]`; tag pushed.
+VERIFY: `git tag | grep "v31\." && echo PASS`
