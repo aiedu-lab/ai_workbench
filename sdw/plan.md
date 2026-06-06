@@ -4294,7 +4294,7 @@ VERIFY: `ls projects/tower_of_hanoi/toh_solution_prompt.md
 
 ### Step 30.5: Apply toh_solution_prompt.md; run all tests
 
-[ ] Status
+[x] Status
 
 CONTEXT: `toh_solution_prompt.md` must be validated end-to-end:
 create `src_copy/` from scaffold, apply prompt to fill in the 4
