@@ -2259,3 +2259,32 @@ section:
 > You are already using genAI for chatting with chatgpt, claude, 
 > gemini, etc. for any and all information. Then what more is 
 > left that is worthwhile learning.
+
+## Streamline Sessions
+[x] Status
+
+Reference: 
+* [Motivation](experimental/motivation/motivation.md)
+* [AI Computer](experimental/motivation/ai_computer.md)
+* git diff for manual changes
+
+Streamline the repo README.md and developer workbench setup. 
+
+Manual changes
+* AGENDA section of README.md is the second one and rewords/moved few 
+other sections to later. 
+* Updated Developer Workbench session and `## LLM Provider Setup` 
+subsection as well as `tools/claude/cloud.md`.
+
+### Objectives
+1. Add a `Why learn GenAI` session as the first session in the AGENDA 
+table that references the [Why learn GenAI](sessions/motivation.md) session.
+
+2. Create a corresponding `Why learn GenAI` session that consolidates 
+the content of `Motivation` and `AI Computer`. One mechanism could be 
+to rename the section `## Why Now? The Hardwave Wave` of the 
+`Motivation` file to `## Why Now? The AI Computer & AI Local Wave` 
+and insert a story and summarized version of the `AI Computer` into 
+that section.
+
+3. Review the manual changes for correctness and consistency.

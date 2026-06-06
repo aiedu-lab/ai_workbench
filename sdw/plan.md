@@ -4575,3 +4575,93 @@ OUTPUT: Tag `v33.2-update-readme-motivation-step-completed` in
 VERIFY: `git tag | grep "v33\." && grep -A1 "### Step 33\."
 sdw/plan.md | grep "\[ \] Status" | wc -l
 && echo PASS`
+
+---
+
+## Phase 34: STREAMLINE SESSIONS
+
+**Addresses:** `sdw/prompt_history.md` § `## Streamline Sessions`
+
+**Target files:** `sessions/motivation.md` (new),
+`README.md`, `tools/claude/cloud.md`, `sessions/dev_workbench.md`
+
+---
+
+### Step 34.1: Create `sessions/motivation.md`
+
+[ ] Status
+
+CONTEXT: `experimental/motivation/motivation.md` has full motivation
+essay; `experimental/motivation/ai_computer.md` covers AI PC/OS
+shift; no `sessions/motivation.md` exists yet.
+ACTION: Create `sessions/motivation.md` from
+`experimental/motivation/motivation.md` as base; replace
+`## Why Now? The Hardware Wave` heading and body with
+`## Why Now? The AI Computer & AI Local Wave` that retains existing
+hardware-wave prose and appends a 3–4 sentence summary from
+`ai_computer.md` (NPU/local AI, OS orchestration, privacy benefits).
+All lines ≤ 79 chars; 2-space indentation.
+CONSTRAINTS: Do not modify `experimental/motivation/` files; no new
+sections beyond the expanded Why Now? block; no trailing whitespace.
+OUTPUT: `sessions/motivation.md` with all original sections plus
+expanded `Why Now? The AI Computer & AI Local Wave` section.
+VERIFY: `test -f sessions/motivation.md && echo PASS || echo FAIL`
+
+---
+
+### Step 34.2: Add "Why learn GenAI?" row to README.md AGENDA
+
+[ ] Status
+
+CONTEXT: `README.md` AGENDA table has "Introduction" as first row;
+no "Why learn GenAI?" entry exists; `sessions/motivation.md` created
+in Step 34.1.
+ACTION: Insert new first row in the AGENDA table linking to
+`sessions/motivation.md` with description "Understand why generative
+AI matters and what the AI Computer shift means for builders."
+CONSTRAINTS: Do not modify any other AGENDA rows; keep all lines
+≤ 79 chars; do not change section ordering elsewhere in README.md.
+OUTPUT: `README.md` with "Why learn GenAI?" as first AGENDA row.
+VERIFY: `python3 -c "
+import re; c=open('README.md').read()
+m=re.search(r'## 📅 Agenda.*?(?=\n##)',c,re.DOTALL)
+rows=[l for l in m.group().split('\n')
+      if l.startswith('|') and 'Topic' not in l and '---' not in l]
+print('PASS' if 'motivation' in rows[0] else 'FAIL')
+"`
+
+---
+
+### Step 34.3: Verify and fix manual changes
+
+[ ] Status
+
+CONTEXT: Manual changes to `README.md`, `sessions/dev_workbench.md`,
+and `tools/claude/cloud.md` are unstaged; typo "chodse" exists in
+`tools/claude/cloud.md`.
+ACTION: (1) Fix typo "chodse" → "choose" in `tools/claude/cloud.md`.
+(2) Verify title "# Claude Cloud Account" on line 1. (3) Verify
+LLM Provider Setup table in `sessions/dev_workbench.md` has rows
+for cloud.md, cli.md, desktop.md and "pay-as-you-go" wording.
+(4) Verify README.md SDW section appears only under Contribution
+Guidelines, not duplicated.
+CONSTRAINTS: Only fix typo and broken markdown; do not undo
+intentional manual changes; do not add new content.
+OUTPUT: `tools/claude/cloud.md` typo fixed; all three files verified.
+VERIFY: `grep -c "chodse" tools/claude/cloud.md  # 0`
+
+---
+
+### Step 34.4: Mark Phase 34 complete
+
+[ ] Status
+
+CONTEXT: All Phase 34 steps executed and verified; status lines in
+`sdw/plan.md` read `[ ] Status`; prompt section still `[ ] Status`.
+ACTION: (1) Confirm all `[ ] Status` in Phase 34 of `sdw/plan.md`
+are `[x] Status`. (2) Commit all changes.
+(3) Tag `v34.4-streamline-sessions-step-completed` and push.
+CONSTRAINTS: Only flip status lines; do not modify step bodies.
+OUTPUT: All Phase 34 `[ ] Status` → `[x] Status`; tag pushed.
+VERIFY: `grep -A1 "### Step 34\." sdw/plan.md | grep "\[ \] Status"
+# → 0 matches`
