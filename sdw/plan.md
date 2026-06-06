@@ -4208,3 +4208,127 @@ CONSTRAINTS: Append-only to plan.md; tag format
 vN.K-*-step-completed.
 OUTPUT: plan.md Phase 29 all [x]; tag v29.3-* pushed.
 VERIFY: `git tag | grep "v29\." && echo PASS`.
+
+---
+
+## Phase 30: UPDATE TOH
+<!-- AI-GENERATED [claude:claude-sonnet-4-6]: Phase 30
+     (prompt_history.md ## Update TOH) -->
+
+### Step 30.1: Fix line-length violations in src/ Python files
+
+[ ] Status
+
+CONTEXT: `wc -L` on `projects/tower_of_hanoi/src/*.py` and
+`src/tests/*.py` shows max lines 81–102 chars in
+ascii_renderer.py (81), disc.py (82), move.py (85),
+orchestrator.py (84), step_writer.py (102), test_move.py (99),
+test_orchestrator.py (81), violating the 79-char rule in
+`.agent/rules/always-line-length.md`.
+ACTION: Edit each offending file to wrap long lines to ≤79 chars;
+apply 2-space indent; exempt only unbreakable URLs.
+CONSTRAINTS: No logic, behavior, test assertions, or method
+signature changes; src/__pycache__/ not modified.
+OUTPUT: All `.py` files in `src/` and `src/tests/` pass ≤79-char
+check; `toh_prompt.md` Style Rules left unchanged.
+VERIFY: `awk 'length>79' projects/tower_of_hanoi/src/*.py
+projects/tower_of_hanoi/src/tests/*.py
+&& echo FAIL || echo PASS`
+
+### Step 30.2: Add richer comments; validate empty_tower() logic
+
+[ ] Status
+
+CONTEXT: Test methods lack per-method docstrings; `empty_tower()`
+fixture `num_discs=3` looks wrong but is correct (game capacity
+for AsciiRenderer column sizing, not current disc count).
+ACTION: (1) Add a one-line docstring to every `test_*` method
+in all 5 test files stating purpose and expected outcome. (2) Add
+a comment on `empty_tower()` confirming `num_discs=3` is game
+capacity for renderer, NOT disc count. (3) Add brief WHY comments
+to non-obvious blocks in non-test src/ files (e.g.
+step_writer.py context-manager close logic).
+CONSTRAINTS: No assertion/logic/signature changes; ≤79 chars/line.
+OUTPUT: Every `test_*` method has a docstring; `empty_tower()`
+has clarifying comment; WHY comments added to src/ files.
+VERIFY: `grep -c '"""' projects/tower_of_hanoi/src/tests/
+test_tower.py` → count ≥ 10
+
+### Step 30.3: Create src_scaffold/ and .gitignore
+
+[ ] Status
+
+CONTEXT: `src/` is the pristine scaffold; no student working
+directory or `.gitignore` exists in `projects/tower_of_hanoi/`.
+ACTION: (1) Create `projects/tower_of_hanoi/src_scaffold/` as a
+committed copy of `src/` (pristine, never modified). (2) Create
+`projects/tower_of_hanoi/.gitignore` with `src_copy/`. (3) Add
+`## Student Workflow` section to `projects/tower_of_hanoi/
+README.md`: copy `src_scaffold/` → `src_copy/`, implement 4
+skeleton classes, run `pytest src_copy/tests/`.
+CONSTRAINTS: `src_scaffold/` identical to `src/`; `src_copy/`
+never committed; ≤79 chars/line.
+OUTPUT: `src_scaffold/` committed; `.gitignore` has `src_copy/`;
+README.md has `## Student Workflow` section.
+VERIFY: `ls projects/tower_of_hanoi/src_scaffold/disc.py
+&& grep "src_copy" projects/tower_of_hanoi/.gitignore
+&& echo PASS`
+
+### Step 30.4: Create toh_solution_prompt.md; update toh_prompt.md
+
+[ ] Status
+
+CONTEXT: No `toh_solution_prompt.md` exists; `toh_prompt.md`
+Output section does not reference `src_scaffold/` or `src_copy/`.
+ACTION: (1) Create `projects/tower_of_hanoi/toh_solution_prompt.
+md` with self-contained impl requirements for Disc, Tower, Move,
+Orchestrator (matching toh_prompt.md interface) so `claude -p`
+can fill in the 4 skeleton classes. (2) Update `toh_prompt.md`
+Output section: `src_scaffold/` = pristine scaffold; `src/` =
+reference solution; `src_copy/` = student working area (git-
+ignored).
+CONSTRAINTS: `toh_solution_prompt.md` self-contained for
+`claude -p`; ≤79 chars/line.
+OUTPUT: `toh_solution_prompt.md` exists; `toh_prompt.md` Output
+references `src_scaffold/` and `src_copy/`.
+VERIFY: `ls projects/tower_of_hanoi/toh_solution_prompt.md
+&& grep "src_scaffold" projects/tower_of_hanoi/toh_prompt.md
+&& echo PASS`
+
+### Step 30.5: Apply toh_solution_prompt.md; run all tests
+
+[ ] Status
+
+CONTEXT: `toh_solution_prompt.md` must be validated end-to-end:
+create `src_copy/` from scaffold, apply prompt to fill in the 4
+skeleton classes, run `pytest src_copy/tests/` to confirm all
+tests pass.
+ACTION: (1) `cp -r projects/tower_of_hanoi/src_scaffold
+projects/tower_of_hanoi/src_copy`. (2) From `projects/
+tower_of_hanoi/` run `claude -p "$(cat toh_solution_prompt.md)"
+--allowedTools Write` to fill skeleton classes in `src_copy/`.
+(3) Run `python -m pytest src_copy/tests/ -q` and confirm all
+pass. (4) Confirm `src_copy/` absent from `git status`.
+CONSTRAINTS: `src_copy/` stays git-ignored; fix failures before
+marking complete.
+OUTPUT: All tests in `src_copy/tests/` pass; `src_copy/` absent
+from `git status --short`.
+VERIFY: `cd projects/tower_of_hanoi
+&& python -m pytest src_copy/tests/ -q 2>&1 | tail -3
+&& (git status --short | grep -q "src_copy"
+&& echo FAIL || echo PASS)`
+
+### Step 30.6: Mark Phase 30 complete
+
+[ ] Status
+
+CONTEXT: All Phase 30 steps done; `sdw/prompt_history.md`
+`## Update TOH` already marked `[x] Status` (committed in
+Step 3a).
+ACTION: Confirm every `[ ] Status` in Phase 30 block of
+`sdw/plan.md` is `[x] Status` (flipped per-step); commit any
+remaining changes; tag `v30.6-update-toh-step-completed`; push.
+CONSTRAINTS: Append-only to plan.md; tag format
+vN.K-*-step-completed.
+OUTPUT: plan.md Phase 30 all [x]; tag v30.6-* pushed.
+VERIFY: `git tag | grep "v30\." && echo PASS`

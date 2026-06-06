@@ -2112,3 +2112,60 @@ components with separation of concerns.
 * AI gets confused unless given limited context - otherwise, you 
 see deteoriated quality due to context overflow - that is focused 
 and limited in scope at an instance.
+
+## Update TOH
+[x] Status
+
+Reference `projects/tower_of_hanoi`. Note that the code base in
+`src/` was generated applying the prompt in `toh_prompt.md`. Thus,
+if you make any changes to code in `src/` update the `toh_prompt.md`
+so that the code in `src/` can be created anytime by applying
+the `toh_prompt.md`. 
+
+### Changes to src code
+1. Run /always-line-length on all the python code in the src/ directory.
+2. Annotate with richer comments in all the classes and methods of the code - 
+Specifically ensure the comments in tests/ directory is complete and fully
+specified so that while running tests the user knows exactly the purpose 
+and motivate of all test cases.
+3. Validate the logic of the code in src/tests/. Specifically the 
+empty_tower() in tests/test_tower.py seems incorrect as the 
+Tower class ctor 2nd argument num_discs=3, shouldn't it be zero?
+
+### Restructure src content
+Offer a placeholder in the directory `projects/tower_of_hanoi` where
+the modifications to `src/` do not pollute the original code with 
+skeletal classes defined so that users can always start from skelete
+class definitions.
+Possible solutions are:
+1. Copy src to src_copy and then fill in the classes in src_copy/
+If so, how do we prevent the solution is not git checked in. Do we just
+put src_copy/ in .gitignore. 
+2. How do we ensure that the following classes are not modified:
+* classes in the tests directory.
+* classes in the step_write.py or ascii_renderer.py.
+3. Possible solutions: 
+* Should we just package them somehow that is not
+modified? OR 
+* In the interest of keeping everything simple, we let 
+student duplicate everything user src_original to src/ and modifying?
+
+### Solve
+For demonstrating students, we need to show a sample solution. 
+Create `projects/tower_of_hanoi/SOLUTION.md` where we document
+example prompt we feed to solve the problem: 
+* copy the code from `src` to say `src_copy`
+* fill in the code in the methods of classes in src_copy/
+* run the test in src_copy/tests
+* validate all tests pass, validate src_copy is in .gitignore
+* git add & commit - note only the SOLUTION.md is committed, not src_copy
+
+### Approved Clarifications (pre-approval addendum)
+
+The following changes were incorporated into Phase 30 before
+the plan was approved (recorded per prompt history protocol):
+* `SOLUTION.md` renamed to `toh_solution_prompt.md` to mirror
+  the naming pattern of `toh_prompt.md` (prompt → output).
+* Step 30.5 added: apply `toh_solution_prompt.md` via Claude
+  CLI, create `src_copy/`, run `pytest src_copy/tests/` to
+  validate all tests pass before marking Phase 30 complete.
