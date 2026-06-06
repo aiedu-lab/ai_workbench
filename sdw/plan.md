@@ -4611,7 +4611,7 @@ VERIFY: `test -f sessions/motivation.md && echo PASS || echo FAIL`
 
 ### Step 34.2: Add "Why learn GenAI?" row to README.md AGENDA
 
-[ ] Status
+[x] Status
 
 CONTEXT: `README.md` AGENDA table has "Introduction" as first row;
 no "Why learn GenAI?" entry exists; `sessions/motivation.md` created
