@@ -4454,3 +4454,82 @@ plan.md.
 OUTPUT: `prompt_history.md` `## Restructure TOH Prompts` marked
 `[x]`; plan.md Phase 31 all `[x]`; tag pushed.
 VERIFY: `git tag | grep "v31\." && echo PASS`
+
+---
+
+<!-- AI-GENERATED [claude:claude-sonnet-4-6]: Phase 32 (prompt_history.md ## TOH Reorganize Solution Directory) -->
+
+## Phase 32: TOH REORGANIZE SOLUTION DIRECTORY
+
+### Step 32.1: Move prompt files and src_solution into solution/
+
+[ ] Status
+
+CONTEXT: Prompt files and `src_solution/` sit loose in
+`projects/tower_of_hanoi/`; grouping them under `solution/`
+makes the layout self-explanatory.
+ACTION: `mkdir -p solution/prompts` then `git mv` the four
+prompt files into `solution/prompts/` and `git mv src_solution
+solution/src`.
+CONSTRAINTS: `src/` (scaffold) stays at root; `src_copy/` stays
+git-ignored; no file content changes in this step.
+OUTPUT: `solution/prompts/*.md` and `solution/src/` exist in git.
+VERIFY: `ls projects/tower_of_hanoi/solution/prompts/ | wc -l
+&& ls projects/tower_of_hanoi/solution/src/disc.py && echo PASS`
+
+---
+
+### Step 32.2: Update README.md
+
+[ ] Status
+
+CONTEXT: README.md references old paths and has no Objective
+section explaining the HDD exercise.
+ACTION: (1) Add `## Objective` section (before `## Rules`)
+explaining HDD with 4-phase table. (2) Update `## Project
+Structure` tree to show `solution/prompts/` and `solution/src/`.
+(3) Update `## Running with a Prompt File` to use
+`solution/prompts/<file>` paths. (4) Update the Student Workflow
+note about `toh_complete_solution_prompt.md` reference.
+CONSTRAINTS: ≤79 chars/line; preserve all other sections.
+OUTPUT: README.md has `## Objective`; `## Project Structure`
+reflects `solution/`; prompt paths updated.
+VERIFY: `grep "## Objective" projects/tower_of_hanoi/README.md
+&& grep "solution/prompts"
+projects/tower_of_hanoi/README.md && echo PASS`
+
+---
+
+### Step 32.3: Update cross-references inside prompt files
+
+[ ] Status
+
+CONTEXT: `toh_problem_prompt.md` Student Workflow section still
+references `toh_complete_solution_prompt.md` without a path.
+ACTION: Update the Student Workflow section in
+`solution/prompts/toh_problem_prompt.md` to reference
+`solution/prompts/toh_complete_solution_prompt.md`.
+CONSTRAINTS: Change only the filename reference; preserve all
+other content; ≤79 chars/line.
+OUTPUT: `toh_problem_prompt.md` references the new path.
+VERIFY: `grep "solution/prompts"
+projects/tower_of_hanoi/solution/prompts/toh_problem_prompt.md
+&& echo PASS`
+
+---
+
+### Step 32.4: Mark Phase 32 complete
+
+[ ] Status
+
+CONTEXT: All Phase 32 steps done; `sdw/prompt_history.md`
+`## TOH Reorganize Solution Directory` needs `[x] Status`.
+ACTION: (1) Flip `[ ] Status` → `[x] Status` on the line after
+`## TOH Reorganize Solution Directory` in
+`sdw/prompt_history.md`. (2) Confirm every Phase 32 step in
+`sdw/plan.md` is `[x] Status`. (3) Commit. (4) Tag
+`v32.4-toh-reorganize-solution-step-completed`; push.
+CONSTRAINTS: Tag format vN.K-*-step-completed.
+OUTPUT: `prompt_history.md` marked `[x]`; plan.md Phase 32 all
+`[x]`; tag pushed.
+VERIFY: `git tag | grep "v32\." && echo PASS`

@@ -2223,3 +2223,26 @@ Claude CLI invocation:
   # Add --dangerously-skip-permissions once the prompt is
   # well-vetted to skip per-action approval prompts.
   ```
+
+---
+
+## TOH Reorganize Solution Directory
+
+[ ] Status
+
+Move the four HDD prompt files and the reference solution into a
+single `solution/` subdirectory to make the project layout
+self-explanatory:
+
+  solution/
+    prompts/   — four HDD phase prompt files
+    src/       — reference solution code (was src_solution/)
+
+Update README.md:
+- Add `## Objective` section explaining the HDD exercise and
+  its four phases.
+- Update `## Project Structure` to reflect the new layout,
+  tagging `solution/prompts/` as sample prompts and
+  `solution/src/` as sample solution code.
+- Update all cross-references (Student Workflow, Running with
+  a Prompt File, etc.) to use the new paths.
