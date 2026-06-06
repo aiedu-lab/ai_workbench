@@ -4136,3 +4136,75 @@ CONSTRAINTS: Append-only to plan.md; tag format
 vN.K-*-step-completed.
 OUTPUT: plan.md Phase 28 all [x]; tag pushed.
 VERIFY: `git tag | grep "v28\." && echo PASS`.
+
+---
+
+## Phase 29: MOTIVATE GENAI
+
+### Step 29.1: Rewrite `## 🌐 Motivation` in README.md
+
+[ ] Status
+
+CONTEXT: README.md `## 🌐 Motivation` (lines 15–34) is a sparse
+one-sentence intro + bare industry table; the full narrative from
+prompt_history.md ## Motivate GenAI has never been applied.
+ACTION: Replace the content between `## 🌐 Motivation` and the
+following `---` separator in README.md with the full narrative
+from the prompt: vacation group-chat hook, six-activity
+breakdown, three-generations-of-software arc (Legacy → Predictive
+AI → Generative AI), `## 🌐 The Same Story, Everywhere` industry
+table (expanded from the prompt), `## What This Means for
+Software`, and `## Why Now? The Hardware Wave`; preserve the
+existing table rows and augment them; keep all lines ≤79 chars
+with 2-space indents; include the closing blockquote takeaway.
+CONSTRAINTS: Do not touch any other README.md sections; ≤79
+chars/line; 2-space indent; no emoji added unless already in
+the prompt text.
+OUTPUT: README.md `## 🌐 Motivation` contains vacation example,
+three-generations narrative, expanded industry table, "What This
+Means for Software", and "Hardware Wave" sections.
+VERIFY: `grep -n "judgment calls\|Hardware Wave" README.md
+| grep -v "^Binary" && echo PASS`.
+
+### Step 29.2: Expand `## 🧠 The Core Concept` in sessions/hdd.md
+
+[ ] Status
+
+CONTEXT: sessions/hdd.md `## 🧠 The Core Concept` (lines 12–39)
+has a table and When-to-use block but no Principles or Factors
+subsections; the prompt specifies both including a third principle
+on code review feasibility.
+ACTION: Insert two new subsections immediately before the `---`
+that separates Core Concept from the Exercise section:
+`### Principles` — (1) GenAI code is probabilistic (same prompt ≠
+identical code), correctness not guaranteed by construction;
+(2) the human remains accountable for the outcome and must review;
+(3) authentic accountability requires reviewing the code — review
+can focus on high-level constructs but is only feasible when each
+component is ≤~200 lines and structured with clear separation of
+concerns.
+`### Factors` — humans are smarter but AI is faster; AI output
+quality degrades when context is too wide (context overflow); keep
+each AI task focused and limited in scope.
+CONSTRAINTS: Do not modify Objective, Exercise, or existing
+table/subsections; ≤79 chars/line; 2-space indent.
+OUTPUT: sessions/hdd.md has `### Principles` and `### Factors`
+subsections within `## 🧠 The Core Concept`.
+VERIFY: `grep -n "Principles\|Factors\|probabilistic"
+sessions/hdd.md && echo PASS`.
+
+### Step 29.3: Mark Phase 29 complete
+
+[ ] Status
+
+CONTEXT: All Phase 29 steps done; prompt_history.md
+`## Motivate GenAI` already marked [x] Status (committed with
+plan in Step 3a).
+ACTION: Confirm every `[ ] Status` in the Phase 29 block of
+sdw/plan.md is already `[x] Status` (flipped per-step during
+execution); commit any remaining file changes; tag
+`v29.3-motivate-genai-step-completed`; push branch + tags.
+CONSTRAINTS: Append-only to plan.md; tag format
+vN.K-*-step-completed.
+OUTPUT: plan.md Phase 29 all [x]; tag v29.3-* pushed.
+VERIFY: `git tag | grep "v29\." && echo PASS`.
