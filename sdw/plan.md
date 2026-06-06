@@ -4195,7 +4195,7 @@ sessions/hdd.md && echo PASS`.
 
 ### Step 29.3: Mark Phase 29 complete
 
-[ ] Status
+[x] Status
 
 CONTEXT: All Phase 29 steps done; prompt_history.md
 `## Motivate GenAI` already marked [x] Status (committed with
