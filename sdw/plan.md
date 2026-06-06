@@ -4338,7 +4338,7 @@ VERIFY: `git tag | grep "v30\." && echo PASS`
 
 ### Step 31.1: Create toh_problem_prompt.md; delete toh_prompt.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: `toh_prompt.md` contains the scaffold-generation spec;
 needs to become `toh_problem_prompt.md` covering architecture only

@@ -1,4 +1,4 @@
-# Prompt: Tower of Hanoi — Python Exercise Scaffold
+# Prompt: Tower of Hanoi — Problem Definition & Architecture
 
 > **Teaching note:** This prompt is an example of a well-structured
 > engineering prompt. Each section has a single job: *Context*
@@ -20,7 +20,7 @@
 
 ## Objective
 
-Generate a complete Python scaffold for a Tower of Hanoi solver:
+Generate a Python scaffold for a Tower of Hanoi solver:
 
 1. **Four skeleton classes** (students implement):
    - `Disc` — immutable value object; comparable by size.
@@ -47,8 +47,6 @@ Generate a complete Python scaffold for a Tower of Hanoi solver:
 4. **A README.md** explaining the game rules, the recursive
    solution, and how to run the CLI.
 
-5. **A complete test suite** (one file per class + integration).
-
 ---
 
 ## Solution Approach
@@ -60,18 +58,6 @@ Generate a complete Python scaffold for a Tower of Hanoi solver:
 3. Move N−1 discs: `spare → target`
 
 Boundary: N = 0 → do nothing.  Minimum moves: **2ᴺ − 1**.
-
----
-
-## Test Requirements
-
-| File | Must cover |
-|---|---|
-| `test_disc.py` | valid size; zero/negative `ValueError`; `==`; `<` |
-| `test_tower.py` | construction; `peek` non-destructive; `pop` on empty raises; illegal `push` raises; `as_size_list`; `display` produces output |
-| `test_move.py` | not solved at start; `next` True while moves remain; `next` False when done; Tower[2] holds all discs; move count = 2ᴺ−1 |
-| `test_orchestrator.py` | initial tower state; Tower[2] full after `run()`; Tower[0]/[1] empty; step file non-empty; move count via `## Step` heading count |
-| `test_integration.py` | parametrized N=1,2,3; correct final state; correct move count; ordering invariant — no tower ever has a larger disc above a smaller one at any intermediate step |
 
 ---
 
@@ -88,12 +74,11 @@ Boundary: N = 0 → do nothing.  Minimum moves: **2ᴺ − 1**.
 Return one file per bullet; all Python lives under `src/`:
 
 - `README.md`
-- `src/disc.py`  `src/tower.py`  `src/move.py`  `src/orchestrator.py`
-- `src/ascii_renderer.py`  `src/step_writer.py`  *(fully implemented)*
+- `src/disc.py`  `src/tower.py`  `src/move.py`
+  `src/orchestrator.py`
+- `src/ascii_renderer.py`  `src/step_writer.py`
+  *(fully implemented — not skeletons)*
 - `src/main.py`
-- `src/tests/conftest.py`  `src/tests/test_disc.py`
-  `src/tests/test_tower.py`  `src/tests/test_move.py`
-  `src/tests/test_orchestrator.py`  `src/tests/test_integration.py`
 
 Every skeleton body: exactly `raise NotImplementedError`.
 
@@ -106,5 +91,5 @@ Students copy it to begin work (`src_copy/` is git-ignored):
 cp -r src src_copy
 ```
 
-Apply `toh_solution_prompt.md` via Claude CLI to fill in the
+Apply `toh_complete_prompt.md` via Claude CLI to fill in the
 skeletons in `src_copy/`.
