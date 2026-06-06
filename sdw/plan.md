@@ -4217,7 +4217,7 @@ VERIFY: `git tag | grep "v29\." && echo PASS`.
 
 ### Step 30.1: Fix line-length violations in src/ Python files
 
-[ ] Status
+[x] Status
 
 CONTEXT: `wc -L` on `projects/tower_of_hanoi/src/*.py` and
 `src/tests/*.py` shows max lines 81–102 chars in

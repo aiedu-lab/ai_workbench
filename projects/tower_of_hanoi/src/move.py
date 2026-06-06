@@ -12,78 +12,86 @@ from step_writer import StepWriter
 
 
 class Move:
-    """Generates and executes the complete move sequence for the puzzle.
+  """Generates and executes the complete move sequence for the puzzle.
 
-    The Move class owns the recursion.  It maintains an internal iterator
-    over all legal moves so that callers can advance one step at a time
-    via ``next()``.
+  The Move class owns the recursion.  It maintains an internal iterator
+  over all legal moves so that callers can advance one step at a time
+  via ``next()``.
+
+  Args:
+    towers      (list[Tower]):  The three Tower objects
+                  [Tower0, Tower1, Tower2].
+    num_discs   (int):          Total discs in the puzzle.
+    step_by_step (bool):        If True, ``next()`` pauses for
+                  user input after rendering.
+                  If False, just records the step.
+    step_writer (StepWriter):   Helper that writes Markdown
+                  output to a file.
+  """
+
+  def __init__(
+    self,
+    towers: list[Tower],
+    num_discs: int,
+    step_by_step: bool,
+    step_writer: StepWriter,
+  ) -> None:
+    raise NotImplementedError
+
+  # ------------------------------------------------------------------ #
+  # Public interface                                                     #
+  # ------------------------------------------------------------------ #
+
+  def next(self) -> bool:
+    """Execute the next legal move.
+
+    - Moves the appropriate disc between towers.
+    - Calls ``write_step()`` to record / display the new state.
+    - If ``step_by_step`` is True, waits for the user to press Enter.
+
+    Returns:
+      True  — a move was made; more moves may remain.
+      False — the puzzle is already in its final state (Tower[2] holds
+          all discs in order); no move was made.
+    """
+    raise NotImplementedError
+
+  def write_step(
+    self,
+    step_number: int,
+    from_tower: int,
+    to_tower: int,
+  ) -> None:
+    """Record the current board state as one step.
+
+    Builds a state snapshot from the towers and delegates to
+    ``StepWriter.write()`` so output format is consistent whether
+    writing to a file or stdout.
 
     Args:
-        towers      (list[Tower]):  The three Tower objects [Tower0, Tower1, Tower2].
-        num_discs   (int):          Total discs in the puzzle.
-        step_by_step (bool):        If True, ``next()`` pauses for user input after
-                                    rendering.  If False it just records the step.
-        step_writer (StepWriter):   Helper that writes Markdown output to a file.
+      step_number: 1-based step counter.
+      from_tower:  Index of the tower the disc was moved FROM.
+      to_tower:    Index of the tower the disc was moved TO.
     """
+    raise NotImplementedError
 
-    def __init__(
-        self,
-        towers: list[Tower],
-        num_discs: int,
-        step_by_step: bool,
-        step_writer: StepWriter,
-    ) -> None:
-        raise NotImplementedError
+  def is_solved(self) -> bool:
+    """Return True if Tower[2] holds all discs in correct order."""
+    raise NotImplementedError
 
-    # ------------------------------------------------------------------ #
-    # Public interface                                                     #
-    # ------------------------------------------------------------------ #
+  # ------------------------------------------------------------------ #
+  # Private helpers                                                      #
+  # ------------------------------------------------------------------ #
 
-    def next(self) -> bool:
-        """Execute the next legal move.
+  def _hanoi(self, n: int, source: int, target: int, spare: int) -> None:
+    """Core recursive algorithm.  Yields moves into an internal queue.
 
-        - Moves the appropriate disc between towers.
-        - Calls ``write_step()`` to record / display the new state.
-        - If ``step_by_step`` is True, waits for the user to press Enter.
+    Students implement the three-step recursion described in README.md.
 
-        Returns:
-            True  — a move was made; more moves may remain.
-            False — the puzzle is already in its final state (Tower[2] holds
-                    all discs in order); no move was made.
-        """
-        raise NotImplementedError
-
-    def write_step(self, step_number: int, from_tower: int, to_tower: int) -> None:
-        """Record the current board state as one step.
-
-        Builds a state snapshot from the towers and delegates to
-        ``StepWriter.write()`` so output format is consistent whether
-        writing to a file or stdout.
-
-        Args:
-            step_number: 1-based step counter.
-            from_tower:  Index of the tower the disc was moved FROM.
-            to_tower:    Index of the tower the disc was moved TO.
-        """
-        raise NotImplementedError
-
-    def is_solved(self) -> bool:
-        """Return True if Tower[2] holds all discs in correct order."""
-        raise NotImplementedError
-
-    # ------------------------------------------------------------------ #
-    # Private helpers                                                      #
-    # ------------------------------------------------------------------ #
-
-    def _hanoi(self, n: int, source: int, target: int, spare: int) -> None:
-        """Core recursive algorithm.  Yields moves into an internal queue.
-
-        Students implement the three-step recursion described in README.md.
-
-        Args:
-            n:      Number of discs to move.
-            source: Index of the source tower.
-            target: Index of the destination tower.
-            spare:  Index of the intermediate/spare tower.
-        """
-        raise NotImplementedError
+    Args:
+      n:      Number of discs to move.
+      source: Index of the source tower.
+      target: Index of the destination tower.
+      spare:  Index of the intermediate/spare tower.
+    """
+    raise NotImplementedError
