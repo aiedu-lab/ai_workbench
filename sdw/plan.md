@@ -4360,7 +4360,7 @@ VERIFY: `ls projects/tower_of_hanoi/toh_problem_prompt.md
 
 ### Step 31.2: Create toh_define_tests_prompt.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: No prompt exists for the "define test structure" phase;
 the test requirements table from `toh_prompt.md` must move here.
