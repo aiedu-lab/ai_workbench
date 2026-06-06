@@ -4481,7 +4481,7 @@ VERIFY: `ls projects/tower_of_hanoi/solution/prompts/ | wc -l
 
 ### Step 32.2: Update README.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: README.md references old paths and has no Objective
 section explaining the HDD exercise.
