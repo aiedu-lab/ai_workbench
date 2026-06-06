@@ -4440,7 +4440,7 @@ projects/tower_of_hanoi/README.md && echo PASS`
 
 ### Step 31.6: Mark Phase 31 complete
 
-[ ] Status
+[x] Status
 
 CONTEXT: All Phase 31 steps done; `sdw/prompt_history.md`
 `## Restructure TOH Prompts` needs `[x] Status`.
