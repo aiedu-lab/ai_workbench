@@ -4502,7 +4502,7 @@ projects/tower_of_hanoi/README.md && echo PASS`
 
 ### Step 32.3: Update cross-references inside prompt files
 
-[ ] Status
+[x] Status
 
 CONTEXT: `toh_problem_prompt.md` Student Workflow section still
 references `toh_complete_solution_prompt.md` without a path.

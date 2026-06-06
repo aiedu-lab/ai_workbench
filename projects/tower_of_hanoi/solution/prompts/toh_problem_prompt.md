@@ -91,5 +91,5 @@ Students copy it to begin work (`src_copy/` is git-ignored):
 cp -r src src_copy
 ```
 
-Apply `toh_complete_prompt.md` via Claude CLI to fill in the
-skeletons in `src_copy/`.
+Apply `solution/prompts/toh_complete_solution_prompt.md` via
+Claude CLI to fill in the skeletons in `src_copy/`.
