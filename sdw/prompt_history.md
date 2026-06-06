@@ -2246,3 +2246,16 @@ Update README.md:
   `solution/src/` as sample solution code.
 - Update all cross-references (Student Workflow, Running with
   a Prompt File, etc.) to use the new paths.
+
+---
+
+## Update `## 🌐 Motivation`
+[x] Status
+
+Reference repo root `README.md`: Weave in a pithy and elegant 
+version of the below snippet in the beginning of `## Motivation` 
+section:
+
+> You are already using genAI for chatting with chatgpt, claude, 
+> gemini, etc. for any and all information. Then what more is 
+> left that is worthwhile learning.
