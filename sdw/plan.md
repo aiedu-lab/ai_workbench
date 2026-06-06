@@ -4143,7 +4143,7 @@ VERIFY: `git tag | grep "v28\." && echo PASS`.
 
 ### Step 29.1: Rewrite `## 🌐 Motivation` in README.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: README.md `## 🌐 Motivation` (lines 15–34) is a sparse
 one-sentence intro + bare industry table; the full narrative from
