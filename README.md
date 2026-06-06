@@ -130,8 +130,8 @@ is about.
 ### Why Now? The Hardware Wave
 
 AI ideas have existed for decades. What changed is that the
-**hardware finally caught up**. *(See the PKM session on
-"Silicon and AI.")*
+**hardware finally caught up** - refer 
+[how hardware thresholds impacted AI outcomes](projects/llm_wiki/silicon_ai/analysis/hw_relation_to_ai_advancement.md#summary:-the-five-hardware-thresholds).
 
 NVIDIA and AMD are racing to put AI-capable chips into everyday
 laptops, and Apple already ships AI-enabled Macs and iPhones.
