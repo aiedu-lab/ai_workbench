@@ -4401,19 +4401,19 @@ VERIFY: `ls projects/tower_of_hanoi/toh_complete_tests_prompt.md
 
 ---
 
-### Step 31.4: Create toh_complete_prompt.md; delete toh_solution_prompt.md
+### Step 31.4: Create toh_complete_solution_prompt.md; delete toh_solution_prompt.md
 
-[ ] Status
+[x] Status
 
-CONTEXT: `toh_solution_prompt.md` is the student solution prompt;
-it becomes `toh_complete_prompt.md` to match new naming.
-ACTION: Copy content of `toh_solution_prompt.md` into
-`toh_complete_prompt.md` (content unchanged), then
+CONTEXT: `toh_solution_prompt.md` renamed to
+`toh_complete_solution_prompt.md` to match HDD naming pattern.
+ACTION: Copy `toh_solution_prompt.md` →
+`toh_complete_solution_prompt.md` (content unchanged), then
 `git rm projects/tower_of_hanoi/toh_solution_prompt.md`.
 CONSTRAINTS: Content preserved verbatim; ≤79 chars/line.
-OUTPUT: `toh_complete_prompt.md` exists;
+OUTPUT: `toh_complete_solution_prompt.md` exists;
 `toh_solution_prompt.md` deleted.
-VERIFY: `ls projects/tower_of_hanoi/toh_complete_prompt.md
+VERIFY: `ls projects/tower_of_hanoi/toh_complete_solution_prompt.md
 && ! ls projects/tower_of_hanoi/toh_solution_prompt.md 2>/dev/null
 && echo PASS`
 
