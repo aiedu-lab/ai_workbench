@@ -1,3 +1,4 @@
+<!-- Loaded as AGENTS.md by Codex/Antigravity via symlink. -->
 # CLAUDE.md — AI Workbench
 
 > **Purpose:** This file is read by provider agent at the start of every
@@ -257,37 +258,14 @@ types: HTML, CSS, JS, Python, Markdown, YAML, shell scripts.
 
 ### Line length
 
-Maximum **80 columns**. Wrap code and comments precisely. Long strings
-and URLs are exempt if wrapping would break them.
-
-```python
-# BAD (92 chars):
-def organize_files(source_dir: Path, dry_run: bool, verbose: bool) -> None:
-
-# GOOD (wrapped at 80):
-def organize_files(
-  source_dir: Path,
-  dry_run: bool,
-  verbose: bool,
-) -> None:
-```
-
-**Enforcement — run before every commit:**
-
-```bash
-# Report lines over 80 chars in staged md/py/yaml/sh files
-git diff --name-only HEAD \
-  | grep -E '\.(md|py|yaml|yml|sh)$' \
-  | xargs awk 'length>80 {
-      print FILENAME ":" NR ": " length " chars"
-    }' \
-  | grep . && echo "FAIL: lines exceed 80 cols" || echo "PASS"
-```
+See `.agent/rules/always-line-length.md` — **79 characters**
+maximum. Enforcement command and examples are in that file.
 
 ### Diff consistency
 
-Indentation of surrounding context in all diffs must match the 2-space
-and 80-column rules. Never produce a diff with mixed indentation.
+Indentation of surrounding context in all diffs must match the
+2-space and 79-char rules. Never produce a diff with mixed
+indentation.
 
 ### File hygiene
 
@@ -308,6 +286,9 @@ and 80-column rules. Never produce a diff with mixed indentation.
 At the start of every new session, Claude must orient itself by
 reading these files in order before taking any action:
 
+0. `.agent/rules/*.md` — always-on policies (line length, git
+   flags). These apply to all providers; CLAUDE.md rules take
+   precedence on conflict.
 1. `CLAUDE.md` (this file) — operating protocol
 2. `sdw/plan.md` - plan to create content for the lab
 3. `projects/[project_directory]/plan.md` — current phase, active step, 

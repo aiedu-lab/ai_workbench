@@ -4046,3 +4046,165 @@ VERIFY: `cd projects/llm_wiki/speed-reading &&
 python3 -m py_compile src/orchestrator.py src/piper.py
 src/display.py && python3 src/piper.py --help
 | grep -q waterfall-log && echo PASS`.
+
+## Phase 28: CONSOLIDATE AGENTS
+
+### Step 28.1: Make .agent/rules/always-line-length.md the
+single line-length source
+
+[x] Status
+
+CONTEXT: CLAUDE.md STYLE section states "80 cols" with Python
+examples — duplicating and conflicting with .agent/rules/
+always-line-length.md (79 chars, Go examples).
+ACTION: (1) Rewrite .agent/rules/always-line-length.md: 79
+chars, Python/Markdown examples matching this repo, remove Go
+content. (2) In CLAUDE.md STYLE & HYGIENE replace the inline
+line-length block with: "Line length: see .agent/rules/
+always-line-length.md (79 chars)." Remove duplicate BAD/GOOD
+examples and enforcement snippet from CLAUDE.md. (3) Update
+enforcement command to use length>79.
+CONSTRAINTS: ≤79 chars/line in edited files; CLAUDE.md ≤200
+lines.
+OUTPUT: .agent/rules/always-line-length.md updated; CLAUDE.md
+line-length block replaced by reference.
+VERIFY: `grep -n "80 col\|80 char\|length>80" CLAUDE.md
+| grep -v "^Binary" && echo FAIL || echo PASS`.
+
+### Step 28.2: Symlink AGENTS.md → CLAUDE.md; update CLAUDE.md
+
+[x] Status
+
+CONTEXT: Codex CLI and Antigravity both read AGENTS.md from
+repo root; no such file exists so both tools get empty context.
+A symlink is the DRY solution — one file, two tool names.
+ACTION: (1) ln -s CLAUDE.md AGENTS.md in repo root; git add.
+(2) Add comment at top of CLAUDE.md: <!-- Loaded as AGENTS.md
+by Codex/Antigravity via symlink. --> (3) In CLAUDE.md SESSION
+REHYDRATION add step 0: "Read .agent/rules/*.md as additional
+always-on policies (loaded natively by Antigravity; applied
+here by instruction)."
+CONSTRAINTS: ≤79 chars/line; symlink must be committed.
+OUTPUT: AGENTS.md symlink at repo root; CLAUDE.md annotated.
+VERIFY: `[[ -L AGENTS.md ]] && [[ $(readlink AGENTS.md) =
+"CLAUDE.md" ]] && echo PASS`.
+
+### Step 28.3: Annotate agent-specific directives in .agent/
+
+[x] Status
+
+CONTEXT: .agent/workflows/ls.md has // turbo-all — an
+Antigravity/Gemini-CLI parallel fan-out directive — with no
+explanation. Contributors won't know it is provider-specific.
+ACTION: (1) Add a comment block above // turbo-all in ls.md
+explaining it is an Antigravity/Gemini-CLI directive. (2) In
+.agent/skills/line-length/SKILL.md note that ./tools/check-
+line-length.sh must exist. (3) Confirm name: frontmatter key
+is present in all SKILL.md files (required for /name invoke).
+CONSTRAINTS: ≤79 chars/line; no content changes, annotations
+only.
+OUTPUT: ls.md and skill files annotated.
+VERIFY: `grep -n "Antigravity\|turbo-all"
+.agent/workflows/ls.md && echo PASS`.
+
+### Step 28.4: Add Agent Conventions section to README.md
+
+[x] Status
+
+CONTEXT: README.md "SDW Skills" covers .claude/commands/ only;
+the multi-provider architecture is undocumented.
+ACTION: Insert ## Agent Conventions immediately before
+## Credits. Include: (1) two-layer model: .agent/ = universal
+canonical layer, provider loader files = thin wrappers; (2)
+table — Construct / Path / Invocation / Read by — rows for
+Rule, Skill, Workflow, Claude-slash-cmd, CLAUDE.md/AGENTS.md;
+(3) "Not yet wired" note for Cursor, Windsurf, Copilot.
+CONSTRAINTS: ≤79 chars/line; no restructure of existing
+sections.
+OUTPUT: README.md with ## Agent Conventions section.
+VERIFY: `grep -n "Agent Conventions" README.md && echo PASS`.
+
+### Step 28.5: Mark Phase 28 complete
+
+[x] Status
+
+CONTEXT: All Phase 28 steps done.
+ACTION: Flip every [ ] Status → [x] Status in Phase 28 block
+of sdw/plan.md; commit all changed files; tag v28.5-
+consolidate-agents-step-completed; push branch + tags.
+CONSTRAINTS: Append-only to plan.md; tag format
+vN.K-*-step-completed.
+OUTPUT: plan.md Phase 28 all [x]; tag pushed.
+VERIFY: `git tag | grep "v28\." && echo PASS`.
+
+---
+
+## Phase 29: MOTIVATE GENAI
+
+### Step 29.1: Rewrite `## 🌐 Motivation` in README.md
+
+[x] Status
+
+CONTEXT: README.md `## 🌐 Motivation` (lines 15–34) is a sparse
+one-sentence intro + bare industry table; the full narrative from
+prompt_history.md ## Motivate GenAI has never been applied.
+ACTION: Replace the content between `## 🌐 Motivation` and the
+following `---` separator in README.md with the full narrative
+from the prompt: vacation group-chat hook, six-activity
+breakdown, three-generations-of-software arc (Legacy → Predictive
+AI → Generative AI), `## 🌐 The Same Story, Everywhere` industry
+table (expanded from the prompt), `## What This Means for
+Software`, and `## Why Now? The Hardware Wave`; preserve the
+existing table rows and augment them; keep all lines ≤79 chars
+with 2-space indents; include the closing blockquote takeaway.
+CONSTRAINTS: Do not touch any other README.md sections; ≤79
+chars/line; 2-space indent; no emoji added unless already in
+the prompt text.
+OUTPUT: README.md `## 🌐 Motivation` contains vacation example,
+three-generations narrative, expanded industry table, "What This
+Means for Software", and "Hardware Wave" sections.
+VERIFY: `grep -n "judgment calls\|Hardware Wave" README.md
+| grep -v "^Binary" && echo PASS`.
+
+### Step 29.2: Expand `## 🧠 The Core Concept` in sessions/hdd.md
+
+[x] Status
+
+CONTEXT: sessions/hdd.md `## 🧠 The Core Concept` (lines 12–39)
+has a table and When-to-use block but no Principles or Factors
+subsections; the prompt specifies both including a third principle
+on code review feasibility.
+ACTION: Insert two new subsections immediately before the `---`
+that separates Core Concept from the Exercise section:
+`### Principles` — (1) GenAI code is probabilistic (same prompt ≠
+identical code), correctness not guaranteed by construction;
+(2) the human remains accountable for the outcome and must review;
+(3) authentic accountability requires reviewing the code — review
+can focus on high-level constructs but is only feasible when each
+component is ≤~200 lines and structured with clear separation of
+concerns.
+`### Factors` — humans are smarter but AI is faster; AI output
+quality degrades when context is too wide (context overflow); keep
+each AI task focused and limited in scope.
+CONSTRAINTS: Do not modify Objective, Exercise, or existing
+table/subsections; ≤79 chars/line; 2-space indent.
+OUTPUT: sessions/hdd.md has `### Principles` and `### Factors`
+subsections within `## 🧠 The Core Concept`.
+VERIFY: `grep -n "Principles\|Factors\|probabilistic"
+sessions/hdd.md && echo PASS`.
+
+### Step 29.3: Mark Phase 29 complete
+
+[x] Status
+
+CONTEXT: All Phase 29 steps done; prompt_history.md
+`## Motivate GenAI` already marked [x] Status (committed with
+plan in Step 3a).
+ACTION: Confirm every `[ ] Status` in the Phase 29 block of
+sdw/plan.md is already `[x] Status` (flipped per-step during
+execution); commit any remaining file changes; tag
+`v29.3-motivate-genai-step-completed`; push branch + tags.
+CONSTRAINTS: Append-only to plan.md; tag format
+vN.K-*-step-completed.
+OUTPUT: plan.md Phase 29 all [x]; tag v29.3-* pushed.
+VERIFY: `git tag | grep "v29\." && echo PASS`.
