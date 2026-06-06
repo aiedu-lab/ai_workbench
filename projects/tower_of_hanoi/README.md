@@ -147,3 +147,27 @@ python3 src_copy/main.py --number-discs 5 --no-step-by-step
 
 `src_copy/` is git-ignored — your work stays local until
 you are ready to share it.
+
+---
+
+## Running with a Prompt File
+
+The four HDD prompt files drive each phase of this exercise
+end-to-end via the Claude CLI. Run from `projects/tower_of_hanoi/`:
+
+| Phase | Prompt file |
+|---|---|
+| 1. Define architecture + scaffold | `toh_problem_prompt.md` |
+| 2. Generate test structure (stubs) | `toh_define_tests_prompt.md` |
+| 3. Fill in test assertions | `toh_complete_tests_prompt.md` |
+| 4. Implement skeleton classes | `toh_complete_solution_prompt.md` |
+
+```bash
+# Run phase 1 (or substitute any prompt file for other phases).
+# Claude will ask for permission before each write action.
+claude -p "$(cat toh_problem_prompt.md)" \
+  --allowedTools "Bash,Read,Write" 2>&1
+
+# Add --dangerously-skip-permissions once the prompt is
+# well-vetted to skip per-action approval prompts.
+```

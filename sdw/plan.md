@@ -4421,7 +4421,7 @@ VERIFY: `ls projects/tower_of_hanoi/toh_complete_solution_prompt.md
 
 ### Step 31.5: Update README.md with CLI example section
 
-[ ] Status
+[x] Status
 
 CONTEXT: README.md has no example of applying a prompt file via
 the Claude CLI; called out in the approved prompt_history entry.
