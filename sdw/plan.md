@@ -4317,7 +4317,7 @@ VERIFY: `cd projects/tower_of_hanoi
 
 ### Step 30.6: Mark Phase 30 complete
 
-[ ] Status
+[x] Status
 
 CONTEXT: All Phase 30 steps done; `sdw/prompt_history.md`
 `## Update TOH` already marked `[x] Status` (committed in
