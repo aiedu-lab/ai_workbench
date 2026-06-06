@@ -4540,7 +4540,7 @@ VERIFY: `git tag | grep "v32\." && echo PASS`
 
 ### Step 33.1: Weave pithy opening into `## 🌐 Motivation`
 
-[ ] Status
+[x] Status
 
 CONTEXT: `README.md` Motivation section opens directly with the
 vacation group-chat anecdote; no framing acknowledges that students

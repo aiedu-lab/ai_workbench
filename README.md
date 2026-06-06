@@ -14,6 +14,10 @@ for various use cases, such as coding, automation, etc. using:
 
 ## 🌐 Motivation
 
+You already chat with ChatGPT, Claude, or Gemini every day — for
+homework, ideas, or almost any question. So what is left that is
+actually worth learning?
+
 You have probably been in this group chat:
 
 > "Where should we go for the trip?"
