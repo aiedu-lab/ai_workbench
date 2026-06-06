@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from tower import Tower
 from step_writer import StepWriter
+from ascii_renderer import AsciiRenderer
 
 
 class Move:
@@ -36,7 +37,15 @@ class Move:
     step_by_step: bool,
     step_writer: StepWriter,
   ) -> None:
-    raise NotImplementedError
+    self._towers = towers
+    self._num_discs = num_discs
+    self._step_by_step = step_by_step
+    self._step_writer = step_writer
+    self._renderer = AsciiRenderer(num_discs)
+    self._step_count = 0
+    # Pre-compute the full move sequence at construction time.
+    self._queue: list[tuple[int, int]] = []
+    self._hanoi(num_discs, 0, 2, 1)
 
   # ------------------------------------------------------------------ #
   # Public interface                                                     #
@@ -54,7 +63,16 @@ class Move:
       False — the puzzle is already in its final state (Tower[2] holds
           all discs in order); no move was made.
     """
-    raise NotImplementedError
+    if not self._queue:
+      return False
+    source, target = self._queue.pop(0)
+    disc = self._towers[source].pop()
+    self._towers[target].push(disc)
+    self._step_count += 1
+    self.write_step(self._step_count, source, target)
+    if self._step_by_step:
+      input("Press Enter to continue...")
+    return True
 
   def write_step(
     self,
@@ -73,11 +91,14 @@ class Move:
       from_tower:  Index of the tower the disc was moved FROM.
       to_tower:    Index of the tower the disc was moved TO.
     """
-    raise NotImplementedError
+    state = {i: t.as_size_list() for i, t in enumerate(self._towers)}
+    ascii_art = self._renderer.render(state)
+    self._step_writer.write(step_number, from_tower, to_tower, ascii_art)
 
   def is_solved(self) -> bool:
     """Return True if Tower[2] holds all discs in correct order."""
-    raise NotImplementedError
+    expected = list(range(self._num_discs, 0, -1))
+    return self._towers[2].as_size_list() == expected
 
   # ------------------------------------------------------------------ #
   # Private helpers                                                      #
@@ -94,4 +115,8 @@ class Move:
       target: Index of the destination tower.
       spare:  Index of the intermediate/spare tower.
     """
-    raise NotImplementedError
+    if n == 0:
+      return
+    self._hanoi(n - 1, source, spare, target)
+    self._queue.append((source, target))
+    self._hanoi(n - 1, spare, target, source)

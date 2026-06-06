@@ -2112,3 +2112,137 @@ components with separation of concerns.
 * AI gets confused unless given limited context - otherwise, you 
 see deteoriated quality due to context overflow - that is focused 
 and limited in scope at an instance.
+
+## Update TOH
+[x] Status
+
+Reference `projects/tower_of_hanoi`. Note that the code base in
+`src/` was generated applying the prompt in `toh_prompt.md`. Thus,
+if you make any changes to code in `src/` update the `toh_prompt.md`
+so that the code in `src/` can be created anytime by applying
+the `toh_prompt.md`. 
+
+### Changes to src code
+1. Run /always-line-length on all the python code in the src/ directory.
+2. Annotate with richer comments in all the classes and methods of the code - 
+Specifically ensure the comments in tests/ directory is complete and fully
+specified so that while running tests the user knows exactly the purpose 
+and motivate of all test cases.
+3. Validate the logic of the code in src/tests/. Specifically the 
+empty_tower() in tests/test_tower.py seems incorrect as the 
+Tower class ctor 2nd argument num_discs=3, shouldn't it be zero?
+
+### Restructure src content
+Offer a placeholder in the directory `projects/tower_of_hanoi` where
+the modifications to `src/` do not pollute the original code with 
+skeletal classes defined so that users can always start from skelete
+class definitions.
+Possible solutions are:
+1. Copy src to src_copy and then fill in the classes in src_copy/
+If so, how do we prevent the solution is not git checked in. Do we just
+put src_copy/ in .gitignore. 
+2. How do we ensure that the following classes are not modified:
+* classes in the tests directory.
+* classes in the step_write.py or ascii_renderer.py.
+3. Possible solutions: 
+* Should we just package them somehow that is not
+modified? OR 
+* In the interest of keeping everything simple, we let 
+student duplicate everything user src_original to src/ and modifying?
+
+### Solve
+For demonstrating students, we need to show a sample solution. 
+Create `projects/tower_of_hanoi/SOLUTION.md` where we document
+example prompt we feed to solve the problem: 
+* copy the code from `src` to say `src_copy`
+* fill in the code in the methods of classes in src_copy/
+* run the test in src_copy/tests
+* validate all tests pass, validate src_copy is in .gitignore
+* git add & commit - note only the SOLUTION.md is committed, not src_copy
+
+### Approved Clarifications (pre-approval addendum)
+
+The following changes were incorporated into Phase 30 before
+the plan was approved (recorded per prompt history protocol):
+* `SOLUTION.md` renamed to `toh_solution_prompt.md` to mirror
+  the naming pattern of `toh_prompt.md` (prompt → output).
+* Step 30.5 added: apply `toh_solution_prompt.md` via Claude
+  CLI, create `src_copy/`, run `pytest src_copy/tests/` to
+  validate all tests pass before marking Phase 30 complete.
+
+---
+
+## Restructure TOH Prompts
+
+[x] Status
+
+
+Restructure the Tower of Hanoi prompt files to follow a 4-step
+HDD (Human-Directed Development) workflow. Replace the two
+existing prompt files with four purpose-specific prompts, one
+per phase. No section is dropped — every section from the
+existing files maps to one of the new files as shown below.
+
+### Section mapping
+
+| Existing section (source file) | → New file |
+|---|---|
+| Teaching note, Context, Solution Approach, Style Rules (toh_prompt.md) | toh_problem_prompt.md |
+| Objective: skeleton classes, utilities, CLI, README (toh_prompt.md) | toh_problem_prompt.md |
+| Output: file list (toh_prompt.md) | toh_problem_prompt.md |
+| Student Workflow (toh_prompt.md) | toh_problem_prompt.md + README.md |
+| Objective: test suite item (toh_prompt.md) | toh_define_tests_prompt.md |
+| Test Requirements table (toh_prompt.md) | toh_define_tests_prompt.md |
+| Intro context, Steps, Constraints (toh_solution_prompt.md) | toh_complete_prompt.md |
+
+### Four new prompt files
+
+1. **toh_problem_prompt.md** — defines the problem; requests
+   architecture: classes with method signatures and
+   `raise NotImplementedError` bodies; utilities, CLI, README.
+
+2. **toh_define_tests_prompt.md** — given the class definitions,
+   produce the test suite structure: test class and method names
+   per class plus integration; no assertions yet.
+
+3. **toh_complete_tests_prompt.md** — given the test structure,
+   fill in all test bodies with assertions.
+
+4. **toh_complete_prompt.md** — given class definitions and
+   complete tests, fill in class implementations one at a time,
+   running tests after each to validate.
+
+### README.md addition
+
+Add a `## Running with a Prompt File` section with a sample
+Claude CLI invocation:
+
+  ```bash
+  claude -p "$(cat ../toh_problem_prompt.md)" \
+    --allowedTools "Bash,Read,Write" 2>&1
+  # Add --dangerously-skip-permissions once the prompt is
+  # well-vetted to skip per-action approval prompts.
+  ```
+
+---
+
+## TOH Reorganize Solution Directory
+
+[x] Status
+
+Move the four HDD prompt files and the reference solution into a
+single `solution/` subdirectory to make the project layout
+self-explanatory:
+
+  solution/
+    prompts/   — four HDD phase prompt files
+    src/       — reference solution code (was src_solution/)
+
+Update README.md:
+- Add `## Objective` section explaining the HDD exercise and
+  its four phases.
+- Update `## Project Structure` to reflect the new layout,
+  tagging `solution/prompts/` as sample prompts and
+  `solution/src/` as sample solution code.
+- Update all cross-references (Student Workflow, Running with
+  a Prompt File, etc.) to use the new paths.

@@ -1,0 +1,12 @@
+# Student working copy — never committed.
+# Run: cp -r src src_copy
+src_copy/
+
+# Python build/cache artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/

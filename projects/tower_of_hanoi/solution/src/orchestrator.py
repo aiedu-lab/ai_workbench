@@ -7,6 +7,7 @@ initial state to completion.
 
 from __future__ import annotations
 
+from disc import Disc
 from tower import Tower
 from move import Move
 from step_writer import StepWriter
@@ -33,7 +34,22 @@ class Orchestrator:
     step_by_step: bool,
     step_file: str,
   ) -> None:
-    raise NotImplementedError
+    # Tower 0 starts with all discs; largest at bottom (index 0).
+    discs = [Disc(n) for n in range(num_discs, 0, -1)]
+    self._towers = [
+      Tower(0, num_discs, discs),
+      Tower(1, num_discs, []),
+      Tower(2, num_discs, []),
+    ]
+    self._step_writer = StepWriter(
+      step_file=step_file, echo_to_stdout=step_by_step
+    )
+    self._move = Move(
+      towers=self._towers,
+      num_discs=num_discs,
+      step_by_step=step_by_step,
+      step_writer=self._step_writer,
+    )
 
   # ------------------------------------------------------------------ #
   # Public interface                                                     #
@@ -48,12 +64,14 @@ class Orchestrator:
     After completion, closes the StepWriter so the output file is
     flushed and finalised.
     """
-    raise NotImplementedError
+    while self._move.next():
+      pass
+    self._step_writer.close()
 
   def get_towers(self) -> list[Tower]:
     """Return three Tower objects (useful for testing mid-run state)."""
-    raise NotImplementedError
+    return self._towers
 
   def get_move(self) -> Move:
     """Return the Move object (for inspecting step count in tests)."""
-    raise NotImplementedError
+    return self._move

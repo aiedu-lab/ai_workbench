@@ -31,7 +31,10 @@ class Tower:
     num_discs: int,
     discs: list[Disc] | None = None,
   ) -> None:
-    raise NotImplementedError
+    self._index = index
+    self._num_discs = num_discs
+    self._discs: list[Disc] = list(discs) if discs else []
+    self._renderer = AsciiRenderer(num_discs)
 
   # ------------------------------------------------------------------ #
   # Stack operations                                                     #
@@ -44,7 +47,12 @@ class Tower:
       ValueError: If the disc is larger than the current top disc
             (would violate the game rules).
     """
-    raise NotImplementedError
+    top = self.peek()
+    if top is not None and top < disc:
+      raise ValueError(
+        f"Cannot place {disc!r} on {top!r} — larger on smaller"
+      )
+    self._discs.append(disc)
 
   def pop(self) -> Disc:
     """Remove and return the top disc.
@@ -52,19 +60,21 @@ class Tower:
     Raises:
       IndexError: If the tower is empty.
     """
-    raise NotImplementedError
+    if self.is_empty():
+      raise IndexError("pop from empty tower")
+    return self._discs.pop()
 
   def peek(self) -> Disc | None:
     """Return the top disc without removing it, or None if empty."""
-    raise NotImplementedError
+    return self._discs[-1] if self._discs else None
 
   def is_empty(self) -> bool:
     """Return True if there are no discs on this tower."""
-    raise NotImplementedError
+    return len(self._discs) == 0
 
   def size(self) -> int:
     """Return the number of discs currently on this tower."""
-    raise NotImplementedError
+    return len(self._discs)
 
   # ------------------------------------------------------------------ #
   # State snapshot — used by AsciiRenderer and StepWriter               #
@@ -84,7 +94,7 @@ class Tower:
            1: tower1.as_size_list(),
            2: tower2.as_size_list()}
     """
-    raise NotImplementedError
+    return [d.size for d in self._discs]
 
   # ------------------------------------------------------------------ #
   # Display                                                              #
@@ -95,7 +105,8 @@ class Tower:
 
     Hint: build a single-tower state dict and call renderer.render().
     """
-    raise NotImplementedError
+    state = {self._index: self.as_size_list()}
+    print(self._renderer.render(state))
 
   def __repr__(self) -> str:
-    raise NotImplementedError
+    return f"Tower({self._index}, {self.as_size_list()})"

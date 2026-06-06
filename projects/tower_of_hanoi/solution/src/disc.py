@@ -22,17 +22,21 @@ class Disc:
     Raises:
       ValueError: If size is not a positive integer.
     """
-    raise NotImplementedError
+    if not isinstance(size, int) or size <= 0:
+      raise ValueError(f"size must be a positive integer, got {size!r}")
+    self.size = size
 
   # ------------------------------------------------------------------ #
   # Comparison helpers — lets you write:  disc_a < disc_b               #
   # ------------------------------------------------------------------ #
 
   def __eq__(self, other: object) -> bool:
-    raise NotImplementedError
+    if not isinstance(other, Disc):
+      return NotImplemented
+    return self.size == other.size
 
   def __lt__(self, other: "Disc") -> bool:
-    raise NotImplementedError
+    return self.size < other.size
 
   def __repr__(self) -> str:
-    raise NotImplementedError
+    return f"Disc({self.size})"
