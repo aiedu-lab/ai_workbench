@@ -4168,7 +4168,7 @@ VERIFY: `grep -n "judgment calls\|Hardware Wave" README.md
 
 ### Step 29.2: Expand `## 🧠 The Core Concept` in sessions/hdd.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: sessions/hdd.md `## 🧠 The Core Concept` (lines 12–39)
 has a table and When-to-use block but no Principles or Factors

@@ -38,6 +38,28 @@ spec that is already fully described.
 See the comparison table in
 [Concept: Spec Driven Development](sdd_basics.md#human-driven-vs-spec-driven-vs-vibe-coded).
 
+### Principles
+
+1. **Probabilistic, not deterministic** — the same prompt does not
+   produce identical code. GenAI output cannot be assumed correct
+   by construction; it must be verified.
+2. **Human accountability** — the human is ultimately accountable
+   for the code. Accountability is meaningless without review.
+3. **Review feasibility** — authentic review of generated code is
+   only feasible when the scope of each review is ≤~200 lines 
+   with each review focused on independent code structures i.e. 
+   componentized with clear separation of concerns. 
+   Hence, keep the structure surface of components small and 
+   focused so the human can actually endorse what was built.
+
+### Factors
+
+- **Humans are smarter, but AI is faster** — the human supplies
+  judgment and design; AI supplies execution speed.
+- **Context overflow degrades quality** — AI output deteriorates
+  when the context is too wide. Keep each AI task focused and
+  limited in scope to one component at a time.
+
 ---
 
 ## 🏃 Exercise — Tower of Hanoi
