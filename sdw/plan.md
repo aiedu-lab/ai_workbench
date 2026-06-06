@@ -4237,7 +4237,7 @@ projects/tower_of_hanoi/src/tests/*.py
 
 ### Step 30.2: Add richer comments; validate empty_tower() logic
 
-[ ] Status
+[x] Status
 
 CONTEXT: Test methods lack per-method docstrings; `empty_tower()`
 fixture `num_discs=3` looks wrong but is correct (game capacity

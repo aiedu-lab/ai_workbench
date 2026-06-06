@@ -59,7 +59,9 @@ class AsciiRenderer:
       cells = []
       for t in range(3):
         stack = towers[t]
-        # How many discs are on this tower?
+        # Translate diagram row (top=num_discs, bottom=1) to
+        # a 0-based index into the disc stack (bottom=0, top=last).
+        # disc_index < 0 means the slot is above the topmost disc.
         disc_index = len(stack) - (self._num_discs - row + 1)
         if disc_index >= 0 and disc_index < len(stack):
           # There IS a disc at this row height

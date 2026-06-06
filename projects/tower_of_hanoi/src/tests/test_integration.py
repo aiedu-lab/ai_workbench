@@ -25,6 +25,7 @@ def run_puzzle(tmp_path, num_discs: int) -> tuple:
 class TestEndToEndSmall:
   @pytest.mark.parametrize("num_discs", [1, 2, 3])
   def test_puzzle_solved_for_n_discs(self, tmp_path, num_discs):
+    """Tower[2] holds all discs in order for 1–3 disc configurations."""
     orch, _ = run_puzzle(tmp_path, num_discs)
     towers = orch.get_towers()
     expected = list(range(num_discs, 0, -1))
@@ -32,6 +33,7 @@ class TestEndToEndSmall:
 
   @pytest.mark.parametrize("num_discs", [1, 2, 3])
   def test_correct_move_count(self, tmp_path, num_discs):
+    """Step file records exactly 2^N − 1 moves for N discs."""
     _, step_file = run_puzzle(tmp_path, num_discs)
     content = open(step_file).read()
     move_count = content.count("## Step")
@@ -39,6 +41,7 @@ class TestEndToEndSmall:
 
   @pytest.mark.parametrize("num_discs", [1, 2, 3])
   def test_step_file_exists_and_nonempty(self, tmp_path, num_discs):
+    """The step file exists and contains content after run completes."""
     _, step_file = run_puzzle(tmp_path, num_discs)
     assert os.path.exists(step_file)
     assert os.path.getsize(step_file) > 0
@@ -46,6 +49,7 @@ class TestEndToEndSmall:
 
 class TestEndToEndLarger:
   def test_puzzle_solved_for_5_discs(self, tmp_path):
+    """Solver scales to 5 discs; all towers end in expected state."""
     orch, _ = run_puzzle(tmp_path, 5)
     towers = orch.get_towers()
     assert towers[2].as_size_list() == [5, 4, 3, 2, 1]

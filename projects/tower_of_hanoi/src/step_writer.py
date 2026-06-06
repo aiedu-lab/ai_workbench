@@ -92,4 +92,6 @@ class StepWriter:
     return self
 
   def __exit__(self, *_: object) -> None:
+    # close() guards against double-close; safe to call from both
+    # the context manager and explicit close() calls.
     self.close()

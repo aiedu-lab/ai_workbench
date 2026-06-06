@@ -42,16 +42,19 @@ def move_3(tmp_step_file):
 
 class TestMoveInitialState:
   def test_not_solved_at_start(self, move_3):
+    """is_solved() returns False before any moves are made."""
     m, towers, _ = move_3
     assert not m.is_solved()
 
 
 class TestMoveNext:
   def test_next_returns_true_when_moves_remain(self, move_3):
+    """next() returns True while the puzzle is still in progress."""
     m, _, _ = move_3
     assert m.next() is True
 
   def test_next_advances_board_state(self, move_3):
+    """One next() call redistributes at least one disc off Tower[0]."""
     m, towers, _ = move_3
     m.next()
     # After one move, Tower[0] no longer has all discs
@@ -60,6 +63,7 @@ class TestMoveNext:
         or towers[2].size() > 0)
 
   def test_next_returns_false_when_solved(self, move_3):
+    """next() returns False once Tower[2] holds all discs."""
     m, _, _ = move_3
     # Exhaust all moves
     while m.next():
@@ -69,12 +73,14 @@ class TestMoveNext:
 
 class TestMoveSolvesCorrectly:
   def test_tower2_has_all_discs_after_completion(self, move_3):
+    """Tower[2] holds all discs in correct order after completion."""
     m, towers, _ = move_3
     while m.next():
       pass
     assert towers[2].as_size_list() == [3, 2, 1]
 
   def test_tower0_and_tower1_empty_after_completion(self, move_3):
+    """Source and spare towers are empty once the puzzle is solved."""
     m, towers, _ = move_3
     while m.next():
       pass
@@ -100,6 +106,7 @@ class TestMoveSolvesCorrectly:
 
 class TestMoveWriteStep:
   def test_write_step_creates_file_content(self, tmp_step_file):
+    """write_step() produces file content containing a 'Step' heading."""
     towers = make_towers(2)
     writer = StepWriter(step_file=tmp_step_file, echo_to_stdout=False)
     m = Move(

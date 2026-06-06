@@ -39,7 +39,8 @@ def parse_args() -> argparse.Namespace:
   parser.add_argument(
     "--step-by-step",
     default=True,
-    action=argparse.BooleanOptionalAction,   # enables --no-step-by-step
+    # BooleanOptionalAction auto-generates the --no-step-by-step flag.
+    action=argparse.BooleanOptionalAction,
     help="Pause and display each step interactively",
   )
   parser.add_argument(
