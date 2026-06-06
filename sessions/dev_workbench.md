@@ -69,11 +69,15 @@ guide for that tool — no content is duplicated here.
 
 ## LLM Provider Setup
 
-- [Claude Account Setup](../tools/claude/cloud.md)
-- [LLM Provider Cost Control](
-  ../tools/dev_workbench/provider_cost_control.md)
+| Tool | Setup guide |
+|------|-------------|
+| Claude Account Setup | [cloud account](../tools/claude/cloud.md) |
+| Claude Code CLI | [cli](../tools/claude/cli.md) | 
+| Claude Desktop (Chat + CoWork) | [desktop](../tools/claude/desktop.md) |
 
-Set spending limits and enable usage notifications before running
+### Advanced & Optional
+* Reference [LLM Provider Cost Control](../tools/dev_workbench/provider_cost_control.md)
+* Set spending limits and enable usage notifications before running
 any multi-turn or automated workflows.
 
 ### Multi LLM Provider and Multi Model
@@ -114,7 +118,7 @@ Install shared Python dependencies — see
 ### Claude Multimode
 
 Configure Claude Code for two authentication modes — Pro
-Subscription (default) and PAYG API. See
+Subscription (default) and PAYG (pay-as-you-go) API. See
 [Claude Multimode Set Up](
 ../tools/dev_workbench/vscode.md#claude-multimode-set-up).
 

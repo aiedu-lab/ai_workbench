@@ -1,4 +1,4 @@
-# Claude Cloud Setup
+# Claude Cloud Account
 
 Every student needs a claude.ai account before using any Claude
 tool (Desktop, CLI, or API). Complete this guide once; all other
@@ -58,8 +58,10 @@ and any Python/Node code that uses the Anthropic SDK.
 
 **Purchase credits (required for API use):**
 
-Billing → Add credits → minimum $5. Without credits, API calls
-return a 429 error.
+Billing → Add credits → choose minimum $5. Note we'll use API
+pay-per-use only as an insurance to complete tasks when we 
+exhaust subscription based token credit limits. Without credits, 
+API calls return a 429 error.
 
 ---
 
@@ -108,12 +110,3 @@ curl https://api.anthropic.com/v1/messages \
 Expected: JSON response containing `"type": "message"` and a
 short reply. Any `401` or `403` means the key is wrong or has
 no credits.
-
----
-
-## Next Steps
-
-| Tool | Setup guide |
-|------|-------------|
-| Claude Code CLI | [cli.md](cli.md) |
-| Claude Desktop (Chat + CoWork) | [desktop.md](desktop.md) |

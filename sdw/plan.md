@@ -4634,7 +4634,7 @@ print('PASS' if 'motivation' in rows[0] else 'FAIL')
 
 ### Step 34.3: Verify and fix manual changes
 
-[ ] Status
+[x] Status
 
 CONTEXT: Manual changes to `README.md`, `sessions/dev_workbench.md`,
 and `tools/claude/cloud.md` are unstaged; typo "chodse" exists in
