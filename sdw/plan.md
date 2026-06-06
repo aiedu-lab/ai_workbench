@@ -4463,7 +4463,7 @@ VERIFY: `git tag | grep "v31\." && echo PASS`
 
 ### Step 32.1: Move prompt files and src_solution into solution/
 
-[ ] Status
+[x] Status
 
 CONTEXT: Prompt files and `src_solution/` sit loose in
 `projects/tower_of_hanoi/`; grouping them under `solution/`
