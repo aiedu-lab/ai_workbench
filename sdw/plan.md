@@ -4383,7 +4383,7 @@ projects/tower_of_hanoi/toh_define_tests_prompt.md && echo PASS`
 
 ### Step 31.3: Create toh_complete_tests_prompt.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: No prompt exists for "fill in test assertions" — new
 step in the HDD workflow with no existing source.
