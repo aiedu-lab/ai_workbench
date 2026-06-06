@@ -4533,3 +4533,45 @@ CONSTRAINTS: Tag format vN.K-*-step-completed.
 OUTPUT: `prompt_history.md` marked `[x]`; plan.md Phase 32 all
 `[x]`; tag pushed.
 VERIFY: `git tag | grep "v32\." && echo PASS`
+
+---
+
+## Phase 33: UPDATE README MOTIVATION SECTION
+
+### Step 33.1: Weave pithy opening into `## 🌐 Motivation`
+
+[x] Status
+
+CONTEXT: `README.md` Motivation section opens directly with the
+vacation group-chat anecdote; no framing acknowledges that students
+already use ChatGPT/Claude/Gemini daily.
+ACTION: In `/home/asarcar/ws/sw/ai_workbench/README.md`, insert
+1–3 sentences immediately after the `## 🌐 Motivation` heading and
+before `You have probably been in this group chat:`. Adapt the
+prompt-history snippet into a pithy, elegant bridge — name
+ChatGPT / Claude / Gemini explicitly, then pivot to the deeper
+learning question the anecdote answers.
+CONSTRAINTS: Do not alter any other section; ≤79 chars/line;
+preserve the existing anecdote and all content below unchanged.
+OUTPUT: `README.md` diff showing 1–3 new lines inserted directly
+after `## 🌐 Motivation`.
+VERIFY: `grep -n "genAI\|ChatGPT\|Gemini" README.md
+&& awk '/^## 🌐 Motivation/,/^## /' README.md | head -20
+&& echo PASS`
+
+---
+
+### Step 33.2: Mark Phase 33 complete, commit, tag, push
+
+[ ] Status
+
+CONTEXT: Step 33.1 is committed; all Phase 33 steps done.
+ACTION: (1) Confirm all `[ ] Status` in Phase 33 of `sdw/plan.md`
+are `[x] Status`. (2) Tag `v33.2-update-readme-motivation-step-
+completed`; push to `fix/ongoing`.
+CONSTRAINTS: Do not modify any file; do not push to main.
+OUTPUT: Tag `v33.2-update-readme-motivation-step-completed` in
+`git tag`.
+VERIFY: `git tag | grep "v33\." && grep -A1 "### Step 33\."
+sdw/plan.md | grep "\[ \] Status" | wc -l
+&& echo PASS`
