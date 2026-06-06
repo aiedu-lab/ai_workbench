@@ -2228,7 +2228,7 @@ Claude CLI invocation:
 
 ## TOH Reorganize Solution Directory
 
-[ ] Status
+[x] Status
 
 Move the four HDD prompt files and the reference solution into a
 single `solution/` subdirectory to make the project layout

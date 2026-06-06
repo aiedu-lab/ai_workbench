@@ -4520,7 +4520,7 @@ projects/tower_of_hanoi/solution/prompts/toh_problem_prompt.md
 
 ### Step 32.4: Mark Phase 32 complete
 
-[ ] Status
+[x] Status
 
 CONTEXT: All Phase 32 steps done; `sdw/prompt_history.md`
 `## TOH Reorganize Solution Directory` needs `[x] Status`.
