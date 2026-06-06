@@ -4274,7 +4274,7 @@ VERIFY: `grep "src_copy" projects/tower_of_hanoi/.gitignore
 
 ### Step 30.4: Create toh_solution_prompt.md; update toh_prompt.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: No `toh_solution_prompt.md` exists; `toh_prompt.md`
 Output section does not reference `src_copy/`.
