@@ -33,4 +33,4 @@ DOCKER_SERVER_SSH_PORT: 22
 # their name, email, GitHub username, and Discord username.
 # Responses are private — only the form owner can see them.
 # Format: https://forms.gle/...  (never changes across cohorts)
-GOOGLE_FORM_URL: "<google-form-url>"
+GOOGLE_FORM_URL: "https://forms.gle/dcidy3esnceXypXn8"
