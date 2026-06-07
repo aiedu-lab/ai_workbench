@@ -762,6 +762,490 @@ only Claude Code does.
 
 ---
 
+## Transport, SSE, and Streaming
+
+---
+
+### Why stdio for Local Tools Instead of HTTP/Loopback?
+
+This is a good design question. The short answer is: **the protocol IS
+the same (JSON-RPC 2.0) — only the transport layer differs**. MCP did
+not make an inconsistent choice. It standardized the message format and
+chose the most appropriate transport for each deployment context.
+
+To understand why, separate the two layers:
+
+```
+Layer 1: Message format  →  JSON-RPC 2.0  (same everywhere in MCP)
+Layer 2: Transport       →  stdio  (local)  OR  HTTP+SSE  (remote)
+```
+
+JSON-RPC 2.0 defines what a tool call message looks like:
+
+```json
+{ "jsonrpc": "2.0", "id": 1, "method": "tools/call",
+  "params": { "name": "read_file", "arguments": { "path": "/tmp/x.py" } } }
+```
+
+This message format is identical whether it travels over a pipe or over
+HTTP. MCP is the protocol. stdio and HTTP+SSE are the roads the protocol
+drives on.
+
+---
+
+### Why stdio Was Chosen for Local Servers (Not HTTP/Loopback)
+
+**Reason 1 — No port allocation needed**
+
+Binding to a port, even on loopback (127.0.0.1), requires:
+- Picking a port number that is not already in use
+- OS permission to bind (ports below 1024 require root)
+- Handling port conflicts if two MCP servers try the same port
+
+With stdio, the OS hands you two pipes automatically when you fork a
+child process. No negotiation, no conflicts, no cleanup.
+
+**Reason 2 — Security is tighter**
+
+A loopback socket can be connected to by *any other process on the same
+machine*. If a local MCP server listens on 127.0.0.1:8765, any process
+running as any user on that machine can send it tool calls — including
+malicious code. You would need authentication (tokens, mTLS) even on
+loopback.
+
+A stdio pipe is kernel-enforced IPC: only the parent process (Claude
+Code) and the child process (the MCP server) can read or write it.
+No other process can intercept it. Security is free.
+
+**Reason 3 — Process lifecycle is automatic**
+
+With stdio: when Claude Code exits (or crashes), the OS closes the
+pipes, the child process gets SIGPIPE, and it exits too. No orphaned
+server processes.
+
+With HTTP/loopback: if Claude Code exits, the MCP server keeps running,
+listening on its port, consuming memory, possibly holding locks.
+You need explicit cleanup logic.
+
+**Reason 4 — No HTTP overhead for local calls**
+
+A local tool call over HTTP requires:
+- TCP handshake (even on loopback)
+- HTTP request parsing
+- HTTP response serialization
+- Connection keep-alive management
+
+Over stdio: it is a `write()` syscall and a `read()` syscall. For a
+tool that runs hundreds of times per session (like `Read` or `Grep`),
+this overhead adds up.
+
+**Why HTTP+SSE IS the right choice for remote servers**
+
+For a server running at `https://mcp.github.com`, you have no choice
+but HTTP — you cannot share a pipe with a process on another machine.
+HTTP also gives you TLS for encryption in transit, standard
+authentication headers, and load balancing for free.
+
+So the design is consistent: use the simplest transport that is
+appropriate for the deployment distance. Local = stdio. Remote = HTTP.
+Same JSON-RPC messages both ways.
+
+---
+
+### What Does SSE (Server-Sent Events) Actually Mean?
+
+SSE is an HTTP feature that keeps a connection open so the server can
+push data to the client at any time, without the client polling.
+
+In a normal HTTP request:
+```
+Client: "GET /data"  →  Server processes  →  Server: "here is the data"
+Connection closes.
+```
+
+In an SSE connection:
+```
+Client: "GET /events"  →  Server: "OK, connection open"
+...time passes...
+Server: "event: tools_changed\ndata: {...}\n\n"   ← pushed without request
+...more time passes...
+Server: "event: progress\ndata: {\"percent\": 42}\n\n"  ← pushed again
+...connection stays open indefinitely...
+```
+
+The wire format is plain text, one event per double-newline:
+```
+event: content_block_delta
+data: {"type":"content_block_delta","delta":{"type":"text_delta","text":"Hello"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","delta":{"type":"text_delta","text":" world"}}
+
+event: message_stop
+data: {"type":"message_stop"}
+
+```
+
+---
+
+### Can the Server Asynchronously Push Tool List Changes?
+
+Yes — this is explicitly designed into MCP. The spec defines a
+notification called `notifications/tools/list_changed` that the server
+pushes over the SSE channel when its tool list changes.
+
+The full asynchronous notification flow in MCP's HTTP+SSE transport:
+
+```
+Claude Code (client)                    MCP Server (e.g. GitHub)
+      │                                        │
+      │── GET /sse ──────────────────────────► │  (SSE channel opens)
+      │◄── 200 OK, connection open ────────────│
+      │                                        │
+      │── POST /messages ──────────────────────► │ (tool call - separate HTTP req)
+      │◄── 202 Accepted ────────────────────── │
+      │                                        │
+      │◄── event: message ──────────────────── │ (result pushed over SSE)
+      │    data: {"result": ...}               │
+      │                                        │
+      │  ...later, GitHub deploys a new tool...│
+      │                                        │
+      │◄── event: notification ─────────────── │ (pushed without any request)
+      │    data: {"method":                    │
+      │      "notifications/tools/list_changed"}│
+      │                                        │
+      │── POST /messages ──────────────────────► │ (Claude Code re-fetches tool list)
+      │   {"method": "tools/list"}             │
+```
+
+Other notifications a server can push asynchronously:
+- `notifications/resources/list_changed` — a file or resource changed
+- `notifications/progress` — a long-running tool is X% complete
+- `notifications/cancelled` — a tool execution was cancelled server-side
+
+This is the key advantage of SSE over plain request/response HTTP: the
+server has a channel to proactively inform the client about changes
+without the client polling. For a code review tool, this means the MCP
+server could push a notification when a background analysis finishes,
+rather than having Claude Code poll every second asking "are you done yet?"
+
+---
+
+### What Does Streaming Mean? LLM vs MCP
+
+Streaming means receiving data incrementally as it is produced, rather
+than waiting for the entire result before receiving anything.
+
+---
+
+#### LLM Streaming
+
+Without streaming, generating a 500-word response might take 10-15
+seconds. The user sees nothing until the entire response is ready, then
+it appears all at once.
+
+With streaming, the LLM sends each token (roughly each word-piece) as
+soon as it is computed. The user sees the response build up in real time,
+word by word. This is what you see in the claude.ai chat interface and
+in the Claude Code REPL — text appears as it is generated.
+
+Under the hood, the Anthropic API sends SSE events. Each event carries
+a small delta (a chunk of text or a partial tool call):
+
+```
+POST https://api.anthropic.com/v1/messages
+Content-Type: application/json
+
+{
+  "model": "claude-sonnet-4-6",
+  "max_tokens": 1024,
+  "stream": true,
+  "messages": [{"role": "user", "content": "Explain division by zero"}]
+}
+```
+
+The response is a stream of SSE events:
+```
+event: message_start
+data: {"type":"message_start","message":{"id":"msg_01...","model":"claude-sonnet-4-6",...}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Division"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" by"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" zero"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" raises"}}
+
+...
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"stop_reason":"end_turn"},"usage":{"output_tokens":312}}
+
+event: message_stop
+data: {"type":"message_stop"}
+```
+
+Each `content_block_delta` carries one small piece of text. You
+assemble the full response by concatenating all the delta texts.
+
+---
+
+#### MCP Tool Call Streaming
+
+MCP supports streaming for tool results through the `notifications/progress`
+event. A tool that takes a long time (web scrape, large file analysis,
+database query) can push incremental results rather than making the
+client wait.
+
+```
+Claude Code → POST /messages → { "method": "tools/call", "params": { "name": "scrape_site" } }
+MCP Server  → 202 Accepted
+
+MCP Server  → SSE event: notification
+              { "method": "notifications/progress",
+                "params": { "progressToken": "abc", "progress": 10, "total": 100,
+                            "message": "Fetched page 1 of 10" } }
+
+MCP Server  → SSE event: notification
+              { "method": "notifications/progress",
+                "params": { "progressToken": "abc", "progress": 50, "total": 100,
+                            "message": "Fetched page 5 of 10" } }
+
+MCP Server  → SSE event: message  (final result)
+              { "id": 1, "result": { "content": [{ "type": "text",
+                                                   "text": "All 10 pages scraped..." }] } }
+```
+
+Claude Code can surface these progress events in the UI (the spinner
+and percentage you sometimes see in the REPL during long tool calls).
+
+---
+
+### Concrete Python Code: LLM Streaming Without SDK
+
+To show what the SDK saves you from, here is what streaming looks like
+if you do it manually using only `requests`:
+
+```python
+import requests, json
+
+response = requests.post(
+    "https://api.anthropic.com/v1/messages",
+    headers={
+        "x-api-key": "sk-ant-api03-...",
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+    },
+    json={
+        "model": "claude-sonnet-4-6",
+        "max_tokens": 512,
+        "stream": True,
+        "messages": [{"role": "user", "content": "Say hi in 3 words"}]
+    },
+    stream=True
+)
+
+full_text = ""
+input_tokens = 0
+output_tokens = 0
+
+for raw_line in response.iter_lines():
+    if not raw_line:
+        continue
+    line = raw_line.decode("utf-8")
+
+    if line.startswith("event:"):
+        continue  # skip the event type line
+
+    if line.startswith("data:"):
+        payload = json.loads(line[6:])  # strip "data: "
+
+        if payload["type"] == "content_block_delta":
+            chunk = payload["delta"].get("text", "")
+            full_text += chunk
+            print(chunk, end="", flush=True)  # print as it arrives
+
+        elif payload["type"] == "message_delta":
+            output_tokens = payload.get("usage", {}).get("output_tokens", 0)
+
+        elif payload["type"] == "message_start":
+            input_tokens = payload["message"]["usage"]["input_tokens"]
+
+print(f"\n\nTokens: {input_tokens} in, {output_tokens} out")
+```
+
+This works but requires you to:
+- Know the SSE line format
+- Know all the event type names
+- Manually assemble deltas
+- Handle tool_use blocks (which span multiple events and have their
+  own delta type)
+- Handle error events mid-stream
+- Handle reconnection if the connection drops
+
+---
+
+### The Same Thing With the Claude SDK
+
+```python
+import anthropic
+
+client = anthropic.Anthropic(api_key="sk-ant-api03-...")
+
+# context manager handles connection, parsing, reassembly, cleanup
+with client.messages.stream(
+    model="claude-sonnet-4-6",
+    max_tokens=512,
+    messages=[{"role": "user", "content": "Say hi in 3 words"}]
+) as stream:
+    # text_stream: already assembled, yields complete words not raw deltas
+    for chunk in stream.text_stream:
+        print(chunk, end="", flush=True)
+
+# After the stream, get the complete message with full usage stats:
+final = stream.get_final_message()
+print(f"\nTokens: {final.usage.input_tokens} in, {final.usage.output_tokens} out")
+```
+
+The SDK handles:
+- Opening the streaming HTTP connection with correct headers
+- Parsing raw SSE lines into structured event objects
+- Assembling text deltas into a coherent stream
+- Assembling tool_use blocks from their partial deltas
+- Exposing `stream.text_stream`, `stream.input_json_stream` for tool inputs
+- Collecting final usage stats
+- Closing the connection on exit or exception
+
+---
+
+### Streaming With Tool Use (SDK Handles the Hard Part)
+
+When Claude uses a tool during streaming, the tool call arrives as
+partial deltas too. The input JSON for the tool call arrives character
+by character. Without the SDK:
+
+```
+event: content_block_start
+data: {"type":"content_block_start","index":0,
+       "content_block":{"type":"tool_use","id":"toolu_01","name":"read_file","input":{}}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,
+       "delta":{"type":"input_json_delta","partial_json":"{\"pat"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,
+       "delta":{"type":"input_json_delta","partial_json":"h\": \"/tm"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,
+       "delta":{"type":"input_json_delta","partial_json":"p/x.py\"}"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+```
+
+You must concatenate `partial_json` across events and then parse the
+assembled string as JSON to get the tool input. With the SDK:
+
+```python
+with client.messages.stream(...) as stream:
+    # SDK fires this event when a complete tool call is ready:
+    for event in stream:
+        if event.type == "input_json":
+            print(f"Tool input so far: {event.partial_json}")
+
+    final = stream.get_final_message()
+    for block in final.content:
+        if block.type == "tool_use":
+            print(f"Tool: {block.name}, Input: {block.input}")
+            # block.input is already a parsed dict, not a raw string
+```
+
+---
+
+### What the Agent SDK Adds on Top
+
+The basic SDK handles one request/response pair, even if that pair is
+streamed. The Agent SDK handles the full multi-turn agentic loop with
+streaming at every step.
+
+Without Agent SDK (you implement the loop):
+
+```python
+# You must implement this loop yourself:
+messages = [{"role": "user", "content": prompt}]
+
+while True:
+    response = client.messages.create(model=..., messages=messages, tools=tools)
+
+    if response.stop_reason == "tool_use":
+        # extract tool calls
+        # execute each tool
+        # append results to messages
+        # loop again
+    else:
+        break  # Claude has a final answer
+```
+
+With Agent SDK (the loop is built in):
+
+```python
+from anthropic.agents import run_agent
+
+# SDK runs the loop, calls your tool functions, handles retries:
+async for event in run_agent(
+    model="claude-sonnet-4-6",
+    tools=[my_tool_1, my_tool_2],
+    prompt="Review the diff for PR #22"
+):
+    # Every step of the agent loop streams as an event:
+    if event.type == "text":
+        print(event.text, end="", flush=True)
+    elif event.type == "tool_call":
+        print(f"\n[Calling tool: {event.name}]")
+    elif event.type == "tool_result":
+        print(f"[Tool returned: {event.result[:80]}...]")
+    elif event.type == "done":
+        print(f"\nFinished. Turns: {event.num_turns}, Cost: ${event.cost:.4f}")
+```
+
+The Agent SDK heavy lifting:
+- Runs the tool call → execute → feed result → repeat loop
+- Streams every step as typed events you can render progressively
+- Tracks turn count and enforces max_turns
+- Handles permission denials from tools and surfaces them as events
+- Aggregates total token usage and cost across all turns
+- Manages the growing messages array (truncates if context fills)
+
+---
+
+### Summary Table
+
+| Question | Answer |
+|---|---|
+| Why stdio for local MCP? | No port conflicts, tighter security (pipe vs socket), automatic lifecycle, lower overhead. JSON-RPC is the same either way. |
+| Is JSON-RPC "instead of MCP"? | No — JSON-RPC IS the MCP message format. stdio and HTTP+SSE are just the transports. |
+| What does SSE enable? | Server-to-client push without polling. Tool list changes, progress events, and results all arrive over the same open connection. |
+| Can server push tool list changes? | Yes — `notifications/tools/list_changed` is a defined MCP notification. |
+| What is LLM streaming? | Tokens arrive word-by-word as SSE events instead of all at once. You assemble deltas into full text. |
+| What is MCP tool streaming? | Long-running tools push `notifications/progress` events while executing, instead of making the client wait silently. |
+| What does the basic SDK provide for streaming? | Parses raw SSE events, assembles text and tool-input deltas, exposes simple iterators, handles errors and cleanup. |
+| What does the Agent SDK add? | The full agentic loop — streaming every turn, tool call, result, and completion as typed events without you writing the loop. |
+
+---
+
 ## Summary
 
 | Question | Short Answer |
