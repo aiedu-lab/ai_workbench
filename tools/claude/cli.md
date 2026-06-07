@@ -18,19 +18,22 @@ Restart terminal after install.
 
 ### 1. Choose CLI auth mode
 
-The CLI supports two modes. Use **API Key** for this lab.
+The CLI supports two modes. Use **OAuth Token Mode** for this lab.
 
-#### API Key Mode (recommended for lab)
+#### Subscription / OAuth Token Mode 
+Recommended as primary access mode for lab:
 ```bash
-export ANTHROPIC_API_KEY="sk-ant-..."   # set once per session
-unset CLAUDE_CODE_OAUTH_TOKEN           # ensure OAuth is not active
+# OAuth token takes precedence over API key when both are set
+claude setup-token # generate a one year valid OAUTH TOKEN
+export CLAUDE_CODE_OAUTH_TOKEN="sk-any-..." # set as env variable
+unset ANTHROPIC_API_KEY
 ```
 
-#### Subscription / OAuth Token Mode
+#### API Key Mode 
+Recommended as backup or "overflow" access mode for lab
 ```bash
-# OAuth token takes precedence over API key when both are set.
-# Obtain via: claude setup-token  (valid for one year)
-export CLAUDE_CODE_OAUTH_TOKEN="sk-any-..."
+export ANTHROPIC_API_KEY="sk-ant-..."   # set as env variable
+unset CLAUDE_CODE_OAUTH_TOKEN           # ensure OAuth is not active
 ```
 
 #### Validate Auth Status
