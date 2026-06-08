@@ -2288,3 +2288,35 @@ and insert a story and summarized version of the `AI Computer` into
 that section.
 
 3. Review the manual changes for correctness and consistency.
+
+## Assistants and Agents
+[x] Status
+
+Reference [README.md](../READEME.md)
+
+### Create a session 
+1. Add a **concise** `agents_and_assistants` session in the AGENDA of 
+README.md placed after the `Exercise: Embeddings Visualization` session 
+with the content structure similar to other concept sessions. 
+
+2. Basic concept of `Assistants vs Agents` are as below:
+```text
+Assistant is a complete application potentially with a user facing 
+interface, one or many LLM(s), Tool(s) with persmissions, 
+Knowhow(s) (aka skills), and a master agent to do work and spawn 
+additional agents on demand. Example of assistant are 
+Claude Desktop, Claude CLI, Antigravity, Claude.ai, Codex, etc.
+
+Agent works by operating on a subset of resources that it has
+been granted within assistant. It interacts with an LLM 
+which in turn may ask the agent to call Tool(s) or invoke Knowhow. 
+The response from the Tool or effect of the KnowHow is fed to the LLM.
+This loop continues until the LLM response decides the job is done.   
+```
+
+3. Phrase title of the session as: `Concept: Agents and AI assistants`.
+
+4. Ensure the contents of session's remain focused and short. 
+
+5. Add to references section:
+[Agents and AI assistants](https://drive.google.com/file/d/1hucHQ0QpD3mWeIofVjgvl2m4Nnej52Nm/view)
