@@ -4691,7 +4691,7 @@ VERIFY: `awk '/Embeddings Visualization/{print NR": embed"} /Assistants and Agen
 
 ### Step 35.3: Mark Phase 35 complete
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 35.1-35.2 are executed and verified; their `[ ] Status` lines in `sdw/plan.md`, and the `## Assistants and Agents` `[ ] Status` line in `sdw/prompt_history.md`, all read `[x] Status`.
 ACTION: (1) Confirm every `[ ] Status` under a `### Step 35.` heading in `sdw/plan.md` reads `[x] Status`. (2) Stage and commit any remaining changes. (3) Tag `v35.3-agents-and-assistants-step-completed` and push the current feature branch with `--tags`.
