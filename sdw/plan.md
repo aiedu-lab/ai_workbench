@@ -4668,25 +4668,25 @@ VERIFY: `grep -A1 "### Step 34\." sdw/plan.md | grep "\[ \] Status"
 
 ## Phase 35: AGENTS AND ASSISTANTS SESSION
 
-### Step 35.1: Create `sessions/agents_and_assistants.md`
+### Step 35.1: Create `sessions/assistants_agents.md`
 
 [x] Status
 
-CONTEXT: No `sessions/agents_and_assistants.md` exists; the `## Assistants and Agents` section of `sdw/prompt_history.md` (lines 2292-2322) requests a concise concept session titled "Concept: Agents and AI assistants" built on a containment model — Assistant = full application (UI, LLM(s), Tool(s) with permissions, Knowhow(s)/skills, master agent that spawns sub-agents; e.g. Claude Desktop, Claude CLI, Antigravity, Claude.ai, Codex) and Agent = component operating on a granted resource subset via an LLM↔Tool/Knowhow loop until the LLM signals completion — plus a references entry linking the given Google Drive resource.
-ACTION: Create `sessions/agents_and_assistants.md` with heading `# Concept: Agents and AI assistants`, `## 🎯 Objective` (one paragraph framing assistants as the application and agents as the working components inside them), `## 🧠 The Core Concepts` containing `### What is an AI assistant?` (definition + examples: Claude Desktop, Claude CLI, Antigravity, Claude.ai, Codex), `### What is an AI agent?` (granted-subset + LLM↔Tool/Knowhow loop, ending when the LLM decides the job is done), and `### How an assistant and its agents fit together` (Assistant ⊃ {LLM(s), Tool(s), Knowhow(s), master agent ⊃ sub-agents spawned on demand}, plus a cross-reference to `client_agent.md` / `client_multiagent.md` / `server_multiagent.md`); close with `## References` containing `* [Agents and AI assistants](https://drive.google.com/file/d/1hucHQ0QpD3mWeIofVjgvl2m4Nnej52Nm/view)`. Model heading/section style on `sessions/hdd.md`; keep the file short (~60-80 lines); omit an Exercise section; reuse the prompt's own wording for the definitions.
+CONTEXT: No `sessions/assistants_agents.md` exists; the `## Assistants and Agents` section of `sdw/prompt_history.md` (lines 2292-2322) requests a concise concept session titled "Concept: Assistants and Agents" built on a containment model — Assistant = full application (UI, LLM(s), Tool(s) with permissions, Knowhow(s)/skills, master agent that spawns sub-agents; e.g. Claude Desktop, Claude CLI, Antigravity, Claude.ai, Codex) and Agent = component operating on a granted resource subset via an LLM↔Tool/Knowhow loop until the LLM signals completion — plus a references entry linking the given Google Drive resource.
+ACTION: Create `sessions/assistants_agents.md` with heading `# Concept: Assistants and Agents`, `## 🎯 Objective` (one paragraph framing assistants as the application and agents as the working components inside them), `## 🧠 The Core Concepts` containing `### What is an AI assistant?` (definition + examples: Claude Desktop, Claude CLI, Antigravity, Claude.ai, Codex), `### What is an AI agent?` (granted-subset + LLM↔Tool/Knowhow loop, ending when the LLM decides the job is done), and `### How an assistant and its agents fit together` (Assistant ⊃ {LLM(s), Tool(s), Knowhow(s), master agent ⊃ sub-agents spawned on demand}, plus a cross-reference to `client_agent.md` / `client_multiagent.md` / `server_multiagent.md`); close with `## References` containing `* [Assistants and Agents](https://drive.google.com/file/d/1hucHQ0QpD3mWeIofVjgvl2m4Nnej52Nm/view)`. Model heading/section style on `sessions/hdd.md`; keep the file short (~60-80 lines); omit an Exercise section; reuse the prompt's own wording for the definitions.
 CONSTRAINTS: Do not modify `sessions/hdd.md`, `sessions/sdlc_ai.md`, `sessions/prompting_advanced.md`, or any other existing session file; do not duplicate the "agent patterns" content already in `sessions/prompting_advanced.md` — cross-reference instead; 2-space indentation, 79-char max line length, single trailing blank line, no trailing whitespace.
-OUTPUT: New file `sessions/agents_and_assistants.md` with the structure described above.
-VERIFY: `test -f sessions/agents_and_assistants.md && grep -q "^# Concept: Agents and AI assistants" sessions/agents_and_assistants.md && grep -q "drive.google.com/file/d/1hucHQ0QpD3mWeIofVjgvl2m4Nnej52Nm" sessions/agents_and_assistants.md && echo PASS || echo FAIL`
+OUTPUT: New file `sessions/assistants_agents.md` with the structure described above.
+VERIFY: `test -f sessions/assistants_agents.md && grep -q "^# Concept: Assistants and Agents" sessions/assistants_agents.md && grep -q "drive.google.com/file/d/1hucHQ0QpD3mWeIofVjgvl2m4Nnej52Nm" sessions/assistants_agents.md && echo PASS || echo FAIL`
 
 ### Step 35.2: Add AGENDA row to `README.md`
 
-[ ] Status
+[x] Status
 
 CONTEXT: `README.md`'s `## 📅 Agenda` table (lines 14-39) lists every session in lab order; row 26 is *Exercise: Embeddings Visualization* (`sessions/embedding.md`) and row 27 is *Concept: Spec Driven Development (SDD)* (`sessions/sdd_basics.md`); the prompt asks for the new row to be placed after the Exercise: Embeddings Visualization session.
-ACTION: Insert one new row between README.md lines 26 and 27: `| [**Concept: Agents and AI assistants**](sessions/agents_and_assistants.md) | <concise description framing assistants as the application and agents as the components operating within them> | <duration> mins | [Claude Chat](tools/claude/desktop.md) |  |`, matching the column count, alignment markup, and link-style conventions of the surrounding rows exactly.
+ACTION: Insert one new row between README.md lines 26 and 27: `| [**Concept: Assistants and Agents**](sessions/assistants_agents.md) | <concise description framing assistants as the application and agents as the components operating within them> | <duration> mins | [Claude Chat](tools/claude/desktop.md) |  |`, matching the column count, alignment markup, and link-style conventions of the surrounding rows exactly.
 CONSTRAINTS: Do not reorder, edit, or remove any existing AGENDA row; do not touch any other table or section of `README.md`.
-OUTPUT: `README.md` AGENDA table gains one new row linking to `sessions/agents_and_assistants.md`, positioned between the Embeddings Visualization and SDD rows.
-VERIFY: `awk '/Embeddings Visualization/{print NR": embed"} /Agents and AI assistants/{print NR": agents"} /Spec Driven Development \(SDD\)/{print NR": sdd"}' README.md`
+OUTPUT: `README.md` AGENDA table gains one new row linking to `sessions/assistants_agents.md`, positioned between the Embeddings Visualization and SDD rows.
+VERIFY: `awk '/Embeddings Visualization/{print NR": embed"} /Assistants and Agents/{print NR": agents"} /Spec Driven Development \(SDD\)/{print NR": sdd"}' README.md`
 # → three lines in ascending order: embed < agents < sdd
 
 ### Step 35.3: Mark Phase 35 complete

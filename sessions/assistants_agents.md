@@ -1,4 +1,4 @@
-# Concept: Agents and AI assistants
+# Concept: Assistants and Agents
 
 ## 🎯 Objective
 
@@ -57,5 +57,5 @@ agent spawning sub-agents), and
 
 ## References
 
-* [Agents and AI assistants](https://drive.google.com/file/d/1hucHQ0QpD3mWeIofVjgvl2m4Nnej52Nm/view)
+* [Assistants and Agents](https://drive.google.com/file/d/1hucHQ0QpD3mWeIofVjgvl2m4Nnej52Nm/view)
 </content>
