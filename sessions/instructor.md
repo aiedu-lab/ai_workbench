@@ -239,9 +239,9 @@ real values (not placeholders) for:
 
 | Variable | Value |
 |---|---|
-| `DOCKER_SERVER_ID` | server hostname or IP |
+| `DOCKER_SERVER_ID` | server hostname or IP (default 73.202.223.27) |
 | `DOCKER_SERVER_USERNAME` | shared account name (e.g. `labuser`) |
-| `DOCKER_SERVER_SSH_PORT` | SSH port (default `22`) |
+| `DOCKER_SERVER_SSH_PORT` | SSH port (default `22439`) |
 
 Students run:
 

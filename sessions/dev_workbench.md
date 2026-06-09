@@ -198,6 +198,27 @@ ollama run gemma:2b "Hello, who are you?"
 Expected: a short reply from the local model. Type `/bye`
 to exit and free RAM.
 
+---
+
+## Run Lab Setup Script
+
+Retrieve the Discord webhook URL from `#meetup-notifications`,
+then run both scripts from inside Ubuntu:
+
+```bash
+export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
+python3 projects/group_meetup/labsetup.py
+python3 projects/group_meetup/preflight_check.py
+```
+
+`labsetup.py` generates your SSH key pair, posts your public key
+to Discord, writes the `ai-lab` SSH config entry, and installs
+CLI tools required by optional sessions (poppler-utils,
+html2text).
+Every item in `preflight_check.py` output must show **PASS**.
+
+---
+
 ## Embedding
 
 Python environment for the Embeddings Visualization session.
@@ -206,7 +227,8 @@ the full session.
 
 ### Set Up
 
-`labsetup.py` creates the Python virtual environment, installs
+Reference [Run Lab Setup Script](#run-lab-setup-script) - 
+it creates the Python virtual environment, installs
 all dependencies, and registers the Jupyter kernel automatically.
 
 To set up manually, see
@@ -227,7 +249,9 @@ the full session.
 
 ### Set Up
 
-`labsetup.py` handles all PKM dependencies automatically:
+Reference [Run Lab Setup Script](#run-lab-setup-script) - 
+it handles installation and all PKM dependencies 
+automatically:
 
 - Installs `poppler-utils` (`pdftotext`) and `html2text`
   CLI tools via `apt`.
@@ -257,22 +281,3 @@ python3 projects/llm_wiki/speed-reading/src/piper.py --help
 
 Expected: both CLIs print their paths; `piper.py --help`
 prints the PHASES section.
-
----
-
-## Run Lab Setup Script
-
-Retrieve the Discord webhook URL from `#meetup-notifications`,
-then run both scripts from inside Ubuntu:
-
-```bash
-export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
-python3 projects/group_meetup/labsetup.py
-python3 projects/group_meetup/preflight_check.py
-```
-
-`labsetup.py` generates your SSH key pair, posts your public key
-to Discord, writes the `ai-lab` SSH config entry, and installs
-CLI tools required by optional sessions (poppler-utils,
-html2text).
-Every item in `preflight_check.py` output must show **PASS**.

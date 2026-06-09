@@ -17,6 +17,8 @@ DISCORD_SERVER: "meetup-lab-2026-spring"
 # account and Docker installed 
 # as provisioned in instructor.md Section 3
 # Format: <hostname> (e.g. labserver.example.com or 70.10.5.10)
+# Internal: ai-lab-int 192.168.4.23
+# External: ai-lab 73.202.223.27
 DOCKER_SERVER_ID: "192.168.4.23"
 
 # username for SSH on the lab server.
@@ -25,7 +27,9 @@ DOCKER_SERVER_USERNAME: "labuser"
 
 # SSH port on the lab server
 # Format: <sshport> (e.g. 22, 2222, etc.)
-DOCKER_SERVER_SSH_PORT: 22
+# Internal: 22
+# External: 22439
+DOCKER_SERVER_SSH_PORT: 22439
 
 # Permanent Google Form URL for student roster collection.
 # Created once by the instructor (see instructor.md Section 1).

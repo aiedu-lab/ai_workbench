@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+
+import sys
+
 """Parse labenv.yaml and set up the student lab environment.
 
 Steps performed:
@@ -482,4 +485,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-  main()
+  sys.exit(main())
