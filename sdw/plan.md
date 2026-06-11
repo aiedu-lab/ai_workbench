@@ -4785,3 +4785,15 @@ ACTION: In `main()`, under the `if sudo_ok:` block, swap the call order so `_ins
 CONSTRAINTS: Don't change any other ordering or logic in `main()`; no other files affected.
 OUTPUT: `_install_pkm_tools()` (which installs `zstd`) runs before `_install_ollama()` in `main()`.
 VERIFY: `python3 -c "import sys; sys.path.insert(0, 'projects/group_meetup'); import labsetup as l; l._install_ollama()"` → no "Please install zstd and try again" error (sudo/TTY-only failures in non-interactive environments are expected).
+
+---
+
+### Step 36.7: Make `_write_ssh_config` refresh a stale `Host ai-lab` block
+
+[x] Status
+
+CONTEXT: `_write_ssh_config()` skipped writing entirely if a `Host ai-lab` block already existed in `~/.ssh/config`, so a pre-existing/stale entry (e.g. pointing at the unreachable external address with a different `IdentityFile`) was never updated to the address resolved by `_resolve_docker_server()`. `preflight_check.py`'s "SSH to ai-lab" check kept failing with "Connection timed out" even after Step 36.3, because it used the stale entry.
+ACTION: Rewrite `_write_ssh_config()` to remove any existing `Host ai-lab` block (its header line plus the indented option lines that follow) from `~/.ssh/config`, then append a fresh block built from the resolved `host`/`port` and `SSH_KEY`.
+CONSTRAINTS: Only the `Host ai-lab` block may be removed/replaced; all other Host blocks (e.g. `Host ai-lab-int`, personal entries) must be preserved unchanged; `preflight_check.py`'s `check_ssh` (alias `ai-lab`) must keep working unchanged.
+OUTPUT: `_write_ssh_config()` always reflects the current `_resolve_docker_server()` result in `~/.ssh/config`'s `Host ai-lab` block, regardless of prior content.
+VERIFY: Dry run against a copy of `~/.ssh/config` shows the stale `Host ai-lab` block (external address, `asarcar_id_ed25519_server`) replaced by a fresh block (`192.168.4.23:22`, `asarcar_id_ed25519`), with `Host ai-lab-int` and all other entries unchanged. Applied to the real `~/.ssh/config`, `ssh ai-lab echo ok` now reaches the host (`Permission denied (publickey,password)` — connectivity reached, key not yet installed by instructor — instead of `Connection timed out`).

@@ -160,31 +160,39 @@ def _resolve_docker_server(env: dict[str, str]) -> tuple[str, str]:
 
 
 def _write_ssh_config(env: dict[str, str], host: str, port: str) -> None:
-  """Append the ai-lab Host block to ~/.ssh/config.
+  """Write or refresh the ai-lab Host block in ~/.ssh/config.
 
-  Idempotent: does nothing if the Host ai-lab entry already exists.
+  Replaces any existing Host ai-lab block so the entry always
+  reflects the currently resolved internal/external address —
+  re-running after a labenv.yaml or network change keeps it
+  correct instead of preserving a stale block.
   """
   existing = SSH_CONFIG.read_text() if SSH_CONFIG.exists() else ""
 
-  # Skip if entry already present
+  # Drop any existing "Host ai-lab" block (its header line plus
+  # the indented option lines that follow it).
+  kept = []
+  skipping = False
   for line in existing.splitlines():
     if line.strip() == f"Host {SSH_HOST_ALIAS}":
-      print(
-        f"  OK   ~/.ssh/config entry exists: "
-        f"Host {SSH_HOST_ALIAS} (skipping)"
-      )
-      return
+      skipping = True
+      continue
+    if skipping and line[:1] in (" ", "\t"):
+      continue
+    skipping = False
+    kept.append(line)
 
   SSH_DIR.mkdir(mode=0o700, exist_ok=True)
   entry = (
-    f"\nHost {SSH_HOST_ALIAS}\n"
+    f"Host {SSH_HOST_ALIAS}\n"
     f"  HostName {host}\n"
     f"  User     {env['DOCKER_SERVER_USERNAME']}\n"
     f"  Port     {port}\n"
     f"  IdentityFile {SSH_KEY}\n"
   )
-  with SSH_CONFIG.open("a") as f:
-    f.write(entry)
+  body = "\n".join(kept).rstrip("\n")
+  text = (body + "\n\n" if body else "") + entry
+  SSH_CONFIG.write_text(text)
   SSH_CONFIG.chmod(0o600)
   print(f"  WROTE ~/.ssh/config entry: Host {SSH_HOST_ALIAS}")
 
