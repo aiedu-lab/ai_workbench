@@ -4874,7 +4874,7 @@ VERIFY: `python3 projects/group_meetup/preflight_check.py 2>&1 | grep -i "ssh to
 
 ### Step 37.5: Update `labenv.yaml` comments for the two-target scheme
 
-[ ] Status
+[x] Status
 
 CONTEXT: The comment block above `DOCKER_SERVER_ID_INTERNAL`/`DOCKER_SERVER_ID_EXTERNAL` in `projects/group_meetup/labenv.yaml` describes the now-removed probe/fallback behavior ("labsetup.py probes the internal address first and falls back to the external address — see _resolve_docker_server()").
 ACTION: Update that comment block to describe the two-alias scheme: `labsetup.py` writes two `~/.ssh/config` entries — `ai-lab-int` (internal LAN, `DOCKER_SERVER_ID_INTERNAL`/`_PORT_INTERNAL`) and `ai-lab` (external WAN, `DOCKER_SERVER_ID_EXTERNAL`/`_PORT_EXTERNAL`, default for students connecting via the Internet). Remove the `_resolve_docker_server()` reference.
