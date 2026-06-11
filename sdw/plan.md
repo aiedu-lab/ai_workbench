@@ -4862,7 +4862,7 @@ VERIFY: `python3 -c "import sys; sys.path.insert(0,'projects/group_meetup'); imp
 
 ### Step 37.4: Update `preflight_check.py` `check_ssh()` to PASS if either alias connects
 
-[ ] Status
+[x] Status
 
 CONTEXT: `check_ssh()` only checks `ssh ai-lab echo ok` and labels the check `"SSH to ai-lab"`. After Step 37.1, `~/.ssh/config` contains both `ai-lab-int` and `ai-lab`; the check should PASS if either is reachable, since location determines which one works.
 ACTION: In `projects/group_meetup/preflight_check.py`, add module constants `SSH_HOST_ALIAS = "ai-lab"` and `SSH_HOST_ALIAS_INT = "ai-lab-int"`. Rewrite `check_ssh()` to try `ssh -o BatchMode=yes -o ConnectTimeout=10 <alias> echo ok` for `SSH_HOST_ALIAS_INT` then `SSH_HOST_ALIAS`; return normally (PASS) if either succeeds; raise `RuntimeError` only if both fail, including both stderr messages and noting `ai-lab` (external) is the default for off-campus access. In `main()`, rename the check label from `"SSH to ai-lab"` to `"SSH to ai-lab-int or ai-lab"`. Update the module docstring line "SSH connectivity to the lab server (Host ai-lab in ~/.ssh/config)" to mention both aliases.
