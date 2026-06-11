@@ -4714,7 +4714,7 @@ VERIFY: `grep -A1 "### Step 35\." sdw/plan.md | grep "\[ \] Status"
 
 ### Step 36.1: Fix double `projects/` path bug in preflight_check.py
 
-[ ] Status
+[x] Status
 
 CONTEXT: `labsetup.py` has an uncommitted fix changing `_EMBEDDING_DIR`/`_SPEED_READING_DIR` from `Path(__file__).parent.parent / "projects" / ...` (resolved to nonexistent `projects/projects/...`) to `Path(__file__).parent.parent / ...` (resolves correctly to `projects/...`). `preflight_check.py` has the identical bug, still unfixed, in `_EMBEDDING_VENV_PY` and `_PIPER_PY`, causing `check_embedding_venv` and `check_piper_py` to FAIL.
 ACTION: In `projects/group_meetup/preflight_check.py`, change `_EMBEDDING_VENV_PY` from `Path(__file__).parent.parent / "projects" / "embedding" / ".venv" / "bin" / "python3"` to `Path(__file__).parent.parent / "embedding" / ".venv" / "bin" / "python3"`, and `_PIPER_PY` from `Path(__file__).parent.parent / "projects" / "llm_wiki" / "speed-reading" / "src" / "piper.py"` to `Path(__file__).parent.parent / "llm_wiki" / "speed-reading" / "src" / "piper.py"`. Leave the existing in-progress fix to `labsetup.py` as-is (it will be committed in Step 36.5).

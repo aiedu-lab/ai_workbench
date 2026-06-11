@@ -193,7 +193,7 @@ def check_git_identity():
 
 _EMBEDDING_VENV_PY = (
   Path(__file__).parent.parent
-  / "projects" / "embedding" / ".venv" / "bin" / "python3"
+  / "embedding" / ".venv" / "bin" / "python3"
 )
 
 
@@ -216,7 +216,7 @@ def check_embedding_venv():
 
 _PIPER_PY = (
   Path(__file__).parent.parent
-  / "projects" / "llm_wiki" / "speed-reading"
+  / "llm_wiki" / "speed-reading"
   / "src" / "piper.py"
 )
 
