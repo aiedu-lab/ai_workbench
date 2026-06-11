@@ -4797,3 +4797,15 @@ ACTION: Rewrite `_write_ssh_config()` to remove any existing `Host ai-lab` block
 CONSTRAINTS: Only the `Host ai-lab` block may be removed/replaced; all other Host blocks (e.g. `Host ai-lab-int`, personal entries) must be preserved unchanged; `preflight_check.py`'s `check_ssh` (alias `ai-lab`) must keep working unchanged.
 OUTPUT: `_write_ssh_config()` always reflects the current `_resolve_docker_server()` result in `~/.ssh/config`'s `Host ai-lab` block, regardless of prior content.
 VERIFY: Dry run against a copy of `~/.ssh/config` shows the stale `Host ai-lab` block (external address, `asarcar_id_ed25519_server`) replaced by a fresh block (`192.168.4.23:22`, `asarcar_id_ed25519`), with `Host ai-lab-int` and all other entries unchanged. Applied to the real `~/.ssh/config`, `ssh ai-lab echo ok` now reaches the host (`Permission denied (publickey,password)` — connectivity reached, key not yet installed by instructor — instead of `Connection timed out`).
+
+---
+
+### Step 36.8: Rename ai-lab SSH key to `_id_ed25519_server`
+
+[x] Status
+
+CONTEXT: Step 36.7's `_write_ssh_config()` wrote `IdentityFile {SSH_KEY}` where `SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519"`, but the key actually installed on the Docker server (`labuser@192.168.4.23`) is `asarcar_id_ed25519_server.pub`, matching the convention used by all other "server"/Docker-host entries in `~/.ssh/config` (`server`, `server-int`, `asarcar`, `asarcar-int`, `ai-lab-int`). After Step 36.7's fix, SSH connectivity succeeded but authentication failed with `Permission denied (publickey,password)` because the wrong key was referenced.
+ACTION: In `projects/group_meetup/labsetup.py`, change `SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519"` (line 58) to `SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519_server"`, and update the docstring at line 14 from `~/.ssh/<username>_id_ed25519` to `~/.ssh/<username>_id_ed25519_server`. In `projects/group_meetup/preflight_check.py`, change `SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519"` (line 37) to `...{getpass.getuser()}_id_ed25519_server"`, and update the docstring at line 11 similarly. Update the real `~/.ssh/config`'s `Host ai-lab` `IdentityFile` from `asarcar_id_ed25519` to `asarcar_id_ed25519_server` to match.
+CONSTRAINTS: Do not touch `GITHUB_SSH_KEY` (`_id_ed25519_github`) or any other `Host` block in `~/.ssh/config`; no other logic changes in either file.
+OUTPUT: `SSH_KEY` in both `labsetup.py` and `preflight_check.py` resolves to `<username>_id_ed25519_server`; `~/.ssh/config`'s `Host ai-lab` block references `asarcar_id_ed25519_server`, matching the key already installed on the Docker server.
+VERIFY: `ssh -o BatchMode=yes -o ConnectTimeout=10 ai-lab echo ok` → `ok`; `python3 projects/group_meetup/preflight_check.py` → `PASS  SSH key asarcar_id_ed25519_server` and `PASS  SSH to ai-lab`.

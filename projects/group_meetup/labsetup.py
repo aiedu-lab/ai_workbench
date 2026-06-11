@@ -11,7 +11,7 @@ Steps performed:
    and register Jupyter kernel if venv absent (idempotent).
 4. Install PKM CLI tools (poppler-utils, html2text) if absent
    (idempotent — skipped if both are already on PATH).
-5. Generate ~/.ssh/<username>_id_ed25519 key pair if it does not
+5. Generate ~/.ssh/<username>_id_ed25519_server key pair if it does not
    exist (idempotent — skipped if the key is already present).
 4. Post the public key to #meetup-notifications so the instructor
    can install it on the Docker server (instructor.md Section 3).
@@ -55,7 +55,7 @@ SSH_KEYS = (
 # Use local OS username to name the key so instructors can
 # disambiguate public keys from different student laptops.
 _USERNAME = getpass.getuser()
-SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519"
+SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519_server"
 SSH_CONFIG = SSH_DIR / "config"
 
 GITHUB_HOST_ALIAS = "github.com"

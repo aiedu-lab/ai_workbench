@@ -8,7 +8,7 @@ Checks for:
 - requests and pyyaml packages installed
 - Non-confidential vars present in labenv.yaml with real values
 - DISCORD_WEBHOOK_URL set in the shell environment (secret)
-- SSH key exists at ~/.ssh/<username>_id_ed25519
+- SSH key exists at ~/.ssh/<username>_id_ed25519_server
 - SSH connectivity to the lab server (Host ai-lab in ~/.ssh/config)
 - gh CLI installed and authenticated (gh auth status)
 - GitHub SSH key exists at ~/.ssh/<username>_id_ed25519_github
@@ -34,7 +34,7 @@ import yaml
 from pathlib import Path
 
 LABENV = Path(__file__).parent / "labenv.yaml"
-SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519"
+SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_server"
 GITHUB_SSH_KEY = (
   Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_github"
 )
