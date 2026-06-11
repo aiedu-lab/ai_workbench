@@ -4886,7 +4886,7 @@ VERIFY: `grep -n "_resolve_docker_server\|probes the internal" projects/group_me
 
 ### Step 37.6: Mark Phase 37 complete, commit, tag, push
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 37.1-37.5 executed and verified; `labsetup.py` and `preflight_check.py` now write/check both `ai-lab-int` and `ai-lab` SSH targets, and `labenv.yaml` comments describe the new scheme.
 ACTION: (1) Run `python3 projects/group_meetup/labsetup.py` and `python3 projects/group_meetup/preflight_check.py`; confirm the "SSH to ai-lab-int or ai-lab" check reflects real connectivity (PASS if either alias connects; FAIL with both stderr messages otherwise — acceptable outside a fully-provisioned lab/network). (2) Confirm every `[ ] Status` under a `### Step 37.` heading in `sdw/plan.md` reads `[x] Status`, and flip `## Lab Update` in `sdw/prompt_history.md` to `[x] Status`. (3) Stage and commit `sdw/plan.md`, `sdw/prompt_history.md`, `projects/group_meetup/labsetup.py`, `projects/group_meetup/preflight_check.py`, `projects/group_meetup/labenv.yaml`. (4) Tag `v37.6-lab-ssh-dual-target-step-completed` and push the current branch (`fix/issues`) with `--tags`.
