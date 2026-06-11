@@ -4754,7 +4754,7 @@ VERIFY: `python3 projects/group_meetup/labsetup.py 2>&1 | grep -A4 "ssh/config"`
 
 ### Step 36.4: Install gh CLI if absent; normalize gh handling
 
-[ ] Status
+[x] Status
 
 CONTEXT: `main()` calls `subprocess.run(["gh", "auth", "status"], capture_output=True)` directly; if `gh` is not on PATH, `subprocess.run` raises `FileNotFoundError`, crashing the script before the "Environment ready." message.
 ACTION: Add `_ensure_gh_installed() -> bool`: if `shutil.which("gh")` is set, return `True`; otherwise attempt `sudo apt install -y gh`, returning `True` on success. On `CalledProcessError`, print a `WARN ... install manually: see https://cli.github.com` message (matching existing WARN style) and return `False`. Call this at the start of the GitHub block in `main()`; only run the existing `gh auth status` / `gh api user` / `_generate_github_ssh_key` / `_write_github_ssh_config` / `_validate_github_ssh` sequence if it returns `True`, else print the existing "WARN GitHub CLI not authenticated — skipping GitHub SSH" message.

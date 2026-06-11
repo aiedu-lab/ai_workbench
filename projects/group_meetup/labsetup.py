@@ -470,6 +470,28 @@ def _sudo_precheck() -> bool:
   return True
 
 
+def _ensure_gh_installed() -> bool:
+  """Install the GitHub CLI (gh) via apt if not already on PATH.
+
+  Returns True if gh is available afterward, False if absent and
+  the apt install failed or was unavailable.
+  """
+  if shutil.which("gh"):
+    return True
+  print("  APT  installing: gh")
+  try:
+    subprocess.run(["sudo", "apt", "install", "-y", "gh"], check=True)
+    print("  OK   gh installed")
+    return True
+  except subprocess.CalledProcessError:
+    print(
+      "  WARN gh install failed — install manually: "
+      "https://cli.github.com",
+      file=sys.stderr,
+    )
+    return False
+
+
 def main() -> None:
   env = _load_env()
   _set_env(env)
@@ -500,10 +522,11 @@ def main() -> None:
 
   _validate_secret()
 
-  gh_auth = subprocess.run(
+  gh_ready = _ensure_gh_installed() and subprocess.run(
     ["gh", "auth", "status"], capture_output=True
-  )
-  if gh_auth.returncode == 0:
+  ).returncode == 0
+
+  if gh_ready:
     github_username = subprocess.run(
       ["gh", "api", "user", "--jq", ".login"],
       capture_output=True, text=True,
