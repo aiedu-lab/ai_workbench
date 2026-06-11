@@ -15,8 +15,9 @@ Steps performed:
    exist (idempotent — skipped if the key is already present).
 4. Post the public key to #meetup-notifications so the instructor
    can install it on the Docker server (instructor.md Section 3).
-5. Write a ~/.ssh/config entry (Host ai-lab) for the lab server
-   (idempotent — skipped if the entry already exists).
+5. Write ~/.ssh/config entries (Host ai-lab-int and Host ai-lab)
+   for the internal/external lab server addresses, replacing any
+   prior versions of either block.
 6. Validate SSH connectivity to ai-lab.
 8. Validate that DISCORD_WEBHOOK_URL is set.
 9. If `gh auth status` exits 0: generate ~/.ssh/<username>_id_ed25519_github,
@@ -43,6 +44,7 @@ LABENV = Path(__file__).parent / "labenv.yaml"
 SECRET_KEY = "DISCORD_WEBHOOK_URL"
 SSH_DIR = Path.home() / ".ssh"
 SSH_HOST_ALIAS = "ai-lab"
+SSH_HOST_ALIAS_INT = "ai-lab-int"
 
 SSH_KEYS = (
   "DOCKER_SERVER_ID_INTERNAL",
@@ -159,22 +161,23 @@ def _resolve_docker_server(env: dict[str, str]) -> tuple[str, str]:
     )
 
 
-def _write_ssh_config(env: dict[str, str], host: str, port: str) -> None:
-  """Write or refresh the ai-lab Host block in ~/.ssh/config.
+def _write_ssh_config(env: dict[str, str]) -> None:
+  """Write or refresh the ai-lab-int/ai-lab Host blocks.
 
-  Replaces any existing Host ai-lab block so the entry always
-  reflects the currently resolved internal/external address —
-  re-running after a labenv.yaml or network change keeps it
-  correct instead of preserving a stale block.
+  Replaces any existing Host ai-lab-int / Host ai-lab blocks in
+  ~/.ssh/config with fresh entries for the internal LAN and
+  external WAN addresses — re-running after a labenv.yaml change
+  keeps both correct instead of preserving stale blocks.
   """
   existing = SSH_CONFIG.read_text() if SSH_CONFIG.exists() else ""
 
-  # Drop any existing "Host ai-lab" block (its header line plus
-  # the indented option lines that follow it).
+  # Drop any existing "Host ai-lab-int" / "Host ai-lab" blocks
+  # (header line plus the indented option lines that follow).
+  headers = {f"Host {SSH_HOST_ALIAS_INT}", f"Host {SSH_HOST_ALIAS}"}
   kept = []
   skipping = False
   for line in existing.splitlines():
-    if line.strip() == f"Host {SSH_HOST_ALIAS}":
+    if line.strip() in headers:
       skipping = True
       continue
     if skipping and line[:1] in (" ", "\t"):
@@ -183,18 +186,28 @@ def _write_ssh_config(env: dict[str, str], host: str, port: str) -> None:
     kept.append(line)
 
   SSH_DIR.mkdir(mode=0o700, exist_ok=True)
-  entry = (
-    f"Host {SSH_HOST_ALIAS}\n"
-    f"  HostName {host}\n"
+  targets = (
+    (SSH_HOST_ALIAS_INT, "DOCKER_SERVER_ID_INTERNAL",
+     "DOCKER_SERVER_SSH_PORT_INTERNAL"),
+    (SSH_HOST_ALIAS, "DOCKER_SERVER_ID_EXTERNAL",
+     "DOCKER_SERVER_SSH_PORT_EXTERNAL"),
+  )
+  entries = "".join(
+    f"Host {alias}\n"
+    f"  HostName {env[host_key]}\n"
     f"  User     {env['DOCKER_SERVER_USERNAME']}\n"
-    f"  Port     {port}\n"
+    f"  Port     {env[port_key]}\n"
     f"  IdentityFile {SSH_KEY}\n"
+    for alias, host_key, port_key in targets
   )
   body = "\n".join(kept).rstrip("\n")
-  text = (body + "\n\n" if body else "") + entry
+  text = (body + "\n\n" if body else "") + entries
   SSH_CONFIG.write_text(text)
   SSH_CONFIG.chmod(0o600)
-  print(f"  WROTE ~/.ssh/config entry: Host {SSH_HOST_ALIAS}")
+  print(
+    f"  WROTE ~/.ssh/config: Host {SSH_HOST_ALIAS_INT}, "
+    f"Host {SSH_HOST_ALIAS}"
+  )
 
 
 def _validate_ssh() -> None:

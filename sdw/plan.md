@@ -4826,7 +4826,7 @@ VERIFY: `ssh -o BatchMode=yes -o ConnectTimeout=10 ai-lab echo ok` → `ok`; `py
 
 ### Step 37.1: Rewrite `_write_ssh_config` to write both `ai-lab-int` and `ai-lab` Host blocks
 
-[ ] Status
+[x] Status
 
 CONTEXT: `_write_ssh_config(env, host, port)` writes a single `Host ai-lab` block using a `(host, port)` pair resolved by `_resolve_docker_server()` (probe internal, fall back to external). Students need both `ai-lab-int` (internal LAN) and `ai-lab` (external WAN, default) entries so either path is always available without re-running setup based on location.
 ACTION: In `projects/group_meetup/labsetup.py`, add a module constant `SSH_HOST_ALIAS_INT = "ai-lab-int"` next to `SSH_HOST_ALIAS = "ai-lab"`. Rewrite `_write_ssh_config(env: dict[str, str]) -> None` (drop the `host, port` params) to: remove any existing `Host ai-lab-int` and `Host ai-lab` blocks (header line + indented option lines) from `~/.ssh/config`, then append two fresh blocks — `Host ai-lab-int` using `DOCKER_SERVER_ID_INTERNAL`/`DOCKER_SERVER_SSH_PORT_INTERNAL`, and `Host ai-lab` using `DOCKER_SERVER_ID_EXTERNAL`/`DOCKER_SERVER_SSH_PORT_EXTERNAL` — both with `User {DOCKER_SERVER_USERNAME}` and `IdentityFile {SSH_KEY}`. Update the module docstring line "Write a ~/.ssh/config entry (Host ai-lab) for the lab server" to describe both entries.
