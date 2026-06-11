@@ -4809,3 +4809,87 @@ ACTION: In `projects/group_meetup/labsetup.py`, change `SSH_KEY = SSH_DIR / f"{_
 CONSTRAINTS: Do not touch `GITHUB_SSH_KEY` (`_id_ed25519_github`) or any other `Host` block in `~/.ssh/config`; no other logic changes in either file.
 OUTPUT: `SSH_KEY` in both `labsetup.py` and `preflight_check.py` resolves to `<username>_id_ed25519_server`; `~/.ssh/config`'s `Host ai-lab` block references `asarcar_id_ed25519_server`, matching the key already installed on the Docker server.
 VERIFY: `ssh -o BatchMode=yes -o ConnectTimeout=10 ai-lab echo ok` → `ok`; `python3 projects/group_meetup/preflight_check.py` → `PASS  SSH key asarcar_id_ed25519_server` and `PASS  SSH to ai-lab`.
+
+---
+
+## Phase 37: LAB SSH DUAL-TARGET UPDATE
+
+**Addresses:** `sdw/prompt_history.md` § `## Lab Update`
+
+**Target files:** `projects/group_meetup/labsetup.py`,
+`projects/group_meetup/preflight_check.py`,
+`projects/group_meetup/labenv.yaml`
+
+**provider:model:** `claude:claude-sonnet-4-6`
+
+---
+
+### Step 37.1: Rewrite `_write_ssh_config` to write both `ai-lab-int` and `ai-lab` Host blocks
+
+[x] Status
+
+CONTEXT: `_write_ssh_config(env, host, port)` writes a single `Host ai-lab` block using a `(host, port)` pair resolved by `_resolve_docker_server()` (probe internal, fall back to external). Students need both `ai-lab-int` (internal LAN) and `ai-lab` (external WAN, default) entries so either path is always available without re-running setup based on location.
+ACTION: In `projects/group_meetup/labsetup.py`, add a module constant `SSH_HOST_ALIAS_INT = "ai-lab-int"` next to `SSH_HOST_ALIAS = "ai-lab"`. Rewrite `_write_ssh_config(env: dict[str, str]) -> None` (drop the `host, port` params) to: remove any existing `Host ai-lab-int` and `Host ai-lab` blocks (header line + indented option lines) from `~/.ssh/config`, then append two fresh blocks — `Host ai-lab-int` using `DOCKER_SERVER_ID_INTERNAL`/`DOCKER_SERVER_SSH_PORT_INTERNAL`, and `Host ai-lab` using `DOCKER_SERVER_ID_EXTERNAL`/`DOCKER_SERVER_SSH_PORT_EXTERNAL` — both with `User {DOCKER_SERVER_USERNAME}` and `IdentityFile {SSH_KEY}`. Update the module docstring line "Write a ~/.ssh/config entry (Host ai-lab) for the lab server" to describe both entries.
+CONSTRAINTS: Only `Host ai-lab-int` and `Host ai-lab` blocks may be removed/replaced; `Host github.com` and any other entries (e.g. personal hosts) must be preserved unchanged; 2-space indent, ≤79 chars/line.
+OUTPUT: `_write_ssh_config(env)` writes both `Host ai-lab-int` (internal) and `Host ai-lab` (external) blocks to `~/.ssh/config`, replacing any prior versions of either block.
+VERIFY: After running, `grep -A4 "Host ai-lab" ~/.ssh/config` shows two blocks — `Host ai-lab-int` with the internal host/port from `labenv.yaml`, and `Host ai-lab` with the external host/port — both with the same `User` and `IdentityFile`.
+
+---
+
+### Step 37.2: Remove `_resolve_docker_server`; update `main()` call site
+
+[x] Status
+
+CONTEXT: `main()` currently does `host, port = _resolve_docker_server(env)` then `_write_ssh_config(env, host, port)`. After Step 37.1, `_write_ssh_config(env)` writes both blocks unconditionally, making `_resolve_docker_server()` and its `socket` import dead code.
+ACTION: In `projects/group_meetup/labsetup.py`, delete the `_resolve_docker_server()` function and the `import socket` line (confirm `socket` is not used elsewhere first). In `main()`, change the `if ssh_real:` block to call `_write_ssh_config(env)` directly (no `host`/`port` locals).
+CONSTRAINTS: Don't change `_generate_ssh_key`, `_post_pubkey_to_discord`, `_validate_secret`, or the `ssh_real` placeholder check; no other files affected.
+OUTPUT: `_resolve_docker_server` and the now-unused `socket` import are removed; `main()` calls `_write_ssh_config(env)`.
+VERIFY: `python3 -c "import sys; sys.path.insert(0,'projects/group_meetup'); import labsetup as l; assert not hasattr(l, '_resolve_docker_server')"` exits 0; `grep -n "^import socket" projects/group_meetup/labsetup.py` returns no match.
+
+---
+
+### Step 37.3: Update `_validate_ssh()` to check both `ai-lab-int` and `ai-lab`
+
+[x] Status
+
+CONTEXT: `_validate_ssh()` runs `ssh ai-lab echo ok` once and warns if it fails. With two static aliases, a student may only reach one of them depending on whether they're on the lab LAN or the Internet; success on either should be reported as OK.
+ACTION: Rewrite `_validate_ssh()` to attempt `ssh -o BatchMode=yes -o ConnectTimeout=10 <alias> echo ok` for `SSH_HOST_ALIAS_INT` and then `SSH_HOST_ALIAS`, printing `  OK   SSH <alias> -> connection verified` for each alias that succeeds. If neither succeeds, print the existing WARN message (same style), updated to reference both `ai-lab-int` and `ai-lab` (noting `ai-lab` is the default for off-campus access). Update the module docstring line "Validate SSH connectivity to ai-lab." to mention both aliases.
+CONSTRAINTS: Don't change the public-key posting flow or its messaging; keep the existing WARN wording/format otherwise.
+OUTPUT: `_validate_ssh()` independently reports connectivity for `ai-lab-int` and `ai-lab`; prints the WARN block only if both fail.
+VERIFY: `python3 -c "import sys; sys.path.insert(0,'projects/group_meetup'); import labsetup as l; l._validate_ssh()"` runs without raising and prints an `OK` or `WARN` line per alias.
+
+---
+
+### Step 37.4: Update `preflight_check.py` `check_ssh()` to PASS if either alias connects
+
+[x] Status
+
+CONTEXT: `check_ssh()` only checks `ssh ai-lab echo ok` and labels the check `"SSH to ai-lab"`. After Step 37.1, `~/.ssh/config` contains both `ai-lab-int` and `ai-lab`; the check should PASS if either is reachable, since location determines which one works.
+ACTION: In `projects/group_meetup/preflight_check.py`, add module constants `SSH_HOST_ALIAS = "ai-lab"` and `SSH_HOST_ALIAS_INT = "ai-lab-int"`. Rewrite `check_ssh()` to try `ssh -o BatchMode=yes -o ConnectTimeout=10 <alias> echo ok` for `SSH_HOST_ALIAS_INT` then `SSH_HOST_ALIAS`; return normally (PASS) if either succeeds; raise `RuntimeError` only if both fail, including both stderr messages and noting `ai-lab` (external) is the default for off-campus access. In `main()`, rename the check label from `"SSH to ai-lab"` to `"SSH to ai-lab-int or ai-lab"`. Update the module docstring line "SSH connectivity to the lab server (Host ai-lab in ~/.ssh/config)" to mention both aliases.
+CONSTRAINTS: Keep the `check()` wrapper signature and call pattern unchanged; don't alter any other check function.
+OUTPUT: The "SSH to ai-lab-int or ai-lab" check PASSes if at least one of `ai-lab-int`/`ai-lab` is reachable, FAILs (with both stderr messages) only if neither is.
+VERIFY: `python3 projects/group_meetup/preflight_check.py 2>&1 | grep -i "ssh to ai-lab"` shows the renamed check with PASS or FAIL.
+
+---
+
+### Step 37.5: Update `labenv.yaml` comments for the two-target scheme
+
+[x] Status
+
+CONTEXT: The comment block above `DOCKER_SERVER_ID_INTERNAL`/`DOCKER_SERVER_ID_EXTERNAL` in `projects/group_meetup/labenv.yaml` describes the now-removed probe/fallback behavior ("labsetup.py probes the internal address first and falls back to the external address — see _resolve_docker_server()").
+ACTION: Update that comment block to describe the two-alias scheme: `labsetup.py` writes two `~/.ssh/config` entries — `ai-lab-int` (internal LAN, `DOCKER_SERVER_ID_INTERNAL`/`_PORT_INTERNAL`) and `ai-lab` (external WAN, `DOCKER_SERVER_ID_EXTERNAL`/`_PORT_EXTERNAL`, default for students connecting via the Internet). Remove the `_resolve_docker_server()` reference.
+CONSTRAINTS: Only edit comments; no key/value changes; ≤79 chars/line, 2-space indent.
+OUTPUT: `labenv.yaml` comments accurately describe the `ai-lab-int`/`ai-lab` two-alias scheme with no reference to `_resolve_docker_server`.
+VERIFY: `grep -n "_resolve_docker_server\|probes the internal" projects/group_meetup/labenv.yaml` returns no match.
+
+---
+
+### Step 37.6: Mark Phase 37 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 37.1-37.5 executed and verified; `labsetup.py` and `preflight_check.py` now write/check both `ai-lab-int` and `ai-lab` SSH targets, and `labenv.yaml` comments describe the new scheme.
+ACTION: (1) Run `python3 projects/group_meetup/labsetup.py` and `python3 projects/group_meetup/preflight_check.py`; confirm the "SSH to ai-lab-int or ai-lab" check reflects real connectivity (PASS if either alias connects; FAIL with both stderr messages otherwise — acceptable outside a fully-provisioned lab/network). (2) Confirm every `[ ] Status` under a `### Step 37.` heading in `sdw/plan.md` reads `[x] Status`, and flip `## Lab Update` in `sdw/prompt_history.md` to `[x] Status`. (3) Stage and commit `sdw/plan.md`, `sdw/prompt_history.md`, `projects/group_meetup/labsetup.py`, `projects/group_meetup/preflight_check.py`, `projects/group_meetup/labenv.yaml`. (4) Tag `v37.6-lab-ssh-dual-target-step-completed` and push the current branch (`fix/issues`) with `--tags`.
+CONSTRAINTS: Only flip status checkboxes — do not edit step bodies, reorder steps, or rewrite history; never push to `main`.
+OUTPUT: All Phase 37 `[ ] Status` lines read `[x] Status`; `## Lab Update` in `sdw/prompt_history.md` reads `[x] Status`; annotated tag `v37.6-lab-ssh-dual-target-step-completed` pushed to `fix/issues`.
+VERIFY: `grep -A1 "### Step 37\." sdw/plan.md | grep "\[ \] Status"` → 0 matches; `git tag | grep "v37\."`

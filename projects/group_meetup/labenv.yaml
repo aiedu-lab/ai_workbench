@@ -17,8 +17,10 @@ DISCORD_SERVER: "meetup-lab-2026-spring"
 # Must resolve to an IP with a DOCKER_SERVER_USERNAME
 # account and Docker installed
 # as provisioned in instructor.md Section 3
-# labsetup.py probes the internal address first and falls back
-# to the external address — see _resolve_docker_server().
+# labsetup.py writes two ~/.ssh/config entries: ai-lab-int (the
+# internal address/port below) and ai-lab (the external
+# address/port below, the default for students connecting via
+# the Internet).
 # Format: <hostname/ip> (e.g. labserver.example.com or 70.10.5.10)
 DOCKER_SERVER_ID_INTERNAL: "192.168.4.23"
 DOCKER_SERVER_SSH_PORT_INTERNAL: 22

@@ -15,9 +15,11 @@ Steps performed:
    exist (idempotent — skipped if the key is already present).
 4. Post the public key to #meetup-notifications so the instructor
    can install it on the Docker server (instructor.md Section 3).
-5. Write a ~/.ssh/config entry (Host ai-lab) for the lab server
-   (idempotent — skipped if the entry already exists).
-6. Validate SSH connectivity to ai-lab.
+5. Write ~/.ssh/config entries (Host ai-lab-int and Host ai-lab)
+   for the internal/external lab server addresses, replacing any
+   prior versions of either block.
+6. Validate SSH connectivity to ai-lab-int and ai-lab (either
+   succeeding is OK; ai-lab is the off-campus default).
 8. Validate that DISCORD_WEBHOOK_URL is set.
 9. If `gh auth status` exits 0: generate ~/.ssh/<username>_id_ed25519_github,
    upload public key to GitHub, write Host github.com config entry,
@@ -32,7 +34,6 @@ message posted by the instructor (instructor.md Section 2).
 import getpass
 import os
 import shutil
-import socket
 import subprocess
 import sys
 import yaml
@@ -43,6 +44,7 @@ LABENV = Path(__file__).parent / "labenv.yaml"
 SECRET_KEY = "DISCORD_WEBHOOK_URL"
 SSH_DIR = Path.home() / ".ssh"
 SSH_HOST_ALIAS = "ai-lab"
+SSH_HOST_ALIAS_INT = "ai-lab-int"
 
 SSH_KEYS = (
   "DOCKER_SERVER_ID_INTERNAL",
@@ -138,43 +140,23 @@ def _post_pubkey_to_discord(env: dict[str, str]) -> None:
     )
 
 
-def _resolve_docker_server(env: dict[str, str]) -> tuple[str, str]:
-  """Pick the reachable address for the lab Docker server.
+def _write_ssh_config(env: dict[str, str]) -> None:
+  """Write or refresh the ai-lab-int/ai-lab Host blocks.
 
-  Probes the internal LAN address first (short TCP connect
-  timeout); falls back to the external WAN address if the
-  internal address is unreachable, e.g. when off-campus.
-  """
-  internal_host = env["DOCKER_SERVER_ID_INTERNAL"]
-  internal_port = env["DOCKER_SERVER_SSH_PORT_INTERNAL"]
-  try:
-    with socket.create_connection(
-      (internal_host, int(internal_port)), timeout=2
-    ):
-      return internal_host, internal_port
-  except OSError:
-    return (
-      env["DOCKER_SERVER_ID_EXTERNAL"],
-      env["DOCKER_SERVER_SSH_PORT_EXTERNAL"],
-    )
-
-
-def _write_ssh_config(env: dict[str, str], host: str, port: str) -> None:
-  """Write or refresh the ai-lab Host block in ~/.ssh/config.
-
-  Replaces any existing Host ai-lab block so the entry always
-  reflects the currently resolved internal/external address —
-  re-running after a labenv.yaml or network change keeps it
-  correct instead of preserving a stale block.
+  Replaces any existing Host ai-lab-int / Host ai-lab blocks in
+  ~/.ssh/config with fresh entries for the internal LAN and
+  external WAN addresses — re-running after a labenv.yaml change
+  keeps both correct instead of preserving stale blocks.
   """
   existing = SSH_CONFIG.read_text() if SSH_CONFIG.exists() else ""
 
-  # Drop any existing "Host ai-lab" block (its header line plus
-  # the indented option lines that follow it).
+  # Drop any existing "Host ai-lab-int" / "Host ai-lab" blocks
+  # (header line plus the indented option lines that follow).
+  headers = {f"Host {SSH_HOST_ALIAS_INT}", f"Host {SSH_HOST_ALIAS}"}
   kept = []
   skipping = False
   for line in existing.splitlines():
-    if line.strip() == f"Host {SSH_HOST_ALIAS}":
+    if line.strip() in headers:
       skipping = True
       continue
     if skipping and line[:1] in (" ", "\t"):
@@ -183,40 +165,60 @@ def _write_ssh_config(env: dict[str, str], host: str, port: str) -> None:
     kept.append(line)
 
   SSH_DIR.mkdir(mode=0o700, exist_ok=True)
-  entry = (
-    f"Host {SSH_HOST_ALIAS}\n"
-    f"  HostName {host}\n"
+  targets = (
+    (SSH_HOST_ALIAS_INT, "DOCKER_SERVER_ID_INTERNAL",
+     "DOCKER_SERVER_SSH_PORT_INTERNAL"),
+    (SSH_HOST_ALIAS, "DOCKER_SERVER_ID_EXTERNAL",
+     "DOCKER_SERVER_SSH_PORT_EXTERNAL"),
+  )
+  entries = "".join(
+    f"Host {alias}\n"
+    f"  HostName {env[host_key]}\n"
     f"  User     {env['DOCKER_SERVER_USERNAME']}\n"
-    f"  Port     {port}\n"
+    f"  Port     {env[port_key]}\n"
     f"  IdentityFile {SSH_KEY}\n"
+    for alias, host_key, port_key in targets
   )
   body = "\n".join(kept).rstrip("\n")
-  text = (body + "\n\n" if body else "") + entry
+  text = (body + "\n\n" if body else "") + entries
   SSH_CONFIG.write_text(text)
   SSH_CONFIG.chmod(0o600)
-  print(f"  WROTE ~/.ssh/config entry: Host {SSH_HOST_ALIAS}")
+  print(
+    f"  WROTE ~/.ssh/config: Host {SSH_HOST_ALIAS_INT}, "
+    f"Host {SSH_HOST_ALIAS}"
+  )
 
 
 def _validate_ssh() -> None:
-  result = subprocess.run(
-    [
-      "ssh", "-o", "BatchMode=yes",
-      "-o", "ConnectTimeout=10",
-      SSH_HOST_ALIAS, "echo", "ok",
-    ],
-    capture_output=True,
-    text=True,
-  )
-  if result.returncode != 0 or result.stdout.strip() != "ok":
+  reachable = []
+  last_stderr = ""
+  for alias in (SSH_HOST_ALIAS_INT, SSH_HOST_ALIAS):
+    result = subprocess.run(
+      [
+        "ssh", "-o", "BatchMode=yes",
+        "-o", "ConnectTimeout=10",
+        alias, "echo", "ok",
+      ],
+      capture_output=True,
+      text=True,
+    )
+    if result.returncode == 0 and result.stdout.strip() == "ok":
+      print(f"  OK   SSH {alias} → connection verified")
+      reachable.append(alias)
+    else:
+      last_stderr = result.stderr.strip()
+
+  if not reachable:
     print(
-      f"\n  WARN SSH to {SSH_HOST_ALIAS!r} not yet available.\n"
+      f"\n  WARN SSH to {SSH_HOST_ALIAS_INT!r} and "
+      f"{SSH_HOST_ALIAS!r} not yet available.\n"
       "  Your public key was posted to #meetup-notifications.\n"
       "  Once the instructor confirms it is installed, re-run "
-      "this script to validate the connection.\n"
-      f"  (stderr: {result.stderr.strip()!r})"
+      "this script to validate the connection. Use "
+      f"{SSH_HOST_ALIAS_INT!r} on the lab LAN, or "
+      f"{SSH_HOST_ALIAS!r} (default) from off-campus.\n"
+      f"  (stderr: {last_stderr!r})"
     )
-    return
-  print(f"  OK   SSH {SSH_HOST_ALIAS} → connection verified")
 
 
 def _generate_github_ssh_key(github_username: str) -> None:
@@ -515,10 +517,9 @@ def main() -> None:
   )
 
   if ssh_real:
-    host, port = _resolve_docker_server(env)
     _generate_ssh_key()
     _post_pubkey_to_discord(env)
-    _write_ssh_config(env, host, port)
+    _write_ssh_config(env)
     _validate_ssh()
   else:
     print(

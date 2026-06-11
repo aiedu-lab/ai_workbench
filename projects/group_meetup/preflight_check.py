@@ -9,7 +9,7 @@ Checks for:
 - Non-confidential vars present in labenv.yaml with real values
 - DISCORD_WEBHOOK_URL set in the shell environment (secret)
 - SSH key exists at ~/.ssh/<username>_id_ed25519_server
-- SSH connectivity to the lab server (Host ai-lab in ~/.ssh/config)
+- SSH connectivity to ai-lab-int or ai-lab (~/.ssh/config)
 - gh CLI installed and authenticated (gh auth status)
 - GitHub SSH key exists at ~/.ssh/<username>_id_ed25519_github
 - GitHub SSH authentication (ssh git@github.com)
@@ -38,6 +38,8 @@ SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_server"
 GITHUB_SSH_KEY = (
   Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_github"
 )
+SSH_HOST_ALIAS = "ai-lab"
+SSH_HOST_ALIAS_INT = "ai-lab-int"
 
 NON_SECRET_VARS = (
   "DISCORD_SERVER",
@@ -112,21 +114,29 @@ def check_ssh_key():
 
 
 def check_ssh():
-  result = subprocess.run(
-    [
-      "ssh", "-o", "BatchMode=yes",
-      "-o", "ConnectTimeout=10",
-      "ai-lab", "echo", "ok",
-    ],
-    capture_output=True,
-    text=True,
-  )
-  if result.returncode != 0 or result.stdout.strip() != "ok":
-    raise RuntimeError(
-      "SSH to ai-lab failed — run labsetup.py, then ask the "
-      "instructor to install your public key on the server "
-      f"(stderr: {result.stderr.strip()!r})"
+  errors = {}
+  for alias in (SSH_HOST_ALIAS_INT, SSH_HOST_ALIAS):
+    result = subprocess.run(
+      [
+        "ssh", "-o", "BatchMode=yes",
+        "-o", "ConnectTimeout=10",
+        alias, "echo", "ok",
+      ],
+      capture_output=True,
+      text=True,
     )
+    if result.returncode == 0 and result.stdout.strip() == "ok":
+      return
+    errors[alias] = result.stderr.strip()
+
+  raise RuntimeError(
+    f"SSH to {SSH_HOST_ALIAS_INT} and {SSH_HOST_ALIAS} both "
+    "failed — run labsetup.py, then ask the instructor to "
+    f"install your public key on the server ({SSH_HOST_ALIAS} "
+    "is the default for off-campus access)\n"
+    f"  {SSH_HOST_ALIAS_INT}: {errors[SSH_HOST_ALIAS_INT]!r}\n"
+    f"  {SSH_HOST_ALIAS}: {errors[SSH_HOST_ALIAS]!r}"
+  )
 
 
 def check_gh_install():
@@ -249,7 +259,7 @@ def main():
     check(f"{var} in labenv.yaml", lambda v=var: check_labenv_var(env, v))
   check("DISCORD_WEBHOOK_URL set", check_discord_webhook)
   check(f"SSH key {SSH_KEY.name}", check_ssh_key)
-  check("SSH to ai-lab", check_ssh)
+  check("SSH to ai-lab-int or ai-lab", check_ssh)
   check("gh installed", check_gh_install)
   check("gh authenticated", check_gh_auth)
   check(f"GitHub SSH key {GITHUB_SSH_KEY.name}", check_github_ssh_key)

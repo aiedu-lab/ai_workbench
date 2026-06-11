@@ -2351,3 +2351,27 @@ if internal lab or 22439 if external - suggest a way to handle this cleanly.
 ### Validation
 * projects/group_meetup/labsetup.py should set up up cleanly.
 * projects/group_meetup/preflight_check.py should pass
+
+## Lab Update
+[x] Status
+
+Reference projects/group_meetup:
+* labsetup.py
+* preflight_check.py
+* labenv.yaml
+
+### Issue
+* projects/group_meetup/labsetup.py is creating only server target ai-lab.
+* Students could be accessing the server from the intranet (inside 
+the lab) or sometimes from the extranet (via Internet from outside).
+* Depending on from where labsetup is run, we would have saved against 
+ai-lab the target as an internal private IP address or not.
+* Instead, create two targets ai-lab-int and ai-lab in .ssh/config and
+then students use the appropriate target depending on whether they are
+inside the lab or not.
+
+### Validation
+Either ssh to ai-lab-int works or ssh to ai-lab works with the latter used
+as default as students would mostly access the server via the Internet.
+
+
