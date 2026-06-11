@@ -497,8 +497,8 @@ def main() -> None:
   _set_env(env)
   sudo_ok = _sudo_precheck()
   if sudo_ok:
+    _install_pkm_tools()  # installs zstd — required by ollama installer
     _install_ollama()
-    _install_pkm_tools()
   _setup_embedding_venv()  # pure Python venv — no sudo needed
   _setup_piper_venv()     # speed-reading venv — no sudo needed
 

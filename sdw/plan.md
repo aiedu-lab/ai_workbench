@@ -4773,3 +4773,15 @@ ACTION: (1) Run `python3 projects/group_meetup/preflight_check.py` and confirm p
 CONSTRAINTS: Only flip status checkboxes — do not edit step bodies, reorder steps, or rewrite history; never push to `main`.
 OUTPUT: All Phase 36 `[ ] Status` lines read `[x] Status`; `## Lab Setup` in `sdw/prompt_history.md` reads `[x] Status`; annotated tag `v36.5-lab-setup-fixes-step-completed` pushed to `fix/class`.
 VERIFY: `grep -A1 "### Step 36\." sdw/plan.md | grep "\[ \] Status"` → 0 matches; `git tag | grep "v36\."`
+
+---
+
+### Step 36.6: Fix `_install_ollama`/`_install_pkm_tools` call order
+
+[x] Status
+
+CONTEXT: Step 36.2 added `zstd` to `_install_pkm_tools()`'s package list, but `main()` still called `_install_ollama()` before `_install_pkm_tools()`. Step 36.2's ACTION incorrectly assumed the order was already correct. As a result, running `labsetup.py` end-to-end still fails ollama install with "This version requires zstd for extraction. Please install zstd and try again."
+ACTION: In `main()`, under the `if sudo_ok:` block, swap the call order so `_install_pkm_tools()` runs before `_install_ollama()`.
+CONSTRAINTS: Don't change any other ordering or logic in `main()`; no other files affected.
+OUTPUT: `_install_pkm_tools()` (which installs `zstd`) runs before `_install_ollama()` in `main()`.
+VERIFY: `python3 -c "import sys; sys.path.insert(0, 'projects/group_meetup'); import labsetup as l; l._install_ollama()"` → no "Please install zstd and try again" error (sudo/TTY-only failures in non-interactive environments are expected).
