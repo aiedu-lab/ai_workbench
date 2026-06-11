@@ -4850,7 +4850,7 @@ VERIFY: `python3 -c "import sys; sys.path.insert(0,'projects/group_meetup'); imp
 
 ### Step 37.3: Update `_validate_ssh()` to check both `ai-lab-int` and `ai-lab`
 
-[ ] Status
+[x] Status
 
 CONTEXT: `_validate_ssh()` runs `ssh ai-lab echo ok` once and warns if it fails. With two static aliases, a student may only reach one of them depending on whether they're on the lab LAN or the Internet; success on either should be reported as OK.
 ACTION: Rewrite `_validate_ssh()` to attempt `ssh -o BatchMode=yes -o ConnectTimeout=10 <alias> echo ok` for `SSH_HOST_ALIAS_INT` and then `SSH_HOST_ALIAS`, printing `  OK   SSH <alias> -> connection verified` for each alias that succeeds. If neither succeeds, print the existing WARN message (same style), updated to reference both `ai-lab-int` and `ai-lab` (noting `ai-lab` is the default for off-campus access). Update the module docstring line "Validate SSH connectivity to ai-lab." to mention both aliases.

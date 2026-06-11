@@ -18,7 +18,8 @@ Steps performed:
 5. Write ~/.ssh/config entries (Host ai-lab-int and Host ai-lab)
    for the internal/external lab server addresses, replacing any
    prior versions of either block.
-6. Validate SSH connectivity to ai-lab.
+6. Validate SSH connectivity to ai-lab-int and ai-lab (either
+   succeeding is OK; ai-lab is the off-campus default).
 8. Validate that DISCORD_WEBHOOK_URL is set.
 9. If `gh auth status` exits 0: generate ~/.ssh/<username>_id_ed25519_github,
    upload public key to GitHub, write Host github.com config entry,
@@ -189,25 +190,35 @@ def _write_ssh_config(env: dict[str, str]) -> None:
 
 
 def _validate_ssh() -> None:
-  result = subprocess.run(
-    [
-      "ssh", "-o", "BatchMode=yes",
-      "-o", "ConnectTimeout=10",
-      SSH_HOST_ALIAS, "echo", "ok",
-    ],
-    capture_output=True,
-    text=True,
-  )
-  if result.returncode != 0 or result.stdout.strip() != "ok":
+  reachable = []
+  last_stderr = ""
+  for alias in (SSH_HOST_ALIAS_INT, SSH_HOST_ALIAS):
+    result = subprocess.run(
+      [
+        "ssh", "-o", "BatchMode=yes",
+        "-o", "ConnectTimeout=10",
+        alias, "echo", "ok",
+      ],
+      capture_output=True,
+      text=True,
+    )
+    if result.returncode == 0 and result.stdout.strip() == "ok":
+      print(f"  OK   SSH {alias} → connection verified")
+      reachable.append(alias)
+    else:
+      last_stderr = result.stderr.strip()
+
+  if not reachable:
     print(
-      f"\n  WARN SSH to {SSH_HOST_ALIAS!r} not yet available.\n"
+      f"\n  WARN SSH to {SSH_HOST_ALIAS_INT!r} and "
+      f"{SSH_HOST_ALIAS!r} not yet available.\n"
       "  Your public key was posted to #meetup-notifications.\n"
       "  Once the instructor confirms it is installed, re-run "
-      "this script to validate the connection.\n"
-      f"  (stderr: {result.stderr.strip()!r})"
+      "this script to validate the connection. Use "
+      f"{SSH_HOST_ALIAS_INT!r} on the lab LAN, or "
+      f"{SSH_HOST_ALIAS!r} (default) from off-campus.\n"
+      f"  (stderr: {last_stderr!r})"
     )
-    return
-  print(f"  OK   SSH {SSH_HOST_ALIAS} → connection verified")
 
 
 def _generate_github_ssh_key(github_username: str) -> None:
