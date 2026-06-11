@@ -33,7 +33,6 @@ message posted by the instructor (instructor.md Section 2).
 import getpass
 import os
 import shutil
-import socket
 import subprocess
 import sys
 import yaml
@@ -137,27 +136,6 @@ def _post_pubkey_to_discord(env: dict[str, str]) -> None:
       f"  WARN public-key post failed (HTTP {r.status_code}) — "
       "share your key with the instructor manually.",
       file=sys.stderr,
-    )
-
-
-def _resolve_docker_server(env: dict[str, str]) -> tuple[str, str]:
-  """Pick the reachable address for the lab Docker server.
-
-  Probes the internal LAN address first (short TCP connect
-  timeout); falls back to the external WAN address if the
-  internal address is unreachable, e.g. when off-campus.
-  """
-  internal_host = env["DOCKER_SERVER_ID_INTERNAL"]
-  internal_port = env["DOCKER_SERVER_SSH_PORT_INTERNAL"]
-  try:
-    with socket.create_connection(
-      (internal_host, int(internal_port)), timeout=2
-    ):
-      return internal_host, internal_port
-  except OSError:
-    return (
-      env["DOCKER_SERVER_ID_EXTERNAL"],
-      env["DOCKER_SERVER_SSH_PORT_EXTERNAL"],
     )
 
 
@@ -528,10 +506,9 @@ def main() -> None:
   )
 
   if ssh_real:
-    host, port = _resolve_docker_server(env)
     _generate_ssh_key()
     _post_pubkey_to_discord(env)
-    _write_ssh_config(env, host, port)
+    _write_ssh_config(env)
     _validate_ssh()
   else:
     print(

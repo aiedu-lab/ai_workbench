@@ -4838,7 +4838,7 @@ VERIFY: After running, `grep -A4 "Host ai-lab" ~/.ssh/config` shows two blocks â
 
 ### Step 37.2: Remove `_resolve_docker_server`; update `main()` call site
 
-[ ] Status
+[x] Status
 
 CONTEXT: `main()` currently does `host, port = _resolve_docker_server(env)` then `_write_ssh_config(env, host, port)`. After Step 37.1, `_write_ssh_config(env)` writes both blocks unconditionally, making `_resolve_docker_server()` and its `socket` import dead code.
 ACTION: In `projects/group_meetup/labsetup.py`, delete the `_resolve_docker_server()` function and the `import socket` line (confirm `socket` is not used elsewhere first). In `main()`, change the `if ssh_real:` block to call `_write_ssh_config(env)` directly (no `host`/`port` locals).
