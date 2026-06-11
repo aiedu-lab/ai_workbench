@@ -174,32 +174,6 @@ fully operational.
 
 ---
 
-## AI Local
-
-Ollama model files consume disk space but **do not use RAM
-when idle** — safe to install now without slowing other
-exercises. See [AI Local](ai_local.md) for the full session.
-
-### Set Up
-
-`labsetup.py` installs Ollama automatically.
-
-To install manually, follow the guide for your OS:
-[Local AI Setup Guide](../tools/ollama/setup.md).
-
-### Test
-
-After installation, verify the model responds:
-
-```bash
-ollama run gemma:2b "Hello, who are you?"
-```
-
-Expected: a short reply from the local model. Type `/bye`
-to exit and free RAM.
-
----
-
 ## Run Lab Setup Script
 
 Retrieve the Discord webhook URL from `#meetup-notifications`,
@@ -218,14 +192,45 @@ html2text).
 Every item in `preflight_check.py` output must show **PASS**.
 
 ---
+### Additional Setups
 
-## Embedding
+****All the below setups are automatically effected** by the
+above script.
+
+### AI Local
+
+Ollama model files consume disk space but **do not use RAM
+when idle** — safe to install now without slowing other
+exercises. See [AI Local](ai_local.md) for the full session.
+
+#### Set Up
+
+Reference [Run Lab Setup Script](#run-lab-setup-script) - 
+it installs Ollama automatically.
+
+To install manually, follow the guide for your OS:
+[Local AI Setup Guide](../tools/ollama/setup.md).
+
+#### Test
+
+After installation, verify the model responds:
+
+```bash
+ollama run gemma:2b "Hello, who are you?"
+```
+
+Expected: a short reply from the local model. Type `/bye`
+to exit and free RAM.
+
+---
+
+### Embedding
 
 Python environment for the Embeddings Visualization session.
 See [Exercise: Embeddings Visualization](embedding.md) for
 the full session.
 
-### Set Up
+#### Set Up
 
 Reference [Run Lab Setup Script](#run-lab-setup-script) - 
 it creates the Python virtual environment, installs
@@ -234,20 +239,20 @@ all dependencies, and registers the Jupyter kernel automatically.
 To set up manually, see
 [Python venv Setup](../tools/dev_workbench/venv.md).
 
-### Test
+#### Test
 
 Verify the environment is ready — see the
 [Validation](../tools/dev_workbench/venv.md#validation)
 section in the venv setup guide.
 
-## PKM
+### PKM
 
 Speed Reading Mindmap converts a PDF or text book into an
 interactive HTML mind-map using a multi-agent pipeline.
 See [LLM Wiki — Speed Reading Extension](llm_wiki.md) for
 the full session.
 
-### Set Up
+#### Set Up
 
 Reference [Run Lab Setup Script](#run-lab-setup-script) - 
 it handles installation and all PKM dependencies 
@@ -270,7 +275,7 @@ To create the piper venv manually:
 python3 -m venv projects/llm_wiki/speed-reading/.venv
 ```
 
-### Test
+#### Test
 
 After setup, verify CLIs and piper.py are ready:
 
