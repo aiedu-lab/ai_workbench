@@ -4730,7 +4730,7 @@ print(p._EMBEDDING_VENV_PY); print(p._PIPER_PY)"`
 
 ### Step 36.2: Ensure `zstd` is installed before ollama install
 
-[ ] Status
+[x] Status
 
 CONTEXT: `_install_ollama()` in `labsetup.py` runs the official install script (`curl -fsSL https://ollama.com/install.sh | sh`), which extracts a zstd-compressed archive; if `zstd` is absent the extraction fails. `_install_pkm_tools()` already installs `poppler-utils`/`html2text` via one apt call when missing.
 ACTION: In `_install_pkm_tools()`, add `"zstd"` (binary name `zstd`) to the list of tools checked via `shutil.which` and to the `apt install` package list alongside `poppler-utils` and `html2text`. Keep `_install_ollama()` called after `_install_pkm_tools()` in `main()` (already the case).

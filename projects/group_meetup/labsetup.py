@@ -387,23 +387,35 @@ def _setup_piper_venv() -> None:
   print("  OK   speed-reading venv ready")
 
 
+_PKM_PACKAGES = {
+  "pdftotext": "poppler-utils",
+  "html2text": "html2text",
+  "zstd": "zstd",
+}
+
+
 def _install_pkm_tools() -> None:
-  """Install poppler-utils and html2text if not already on PATH.
+  """Install poppler-utils, html2text, and zstd if not on PATH.
 
   Required by the Speed Reading Mindmap pipeline (src/piper.py):
-  pdftotext converts PDFs; html2text converts HTML pages to plain text.
-  Idempotent — skips the apt call when both CLIs are already present.
+  pdftotext converts PDFs; html2text converts HTML pages to plain
+  text. zstd is required by the ollama install script to extract
+  its release archive. Idempotent — skips the apt call when all
+  three CLIs are already present.
   """
   missing = [
-    t for t in ("pdftotext", "html2text")
-    if not shutil.which(t)
+    pkg for tool, pkg in _PKM_PACKAGES.items()
+    if not shutil.which(tool)
   ]
   if not missing:
-    print("  OK   pdftotext and html2text already installed (skipping)")
+    print(
+      "  OK   pdftotext, html2text, and zstd already installed "
+      "(skipping)"
+    )
     return
   print(f"  APT  installing: {', '.join(missing)}")
   subprocess.run(
-    ["sudo", "apt", "install", "-y", "poppler-utils", "html2text"],
+    ["sudo", "apt", "install", "-y", *missing],
     check=True,
   )
   print("  OK   PKM CLI tools installed")
