@@ -310,13 +310,13 @@ def _validate_secret() -> None:
 
 
 _EMBEDDING_DIR = (
-  Path(__file__).parent.parent / "projects" / "embedding"
+  Path(__file__).parent.parent / "embedding"
 )
 _EMBEDDING_VENV = _EMBEDDING_DIR / ".venv"
 
 _SPEED_READING_DIR = (
   Path(__file__).parent.parent
-  / "projects" / "llm_wiki" / "speed-reading"
+  / "llm_wiki" / "speed-reading"
 )
 _PIPER_VENV = _SPEED_READING_DIR / ".venv"
 

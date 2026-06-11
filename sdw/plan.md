@@ -4766,7 +4766,7 @@ VERIFY: `python3 projects/group_meetup/labsetup.py 2>&1 | grep -iE "gh|github"` 
 
 ### Step 36.5: Mark Phase 36 complete, commit, tag, push
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 36.1-36.4 executed and verified; `labsetup.py`/`preflight_check.py` path, ollama, SSH, and gh fixes are in place (including the pre-existing uncommitted `_EMBEDDING_DIR`/`_SPEED_READING_DIR` fix in `labsetup.py`).
 ACTION: (1) Run `python3 projects/group_meetup/preflight_check.py` and confirm path/tooling-related items (embedding venv, piper.py, ollama, pdftotext, html2text, zstd if checked) show PASS; note any environment-only FAILs (SSH/GitHub connectivity, Discord secret) as expected outside a fully-provisioned lab environment. (2) Confirm every `[ ] Status` under a `### Step 36.` heading in `sdw/plan.md` reads `[x] Status`, and add/flip the `## Lab Setup` status in `sdw/prompt_history.md` to `[x] Status`. (3) Stage and commit `sdw/plan.md`, `sdw/prompt_history.md`, `projects/group_meetup/labsetup.py`, `projects/group_meetup/preflight_check.py`, `projects/group_meetup/labenv.yaml`. (4) Tag `v36.5-lab-setup-fixes-step-completed` and push the current branch (`fix/class`) with `--tags`.
