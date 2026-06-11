@@ -11,7 +11,7 @@ Steps performed:
    and register Jupyter kernel if venv absent (idempotent).
 4. Install PKM CLI tools (poppler-utils, html2text) if absent
    (idempotent — skipped if both are already on PATH).
-5. Generate ~/.ssh/<username>_id_ed25519 key pair if it does not
+5. Generate ~/.ssh/<username>_id_ed25519_server key pair if it does not
    exist (idempotent — skipped if the key is already present).
 4. Post the public key to #meetup-notifications so the instructor
    can install it on the Docker server (instructor.md Section 3).
@@ -32,6 +32,7 @@ message posted by the instructor (instructor.md Section 2).
 import getpass
 import os
 import shutil
+import socket
 import subprocess
 import sys
 import yaml
@@ -44,15 +45,17 @@ SSH_DIR = Path.home() / ".ssh"
 SSH_HOST_ALIAS = "ai-lab"
 
 SSH_KEYS = (
-  "DOCKER_SERVER_ID",
+  "DOCKER_SERVER_ID_INTERNAL",
+  "DOCKER_SERVER_SSH_PORT_INTERNAL",
+  "DOCKER_SERVER_ID_EXTERNAL",
+  "DOCKER_SERVER_SSH_PORT_EXTERNAL",
   "DOCKER_SERVER_USERNAME",
-  "DOCKER_SERVER_SSH_PORT",
 )
 
 # Use local OS username to name the key so instructors can
 # disambiguate public keys from different student laptops.
 _USERNAME = getpass.getuser()
-SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519"
+SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519_server"
 SSH_CONFIG = SSH_DIR / "config"
 
 GITHUB_HOST_ALIAS = "github.com"
@@ -110,7 +113,7 @@ def _post_pubkey_to_discord(env: dict[str, str]) -> None:
     return
 
   pubkey = SSH_KEY.with_suffix(".pub").read_text().strip()
-  server = env.get("DOCKER_SERVER_ID", "<server>")
+  server = env.get("DOCKER_SERVER_ID_INTERNAL", "<server>")
   user = env.get("DOCKER_SERVER_USERNAME", "<user>")
 
   msg = (
@@ -135,32 +138,61 @@ def _post_pubkey_to_discord(env: dict[str, str]) -> None:
     )
 
 
-def _write_ssh_config(env: dict[str, str]) -> None:
-  """Append the ai-lab Host block to ~/.ssh/config.
+def _resolve_docker_server(env: dict[str, str]) -> tuple[str, str]:
+  """Pick the reachable address for the lab Docker server.
 
-  Idempotent: does nothing if the Host ai-lab entry already exists.
+  Probes the internal LAN address first (short TCP connect
+  timeout); falls back to the external WAN address if the
+  internal address is unreachable, e.g. when off-campus.
+  """
+  internal_host = env["DOCKER_SERVER_ID_INTERNAL"]
+  internal_port = env["DOCKER_SERVER_SSH_PORT_INTERNAL"]
+  try:
+    with socket.create_connection(
+      (internal_host, int(internal_port)), timeout=2
+    ):
+      return internal_host, internal_port
+  except OSError:
+    return (
+      env["DOCKER_SERVER_ID_EXTERNAL"],
+      env["DOCKER_SERVER_SSH_PORT_EXTERNAL"],
+    )
+
+
+def _write_ssh_config(env: dict[str, str], host: str, port: str) -> None:
+  """Write or refresh the ai-lab Host block in ~/.ssh/config.
+
+  Replaces any existing Host ai-lab block so the entry always
+  reflects the currently resolved internal/external address —
+  re-running after a labenv.yaml or network change keeps it
+  correct instead of preserving a stale block.
   """
   existing = SSH_CONFIG.read_text() if SSH_CONFIG.exists() else ""
 
-  # Skip if entry already present
+  # Drop any existing "Host ai-lab" block (its header line plus
+  # the indented option lines that follow it).
+  kept = []
+  skipping = False
   for line in existing.splitlines():
     if line.strip() == f"Host {SSH_HOST_ALIAS}":
-      print(
-        f"  OK   ~/.ssh/config entry exists: "
-        f"Host {SSH_HOST_ALIAS} (skipping)"
-      )
-      return
+      skipping = True
+      continue
+    if skipping and line[:1] in (" ", "\t"):
+      continue
+    skipping = False
+    kept.append(line)
 
   SSH_DIR.mkdir(mode=0o700, exist_ok=True)
   entry = (
-    f"\nHost {SSH_HOST_ALIAS}\n"
-    f"  HostName {env['DOCKER_SERVER_ID']}\n"
+    f"Host {SSH_HOST_ALIAS}\n"
+    f"  HostName {host}\n"
     f"  User     {env['DOCKER_SERVER_USERNAME']}\n"
-    f"  Port     {env['DOCKER_SERVER_SSH_PORT']}\n"
+    f"  Port     {port}\n"
     f"  IdentityFile {SSH_KEY}\n"
   )
-  with SSH_CONFIG.open("a") as f:
-    f.write(entry)
+  body = "\n".join(kept).rstrip("\n")
+  text = (body + "\n\n" if body else "") + entry
+  SSH_CONFIG.write_text(text)
   SSH_CONFIG.chmod(0o600)
   print(f"  WROTE ~/.ssh/config entry: Host {SSH_HOST_ALIAS}")
 
@@ -286,13 +318,13 @@ def _validate_secret() -> None:
 
 
 _EMBEDDING_DIR = (
-  Path(__file__).parent.parent / "projects" / "embedding"
+  Path(__file__).parent.parent / "embedding"
 )
 _EMBEDDING_VENV = _EMBEDDING_DIR / ".venv"
 
 _SPEED_READING_DIR = (
   Path(__file__).parent.parent
-  / "projects" / "llm_wiki" / "speed-reading"
+  / "llm_wiki" / "speed-reading"
 )
 _PIPER_VENV = _SPEED_READING_DIR / ".venv"
 
@@ -387,23 +419,35 @@ def _setup_piper_venv() -> None:
   print("  OK   speed-reading venv ready")
 
 
+_PKM_PACKAGES = {
+  "pdftotext": "poppler-utils",
+  "html2text": "html2text",
+  "zstd": "zstd",
+}
+
+
 def _install_pkm_tools() -> None:
-  """Install poppler-utils and html2text if not already on PATH.
+  """Install poppler-utils, html2text, and zstd if not on PATH.
 
   Required by the Speed Reading Mindmap pipeline (src/piper.py):
-  pdftotext converts PDFs; html2text converts HTML pages to plain text.
-  Idempotent — skips the apt call when both CLIs are already present.
+  pdftotext converts PDFs; html2text converts HTML pages to plain
+  text. zstd is required by the ollama install script to extract
+  its release archive. Idempotent — skips the apt call when all
+  three CLIs are already present.
   """
   missing = [
-    t for t in ("pdftotext", "html2text")
-    if not shutil.which(t)
+    pkg for tool, pkg in _PKM_PACKAGES.items()
+    if not shutil.which(tool)
   ]
   if not missing:
-    print("  OK   pdftotext and html2text already installed (skipping)")
+    print(
+      "  OK   pdftotext, html2text, and zstd already installed "
+      "(skipping)"
+    )
     return
   print(f"  APT  installing: {', '.join(missing)}")
   subprocess.run(
-    ["sudo", "apt", "install", "-y", "poppler-utils", "html2text"],
+    ["sudo", "apt", "install", "-y", *missing],
     check=True,
   )
   print("  OK   PKM CLI tools installed")
@@ -434,13 +478,35 @@ def _sudo_precheck() -> bool:
   return True
 
 
+def _ensure_gh_installed() -> bool:
+  """Install the GitHub CLI (gh) via apt if not already on PATH.
+
+  Returns True if gh is available afterward, False if absent and
+  the apt install failed or was unavailable.
+  """
+  if shutil.which("gh"):
+    return True
+  print("  APT  installing: gh")
+  try:
+    subprocess.run(["sudo", "apt", "install", "-y", "gh"], check=True)
+    print("  OK   gh installed")
+    return True
+  except subprocess.CalledProcessError:
+    print(
+      "  WARN gh install failed — install manually: "
+      "https://cli.github.com",
+      file=sys.stderr,
+    )
+    return False
+
+
 def main() -> None:
   env = _load_env()
   _set_env(env)
   sudo_ok = _sudo_precheck()
   if sudo_ok:
+    _install_pkm_tools()  # installs zstd — required by ollama installer
     _install_ollama()
-    _install_pkm_tools()
   _setup_embedding_venv()  # pure Python venv — no sudo needed
   _setup_piper_venv()     # speed-reading venv — no sudo needed
 
@@ -449,23 +515,26 @@ def main() -> None:
   )
 
   if ssh_real:
+    host, port = _resolve_docker_server(env)
     _generate_ssh_key()
     _post_pubkey_to_discord(env)
-    _write_ssh_config(env)
+    _write_ssh_config(env, host, port)
     _validate_ssh()
   else:
     print(
       "  SKIP SSH setup — labenv.yaml still has placeholder values.\n"
-      "  Fill in DOCKER_SERVER_ID, DOCKER_SERVER_USERNAME, and\n"
-      "  DOCKER_SERVER_SSH_PORT with real values, then re-run."
+      "  Fill in DOCKER_SERVER_ID_INTERNAL/_EXTERNAL,\n"
+      "  DOCKER_SERVER_SSH_PORT_INTERNAL/_EXTERNAL, and\n"
+      "  DOCKER_SERVER_USERNAME with real values, then re-run."
     )
 
   _validate_secret()
 
-  gh_auth = subprocess.run(
+  gh_ready = _ensure_gh_installed() and subprocess.run(
     ["gh", "auth", "status"], capture_output=True
-  )
-  if gh_auth.returncode == 0:
+  ).returncode == 0
+
+  if gh_ready:
     github_username = subprocess.run(
       ["gh", "api", "user", "--jq", ".login"],
       capture_output=True, text=True,

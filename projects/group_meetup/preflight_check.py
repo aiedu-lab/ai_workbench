@@ -8,7 +8,7 @@ Checks for:
 - requests and pyyaml packages installed
 - Non-confidential vars present in labenv.yaml with real values
 - DISCORD_WEBHOOK_URL set in the shell environment (secret)
-- SSH key exists at ~/.ssh/<username>_id_ed25519
+- SSH key exists at ~/.ssh/<username>_id_ed25519_server
 - SSH connectivity to the lab server (Host ai-lab in ~/.ssh/config)
 - gh CLI installed and authenticated (gh auth status)
 - GitHub SSH key exists at ~/.ssh/<username>_id_ed25519_github
@@ -34,16 +34,18 @@ import yaml
 from pathlib import Path
 
 LABENV = Path(__file__).parent / "labenv.yaml"
-SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519"
+SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_server"
 GITHUB_SSH_KEY = (
   Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_github"
 )
 
 NON_SECRET_VARS = (
   "DISCORD_SERVER",
-  "DOCKER_SERVER_ID",
+  "DOCKER_SERVER_ID_INTERNAL",
+  "DOCKER_SERVER_SSH_PORT_INTERNAL",
+  "DOCKER_SERVER_ID_EXTERNAL",
+  "DOCKER_SERVER_SSH_PORT_EXTERNAL",
   "DOCKER_SERVER_USERNAME",
-  "DOCKER_SERVER_SSH_PORT",
 )
 
 
@@ -193,7 +195,7 @@ def check_git_identity():
 
 _EMBEDDING_VENV_PY = (
   Path(__file__).parent.parent
-  / "projects" / "embedding" / ".venv" / "bin" / "python3"
+  / "embedding" / ".venv" / "bin" / "python3"
 )
 
 
@@ -216,7 +218,7 @@ def check_embedding_venv():
 
 _PIPER_PY = (
   Path(__file__).parent.parent
-  / "projects" / "llm_wiki" / "speed-reading"
+  / "llm_wiki" / "speed-reading"
   / "src" / "piper.py"
 )
 

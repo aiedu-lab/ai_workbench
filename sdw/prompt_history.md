@@ -2320,3 +2320,34 @@ This loop continues until the LLM response decides the job is done.
 
 5. Add to references section:
 [Agents and AI assistants](https://drive.google.com/file/d/1hucHQ0QpD3mWeIofVjgvl2m4Nnej52Nm/view)
+
+## Lab Setup
+[x] Status
+
+Reference projects/group_meetup:
+* labsetup.py
+* preflight_check.py
+* labenv.yaml
+
+### Issue
+* projects/group_meetup/labsetup.py is not setting up cleanly.
+* projects/group_meetup/preflight_check.py is not passing.
+
+### Resolution
+Fix in the scripts:
+1.  Install ollama requires zstd for extraction
+2. SSH to `ai-lab` fails although public key is already posted 
+* reason is the destination is ai-lab or ai-lab-int depending on 
+whether the user accessing server is inside the lab or accessing 
+from the Internet. 
+* labenv.yaml should have DOCKER_SERVER_ID as 192.168.4.23 if inside 
+lab or 73.202.223.27 if outside lab. The COCKER_SERVER_SSH_PORT is 22 
+if internal lab or 22439 if external - suggest a way to handle this cleanly.
+
+3. gh commands may fail if gh is not installed.
+* install gh if not installated 
+* normalize the commands so that gh commands are handled cleanly
+
+### Validation
+* projects/group_meetup/labsetup.py should set up up cleanly.
+* projects/group_meetup/preflight_check.py should pass

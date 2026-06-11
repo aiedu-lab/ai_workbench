@@ -4699,3 +4699,113 @@ CONSTRAINTS: Only flip status checkboxes — do not edit step bodies, reorder st
 OUTPUT: All Phase 35 `[ ] Status` lines read `[x] Status`; annotated tag `v35.3-agents-and-assistants-step-completed` created and pushed to the feature branch.
 VERIFY: `grep -A1 "### Step 35\." sdw/plan.md | grep "\[ \] Status"
 # → 0 matches`
+
+---
+
+## Phase 36: LAB SETUP FIXES
+
+**Addresses:** `sdw/prompt_history.md` § `## Lab Setup`
+
+**Target files:** `projects/group_meetup/labsetup.py`,
+`projects/group_meetup/preflight_check.py`,
+`projects/group_meetup/labenv.yaml`
+
+---
+
+### Step 36.1: Fix double `projects/` path bug in preflight_check.py
+
+[x] Status
+
+CONTEXT: `labsetup.py` has an uncommitted fix changing `_EMBEDDING_DIR`/`_SPEED_READING_DIR` from `Path(__file__).parent.parent / "projects" / ...` (resolved to nonexistent `projects/projects/...`) to `Path(__file__).parent.parent / ...` (resolves correctly to `projects/...`). `preflight_check.py` has the identical bug, still unfixed, in `_EMBEDDING_VENV_PY` and `_PIPER_PY`, causing `check_embedding_venv` and `check_piper_py` to FAIL.
+ACTION: In `projects/group_meetup/preflight_check.py`, change `_EMBEDDING_VENV_PY` from `Path(__file__).parent.parent / "projects" / "embedding" / ".venv" / "bin" / "python3"` to `Path(__file__).parent.parent / "embedding" / ".venv" / "bin" / "python3"`, and `_PIPER_PY` from `Path(__file__).parent.parent / "projects" / "llm_wiki" / "speed-reading" / "src" / "piper.py"` to `Path(__file__).parent.parent / "llm_wiki" / "speed-reading" / "src" / "piper.py"`. Leave the existing in-progress fix to `labsetup.py` as-is (it will be committed in Step 36.5).
+CONSTRAINTS: Do not change any other paths or logic in either file; 2-space indent, ≤79 chars/line.
+OUTPUT: `preflight_check.py` `_EMBEDDING_VENV_PY` and `_PIPER_PY` resolve to `projects/embedding/.venv/bin/python3` and `projects/llm_wiki/speed-reading/src/piper.py`.
+VERIFY: `python3 -c "
+import sys; sys.path.insert(0, 'projects/group_meetup')
+import preflight_check as p
+print(p._EMBEDDING_VENV_PY); print(p._PIPER_PY)"`
+→ both paths contain `projects/embedding` and `projects/llm_wiki`, neither contains `projects/projects`.
+
+---
+
+### Step 36.2: Ensure `zstd` is installed before ollama install
+
+[x] Status
+
+CONTEXT: `_install_ollama()` in `labsetup.py` runs the official install script (`curl -fsSL https://ollama.com/install.sh | sh`), which extracts a zstd-compressed archive; if `zstd` is absent the extraction fails. `_install_pkm_tools()` already installs `poppler-utils`/`html2text` via one apt call when missing.
+ACTION: In `_install_pkm_tools()`, add `"zstd"` (binary name `zstd`) to the list of tools checked via `shutil.which` and to the `apt install` package list alongside `poppler-utils` and `html2text`. Keep `_install_ollama()` called after `_install_pkm_tools()` in `main()` (already the case).
+CONSTRAINTS: Don't reorder unrelated steps in `main()`; preserve idempotency (skip apt call if all of `pdftotext`, `html2text`, `zstd` already present).
+OUTPUT: `zstd` installed via apt alongside other PKM tools before `_install_ollama()` runs.
+VERIFY: `which zstd && python3 projects/group_meetup/labsetup.py 2>&1 | grep -iE "zstd|ollama"`
+
+---
+
+### Step 36.3: Fix internal/external SSH addressing for ai-lab
+
+[x] Status
+
+CONTEXT: `labenv.yaml` currently pairs the internal IP (`DOCKER_SERVER_ID: "192.168.4.23"`) with the external port (`DOCKER_SERVER_SSH_PORT: 22439`) — an unreachable combination. The server is reachable as `192.168.4.23:22` from inside the lab or `73.202.223.27:22439` from outside. `labsetup.py` writes a single `Host ai-lab` entry to `~/.ssh/config` via `_write_ssh_config()`, and `preflight_check.py`'s `check_ssh` connects to alias `ai-lab`.
+ACTION: In `labenv.yaml`, replace `DOCKER_SERVER_ID` and `DOCKER_SERVER_SSH_PORT` with paired keys: `DOCKER_SERVER_ID_INTERNAL: "192.168.4.23"`, `DOCKER_SERVER_SSH_PORT_INTERNAL: 22`, `DOCKER_SERVER_ID_EXTERNAL: "73.202.223.27"`, `DOCKER_SERVER_SSH_PORT_EXTERNAL: 22439`; update the surrounding comments to describe the probe-and-fall-back scheme. In `labsetup.py`, add `import socket` and a `_resolve_docker_server(env) -> tuple[str, str]` helper that attempts `socket.create_connection((internal_ip, internal_port), timeout=2)`; on success returns the internal `(host, port)`, otherwise returns the external `(host, port)`. Update `SSH_KEYS`/`ssh_real` checks and `_write_ssh_config()` to use the resolved `(host, port)` when writing the `Host ai-lab` block.
+CONSTRAINTS: Keep the single host alias `ai-lab` (do not introduce `ai-lab-int`); `preflight_check.py`'s `check_ssh` (targets alias `ai-lab`) must work unchanged.
+OUTPUT: `labenv.yaml` has internal/external pairs; `labsetup.py` resolves reachability and writes the correct `Host ai-lab` entry to `~/.ssh/config`.
+VERIFY: `python3 projects/group_meetup/labsetup.py 2>&1 | grep -A4 "ssh/config"` → entry shows a resolved host/port pair (no placeholder values).
+
+---
+
+### Step 36.4: Install gh CLI if absent; normalize gh handling
+
+[x] Status
+
+CONTEXT: `main()` calls `subprocess.run(["gh", "auth", "status"], capture_output=True)` directly; if `gh` is not on PATH, `subprocess.run` raises `FileNotFoundError`, crashing the script before the "Environment ready." message.
+ACTION: Add `_ensure_gh_installed() -> bool`: if `shutil.which("gh")` is set, return `True`; otherwise attempt `sudo apt install -y gh`, returning `True` on success. On `CalledProcessError`, print a `WARN ... install manually: see https://cli.github.com` message (matching existing WARN style) and return `False`. Call this at the start of the GitHub block in `main()`; only run the existing `gh auth status` / `gh api user` / `_generate_github_ssh_key` / `_write_github_ssh_config` / `_validate_github_ssh` sequence if it returns `True`, else print the existing "WARN GitHub CLI not authenticated — skipping GitHub SSH" message.
+CONSTRAINTS: Don't change the GitHub SSH key generation/upload logic itself; preserve existing WARN messaging style and exit codes (script must not crash regardless of `gh` availability).
+OUTPUT: `labsetup.py` never raises `FileNotFoundError` for `gh`; installs `gh` via apt when absent and possible.
+VERIFY: `python3 projects/group_meetup/labsetup.py 2>&1 | grep -iE "gh|github"` → no `FileNotFoundError` traceback.
+
+---
+
+### Step 36.5: Mark Phase 36 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 36.1-36.4 executed and verified; `labsetup.py`/`preflight_check.py` path, ollama, SSH, and gh fixes are in place (including the pre-existing uncommitted `_EMBEDDING_DIR`/`_SPEED_READING_DIR` fix in `labsetup.py`).
+ACTION: (1) Run `python3 projects/group_meetup/preflight_check.py` and confirm path/tooling-related items (embedding venv, piper.py, ollama, pdftotext, html2text, zstd if checked) show PASS; note any environment-only FAILs (SSH/GitHub connectivity, Discord secret) as expected outside a fully-provisioned lab environment. (2) Confirm every `[ ] Status` under a `### Step 36.` heading in `sdw/plan.md` reads `[x] Status`, and add/flip the `## Lab Setup` status in `sdw/prompt_history.md` to `[x] Status`. (3) Stage and commit `sdw/plan.md`, `sdw/prompt_history.md`, `projects/group_meetup/labsetup.py`, `projects/group_meetup/preflight_check.py`, `projects/group_meetup/labenv.yaml`. (4) Tag `v36.5-lab-setup-fixes-step-completed` and push the current branch (`fix/class`) with `--tags`.
+CONSTRAINTS: Only flip status checkboxes — do not edit step bodies, reorder steps, or rewrite history; never push to `main`.
+OUTPUT: All Phase 36 `[ ] Status` lines read `[x] Status`; `## Lab Setup` in `sdw/prompt_history.md` reads `[x] Status`; annotated tag `v36.5-lab-setup-fixes-step-completed` pushed to `fix/class`.
+VERIFY: `grep -A1 "### Step 36\." sdw/plan.md | grep "\[ \] Status"` → 0 matches; `git tag | grep "v36\."`
+
+---
+
+### Step 36.6: Fix `_install_ollama`/`_install_pkm_tools` call order
+
+[x] Status
+
+CONTEXT: Step 36.2 added `zstd` to `_install_pkm_tools()`'s package list, but `main()` still called `_install_ollama()` before `_install_pkm_tools()`. Step 36.2's ACTION incorrectly assumed the order was already correct. As a result, running `labsetup.py` end-to-end still fails ollama install with "This version requires zstd for extraction. Please install zstd and try again."
+ACTION: In `main()`, under the `if sudo_ok:` block, swap the call order so `_install_pkm_tools()` runs before `_install_ollama()`.
+CONSTRAINTS: Don't change any other ordering or logic in `main()`; no other files affected.
+OUTPUT: `_install_pkm_tools()` (which installs `zstd`) runs before `_install_ollama()` in `main()`.
+VERIFY: `python3 -c "import sys; sys.path.insert(0, 'projects/group_meetup'); import labsetup as l; l._install_ollama()"` → no "Please install zstd and try again" error (sudo/TTY-only failures in non-interactive environments are expected).
+
+---
+
+### Step 36.7: Make `_write_ssh_config` refresh a stale `Host ai-lab` block
+
+[x] Status
+
+CONTEXT: `_write_ssh_config()` skipped writing entirely if a `Host ai-lab` block already existed in `~/.ssh/config`, so a pre-existing/stale entry (e.g. pointing at the unreachable external address with a different `IdentityFile`) was never updated to the address resolved by `_resolve_docker_server()`. `preflight_check.py`'s "SSH to ai-lab" check kept failing with "Connection timed out" even after Step 36.3, because it used the stale entry.
+ACTION: Rewrite `_write_ssh_config()` to remove any existing `Host ai-lab` block (its header line plus the indented option lines that follow) from `~/.ssh/config`, then append a fresh block built from the resolved `host`/`port` and `SSH_KEY`.
+CONSTRAINTS: Only the `Host ai-lab` block may be removed/replaced; all other Host blocks (e.g. `Host ai-lab-int`, personal entries) must be preserved unchanged; `preflight_check.py`'s `check_ssh` (alias `ai-lab`) must keep working unchanged.
+OUTPUT: `_write_ssh_config()` always reflects the current `_resolve_docker_server()` result in `~/.ssh/config`'s `Host ai-lab` block, regardless of prior content.
+VERIFY: Dry run against a copy of `~/.ssh/config` shows the stale `Host ai-lab` block (external address, `asarcar_id_ed25519_server`) replaced by a fresh block (`192.168.4.23:22`, `asarcar_id_ed25519`), with `Host ai-lab-int` and all other entries unchanged. Applied to the real `~/.ssh/config`, `ssh ai-lab echo ok` now reaches the host (`Permission denied (publickey,password)` — connectivity reached, key not yet installed by instructor — instead of `Connection timed out`).
+
+---
+
+### Step 36.8: Rename ai-lab SSH key to `_id_ed25519_server`
+
+[x] Status
+
+CONTEXT: Step 36.7's `_write_ssh_config()` wrote `IdentityFile {SSH_KEY}` where `SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519"`, but the key actually installed on the Docker server (`labuser@192.168.4.23`) is `asarcar_id_ed25519_server.pub`, matching the convention used by all other "server"/Docker-host entries in `~/.ssh/config` (`server`, `server-int`, `asarcar`, `asarcar-int`, `ai-lab-int`). After Step 36.7's fix, SSH connectivity succeeded but authentication failed with `Permission denied (publickey,password)` because the wrong key was referenced.
+ACTION: In `projects/group_meetup/labsetup.py`, change `SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519"` (line 58) to `SSH_KEY = SSH_DIR / f"{_USERNAME}_id_ed25519_server"`, and update the docstring at line 14 from `~/.ssh/<username>_id_ed25519` to `~/.ssh/<username>_id_ed25519_server`. In `projects/group_meetup/preflight_check.py`, change `SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519"` (line 37) to `...{getpass.getuser()}_id_ed25519_server"`, and update the docstring at line 11 similarly. Update the real `~/.ssh/config`'s `Host ai-lab` `IdentityFile` from `asarcar_id_ed25519` to `asarcar_id_ed25519_server` to match.
+CONSTRAINTS: Do not touch `GITHUB_SSH_KEY` (`_id_ed25519_github`) or any other `Host` block in `~/.ssh/config`; no other logic changes in either file.
+OUTPUT: `SSH_KEY` in both `labsetup.py` and `preflight_check.py` resolves to `<username>_id_ed25519_server`; `~/.ssh/config`'s `Host ai-lab` block references `asarcar_id_ed25519_server`, matching the key already installed on the Docker server.
+VERIFY: `ssh -o BatchMode=yes -o ConnectTimeout=10 ai-lab echo ok` → `ok`; `python3 projects/group_meetup/preflight_check.py` → `PASS  SSH key asarcar_id_ed25519_server` and `PASS  SSH to ai-lab`.
