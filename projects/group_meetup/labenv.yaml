@@ -12,24 +12,23 @@
 DISCORD_SERVER: "meetup-lab-2026-spring"
 
 
-# Lab server hostname reachable from student laptops.
-# Must resolve to an IP with a DOCKER_SERVER_USERNAME 
-# account and Docker installed 
+# Lab server reachable from student laptops, either directly on
+# the lab LAN (internal) or via port-forwarded WAN (external).
+# Must resolve to an IP with a DOCKER_SERVER_USERNAME
+# account and Docker installed
 # as provisioned in instructor.md Section 3
-# Format: <hostname> (e.g. labserver.example.com or 70.10.5.10)
-# Internal: ai-lab-int 192.168.4.23
-# External: ai-lab 73.202.223.27
-DOCKER_SERVER_ID: "192.168.4.23"
+# labsetup.py probes the internal address first and falls back
+# to the external address — see _resolve_docker_server().
+# Format: <hostname/ip> (e.g. labserver.example.com or 70.10.5.10)
+DOCKER_SERVER_ID_INTERNAL: "192.168.4.23"
+DOCKER_SERVER_SSH_PORT_INTERNAL: 22
+
+DOCKER_SERVER_ID_EXTERNAL: "73.202.223.27"
+DOCKER_SERVER_SSH_PORT_EXTERNAL: 22439
 
 # username for SSH on the lab server.
 # Foramt: <username> (e.g. labuser)
 DOCKER_SERVER_USERNAME: "labuser"
-
-# SSH port on the lab server
-# Format: <sshport> (e.g. 22, 2222, etc.)
-# Internal: 22
-# External: 22439
-DOCKER_SERVER_SSH_PORT: 22439
 
 # Permanent Google Form URL for student roster collection.
 # Created once by the instructor (see instructor.md Section 1).

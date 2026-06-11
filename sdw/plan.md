@@ -4742,7 +4742,7 @@ VERIFY: `which zstd && python3 projects/group_meetup/labsetup.py 2>&1 | grep -iE
 
 ### Step 36.3: Fix internal/external SSH addressing for ai-lab
 
-[ ] Status
+[x] Status
 
 CONTEXT: `labenv.yaml` currently pairs the internal IP (`DOCKER_SERVER_ID: "192.168.4.23"`) with the external port (`DOCKER_SERVER_SSH_PORT: 22439`) — an unreachable combination. The server is reachable as `192.168.4.23:22` from inside the lab or `73.202.223.27:22439` from outside. `labsetup.py` writes a single `Host ai-lab` entry to `~/.ssh/config` via `_write_ssh_config()`, and `preflight_check.py`'s `check_ssh` connects to alias `ai-lab`.
 ACTION: In `labenv.yaml`, replace `DOCKER_SERVER_ID` and `DOCKER_SERVER_SSH_PORT` with paired keys: `DOCKER_SERVER_ID_INTERNAL: "192.168.4.23"`, `DOCKER_SERVER_SSH_PORT_INTERNAL: 22`, `DOCKER_SERVER_ID_EXTERNAL: "73.202.223.27"`, `DOCKER_SERVER_SSH_PORT_EXTERNAL: 22439`; update the surrounding comments to describe the probe-and-fall-back scheme. In `labsetup.py`, add `import socket` and a `_resolve_docker_server(env) -> tuple[str, str]` helper that attempts `socket.create_connection((internal_ip, internal_port), timeout=2)`; on success returns the internal `(host, port)`, otherwise returns the external `(host, port)`. Update `SSH_KEYS`/`ssh_real` checks and `_write_ssh_config()` to use the resolved `(host, port)` when writing the `Host ai-lab` block.

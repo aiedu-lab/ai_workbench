@@ -32,6 +32,7 @@ message posted by the instructor (instructor.md Section 2).
 import getpass
 import os
 import shutil
+import socket
 import subprocess
 import sys
 import yaml
@@ -44,9 +45,11 @@ SSH_DIR = Path.home() / ".ssh"
 SSH_HOST_ALIAS = "ai-lab"
 
 SSH_KEYS = (
-  "DOCKER_SERVER_ID",
+  "DOCKER_SERVER_ID_INTERNAL",
+  "DOCKER_SERVER_SSH_PORT_INTERNAL",
+  "DOCKER_SERVER_ID_EXTERNAL",
+  "DOCKER_SERVER_SSH_PORT_EXTERNAL",
   "DOCKER_SERVER_USERNAME",
-  "DOCKER_SERVER_SSH_PORT",
 )
 
 # Use local OS username to name the key so instructors can
@@ -110,7 +113,7 @@ def _post_pubkey_to_discord(env: dict[str, str]) -> None:
     return
 
   pubkey = SSH_KEY.with_suffix(".pub").read_text().strip()
-  server = env.get("DOCKER_SERVER_ID", "<server>")
+  server = env.get("DOCKER_SERVER_ID_INTERNAL", "<server>")
   user = env.get("DOCKER_SERVER_USERNAME", "<user>")
 
   msg = (
@@ -135,7 +138,28 @@ def _post_pubkey_to_discord(env: dict[str, str]) -> None:
     )
 
 
-def _write_ssh_config(env: dict[str, str]) -> None:
+def _resolve_docker_server(env: dict[str, str]) -> tuple[str, str]:
+  """Pick the reachable address for the lab Docker server.
+
+  Probes the internal LAN address first (short TCP connect
+  timeout); falls back to the external WAN address if the
+  internal address is unreachable, e.g. when off-campus.
+  """
+  internal_host = env["DOCKER_SERVER_ID_INTERNAL"]
+  internal_port = env["DOCKER_SERVER_SSH_PORT_INTERNAL"]
+  try:
+    with socket.create_connection(
+      (internal_host, int(internal_port)), timeout=2
+    ):
+      return internal_host, internal_port
+  except OSError:
+    return (
+      env["DOCKER_SERVER_ID_EXTERNAL"],
+      env["DOCKER_SERVER_SSH_PORT_EXTERNAL"],
+    )
+
+
+def _write_ssh_config(env: dict[str, str], host: str, port: str) -> None:
   """Append the ai-lab Host block to ~/.ssh/config.
 
   Idempotent: does nothing if the Host ai-lab entry already exists.
@@ -154,9 +178,9 @@ def _write_ssh_config(env: dict[str, str]) -> None:
   SSH_DIR.mkdir(mode=0o700, exist_ok=True)
   entry = (
     f"\nHost {SSH_HOST_ALIAS}\n"
-    f"  HostName {env['DOCKER_SERVER_ID']}\n"
+    f"  HostName {host}\n"
     f"  User     {env['DOCKER_SERVER_USERNAME']}\n"
-    f"  Port     {env['DOCKER_SERVER_SSH_PORT']}\n"
+    f"  Port     {port}\n"
     f"  IdentityFile {SSH_KEY}\n"
   )
   with SSH_CONFIG.open("a") as f:
@@ -461,15 +485,17 @@ def main() -> None:
   )
 
   if ssh_real:
+    host, port = _resolve_docker_server(env)
     _generate_ssh_key()
     _post_pubkey_to_discord(env)
-    _write_ssh_config(env)
+    _write_ssh_config(env, host, port)
     _validate_ssh()
   else:
     print(
       "  SKIP SSH setup — labenv.yaml still has placeholder values.\n"
-      "  Fill in DOCKER_SERVER_ID, DOCKER_SERVER_USERNAME, and\n"
-      "  DOCKER_SERVER_SSH_PORT with real values, then re-run."
+      "  Fill in DOCKER_SERVER_ID_INTERNAL/_EXTERNAL,\n"
+      "  DOCKER_SERVER_SSH_PORT_INTERNAL/_EXTERNAL, and\n"
+      "  DOCKER_SERVER_USERNAME with real values, then re-run."
     )
 
   _validate_secret()
