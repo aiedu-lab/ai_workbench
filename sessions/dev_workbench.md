@@ -192,10 +192,11 @@ html2text).
 Every item in `preflight_check.py` output must show **PASS**.
 
 ---
-### Additional Setups
+## Additional Setups
 
-****All the below setups are automatically effected** by the
-above script.
+**ALL** the below setups are automatically effected when you
+ran the [lab setup script](projects/group_meetup/labsetup.py)
+above.
 
 ### AI Local
 
