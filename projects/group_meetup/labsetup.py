@@ -14,17 +14,20 @@ Steps performed:
 5. Generate ~/.ssh/<username>_id_ed25519_server key pair if it does not
    exist (idempotent — skipped if the key is already present).
 4. Post the public key to #meetup-notifications so the instructor
-   can install it on the Docker server (instructor.md Section 3).
+   can install it on the Docker server (instructor.md Section 3) —
+   only when a new key was generated in step 5 (idempotent).
 5. Write ~/.ssh/config entries (Host ai-lab-int and Host ai-lab)
    for the internal/external lab server addresses, replacing any
    prior versions of either block.
 6. Validate SSH connectivity to ai-lab-int and ai-lab (either
    succeeding is OK; ai-lab is the off-campus default).
 8. Validate that DISCORD_WEBHOOK_URL is set.
-9. If `gh auth status` exits 0: generate ~/.ssh/<username>_id_ed25519_github,
-   upload public key to GitHub, write Host github.com config entry,
-   and validate GitHub SSH authentication. Skipped with WARN if not
-   authenticated — run `gh auth login` first (dev_workbench.md).
+9. If `gh auth status` exits 0: generate
+   ~/.ssh/<username>_id_ed25519_github if absent, upload the
+   public key to GitHub if not already registered (idempotent),
+   write Host github.com config entry, and validate GitHub SSH
+   authentication. Skipped with WARN if not authenticated — run
+   `gh auth login` first (dev_workbench.md).
 
 Steps 2–5 are skipped when labenv.yaml still contains placeholder
 values (strings wrapped in < >). DISCORD_WEBHOOK_URL must be set
@@ -75,17 +78,30 @@ def _set_env(env: dict[str, str]) -> None:
     print(f"  SET  {key}={value}")
 
 
+def _gh_env() -> dict[str, str]:
+  """Environment for `gh` calls, with GH_TOKEN/GITHUB_TOKEN unset.
+
+  A GH_TOKEN exported for unrelated purposes (e.g. a code-review
+  PAT) overrides the `gh auth login` session and its
+  admin:public_key scope (github.md), breaking SSH key setup.
+  """
+  env = os.environ.copy()
+  env.pop("GH_TOKEN", None)
+  env.pop("GITHUB_TOKEN", None)
+  return env
+
+
 def _is_placeholder(value: str) -> bool:
   stripped = value.strip()
   return stripped.startswith("<") and stripped.endswith(">")
 
 
-def _generate_ssh_key() -> None:
-  """Generate ed25519 key pair if it does not already exist."""
+def _generate_ssh_key() -> bool:
+  """Generate ed25519 key pair if absent; return True if generated."""
   SSH_DIR.mkdir(mode=0o700, exist_ok=True)
   if SSH_KEY.exists():
     print(f"  OK   SSH key already exists: {SSH_KEY} (skipping)")
-    return
+    return False
   subprocess.run(
     [
       "ssh-keygen", "-t", "ed25519",
@@ -97,6 +113,7 @@ def _generate_ssh_key() -> None:
     capture_output=True,
   )
   print(f"  GEN  SSH key pair created: {SSH_KEY}")
+  return True
 
 
 def _post_pubkey_to_discord(env: dict[str, str]) -> None:
@@ -181,6 +198,12 @@ def _write_ssh_config(env: dict[str, str]) -> None:
   )
   body = "\n".join(kept).rstrip("\n")
   text = (body + "\n\n" if body else "") + entries
+  if text == existing:
+    print(
+      f"  OK   ~/.ssh/config Host {SSH_HOST_ALIAS_INT}, "
+      f"Host {SSH_HOST_ALIAS} up to date (skipping)"
+    )
+    return
   SSH_CONFIG.write_text(text)
   SSH_CONFIG.chmod(0o600)
   print(
@@ -221,17 +244,16 @@ def _validate_ssh() -> None:
     )
 
 
-def _generate_github_ssh_key(github_username: str) -> None:
-  """Generate GitHub ed25519 key pair and upload to GitHub.
-
-  Idempotent — skipped if the key file already exists.
+def _generate_github_ssh_key(github_username: str) -> bool:
+  """Generate GitHub SSH key pair if absent; return True if
+  generated.
   """
   SSH_DIR.mkdir(mode=0o700, exist_ok=True)
   if GITHUB_SSH_KEY.exists():
     print(
       f"  OK   GitHub SSH key exists: {GITHUB_SSH_KEY} (skipping)"
     )
-    return
+    return False
   subprocess.run(
     [
       "ssh-keygen", "-t", "ed25519",
@@ -243,15 +265,47 @@ def _generate_github_ssh_key(github_username: str) -> None:
     capture_output=True,
   )
   print(f"  GEN  GitHub SSH key created: {GITHUB_SSH_KEY}")
-  subprocess.run(
+  return True
+
+
+def _upload_github_ssh_key(github_username: str) -> None:
+  """Upload the GitHub public key if not already registered.
+
+  Checked independently of key generation (via `gh ssh-key list`)
+  so a re-run retries the upload even if a prior upload attempt
+  failed after the local key was already created. `gh ssh-key`
+  requires the `admin:public_key` auth scope — WARN (don't crash)
+  if list/add fails, since `gh auth login`'s default scopes omit it.
+  """
+  title = f"{_USERNAME}-lab-key"
+  list_result = subprocess.run(
+    ["gh", "ssh-key", "list"],
+    capture_output=True, text=True, env=_gh_env(),
+  )
+  if list_result.returncode == 0 and title in list_result.stdout:
+    print(f"  OK   GitHub key '{title}' already uploaded (skipping)")
+    return
+  add_result = subprocess.run(
     [
       "gh", "ssh-key", "add",
       str(GITHUB_SSH_KEY.with_suffix(".pub")),
-      "--title", f"{_USERNAME}-lab-key",
+      "--title", title,
     ],
-    check=True,
+    capture_output=True, text=True, env=_gh_env(),
   )
-  print(f"  POST GitHub public key uploaded for {github_username}")
+  if add_result.returncode == 0:
+    if "already exists" in add_result.stderr:
+      print(f"  OK   GitHub key '{title}' already uploaded (skipping)")
+    else:
+      print(f"  POST GitHub public key uploaded for {github_username}")
+  else:
+    print(
+      "  WARN GitHub key upload failed — grant the scope and "
+      "re-run:\n"
+      "  gh auth refresh -h github.com -s admin:public_key\n"
+      f"  (stderr: {add_result.stderr.strip()!r})",
+      file=sys.stderr,
+    )
 
 
 def _write_github_ssh_config() -> None:
@@ -517,8 +571,12 @@ def main() -> None:
   )
 
   if ssh_real:
-    _generate_ssh_key()
-    _post_pubkey_to_discord(env)
+    if _generate_ssh_key():
+      _post_pubkey_to_discord(env)
+    else:
+      print(
+        "  SKIP Discord post — key already shared with instructor"
+      )
     _write_ssh_config(env)
     _validate_ssh()
   else:
@@ -532,15 +590,16 @@ def main() -> None:
   _validate_secret()
 
   gh_ready = _ensure_gh_installed() and subprocess.run(
-    ["gh", "auth", "status"], capture_output=True
+    ["gh", "auth", "status"], capture_output=True, env=_gh_env(),
   ).returncode == 0
 
   if gh_ready:
     github_username = subprocess.run(
       ["gh", "api", "user", "--jq", ".login"],
-      capture_output=True, text=True,
+      capture_output=True, text=True, env=_gh_env(),
     ).stdout.strip()
     _generate_github_ssh_key(github_username)
+    _upload_github_ssh_key(github_username)
     _write_github_ssh_config()
     _validate_github_ssh()
   else:

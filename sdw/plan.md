@@ -4893,3 +4893,145 @@ ACTION: (1) Run `python3 projects/group_meetup/labsetup.py` and `python3 project
 CONSTRAINTS: Only flip status checkboxes — do not edit step bodies, reorder steps, or rewrite history; never push to `main`.
 OUTPUT: All Phase 37 `[ ] Status` lines read `[x] Status`; `## Lab Update` in `sdw/prompt_history.md` reads `[x] Status`; annotated tag `v37.6-lab-ssh-dual-target-step-completed` pushed to `fix/issues`.
 VERIFY: `grep -A1 "### Step 37\." sdw/plan.md | grep "\[ \] Status"` → 0 matches; `git tag | grep "v37\."`
+
+---
+
+## Phase 38: DOCS & LAB CLEANUP II
+
+**Addresses:** `sdw/prompt_history.md` § `## Lab Update II`
+
+**Target files:** `tools/dev_workbench/vscode.md`,
+`tools/VM/setup.md`, `sessions/dev_workbench.md`,
+`projects/group_meetup/labsetup.py`, `tools/claude/cli.md`
+
+**provider:model:** `claude:claude-sonnet-4-6`
+
+---
+
+### Step 38.1: Rewrite "Claude Multimode Set Up" in `tools/dev_workbench/vscode.md`
+
+[x] Status
+
+CONTEXT: The "Claude Multimode Set Up" section (lines 35-72) documents switching Claude Code auth via `CLAUDE_CONFIG_DIR` pointing at `$HOME/.claude` vs `$HOME/.claude-payg` — an outdated scheme. The real switch is `CLAUDE_CODE_OAUTH_TOKEN` (subscription, higher precedence when both env vars are set) vs `ANTHROPIC_API_KEY` (pay-as-you-go).
+ACTION: Replace the section body (keep the `## Claude Multimode Set Up` heading) with: a short explanation that `CLAUDE_CODE_OAUTH_TOKEN` takes precedence over `ANTHROPIC_API_KEY` when both are set; a `~/.bashrc` snippet defining `claude-subscribe`/`claude-api` convenience functions (per the example in `sdw/prompt_history.md` "Claude Multimode Setup", correcting its `CLAUDE_Cecho ODE_OAUTH_TOKEN` typo to `CLAUDE_CODE_OAUTH_TOKEN`) plus a default `export CLAUDE_CODE_OAUTH_TOKEN=...`; keep the `code .` launch instruction; keep a "Validation" subsection using `/status` and drop the `CLAUDE_CONFIG_DIR`-based `cat .../credentials.json` check.
+CONSTRAINTS: Only lines 35-72 (the "Claude Multimode Set Up" section); don't touch "GitHub Pull Request Extension" or "Guardrails" sections; 2-space indent, ≤79 chars/line including inside code fences.
+OUTPUT: "Claude Multimode Set Up" describes `CLAUDE_CODE_OAUTH_TOKEN`/`ANTHROPIC_API_KEY` precedence and the bashrc convenience functions; no remaining `CLAUDE_CONFIG_DIR` or `.claude-payg` references.
+VERIFY: `grep -n "CLAUDE_CONFIG_DIR\|claude-payg" tools/dev_workbench/vscode.md` → 0 matches; `grep -n "CLAUDE_CODE_OAUTH_TOKEN" tools/dev_workbench/vscode.md` → matches found.
+
+---
+
+### Step 38.2: Use host username in macOS Dev Container `devcontainer.json` (`tools/VM/setup.md`)
+
+[x] Status
+
+CONTEXT: The `devcontainer.json` snippet (lines ~154-167) in "macOS — Dev Container" uses the base image's default `vscode` user; students want the container's primary user to match their host macOS username (`whoami`/`$USER`) instead.
+ACTION: In `tools/VM/setup.md`, update the `devcontainer.json` snippet to add the `ghcr.io/devcontainers/features/common-utils:2` feature with `"username": "${localEnv:USER}"`, `"uid": "automatic"`, `"gid": "automatic"`, and add a top-level `"remoteUser": "${localEnv:USER}"` so the container user matches the host username instead of the image default `vscode`. Add one sentence noting `${localEnv:USER}` is substituted from the host shell's `$USER` when the container is built.
+CONSTRAINTS: Only the `devcontainer.json` snippet and its immediately adjacent prose within "macOS — Dev Container" (lines 106-177); don't touch "Windows" or "Notes for instructors"; ≤79 chars/line in the JSON snippet.
+OUTPUT: `devcontainer.json` snippet includes the `common-utils` feature with `${localEnv:USER}` and `"remoteUser": "${localEnv:USER}"`; one sentence explains the host-username substitution.
+VERIFY: `grep -n 'localEnv:USER\|common-utils\|remoteUser' tools/VM/setup.md` → matches found for all three.
+
+---
+
+### Step 38.3: Hyperlink SSH-key bullet in "GitHub Account and SSH Setup" (`sessions/dev_workbench.md`)
+
+[x] Status
+
+CONTEXT: Line 58 of "GitHub Account and SSH Setup" reads "- Generate and upload an SSH key for GitHub authentication" with no link to GitHub's docs.
+ACTION: In `sessions/dev_workbench.md`, edit that bullet so "Generate and upload an SSH key" is a markdown hyperlink to `https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account`, keeping the trailing "for GitHub authentication" text. Wrap the line(s) to match the existing wrapped-link style used by the other bullets in this section (e.g. the "Git Identity Setup" / "SSH Validation" bullets).
+CONSTRAINTS: Only this one bullet; don't alter other bullets/links in the section; ≤79 chars/line.
+OUTPUT: The 3rd bullet renders as a markdown link with visible text "Generate and upload an SSH key" pointing at the GitHub docs URL, followed by "for GitHub authentication".
+VERIFY: `grep -n "adding-a-new-ssh-key-to-your-github-account" sessions/dev_workbench.md` → 1 match.
+
+---
+
+### Step 38.4: Add "Step 0" (git switch) to "Test VSCode + GitHub + Claude Code Integration" (`sessions/dev_workbench.md`)
+
+[x] Status
+
+CONTEXT: The section (lines 127-174) starts at "Step 1 — Pull latest code from your personal branch" but assumes the student is already on `feature/from_<username>`; there is no step that switches to it first.
+ACTION: In `sessions/dev_workbench.md`, insert a new "**Step 0 — Switch to your personal feature branch:**" block immediately before "**Step 1 — Pull latest code...**", with a one-line instruction ("In the VSCode terminal:") and a ```bash``` fence containing `git switch feature/from_$GITHUB_USERNAME`.
+CONSTRAINTS: Only this section; don't renumber or otherwise modify Steps 1-4; ≤79 chars/line.
+OUTPUT: Section now reads Step 0 (git switch), Step 1 (pull), Step 2 (edit), Step 3 (push), Step 4 (PR), in that order.
+VERIFY: `grep -n "Step 0\|git switch feature/from" sessions/dev_workbench.md` → both found, with Step 0 appearing before Step 1.
+
+---
+
+### Step 38.5: Make Discord pubkey post idempotent in `labsetup.py`
+
+[x] Status
+
+CONTEXT: `_generate_ssh_key()` (labsetup.py:83-99) returns `None` and silently skips when `SSH_KEY` already exists. `main()`'s `if ssh_real:` block (labsetup.py:519-523) unconditionally calls `_post_pubkey_to_discord(env)` every run, reposting the same key to #meetup-notifications even when no new key was generated.
+ACTION: Change `_generate_ssh_key()` to return `bool` — `True` if a new key pair was generated, `False` if `SSH_KEY` already existed (skip case). In `main()`'s `if ssh_real:` block, only call `_post_pubkey_to_discord(env)` when `_generate_ssh_key()` returns `True`; when it returns `False`, print a `SKIP` line noting the key already exists and was previously shared with the instructor. Update the module docstring's "Post the public key..." line to note this only happens when a new key is generated.
+CONSTRAINTS: Don't change `_post_pubkey_to_discord`'s body, `_write_ssh_config`, or `_validate_ssh`; `preflight_check.py` untouched; ≤79 chars/line.
+OUTPUT: `_generate_ssh_key() -> bool`; Discord pubkey post happens only when a new key is generated this run; otherwise a SKIP message is printed instead.
+VERIFY: `python3 -c "import sys; sys.path.insert(0,'projects/group_meetup'); import labsetup as l; assert l._generate_ssh_key() is False"` → exits 0 (key already exists from Phase 37 runs); `python3 projects/group_meetup/labsetup.py 2>&1 | grep -i "public key"` shows a SKIP line, not a POST line.
+
+---
+
+### Step 38.6: Clean up "Plugin Installs" and "Install the VSCode Extension" in `tools/claude/cli.md`
+
+[x] Status
+
+CONTEXT: `tools/claude/cli.md` has an uncommitted draft edit already replacing "Plugin Installs" Step 6 (`claude plugin update` → two `claude plugin marketplace update ...` lines) and an uncommitted edit retitling the "🔐 Security" heading to "🔐 Security: OAUth Token and API Keys" (typos) plus a new "Reference section above `Subscription / OAuth Token Mode`" note. "Install the VSCode Extension" (lines 64-91) has a verbose "Once installed:" paragraph with 4 usage bullets before the "keep the sidebar open" `settings.json` tip.
+ACTION: (1) Keep the existing "Plugin Installs" Step 6 draft edit as-is (two `claude plugin marketplace update claude-code-plugins`/`claude-plugins-official` lines) — it is correct. (2) Fix the typos in the already-edited Security heading: "🔐 Security: OAUth Token an dAPI Keys" → "🔐 Security: OAuth Token and API Keys" (keep the "Reference section above..." note and "NEVER commit OAUTH TOKEN or API keys" line as already drafted). (3) In "Install the VSCode Extension", delete the "Once installed:" paragraph and its 4 bullets, keeping the install-steps bullets above it and the "To keep the sidebar open..." `settings.json` snippet + keyboard-shortcut line below it.
+CONSTRAINTS: Don't touch the "Subscription / OAuth Token Mode" section body (lines 23-30) beyond what's already staged; don't renumber other numbered sections; ≤79 chars/line.
+OUTPUT: "Plugin Installs" Step 6 uses the two `claude plugin marketplace update` commands; Security heading reads "🔐 Security: OAuth Token and API Keys" with no typos; "Install the VSCode Extension" no longer has the "Once installed:" usage-bullets paragraph.
+VERIFY: `grep -n "OAUth Token an dAPI\|Once installed:" tools/claude/cli.md` → 0 matches; `grep -n "claude plugin marketplace update" tools/claude/cli.md` → 2 matches.
+
+---
+
+### Step 38.7: Mark Phase 38 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 38.1-38.6 executed and verified across `tools/dev_workbench/vscode.md`, `tools/VM/setup.md`, `sessions/dev_workbench.md`, `projects/group_meetup/labsetup.py`, and `tools/claude/cli.md`.
+ACTION: (1) Re-run each step's VERIFY command and confirm all pass. (2) Confirm every `[ ] Status` under a `### Step 38.` heading in `sdw/plan.md` reads `[x] Status`, and flip `## Lab Update II` in `sdw/prompt_history.md` to `[x] Status`. (3) Stage and commit `sdw/plan.md`, `sdw/prompt_history.md`, `tools/dev_workbench/vscode.md`, `tools/VM/setup.md`, `sessions/dev_workbench.md`, `projects/group_meetup/labsetup.py`, `tools/claude/cli.md`. (4) Tag `v38.7-docs-lab-cleanup-ii-step-completed` and push the current branch (`fix/issues`) with `--tags`.
+CONSTRAINTS: Only flip status checkboxes — do not edit step bodies, reorder steps, or rewrite history; never push to `main`.
+OUTPUT: All Phase 38 `[ ] Status` lines read `[x] Status`; `## Lab Update II` in `sdw/prompt_history.md` reads `[x] Status`; annotated tag `v38.7-docs-lab-cleanup-ii-step-completed` pushed to `fix/issues`.
+VERIFY: `grep -A1 "### Step 38\." sdw/plan.md | grep "\[ \] Status"` → 0 matches; `git tag | grep "v38\."`
+
+---
+
+## Phase 39: CLAUDE CODE NATIVE INSTALLER MIGRATION
+
+**Addresses:** `sdw/prompt_history.md` § `## Claude Code Native Installer Migration`
+
+**Target files:** `tools/VM/setup.md`
+
+**provider:model:** `claude:claude-sonnet-4-6`
+
+---
+
+### Step 39.1: Replace `npm install -g @anthropic-ai/claude-code` with the native installer in `tools/VM/setup.md`
+
+[x] Status
+
+CONTEXT: Step 4 of the WSL "Suggested workflow" (lines 92-97) installs Claude Code via `npm install -g @anthropic-ai/claude-code`. Anthropic deprecated this npm package method and moved to a self-contained native installer; `npm install -g` now yields a stale/broken CLI.
+ACTION: In `tools/VM/setup.md`, replace the `npm install -g @anthropic-ai/claude-code` line (line 96) with `npm uninstall -g @anthropic-ai/claude-code` (commented as removing any stale package) followed by `curl -fsSL https://claude.ai/install.sh | bash`, and add a one-line note that this matches `tools/claude/cli.md`'s CLI Setup section.
+CONSTRAINTS: Only lines 92-97 (Step 4 of the WSL "Suggested workflow"); don't touch other steps/sections; ≤79 chars/line.
+OUTPUT: Step 4 no longer references `npm install -g @anthropic-ai/claude-code`; uses the native installer matching `tools/claude/cli.md`.
+VERIFY: `grep -n "npm install -g @anthropic-ai/claude-code" tools/VM/setup.md` → 0 matches; `grep -n "claude.ai/install.sh" tools/VM/setup.md` → 1 match.
+
+---
+
+### Step 39.2: Verify native installer is active on this dev machine
+
+[x] Status
+
+CONTEXT: This dev machine's `claude` binary should already be on the native installer per the migration described in `## Claude Code Native Installer Migration`.
+ACTION: Run `which claude`, `claude --version`, and `npm ls -g --depth=0 | grep -i claude`. If a stale npm global package is found, run `npm uninstall -g @anthropic-ai/claude-code` then `curl -fsSL https://claude.ai/install.sh | bash`.
+CONSTRAINTS: Read-only verification preferred; only run uninstall/install if a stale npm package is actually found.
+OUTPUT: Confirmation that `which claude` resolves to `~/.local/bin/claude` (native installer path) and no `@anthropic-ai/claude-code` npm global package exists.
+VERIFY: `which claude` → `~/.local/bin/claude`; `npm ls -g --depth=0 | grep -i claude` → no output.
+
+---
+
+### Step 39.3: Mark Phase 39 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 39.1-39.2 executed and verified; `tools/VM/setup.md` now uses the native installer and this dev machine is confirmed clean.
+ACTION: (1) Re-run each step's VERIFY command and confirm all pass. (2) Confirm every `[ ] Status` under a `### Step 39.` heading in `sdw/plan.md` reads `[x] Status`. (3) Stage and commit `sdw/plan.md`, `tools/VM/setup.md`. (4) Tag `v39.3-claude-native-installer-step-completed` and push the current branch (`fix/students`) with `--tags`.
+CONSTRAINTS: Only flip status checkboxes — do not edit step bodies, reorder steps, or rewrite history; never push to `main`.
+OUTPUT: All Phase 39 `[ ] Status` lines read `[x] Status`; annotated tag `v39.3-claude-native-installer-step-completed` pushed to `fix/students`.
+VERIFY: `grep -A1 "### Step 39\." sdw/plan.md | grep "\[ \] Status"` → 0 matches; `git tag | grep "v39\."`

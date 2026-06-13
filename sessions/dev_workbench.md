@@ -55,7 +55,8 @@ guide for that tool — no content is duplicated here.
 - Install the `gh` CLI inside Ubuntu (WSL2 or Dev Container) —
   full steps in the
   [GitHub Setup Guide](../tools/dev_workbench/github.md#account-setup)
-- Generate and upload an SSH key for GitHub authentication
+- [Generate and upload an SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+  for GitHub authentication
 - Set your global git identity — see
   [Git Identity Setup](
   ../tools/dev_workbench/github.md#git-identity-setup)
@@ -128,6 +129,17 @@ Subscription (default) and PAYG (pay-as-you-go) API. See
 
 Validate the full round-trip: Pull → Claude edits → Push → PR.
 
+**Step 0 — Switch to your personal feature branch:**
+
+In the VSCode terminal:
+
+```bash
+# switch to a feature branch, create if not created before
+export GITHUB_USERNAME=`gh api user -q .login`
+git switch feature/from_$GITHUB_USERNAME || \
+  git switch -c feature/from_$GITHUB_USERNAME
+```
+
 **Step 1 — Pull latest code from your personal branch:**
 
 In VSCode, open the Source Control panel (`Ctrl+Shift+G`).
@@ -139,8 +151,8 @@ Open the Claude Code panel in VSCode and send this prompt:
 
 ```text
 Update tests/vscode/hello.py to print:
-hello, <YourGitHubUser>!
-where <YourGitHubUser> is your GitHub username e.g. "joesmith"
+hello, joesmith!
+where joesmith is your GitHub username
 ```
 
 Claude should create or update the file. Run it to confirm:

@@ -2374,4 +2374,115 @@ inside the lab or not.
 Either ssh to ai-lab-int works or ssh to ai-lab works with the latter used
 as default as students would mostly access the server via the Internet.
 
+## Lab Update II
+[x] Status
 
+### Claude Multimode Setup
+
+Reference `Claude Multimode Set up` of `tools/dev_workbench/vscode.md`
+it seems outdated. 
+
+Setting CLAUDE_CONFIG_DIR to $HOME/.claude or 
+$HOME/.claude-payg is old. Remove that section as all we need 
+to do to switch modes is set  CLAUDE_CODE_OAUTH_TOKEN - 
+it has higher preference than ANTHROPIC_API_KEY.
+When CLAUDE_Cecho ODE_OAUTH_TOKEN is unset pay-as-you-go 
+ANTHROPIC_API_KEY is activated as long as it is set.
+
+Example convenienece functions used to switch claude modes is
+kept in ~/.bashrc:
+
+```text
+# MY_CLAUDE_CODE_AUTH_TOKEN is Pro/Max Subscription OAUTH TOKEN
+# MY_ANTHROPIC_API_KEY is pay-as-you-go API Key
+
+# Convenience functions to switch claude modes:
+claude-subscribe() {
+  # optional as CLAUDE_CODE_OAUTH_TOKEN has higher precedence
+  unset ANTHROPIC_API_KEY
+  export CLAUDE_CODE_OAUTH_TOKEN="$MY_CLAUDE_CODE_OAUTH_TOKEN"
+  echo "claude set to - `claude auth status --text` - mode"
+}
+claude-api() {
+  unset CLAUDE_CODE_OAUTH_TOKEN
+  export ANTHROPIC_API_KEY="$MY_ANTHROPIC_API_KEY"
+  echo "claude set to - `claude auth status --text` - mode"
+}
+# Default to subscription mode - OAUTH is active when
+# both OAUTH and API are set
+export CLAUDE_CODE_OAUTH_TOKEN="$MY_CLAUDE_CODE_OAUTH_TOKEN"
+```
+
+### MacOS Docker Setup
+
+Reference section `macOS — Dev Container` of `tools/VM/setup.md`
+The installation is setting up the user as `vscode` in the 
+container. It should pick the username from the OS (eg `whoami`)
+rather than `vscode` which may have been picked up from the
+VSCode extension.
+
+### Github
+
+1. Reference section `GitHub Account and SSH Setup` of
+`sessions/dev_workbench.md`.
+
+Hyperlink the text (3rd bullet) where you "Generate and upload 
+an SSH Key ..." with https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account
+
+2. Refererence `Test VSCode + GitHub + Claude Code Integration` 
+section of `sessions/dev_workbench.md`
+
+ADD Step 0 to "switch" to feature branch that was previously created
+by adding the command line snippet below:
+```bash
+git switch feature/from_$GITHUB_USERNAME
+```
+
+### Lab Setup Script
+Review `projects/group_meetup/labsetup.py` and
+`projects/group_meetup/preflight_check.py`.
+
+Validate that labsetup.py is idempotent. For example, everytime 
+we run the script we post the SSH public key in the
+discord channel - even if a new one was not generated.
+
+
+### Claude CLI
+
+Reference `tools/claude/cli.md`
+
+1. Clean up section `Plugin Installs` last line 
+`claude plugin update`.
+The last line was cleaned up to the below - please validate:
+
+```text
+# Step 6 - Update all plugins
+# Native plugins are auto-updated, 3rd party require manual updates
+claude plugin marketplace update claude-code-plugins
+claude plugin marketplace update claude-plugins-official
+```
+
+2. Clean up section `Install the VSCode Extension`. Eliminate 
+the paragraph section starting `Once Installed` to the `settings.json`
+added json example to keep sidebar open.
+
+## Claude Code Native Installer Migration
+[x] Status
+
+`tools/VM/setup.md`'s WSL "Suggested workflow" Step 4 installs
+Claude Code via `npm install -g @anthropic-ai/claude-code`. This
+method is deprecated — Anthropic moved Claude Code to a
+self-contained native installer and pulled/froze the npm package
+after a packaging incident, so `npm install -g` now yields a
+stale, broken CLI.
+
+Fix: replace with the official native installer (already used in
+`tools/claude/cli.md`):
+
+```bash
+npm uninstall -g @anthropic-ai/claude-code   # remove stale pkg
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+Verify with `claude --version` and `which claude` — the binary
+should resolve under `~/.local/bin/claude`, not node_modules.

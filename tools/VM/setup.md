@@ -93,7 +93,10 @@ Recommended minimums for this lab: 8 GB RAM, 4 cores, 40 GB disk.
    ```bash
    sudo apt-get update
    sudo apt-get install -y python3 python3-pip git
-   npm install -g @anthropic-ai/claude-code
+
+   # Claude Code: use the native installer (matches
+   # tools/claude/cli.md) — the npm package is deprecated
+   curl -fsSL https://claude.ai/install.sh | bash
    ```
 5. Keep all project files under `~/` (inside WSL), not under
    `/mnt/c/` — WSL I/O on Windows-mounted drives is significantly
@@ -160,11 +163,22 @@ Commit this file at `.devcontainer/devcontainer.json`:
   "image": "mcr.microsoft.com/devcontainers/python:3.12-bullseye",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/node:1": {"version": "lts"}
+    "ghcr.io/devcontainers/features/node:1": {"version": "lts"},
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "username": "${localEnv:USER}",
+      "uid": "automatic",
+      "gid": "automatic"
+    }
   },
+  "remoteUser": "${localEnv:USER}",
   "postCreateCommand": "pip install requests pyyaml"
 }
 ```
+
+`${localEnv:USER}` is substituted from the host macOS shell's
+`$USER` when the container is built, so the container's primary
+user matches your host username instead of the image default
+`vscode`.
 
 #### Suggested workflow
 

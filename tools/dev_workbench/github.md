@@ -45,8 +45,13 @@ sudo apt update && sudo apt install gh -y
 3. Authenticate - **required before running `labsetup.py`**:
 
 ```bash
-gh auth login   # choose GitHub.com → HTTPS → browser
+# admin:public_key is required for labsetup.py to upload your
+# SSH key via `gh ssh-key add`
+gh auth login -s admin:public_key  # GitHub.com → HTTPS → browser
 gh auth status  # must exit 0 before continuing
+
+# Already authenticated without admin:public_key? Run instead:
+gh auth refresh -h github.com -s admin:public_key
 ```
 
 ---
@@ -141,7 +146,7 @@ gh auth status
 **Step 1 — Clone `ai_workbench` into your workspace:**
 
 ```bash
-export GITHUB_USERNAME="<your_github_username>"
+export GITHUB_USERNAME=`gh api user -q .login`
 # Set MY_WORKSPACE to your preferred directory.
 # Example: ~/ws/sw — choose any path you like.
 export MY_WORKSPACE=~/ws/sw
