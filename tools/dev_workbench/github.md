@@ -45,8 +45,13 @@ sudo apt update && sudo apt install gh -y
 3. Authenticate - **required before running `labsetup.py`**:
 
 ```bash
-gh auth login   # choose GitHub.com → HTTPS → browser
+# admin:public_key is required for labsetup.py to upload your
+# SSH key via `gh ssh-key add`
+gh auth login -s admin:public_key  # GitHub.com → HTTPS → browser
 gh auth status  # must exit 0 before continuing
+
+# Already authenticated without admin:public_key? Run instead:
+gh auth refresh -h github.com -s admin:public_key
 ```
 
 ---
