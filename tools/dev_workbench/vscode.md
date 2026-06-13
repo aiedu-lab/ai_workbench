@@ -34,38 +34,43 @@
 * Your personal branch appears under "Current Branch".
 ## Claude Multimode Set Up
 
-The Claude Code extension reads `CLAUDE_CONFIG_DIR` to locate its
-credentials. Different directories let you switch between Pro
-Subscription (browser login) and PAYG API key modes without
-re-authenticating.
+Claude Code supports two authentication modes, selected by
+environment variables. `CLAUDE_CODE_OAUTH_TOKEN` (Pro/Max
+subscription) takes precedence over `ANTHROPIC_API_KEY`
+(pay-as-you-go) when both are set; unset the token to fall
+back to the API key.
 
-### Mode 1 — Pro Subscription (default)
+### Convenience functions
 
-Leave `CLAUDE_CONFIG_DIR` unset, or set it to `$HOME/.claude`.
+Add to `~/.bashrc`:
+
+```bash
+# MY_CLAUDE_CODE_OAUTH_TOKEN is the Pro/Max subscription token
+# MY_ANTHROPIC_API_KEY is the pay-as-you-go API key
+
+claude-subscribe() {
+  unset ANTHROPIC_API_KEY
+  export CLAUDE_CODE_OAUTH_TOKEN="$MY_CLAUDE_CODE_OAUTH_TOKEN"
+  echo "claude set to - $(claude auth status --text) - mode"
+}
+claude-api() {
+  unset CLAUDE_CODE_OAUTH_TOKEN
+  export ANTHROPIC_API_KEY="$MY_ANTHROPIC_API_KEY"
+  echo "claude set to - $(claude auth status --text) - mode"
+}
+
+# Default to subscription mode — OAuth token takes precedence
+# when both are set
+export CLAUDE_CODE_OAUTH_TOKEN="$MY_CLAUDE_CODE_OAUTH_TOKEN"
+```
+
 Launch VSCode from the Ubuntu terminal:
 
 ```bash
 code .
 ```
 
-### Mode 2 — PAYG API
-
-Set `CLAUDE_CONFIG_DIR` to `$HOME/.claude-payg` at launch:
-
-```bash
-CLAUDE_CONFIG_DIR=$HOME/.claude-payg code .
-```
-
-Ensure `$HOME/.claude-payg/credentials.json` contains a valid
-API key before switching.
-
 ### Validation
-
-Check which credentials are active from the VSCode terminal:
-
-```bash
-cat ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/credentials.json
-```
 
 Inside the Claude Code panel, run `/status` — the output shows
 the active authentication mode (Pro Subscription or API key).

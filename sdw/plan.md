@@ -4910,7 +4910,7 @@ VERIFY: `grep -A1 "### Step 37\." sdw/plan.md | grep "\[ \] Status"` → 0 match
 
 ### Step 38.1: Rewrite "Claude Multimode Set Up" in `tools/dev_workbench/vscode.md`
 
-[ ] Status
+[x] Status
 
 CONTEXT: The "Claude Multimode Set Up" section (lines 35-72) documents switching Claude Code auth via `CLAUDE_CONFIG_DIR` pointing at `$HOME/.claude` vs `$HOME/.claude-payg` — an outdated scheme. The real switch is `CLAUDE_CODE_OAUTH_TOKEN` (subscription, higher precedence when both env vars are set) vs `ANTHROPIC_API_KEY` (pay-as-you-go).
 ACTION: Replace the section body (keep the `## Claude Multimode Set Up` heading) with: a short explanation that `CLAUDE_CODE_OAUTH_TOKEN` takes precedence over `ANTHROPIC_API_KEY` when both are set; a `~/.bashrc` snippet defining `claude-subscribe`/`claude-api` convenience functions (per the example in `sdw/prompt_history.md` "Claude Multimode Setup", correcting its `CLAUDE_Cecho ODE_OAUTH_TOKEN` typo to `CLAUDE_CODE_OAUTH_TOKEN`) plus a default `export CLAUDE_CODE_OAUTH_TOKEN=...`; keep the `code .` launch instruction; keep a "Validation" subsection using `/status` and drop the `CLAUDE_CONFIG_DIR`-based `cat .../credentials.json` check.
