@@ -5016,7 +5016,7 @@ VERIFY: `grep -n "npm install -g @anthropic-ai/claude-code" tools/VM/setup.md` â
 
 ### Step 39.2: Verify native installer is active on this dev machine
 
-[ ] Status
+[x] Status
 
 CONTEXT: This dev machine's `claude` binary should already be on the native installer per the migration described in `## Claude Code Native Installer Migration`.
 ACTION: Run `which claude`, `claude --version`, and `npm ls -g --depth=0 | grep -i claude`. If a stale npm global package is found, run `npm uninstall -g @anthropic-ai/claude-code` then `curl -fsSL https://claude.ai/install.sh | bash`.
