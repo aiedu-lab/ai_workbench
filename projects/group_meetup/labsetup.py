@@ -78,6 +78,19 @@ def _set_env(env: dict[str, str]) -> None:
     print(f"  SET  {key}={value}")
 
 
+def _gh_env() -> dict[str, str]:
+  """Environment for `gh` calls, with GH_TOKEN/GITHUB_TOKEN unset.
+
+  A GH_TOKEN exported for unrelated purposes (e.g. a code-review
+  PAT) overrides the `gh auth login` session and its
+  admin:public_key scope (github.md), breaking SSH key setup.
+  """
+  env = os.environ.copy()
+  env.pop("GH_TOKEN", None)
+  env.pop("GITHUB_TOKEN", None)
+  return env
+
+
 def _is_placeholder(value: str) -> bool:
   stripped = value.strip()
   return stripped.startswith("<") and stripped.endswith(">")
@@ -260,7 +273,8 @@ def _upload_github_ssh_key(github_username: str) -> None:
   """
   title = f"{_USERNAME}-lab-key"
   list_result = subprocess.run(
-    ["gh", "ssh-key", "list"], capture_output=True, text=True,
+    ["gh", "ssh-key", "list"],
+    capture_output=True, text=True, env=_gh_env(),
   )
   if list_result.returncode == 0 and title in list_result.stdout:
     print(f"  OK   GitHub key '{title}' already uploaded (skipping)")
@@ -271,7 +285,7 @@ def _upload_github_ssh_key(github_username: str) -> None:
       str(GITHUB_SSH_KEY.with_suffix(".pub")),
       "--title", title,
     ],
-    capture_output=True, text=True,
+    capture_output=True, text=True, env=_gh_env(),
   )
   if add_result.returncode == 0:
     print(f"  POST GitHub public key uploaded for {github_username}")
@@ -567,13 +581,13 @@ def main() -> None:
   _validate_secret()
 
   gh_ready = _ensure_gh_installed() and subprocess.run(
-    ["gh", "auth", "status"], capture_output=True
+    ["gh", "auth", "status"], capture_output=True, env=_gh_env(),
   ).returncode == 0
 
   if gh_ready:
     github_username = subprocess.run(
       ["gh", "api", "user", "--jq", ".login"],
-      capture_output=True, text=True,
+      capture_output=True, text=True, env=_gh_env(),
     ).stdout.strip()
     _generate_github_ssh_key(github_username)
     _upload_github_ssh_key(github_username)
