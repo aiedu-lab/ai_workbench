@@ -4922,7 +4922,7 @@ VERIFY: `grep -n "CLAUDE_CONFIG_DIR\|claude-payg" tools/dev_workbench/vscode.md`
 
 ### Step 38.2: Use host username in macOS Dev Container `devcontainer.json` (`tools/VM/setup.md`)
 
-[ ] Status
+[x] Status
 
 CONTEXT: The `devcontainer.json` snippet (lines ~154-167) in "macOS — Dev Container" uses the base image's default `vscode` user; students want the container's primary user to match their host macOS username (`whoami`/`$USER`) instead.
 ACTION: In `tools/VM/setup.md`, update the `devcontainer.json` snippet to add the `ghcr.io/devcontainers/features/common-utils:2` feature with `"username": "${localEnv:USER}"`, `"uid": "automatic"`, `"gid": "automatic"`, and add a top-level `"remoteUser": "${localEnv:USER}"` so the container user matches the host username instead of the image default `vscode`. Add one sentence noting `${localEnv:USER}` is substituted from the host shell's `$USER` when the container is built.
