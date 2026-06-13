@@ -5004,7 +5004,7 @@ VERIFY: `grep -A1 "### Step 38\." sdw/plan.md | grep "\[ \] Status"` → 0 match
 
 ### Step 39.1: Replace `npm install -g @anthropic-ai/claude-code` with the native installer in `tools/VM/setup.md`
 
-[ ] Status
+[x] Status
 
 CONTEXT: Step 4 of the WSL "Suggested workflow" (lines 92-97) installs Claude Code via `npm install -g @anthropic-ai/claude-code`. Anthropic deprecated this npm package method and moved to a self-contained native installer; `npm install -g` now yields a stale/broken CLI.
 ACTION: In `tools/VM/setup.md`, replace the `npm install -g @anthropic-ai/claude-code` line (line 96) with `npm uninstall -g @anthropic-ai/claude-code` (commented as removing any stale package) followed by `curl -fsSL https://claude.ai/install.sh | bash`, and add a one-line note that this matches `tools/claude/cli.md`'s CLI Setup section.

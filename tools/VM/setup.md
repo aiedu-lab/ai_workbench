@@ -93,7 +93,11 @@ Recommended minimums for this lab: 8 GB RAM, 4 cores, 40 GB disk.
    ```bash
    sudo apt-get update
    sudo apt-get install -y python3 python3-pip git
-   npm install -g @anthropic-ai/claude-code
+
+   # Claude Code: use the native installer (matches
+   # tools/claude/cli.md) — the npm package is deprecated
+   npm uninstall -g @anthropic-ai/claude-code  # remove stale pkg
+   curl -fsSL https://claude.ai/install.sh | bash
    ```
 5. Keep all project files under `~/` (inside WSL), not under
    `/mnt/c/` — WSL I/O on Windows-mounted drives is significantly
