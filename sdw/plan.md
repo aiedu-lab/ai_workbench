@@ -4958,7 +4958,7 @@ VERIFY: `grep -n "Step 0\|git switch feature/from" sessions/dev_workbench.md` â†
 
 ### Step 38.5: Make Discord pubkey post idempotent in `labsetup.py`
 
-[ ] Status
+[x] Status
 
 CONTEXT: `_generate_ssh_key()` (labsetup.py:83-99) returns `None` and silently skips when `SSH_KEY` already exists. `main()`'s `if ssh_real:` block (labsetup.py:519-523) unconditionally calls `_post_pubkey_to_discord(env)` every run, reposting the same key to #meetup-notifications even when no new key was generated.
 ACTION: Change `_generate_ssh_key()` to return `bool` â€” `True` if a new key pair was generated, `False` if `SSH_KEY` already existed (skip case). In `main()`'s `if ssh_real:` block, only call `_post_pubkey_to_discord(env)` when `_generate_ssh_key()` returns `True`; when it returns `False`, print a `SKIP` line noting the key already exists and was previously shared with the instructor. Update the module docstring's "Post the public key..." line to note this only happens when a new key is generated.
