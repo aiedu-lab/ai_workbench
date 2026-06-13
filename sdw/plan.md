@@ -4946,7 +4946,7 @@ VERIFY: `grep -n "adding-a-new-ssh-key-to-your-github-account" sessions/dev_work
 
 ### Step 38.4: Add "Step 0" (git switch) to "Test VSCode + GitHub + Claude Code Integration" (`sessions/dev_workbench.md`)
 
-[ ] Status
+[x] Status
 
 CONTEXT: The section (lines 127-174) starts at "Step 1 — Pull latest code from your personal branch" but assumes the student is already on `feature/from_<username>`; there is no step that switches to it first.
 ACTION: In `sessions/dev_workbench.md`, insert a new "**Step 0 — Switch to your personal feature branch:**" block immediately before "**Step 1 — Pull latest code...**", with a one-line instruction ("In the VSCode terminal:") and a ```bash``` fence containing `git switch feature/from_$GITHUB_USERNAME`.

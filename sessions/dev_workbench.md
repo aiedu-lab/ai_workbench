@@ -129,6 +129,16 @@ Subscription (default) and PAYG (pay-as-you-go) API. See
 
 Validate the full round-trip: Pull → Claude edits → Push → PR.
 
+**Step 0 — Switch to your personal feature branch:**
+
+In the VSCode terminal:
+
+```bash
+# switch to a feature branch, create if not created before
+git switch feature/from_$GITHUB_USERNAME || \
+  git switch -c feature/from_$GITHUB_USERNAME
+```
+
 **Step 1 — Pull latest code from your personal branch:**
 
 In VSCode, open the Source Control panel (`Ctrl+Shift+G`).
