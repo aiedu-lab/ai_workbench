@@ -4989,3 +4989,49 @@ ACTION: (1) Re-run each step's VERIFY command and confirm all pass. (2) Confirm 
 CONSTRAINTS: Only flip status checkboxes — do not edit step bodies, reorder steps, or rewrite history; never push to `main`.
 OUTPUT: All Phase 38 `[ ] Status` lines read `[x] Status`; `## Lab Update II` in `sdw/prompt_history.md` reads `[x] Status`; annotated tag `v38.7-docs-lab-cleanup-ii-step-completed` pushed to `fix/issues`.
 VERIFY: `grep -A1 "### Step 38\." sdw/plan.md | grep "\[ \] Status"` → 0 matches; `git tag | grep "v38\."`
+
+---
+
+## Phase 39: CLAUDE CODE NATIVE INSTALLER MIGRATION
+
+**Addresses:** `sdw/prompt_history.md` § `## Claude Code Native Installer Migration`
+
+**Target files:** `tools/VM/setup.md`
+
+**provider:model:** `claude:claude-sonnet-4-6`
+
+---
+
+### Step 39.1: Replace `npm install -g @anthropic-ai/claude-code` with the native installer in `tools/VM/setup.md`
+
+[ ] Status
+
+CONTEXT: Step 4 of the WSL "Suggested workflow" (lines 92-97) installs Claude Code via `npm install -g @anthropic-ai/claude-code`. Anthropic deprecated this npm package method and moved to a self-contained native installer; `npm install -g` now yields a stale/broken CLI.
+ACTION: In `tools/VM/setup.md`, replace the `npm install -g @anthropic-ai/claude-code` line (line 96) with `npm uninstall -g @anthropic-ai/claude-code` (commented as removing any stale package) followed by `curl -fsSL https://claude.ai/install.sh | bash`, and add a one-line note that this matches `tools/claude/cli.md`'s CLI Setup section.
+CONSTRAINTS: Only lines 92-97 (Step 4 of the WSL "Suggested workflow"); don't touch other steps/sections; ≤79 chars/line.
+OUTPUT: Step 4 no longer references `npm install -g @anthropic-ai/claude-code`; uses the native installer matching `tools/claude/cli.md`.
+VERIFY: `grep -n "npm install -g @anthropic-ai/claude-code" tools/VM/setup.md` → 0 matches; `grep -n "claude.ai/install.sh" tools/VM/setup.md` → 1 match.
+
+---
+
+### Step 39.2: Verify native installer is active on this dev machine
+
+[ ] Status
+
+CONTEXT: This dev machine's `claude` binary should already be on the native installer per the migration described in `## Claude Code Native Installer Migration`.
+ACTION: Run `which claude`, `claude --version`, and `npm ls -g --depth=0 | grep -i claude`. If a stale npm global package is found, run `npm uninstall -g @anthropic-ai/claude-code` then `curl -fsSL https://claude.ai/install.sh | bash`.
+CONSTRAINTS: Read-only verification preferred; only run uninstall/install if a stale npm package is actually found.
+OUTPUT: Confirmation that `which claude` resolves to `~/.local/bin/claude` (native installer path) and no `@anthropic-ai/claude-code` npm global package exists.
+VERIFY: `which claude` → `~/.local/bin/claude`; `npm ls -g --depth=0 | grep -i claude` → no output.
+
+---
+
+### Step 39.3: Mark Phase 39 complete, commit, tag, push
+
+[ ] Status
+
+CONTEXT: Steps 39.1-39.2 executed and verified; `tools/VM/setup.md` now uses the native installer and this dev machine is confirmed clean.
+ACTION: (1) Re-run each step's VERIFY command and confirm all pass. (2) Confirm every `[ ] Status` under a `### Step 39.` heading in `sdw/plan.md` reads `[x] Status`. (3) Stage and commit `sdw/plan.md`, `tools/VM/setup.md`. (4) Tag `v39.3-claude-native-installer-step-completed` and push the current branch (`fix/students`) with `--tags`.
+CONSTRAINTS: Only flip status checkboxes — do not edit step bodies, reorder steps, or rewrite history; never push to `main`.
+OUTPUT: All Phase 39 `[ ] Status` lines read `[x] Status`; annotated tag `v39.3-claude-native-installer-step-completed` pushed to `fix/students`.
+VERIFY: `grep -A1 "### Step 39\." sdw/plan.md | grep "\[ \] Status"` → 0 matches; `git tag | grep "v39\."`

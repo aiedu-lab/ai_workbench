@@ -2465,3 +2465,24 @@ claude plugin marketplace update claude-plugins-official
 2. Clean up section `Install the VSCode Extension`. Eliminate 
 the paragraph section starting `Once Installed` to the `settings.json`
 added json example to keep sidebar open.
+
+## Claude Code Native Installer Migration
+[x] Status
+
+`tools/VM/setup.md`'s WSL "Suggested workflow" Step 4 installs
+Claude Code via `npm install -g @anthropic-ai/claude-code`. This
+method is deprecated — Anthropic moved Claude Code to a
+self-contained native installer and pulled/froze the npm package
+after a packaging incident, so `npm install -g` now yields a
+stale, broken CLI.
+
+Fix: replace with the official native installer (already used in
+`tools/claude/cli.md`):
+
+```bash
+npm uninstall -g @anthropic-ai/claude-code   # remove stale pkg
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+Verify with `claude --version` and `which claude` — the binary
+should resolve under `~/.local/bin/claude`, not node_modules.
