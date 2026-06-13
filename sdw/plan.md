@@ -4934,7 +4934,7 @@ VERIFY: `grep -n 'localEnv:USER\|common-utils\|remoteUser' tools/VM/setup.md` â†
 
 ### Step 38.3: Hyperlink SSH-key bullet in "GitHub Account and SSH Setup" (`sessions/dev_workbench.md`)
 
-[ ] Status
+[x] Status
 
 CONTEXT: Line 58 of "GitHub Account and SSH Setup" reads "- Generate and upload an SSH key for GitHub authentication" with no link to GitHub's docs.
 ACTION: In `sessions/dev_workbench.md`, edit that bullet so "Generate and upload an SSH key" is a markdown hyperlink to `https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account`, keeping the trailing "for GitHub authentication" text. Wrap the line(s) to match the existing wrapped-link style used by the other bullets in this section (e.g. the "Git Identity Setup" / "SSH Validation" bullets).

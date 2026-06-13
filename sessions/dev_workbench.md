@@ -55,7 +55,8 @@ guide for that tool — no content is duplicated here.
 - Install the `gh` CLI inside Ubuntu (WSL2 or Dev Container) —
   full steps in the
   [GitHub Setup Guide](../tools/dev_workbench/github.md#account-setup)
-- Generate and upload an SSH key for GitHub authentication
+- [Generate and upload an SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
+  for GitHub authentication
 - Set your global git identity — see
   [Git Identity Setup](
   ../tools/dev_workbench/github.md#git-identity-setup)
