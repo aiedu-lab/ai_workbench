@@ -254,24 +254,35 @@ def _upload_github_ssh_key(github_username: str) -> None:
 
   Checked independently of key generation (via `gh ssh-key list`)
   so a re-run retries the upload even if a prior upload attempt
-  failed after the local key was already created.
+  failed after the local key was already created. `gh ssh-key`
+  requires the `admin:public_key` auth scope — WARN (don't crash)
+  if list/add fails, since `gh auth login`'s default scopes omit it.
   """
   title = f"{_USERNAME}-lab-key"
-  existing = subprocess.run(
+  list_result = subprocess.run(
     ["gh", "ssh-key", "list"], capture_output=True, text=True,
-  ).stdout
-  if title in existing:
+  )
+  if list_result.returncode == 0 and title in list_result.stdout:
     print(f"  OK   GitHub key '{title}' already uploaded (skipping)")
     return
-  subprocess.run(
+  add_result = subprocess.run(
     [
       "gh", "ssh-key", "add",
       str(GITHUB_SSH_KEY.with_suffix(".pub")),
       "--title", title,
     ],
-    check=True,
+    capture_output=True, text=True,
   )
-  print(f"  POST GitHub public key uploaded for {github_username}")
+  if add_result.returncode == 0:
+    print(f"  POST GitHub public key uploaded for {github_username}")
+  else:
+    print(
+      "  WARN GitHub key upload failed — grant the scope and "
+      "re-run:\n"
+      "  gh auth refresh -h github.com -s admin:public_key\n"
+      f"  (stderr: {add_result.stderr.strip()!r})",
+      file=sys.stderr,
+    )
 
 
 def _write_github_ssh_config() -> None:
