@@ -198,6 +198,12 @@ def _write_ssh_config(env: dict[str, str]) -> None:
   )
   body = "\n".join(kept).rstrip("\n")
   text = (body + "\n\n" if body else "") + entries
+  if text == existing:
+    print(
+      f"  OK   ~/.ssh/config Host {SSH_HOST_ALIAS_INT}, "
+      f"Host {SSH_HOST_ALIAS} up to date (skipping)"
+    )
+    return
   SSH_CONFIG.write_text(text)
   SSH_CONFIG.chmod(0o600)
   print(
@@ -288,7 +294,10 @@ def _upload_github_ssh_key(github_username: str) -> None:
     capture_output=True, text=True, env=_gh_env(),
   )
   if add_result.returncode == 0:
-    print(f"  POST GitHub public key uploaded for {github_username}")
+    if "already exists" in add_result.stderr:
+      print(f"  OK   GitHub key '{title}' already uploaded (skipping)")
+    else:
+      print(f"  POST GitHub public key uploaded for {github_username}")
   else:
     print(
       "  WARN GitHub key upload failed — grant the scope and "
