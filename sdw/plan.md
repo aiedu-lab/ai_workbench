@@ -5028,7 +5028,7 @@ VERIFY: `which claude` → `~/.local/bin/claude`; `npm ls -g --depth=0 | grep -i
 
 ### Step 39.3: Mark Phase 39 complete, commit, tag, push
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 39.1-39.2 executed and verified; `tools/VM/setup.md` now uses the native installer and this dev machine is confirmed clean.
 ACTION: (1) Re-run each step's VERIFY command and confirm all pass. (2) Confirm every `[ ] Status` under a `### Step 39.` heading in `sdw/plan.md` reads `[x] Status`. (3) Stage and commit `sdw/plan.md`, `tools/VM/setup.md`. (4) Tag `v39.3-claude-native-installer-step-completed` and push the current branch (`fix/students`) with `--tags`.
