@@ -68,28 +68,6 @@ claude
 * Search for **"Claude Code"** — install the extension published by **Anthropic** (2M+ installs, verified publisher)
 * Restart VSCode if prompted
 
-Once installed:
-
-* Click the **Spark (⚡) icon** in the left Activity Bar to open the Claude Code sidebar
-* The same icon appears in the top-right Editor Toolbar when a file is open
-* Inline diffs appear in real time — use **Accept / Reject** buttons per change
-* Open multiple conversations in separate tabs via the Sessions list
-
-To keep the sidebar open across restarts, add to your VSCode `settings.json`:
-
-```json
-{
-  "auto-run-command.rules": [
-    {
-      "condition": "always",
-      "command": "claude-vscode.sidebar.open"
-    }
-  ]
-}
-```
-
-Or set a keyboard shortcut: `Cmd+Shift+I` (Mac) / `Ctrl+Shift+I` (Windows).
-
 ### 6. Confirm the integrated terminal works
 
 In VSCode's integrated terminal (`Ctrl+\``):
@@ -154,7 +132,8 @@ ls ~/.claude/plugins/marketplaces/
 
 # Step 6 - Update all plugins
 # Native plugins are auto-updated, 3rd party require manual updates
-claude plugin update
+claude plugin marketplace update claude-code-plugins
+claude plugin marketplace update claude-plugins-official
 ```
 
 ---
@@ -178,12 +157,15 @@ claude plugin update
 
 ---
 
-## 🔐 Security: API Keys
+## 🔐 Security: OAuth Token and API Keys
 
+> Reference section above `Subscription / OAuth Token Mode`
+> for ouath token creation, storage, etc.
+> OR
 > See [Claude Cloud Setup — API Key](cloud.md#2-generate-an-api-key)
 > for key creation, storage, and revocation instructions.
 
-- NEVER commit API keys to GitHub
+- NEVER commit OAUTH TOKEN or API keys to GitHub
 - Use `ANTHROPIC_API_KEY` environment variable only
 
 ## Guardrails & Tokenomics
