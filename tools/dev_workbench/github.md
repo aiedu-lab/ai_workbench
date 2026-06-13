@@ -141,7 +141,7 @@ gh auth status
 **Step 1 — Clone `ai_workbench` into your workspace:**
 
 ```bash
-export GITHUB_USERNAME="<your_github_username>"
+export GITHUB_USERNAME=`gh api user -q .login`
 # Set MY_WORKSPACE to your preferred directory.
 # Example: ~/ws/sw — choose any path you like.
 export MY_WORKSPACE=~/ws/sw

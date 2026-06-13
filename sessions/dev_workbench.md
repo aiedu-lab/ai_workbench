@@ -135,6 +135,7 @@ In the VSCode terminal:
 
 ```bash
 # switch to a feature branch, create if not created before
+export GITHUB_USERNAME=`gh api user -q .login`
 git switch feature/from_$GITHUB_USERNAME || \
   git switch -c feature/from_$GITHUB_USERNAME
 ```
@@ -150,8 +151,8 @@ Open the Claude Code panel in VSCode and send this prompt:
 
 ```text
 Update tests/vscode/hello.py to print:
-hello, <YourGitHubUser>!
-where <YourGitHubUser> is your GitHub username e.g. "joesmith"
+hello, joesmith!
+where joesmith is your GitHub username
 ```
 
 Claude should create or update the file. Run it to confirm:
