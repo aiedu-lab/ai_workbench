@@ -4982,7 +4982,7 @@ VERIFY: `grep -n "OAUth Token an dAPI\|Once installed:" tools/claude/cli.md` →
 
 ### Step 38.7: Mark Phase 38 complete, commit, tag, push
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 38.1-38.6 executed and verified across `tools/dev_workbench/vscode.md`, `tools/VM/setup.md`, `sessions/dev_workbench.md`, `projects/group_meetup/labsetup.py`, and `tools/claude/cli.md`.
 ACTION: (1) Re-run each step's VERIFY command and confirm all pass. (2) Confirm every `[ ] Status` under a `### Step 38.` heading in `sdw/plan.md` reads `[x] Status`, and flip `## Lab Update II` in `sdw/prompt_history.md` to `[x] Status`. (3) Stage and commit `sdw/plan.md`, `sdw/prompt_history.md`, `tools/dev_workbench/vscode.md`, `tools/VM/setup.md`, `sessions/dev_workbench.md`, `projects/group_meetup/labsetup.py`, `tools/claude/cli.md`. (4) Tag `v38.7-docs-lab-cleanup-ii-step-completed` and push the current branch (`fix/issues`) with `--tags`.
