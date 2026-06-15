@@ -8,11 +8,11 @@ def get_os_username() -> str:
   return getpass.getuser()
 
 def get_github_username() -> str:
-  return NotImplementedError
+  return "adisa"
 
 def main() -> None:
-  os_user_name = get_os_username()
-  print(f"Hello {os_user_name}")
+  github_username = get_github_username()
+  print(f"hello, {github_username}!")
 
 if __name__ == "__main__":
   sys.exit(main())
