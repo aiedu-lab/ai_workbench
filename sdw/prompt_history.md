@@ -2486,3 +2486,21 @@ curl -fsSL https://claude.ai/install.sh | bash
 
 Verify with `claude --version` and `which claude` — the binary
 should resolve under `~/.local/bin/claude`, not node_modules.
+
+## Lab Update III
+[x] Status
+
+Reference 
+- `tools/claude/cli.md`
+- `tools/claude/cloud.md`
+- `tools/dev_workbench/cline.md`
+- `tools/dev_workbench/vscode.md`
+
+I manually edited the above file references. 
+Please validate the correctness of these files. 
+Specifically the below changes:
+- vscode.md: WAL is typo for WSL
+- vscode.md: GitHub extension is not needed as it is built in
+- claude/cli.md, claude/cloud.md is about setting the API KEY
+  and OAUTH_TOKEN and saving it in environment variables
+- cline.md: about linking it LLM for different choices.
