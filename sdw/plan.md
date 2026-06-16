@@ -5086,7 +5086,7 @@ VERIFY: `grep -n "Launch VSCode from the Ubuntu terminal" tools/dev_workbench/vs
 
 ### Step 40.4: Mark Phase 40 complete, commit, tag, push
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 40.1–40.3 executed and verified; all tool guide files are correct and clean.
 ACTION: (1) Re-run each step's VERIFY command and confirm all pass. (2) Confirm every `[ ] Status` under a `### Step 40.` heading in `sdw/plan.md` reads `[x] Status`. (3) Stage and commit `sdw/plan.md`, `tools/claude/cli.md`, `tools/dev_workbench/cline.md`, `tools/dev_workbench/vscode.md`. (4) Tag `v40.4-lab-update-iii-step-completed` and push the current branch (`fix/edits`) with `--tags`.
