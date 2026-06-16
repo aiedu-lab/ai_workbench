@@ -5062,7 +5062,7 @@ VERIFY: `grep -n "ouath" tools/claude/cli.md` → 0 matches; `grep -n "ANTHROPIC
 
 ### Step 40.2: Fix cline.md — typo in validation section
 
-[ ] Status
+[x] Status
 
 CONTEXT: `tools/dev_workbench/cline.md` line 66 has `aboce` (misspelling of "above").
 ACTION: In `tools/dev_workbench/cline.md` change `aboce` → `above` on line 66.
