@@ -5074,7 +5074,7 @@ VERIFY: `grep -n "aboce" tools/dev_workbench/cline.md` → 0 matches.
 
 ### Step 40.3: Fix vscode.md — remove redundant block and rename subsection
 
-[ ] Status
+[x] Status
 
 CONTEXT: `tools/dev_workbench/vscode.md` has two structural issues: (1) orphaned `Launch VSCode from the Ubuntu terminal: code .` block (lines 36–40) — `code .` already appears in `### VSCode and CLI Basics` at line 22; (2) `### Validation` subsection has the same name as its parent `## Validation`, creating ambiguity.
 ACTION: (1) Delete lines 36–40 (the orphaned `code .` block). (2) Rename `### Validation` (will shift after deletion) to `### Claude Code Extension`.
