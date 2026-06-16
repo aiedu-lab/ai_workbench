@@ -41,7 +41,7 @@ for any lab work.
 
 ---
 
-## 3. Generate an API Key
+## 3. Generate and save an API Key
 
 Required for: Claude Code CLI (`--api-key` mode), direct API calls,
 and any Python/Node code that uses the Anthropic SDK.
@@ -51,6 +51,8 @@ and any Python/Node code that uses the Anthropic SDK.
 3. Navigate to **Settings → API Keys → Create Key**.
 4. Name the key (e.g. `ai-lab-key`) and copy it — it is shown
    only once.
+5. Reference [set `ANTHROPIC_API_KEY` in environment variable](
+   cli.md#api-key-mode) so every tool can find it without hardcoding.
 
 > **Do NOT share or commit your API key.** If it is ever exposed,
 > revoke it immediately at `platform.claude.com/settings/api-keys`
@@ -65,33 +67,7 @@ API calls return a 429 error.
 
 ---
 
-## 4. Save the API Key as an Environment Variable
-
-Set `ANTHROPIC_API_KEY` in your shell so every tool can find it
-without hardcoding.
-
-**macOS / Linux / WSL2:**
-
-```bash
-export ANTHROPIC_API_KEY="sk-ant-..."
-# To persist across terminal sessions:
-echo 'export ANTHROPIC_API_KEY="sk-ant-..."' >> ~/.bashrc
-source ~/.bashrc
-```
-
-**Validation:**
-
-```bash
-echo $ANTHROPIC_API_KEY        # must print your key (not empty)
-```
-
-> **NEVER** add this key to any file that is committed to Git.
-> Add `.env` to `.gitignore` if you store keys in a local `.env`
-> file.
-
----
-
-## 5. Validate End-to-End
+## 4. Validate End-to-End
 
 Confirm your account, key, and env var all work together:
 

@@ -1,0 +1,11 @@
+{
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": { "USERNAME": "${localEnv:USER}" }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/node:1": {"version": "lts"}
+  },
+  "remoteUser": "${localEnv:USER}"
+}

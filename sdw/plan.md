@@ -5035,3 +5035,61 @@ ACTION: (1) Re-run each step's VERIFY command and confirm all pass. (2) Confirm 
 CONSTRAINTS: Only flip status checkboxes — do not edit step bodies, reorder steps, or rewrite history; never push to `main`.
 OUTPUT: All Phase 39 `[ ] Status` lines read `[x] Status`; annotated tag `v39.3-claude-native-installer-step-completed` pushed to `fix/students`.
 VERIFY: `grep -A1 "### Step 39\." sdw/plan.md | grep "\[ \] Status"` → 0 matches; `git tag | grep "v39\."`
+
+---
+
+## Phase 40: LAB UPDATE III — VALIDATE TOOL GUIDE EDITS
+
+**Addresses:** `sdw/prompt_history.md` § `## Lab Update III`
+
+**Target files:** `tools/claude/cli.md`, `tools/dev_workbench/cline.md`, `tools/dev_workbench/vscode.md`
+
+**provider:model:** `claude:claude-sonnet-4-6`
+
+---
+
+### Step 40.1: Fix cli.md — typo and inaccurate security note
+
+[x] Status
+
+CONTEXT: `tools/claude/cli.md` has two issues: typo "ouath" on line 210 and a misleading security bullet on line 216 saying "ANTHROPIC_API_KEY environment variable only" even though the file documents both OAUTH TOKEN and API KEY modes.
+ACTION: In `tools/claude/cli.md` (1) change `ouath` → `oauth` on line 210; (2) change line 216 from `- Use \`ANTHROPIC_API_KEY\` environment variable only` to `- Use environment variables only — never hardcode keys or tokens`.
+CONSTRAINTS: Only lines 210 and 216; do not touch any other lines; ≤79 chars/line.
+OUTPUT: `cli.md` line 210 reads `oauth` and line 216 reads the updated security bullet.
+VERIFY: `grep -n "ouath" tools/claude/cli.md` → 0 matches; `grep -n "ANTHROPIC_API_KEY environment variable only" tools/claude/cli.md` → 0 matches.
+
+---
+
+### Step 40.2: Fix cline.md — typo in validation section
+
+[x] Status
+
+CONTEXT: `tools/dev_workbench/cline.md` line 66 has `aboce` (misspelling of "above").
+ACTION: In `tools/dev_workbench/cline.md` change `aboce` → `above` on line 66.
+CONSTRAINTS: Only line 66; do not touch any other content; ≤79 chars/line.
+OUTPUT: Line 66 reads `For each of the above cases:`.
+VERIFY: `grep -n "aboce" tools/dev_workbench/cline.md` → 0 matches.
+
+---
+
+### Step 40.3: Fix vscode.md — remove redundant block and rename subsection
+
+[x] Status
+
+CONTEXT: `tools/dev_workbench/vscode.md` has two structural issues: (1) orphaned `Launch VSCode from the Ubuntu terminal: code .` block (lines 36–40) — `code .` already appears in `### VSCode and CLI Basics` at line 22; (2) `### Validation` subsection has the same name as its parent `## Validation`, creating ambiguity.
+ACTION: (1) Delete lines 36–40 (the orphaned `code .` block). (2) Rename `### Validation` (will shift after deletion) to `### Claude Code Extension`.
+CONSTRAINTS: Only the two described changes; do not touch other subsections or content; ≤79 chars/line.
+OUTPUT: Orphaned `code .` block is gone; formerly ambiguous subsection is now `### Claude Code Extension`.
+VERIFY: `grep -n "Launch VSCode from the Ubuntu terminal" tools/dev_workbench/vscode.md` → 0 matches; `grep -n "### Claude Code Extension" tools/dev_workbench/vscode.md` → 1 match.
+
+---
+
+### Step 40.4: Mark Phase 40 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 40.1–40.3 executed and verified; all tool guide files are correct and clean.
+ACTION: (1) Re-run each step's VERIFY command and confirm all pass. (2) Confirm every `[ ] Status` under a `### Step 40.` heading in `sdw/plan.md` reads `[x] Status`. (3) Stage and commit `sdw/plan.md`, `tools/claude/cli.md`, `tools/dev_workbench/cline.md`, `tools/dev_workbench/vscode.md`. (4) Tag `v40.4-lab-update-iii-step-completed` and push the current branch (`fix/edits`) with `--tags`.
+CONSTRAINTS: Only flip status checkboxes — never push to `main`; `cloud.md` requires no changes.
+OUTPUT: All Phase 40 `[ ] Status` lines read `[x] Status`; annotated tag `v40.4-lab-update-iii-step-completed` pushed to `fix/edits`.
+VERIFY: `grep -A1 "### Step 40\." sdw/plan.md | grep "\[ \] Status"` → 0 matches; `git tag | grep "v40\."`.

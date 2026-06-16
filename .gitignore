@@ -36,3 +36,6 @@ desktop.ini
 
 # Obsidian temp files
 *.tmp.*
+
+# Devcontainer lock json
+.devcontainer/devcontainer-lock.json

@@ -149,36 +149,19 @@ git clone https://github.com/aiedu-lab/ai_workbench.git
 cd ai_workbench
 ```
 
-4. Open the repo in VSCode, then reopen in the container:
-   - VSCode will detect `.devcontainer/devcontainer.json` and
-     show a **"Reopen in Container"** prompt — click it, or use
-     `Cmd+Shift+P` → **Dev Containers: Reopen in Container**.
-
-#### `devcontainer.json`
-
-Commit this file at `.devcontainer/devcontainer.json`:
-
-```json
-{
-  "image": "mcr.microsoft.com/devcontainers/python:3.12-bullseye",
-  "features": {
-    "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/devcontainers/features/node:1": {"version": "lts"},
-    "ghcr.io/devcontainers/features/common-utils:2": {
-      "username": "${localEnv:USER}",
-      "uid": "automatic",
-      "gid": "automatic"
-    }
-  },
-  "remoteUser": "${localEnv:USER}",
-  "postCreateCommand": "pip install requests pyyaml"
-}
-```
-
-`${localEnv:USER}` is substituted from the host macOS shell's
-`$USER` when the container is built, so the container's primary
-user matches your host username instead of the image default
-`vscode`.
+4. Open the repo in VSCode:
+- For the first time VSCode will detect 
+[devcontainer.json](../../.devcontainer/devcontainer.json) and 
+[Dockerfile](../../.devcontainer/Dockerfile) a **Create Container** prompt 
+will appear - click it to create a linux container.
+- For subsequent times, a **"Reopen in Container"** prompt will appear — 
+click it, or use `Cmd+Shift+P` → **Dev Containers: Reopen in Container**.
+- Container creation honors the following:
+  - Ubuntu LTS image target is built per the `devcontainer.json`. 
+  - `$USER` is provisioned when the container is built - the container's
+    primary user matches host username instead of the image default `vscode`.
+  - `${localEnv:USER}` is substituted from the host macOS shell's
+  - python3.12 and pyyaml is installed 
 
 #### Suggested workflow
 
