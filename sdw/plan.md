@@ -5050,7 +5050,7 @@ VERIFY: `grep -A1 "### Step 39\." sdw/plan.md | grep "\[ \] Status"` → 0 match
 
 ### Step 40.1: Fix cli.md — typo and inaccurate security note
 
-[ ] Status
+[x] Status
 
 CONTEXT: `tools/claude/cli.md` has two issues: typo "ouath" on line 210 and a misleading security bullet on line 216 saying "ANTHROPIC_API_KEY environment variable only" even though the file documents both OAUTH TOKEN and API KEY modes.
 ACTION: In `tools/claude/cli.md` (1) change `ouath` → `oauth` on line 210; (2) change line 216 from `- Use \`ANTHROPIC_API_KEY\` environment variable only` to `- Use environment variables only — never hardcode keys or tokens`.

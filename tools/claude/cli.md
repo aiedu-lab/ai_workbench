@@ -25,21 +25,68 @@ Recommended as primary access mode for lab:
 ```bash
 # OAuth token takes precedence over API key when both are set
 claude setup-token # generate a one year valid OAUTH TOKEN
-export CLAUDE_CODE_OAUTH_TOKEN="sk-any-..." # set as env variable
-unset ANTHROPIC_API_KEY
+# set as env variable and persist across terminal sessions:
+echo 'export MY_CLAUDE_CODE_OAUTH_TOKEN="sk-ant-..."' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 #### API Key Mode 
 Recommended as backup or "overflow" access mode for lab
 ```bash
-export ANTHROPIC_API_KEY="sk-ant-..."   # set as env variable
-unset CLAUDE_CODE_OAUTH_TOKEN           # ensure OAuth is not active
+# set as env variable and persist across terminal sessions:
+echo 'export MY_ANTHROPIC_API_KEY="sk-ant-..."' >> ~/.bashrc
+source ~/.bashrc
+```
+#### Convenience functions to switch modes
+
+Claude Code supports two authentication modes, selected by
+environment variables. `CLAUDE_CODE_OAUTH_TOKEN` (Pro/Max
+subscription) takes precedence over `ANTHROPIC_API_KEY`
+(pay-as-you-go) when both are set; unset the token to fall
+back to the API key.
+
+Add to `~/.bashrc`:
+
+```bash
+# MY_CLAUDE_CODE_OAUTH_TOKEN is the Pro/Max subscription token
+# MY_ANTHROPIC_API_KEY is the pay-as-you-go API key
+
+claude-subscribe() {
+  unset ANTHROPIC_API_KEY
+  export CLAUDE_CODE_OAUTH_TOKEN="$MY_CLAUDE_CODE_OAUTH_TOKEN"
+  echo "claude set to - $(claude auth status --text) - mode"
+}
+claude-api() {
+  unset CLAUDE_CODE_OAUTH_TOKEN
+  export ANTHROPIC_API_KEY="$MY_ANTHROPIC_API_KEY"
+  echo "claude set to - $(claude auth status --text) - mode"
+}
+
+# Default to subscription mode — OAuth token takes precedence
+# when both are set
+export CLAUDE_CODE_OAUTH_TOKEN="$MY_CLAUDE_CODE_OAUTH_TOKEN"
 ```
 
-#### Validate Auth Status
+#### Validation
+
 ```bash
+echo "Switching claude code to API PAYG mode"
+# must print api key (not empty)
+claude-api && \
+echo "ANTHROPIC_API_KEY is \"$ANTHROPIC_API_KEY\""
+
+echo "Switching claude code to OAUTH Subscription mode"
+# must print auth token (not empty)
+claude-subscribe && \
+  echo "CLAUDE_CODE_OAUTH_TOKEN is \"$CLAUDE_CODE_OAUTH_TOKEN\"" 
+
+echo "Final claude code mode"
 claude auth status --text
 ```
+
+> **NEVER** add these key to any file that is committed to Git.
+> Add `.env` to `.gitignore` if you store keys in a local `.env`
+> file.
 
 ### 2. Login via browser (first time only)
 
@@ -160,13 +207,13 @@ claude plugin marketplace update claude-plugins-official
 ## 🔐 Security: OAuth Token and API Keys
 
 > Reference section above `Subscription / OAuth Token Mode`
-> for ouath token creation, storage, etc.
+> for oauth token creation, storage, etc.
 > OR
 > See [Claude Cloud Setup — API Key](cloud.md#2-generate-an-api-key)
 > for key creation, storage, and revocation instructions.
 
 - NEVER commit OAUTH TOKEN or API keys to GitHub
-- Use `ANTHROPIC_API_KEY` environment variable only
+- Use environment variables only — never hardcode keys or tokens
 
 ## Guardrails & Tokenomics
 
