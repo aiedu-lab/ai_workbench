@@ -5188,7 +5188,7 @@ VERIFY: `grep -n "ENABLE_CLAUDEAI_MCP_SERVERS=false" tools/claude/cloud.md`
 
 ### Step 41.2: Fix broken Exercise→Project links, scaffold missing plan.md placeholders
 
-[ ] Status
+[x] Status
 
 CONTEXT: Five sessions reference project directories that are either
 wrong or missing: `sessions/planning.md` → nonexistent

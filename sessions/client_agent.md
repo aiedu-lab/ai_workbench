@@ -92,7 +92,7 @@ After completing the exercise, verify each item before moving on:
 * [CoWork](https://support.claude.com/en/articles/13345190-get-started-with-cowork)
 
 ## Output
-* [Plan](../projects/client_automation/plan.md)
+* [Plan](../projects/client_work_automation/plan.md)
 * [Notes](../learnings/session_notes/client_agent.md)
 
 ---
