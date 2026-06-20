@@ -28,6 +28,11 @@ Steps performed:
    write Host github.com config entry, and validate GitHub SSH
    authentication. Skipped with WARN if not authenticated — run
    `gh auth login` first (dev_workbench.md).
+10. On macOS, materialize .devcontainer/ from
+    tools/VM/devcontainer/ so VSCode's Dev Containers prompt
+    fires (tools/VM/setup.md). On Windows/WSL or native Linux,
+    remove .devcontainer/ if present — the lab environment is
+    already native there and the prompt is redundant. Idempotent.
 
 Steps 2–5 are skipped when labenv.yaml still contains placeholder
 values (strings wrapped in < >). DISCORD_WEBHOOK_URL must be set
@@ -534,6 +539,33 @@ def _sudo_precheck() -> bool:
   return True
 
 
+_DEVCONTAINER_SRC = (
+  Path(__file__).parent.parent / "tools" / "VM" / "devcontainer"
+)
+_DEVCONTAINER_DST = Path(__file__).parent.parent / ".devcontainer"
+
+
+def _setup_devcontainer() -> None:
+  """Materialize .devcontainer/ on macOS only; remove it elsewhere.
+
+  VSCode's "Create/Reopen in Container" prompt fires purely on
+  .devcontainer/devcontainer.json's presence (tools/VM/setup.md) —
+  on Windows/WSL or native Linux the lab environment is already
+  native, so the container is redundant and the prompt is noise.
+  Idempotent in both directions.
+  """
+  if os.uname().sysname == "Darwin":
+    _DEVCONTAINER_DST.mkdir(exist_ok=True)
+    for name in ("Dockerfile", "devcontainer.json"):
+      shutil.copy(_DEVCONTAINER_SRC / name, _DEVCONTAINER_DST / name)
+    print("  OK   .devcontainer/ materialized (macOS)")
+  elif _DEVCONTAINER_DST.exists():
+    shutil.rmtree(_DEVCONTAINER_DST)
+    print("  OK   .devcontainer/ removed (not macOS)")
+  else:
+    print("  OK   .devcontainer/ absent (not macOS, skipping)")
+
+
 def _ensure_gh_installed() -> bool:
   """Install the GitHub CLI (gh) via apt if not already on PATH.
 
@@ -565,6 +597,7 @@ def main() -> None:
     _install_ollama()
   _setup_embedding_venv()  # pure Python venv — no sudo needed
   _setup_piper_venv()     # speed-reading venv — no sudo needed
+  _setup_devcontainer()   # macOS only — no sudo needed
 
   ssh_real = all(
     k in env and not _is_placeholder(env[k]) for k in SSH_KEYS

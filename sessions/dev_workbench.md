@@ -193,8 +193,8 @@ then run both scripts from inside Ubuntu:
 
 ```bash
 export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
-python3 projects/group_meetup/labsetup.py
-python3 projects/group_meetup/preflight_check.py
+python3 setup/labsetup.py
+python3 setup/preflight_check.py
 ```
 
 `labsetup.py` generates your SSH key pair, posts your public key
@@ -207,7 +207,7 @@ Every item in `preflight_check.py` output must show **PASS**.
 ## Additional Setups
 
 **ALL** the below setups are automatically effected when you
-ran the [lab setup script](projects/group_meetup/labsetup.py)
+ran the [lab setup script](setup/labsetup.py)
 above.
 
 ### AI Local

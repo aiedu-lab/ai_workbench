@@ -17,6 +17,10 @@ to an AI coding agent.
 The human stays in control of *what* the software must do;
 the agent handles the *how*.
 
+Ask the agent to run each HDD prompt file above per the repo root CLAUDE.md
+operating protocol (Plan Update Protocol, one step per turn, commit
+after each step).
+
 ---
 
 ## Rules

@@ -41,6 +41,21 @@ for any lab work.
 
 ---
 
+## Disable Claude Connectors
+
+Claude Connectors let claude.ai silently attach MCP servers to
+every conversation, consuming context and token budget without
+explanation. Disable them before using any lab tool.
+
+1. Set the environment variable: `ENABLE_CLAUDEAI_MCP_SERVERS=false`.
+2. Add it to `~/.bashrc` so it persists across sessions (the lab's
+   dev container is Linux-based and always sources `~/.bashrc`).
+
+**Validation:** `echo $ENABLE_CLAUDEAI_MCP_SERVERS` → expect
+`false`.
+
+---
+
 ## 3. Generate and save an API Key
 
 Required for: Claude Code CLI (`--api-key` mode), direct API calls,

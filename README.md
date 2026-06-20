@@ -1,4 +1,4 @@
-# AI Workbench
+# <img src="docs/brand/aiedu-lab.png" alt="aiedu-lab" width="32" valign="middle"> AI Workbench
 
 ## Objective
 A hands-on, community-driven program to learn about generative AI solutions, 

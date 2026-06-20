@@ -109,5 +109,5 @@ Use:
 ---
 
 ## Output
-- [Plan](../projects/client_app/plan.md)
+- [Plan](../projects/planning/plan.md)
 - [Notes](../learnings/session_notes/planning.md)

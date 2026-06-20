@@ -7,6 +7,12 @@ on different high level subject with each topic kept in a
 separate directory. Cross-links between notes use Obsidian
 `[[wikilink]]` format throughout.
 
+## Operating Protocol
+Ask the agent to execute `proc_article.md` (this directory's
+phase-by-phase execution prompt) per the repo root CLAUDE.md
+operating protocol (Plan Update Protocol, one step per turn,
+commit after each step).
+
 ## Methodology
 **Specification Driven PKM** where distinct Subjects are contained
 in a subdirectory. For example, all **Knowledge Graph (KG)** on

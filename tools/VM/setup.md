@@ -149,10 +149,16 @@ git clone https://github.com/aiedu-lab/ai_workbench.git
 cd ai_workbench
 ```
 
-4. Open the repo in VSCode:
-- For the first time VSCode will detect 
-[devcontainer.json](../../.devcontainer/devcontainer.json) and 
-[Dockerfile](../../.devcontainer/Dockerfile) a **Create Container** prompt 
+4. Run `python3 setup/labsetup.py` once — on macOS it copies
+[devcontainer.json](devcontainer/devcontainer.json) and
+[Dockerfile](devcontainer/Dockerfile) from `tools/VM/devcontainer/`
+(the canonical source) into `.devcontainer/`; on Windows/WSL or
+native Linux it removes `.devcontainer/` if present, since the lab
+environment is already native there.
+
+5. Open the repo in VSCode:
+- For the first time VSCode will detect `.devcontainer/devcontainer.json`
+and `.devcontainer/Dockerfile` — a **Create Container** prompt
 will appear - click it to create a linux container.
 - For subsequent times, a **"Reopen in Container"** prompt will appear — 
 click it, or use `Cmd+Shift+P` → **Dev Containers: Reopen in Container**.

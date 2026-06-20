@@ -320,7 +320,7 @@ reproduce it from scratch:
 - [ ] Build interactive UI with Lovable.
 ```
 
-Save this as `projects/group_meetup/pipeline_plan.md` and
+Save this as `projects/client_multiagent/pipeline_plan.md` and
 check it into your personal branch.
 
 ---

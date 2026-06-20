@@ -5093,3 +5093,293 @@ ACTION: (1) Re-run each step's VERIFY command and confirm all pass. (2) Confirm 
 CONSTRAINTS: Only flip status checkboxes — never push to `main`; `cloud.md` requires no changes.
 OUTPUT: All Phase 40 `[ ] Status` lines read `[x] Status`; annotated tag `v40.4-lab-update-iii-step-completed` pushed to `fix/edits`.
 VERIFY: `grep -A1 "### Step 40\." sdw/plan.md | grep "\[ \] Status"` → 0 matches; `git tag | grep "v40\."`.
+
+---
+
+## Phase 41: Environment Update — Connectors, Planning Scaffold, Project Consistency, DevContainer OS Gating
+
+### Context
+
+`sdw/prompt_history.md` § `## Environmant Update` (lines 2508–2598,
+includes the `### Update DevContainer Environment` subsection) is the
+last unprocessed prompt section ([ ] Status). Phase 40 is the highest
+completed phase in `sdw/plan.md`, so this becomes **Phase 41**.
+
+Verified current repo state (read-only audit, no code changed yet):
+- `tools/claude/cloud.md` has no Claude Connectors / MCP-disable section.
+- `sessions/planning.md` links to a nonexistent
+  `../projects/client_app/plan.md`; `projects/planning/` doesn't exist.
+- `sessions/client_agent.md` links to a nonexistent
+  `../projects/client_automation/plan.md` — the real dir is
+  `projects/client_work_automation/` (plan.md only, no README.md).
+- `sessions/server_multiagent.md` links to
+  `../projects/server_multiagent/plan.md`, but that directory doesn't
+  exist at all.
+- `sessions/prompting_basics.md` has an Exercise section but no
+  `## Output` / project-directory reference at all.
+- `projects/client_multiagent/`, `projects/prompting_advanced/`,
+  `projects/claude_review/` exist with content but have no `README.md`
+  backreferencing their session.
+- `sessions/presentation_n_design.md:254` links to a nonexistent
+  `../projects/slides/plan.md` (only `projects/slides/demo/plan.md`,
+  the *instructor* demo plan, exists — the student exercise plan is
+  missing).
+- `projects/client_application/prompts.md` (generic SDD prompt
+  examples: Plan Review / Scoped Execution / Failure Analysis) is
+  **orphaned** — no session links to it. `sessions/client_application.md`'s
+  own `## Output` points to `plans/specs/event_organizer.md`; the
+  actual SDD exercise code lives in `projects/group_meetup/`. Decision
+  (user-confirmed): link it from `sessions/sdd_basics.md` instead of
+  deleting — the prompt patterns are generic across every SDD-style
+  row in that session's "Specification Driven Beyond Code" table, not
+  specific to the Group Meetup exercise. Since it's now tied to
+  `sdd_basics.md` rather than `client_application.md`, the directory
+  is renamed `projects/sdd_prompts/` (user-confirmed) to match its
+  actual content and linkage.
+- User instruction (2026-06-20): every `projects/<name>/README.md`
+  must always direct the agent to execute that project's `plan.md`
+  per the repo root `CLAUDE.md` operating protocol — root
+  `CLAUDE.md` already auto-loads regardless of cwd, but this needs
+  to be stated explicitly so students invoke it correctly. Scope
+  widened from the 8 dirs missing a README to all twelve
+  `projects/*` dirs lacking one, plus amending the two that already
+  have one (`llm_wiki`, `tower_of_hanoi`). This instruction itself
+  is recorded in `sdw/prompt_history.md` for historical reasons
+  (per Step 41.3, item 6).
+- `.devcontainer/Dockerfile` and `.devcontainer/devcontainer.json` are
+  generic — nothing prevents VS Code's auto "Create/Reopen in
+  Container" prompt from firing on Windows/WSL or native Linux, where
+  the dev environment is already native and a container is redundant.
+  `tools/VM/setup.md`'s macOS section depends on that auto-prompt
+  firing when `.devcontainer/devcontainer.json` is present at the repo
+  root — VS Code triggers it purely on file presence, not OS, so the
+  fix must control *whether the file exists* per OS rather than adding
+  in-file OS logic.
+- `projects/group_meetup/labsetup.py` already does idempotent,
+  numbered, OS-aware setup steps (uses `os.uname()`) — the natural
+  place to add OS-gated devcontainer provisioning.
+
+**provider:model:** `claude:claude-sonnet-4-6`
+
+---
+
+### Step 41.1: Add Claude Connectors disable section to cloud.md
+
+[x] Status
+
+CONTEXT: `tools/claude/cloud.md` documents API key / OAuth token setup
+but has no guidance on disabling Claude Connectors, so MCP servers can
+silently auto-inject into every student's session and consume
+context/token budget unexplained.
+ACTION: Add a `## Disable Claude Connectors` section to
+`tools/claude/cloud.md` (after the existing Privacy Settings section)
+instructing students to set `ENABLE_CLAUDEAI_MCP_SERVERS=false` as an
+environment variable, with a one-line rationale (silent context/token
+consumption), and a validation snippet:
+`echo $ENABLE_CLAUDEAI_MCP_SERVERS` → expect `false`.
+CONSTRAINTS: Only edit `tools/claude/cloud.md`; ≤79 chars/line; 2-space
+indent; do not touch the API key/OAuth sections.
+OUTPUT: New `## Disable Claude Connectors` section with env var
+instruction and validation command.
+VERIFY: `grep -n "ENABLE_CLAUDEAI_MCP_SERVERS=false" tools/claude/cloud.md`
+→ 1 match.
+
+---
+
+### Step 41.2: Fix broken Exercise→Project links, scaffold missing plan.md placeholders
+
+[x] Status
+
+CONTEXT: Five sessions reference project directories that are either
+wrong or missing: `sessions/planning.md` → nonexistent
+`projects/client_app/`; `sessions/client_agent.md` → nonexistent
+`projects/client_automation/` (real dir is `client_work_automation`);
+`sessions/server_multiagent.md` → `projects/server_multiagent/`
+(directory doesn't exist); `sessions/presentation_n_design.md:254` →
+nonexistent `projects/slides/plan.md` (only the instructor's
+`projects/slides/demo/plan.md` exists); `sessions/prompting_basics.md`
+has no project-directory reference at all.
+ACTION: (1) In `sessions/planning.md` line 112, change
+`../projects/client_app/plan.md` → `../projects/planning/plan.md`;
+create `projects/planning/plan.md` with only a `# Planning Exercise
+Plan` heading. (2) In `sessions/client_agent.md` line 95, change
+`../projects/client_automation/plan.md` →
+`../projects/client_work_automation/plan.md`. (3) Create
+`projects/server_multiagent/plan.md` with only a `# Server Multi-Agent
+Exercise Plan` heading (link in `sessions/server_multiagent.md:214`
+already correct). (4) Create `projects/slides/plan.md` with only a
+`# Presentation & Design Exercise Plan` heading — the student's own
+exercise plan, distinct from `projects/slides/demo/plan.md` (the
+instructor demo); link in `presentation_n_design.md:254` already
+points here. (5) In `sessions/prompting_basics.md`, add an `## Output`
+section (matching the pattern in `client_agent.md` /
+`server_multiagent.md`) with
+`[Plan](../projects/prompting_basics/plan.md)` and
+`[Notes](../learnings/session_notes/prompting_basics.md)`; create
+`projects/prompting_basics/plan.md` with only a `# Prompting Basics
+Exercise Plan` heading.
+CONSTRAINTS: Each new `plan.md` is heading-only (no phases/steps —
+students fill those in); do not modify any other session content;
+≤79 chars/line; 2-space indent.
+OUTPUT: All five links resolve to existing files; four new
+heading-only `plan.md` placeholders created.
+VERIFY: `grep -n "client_app\|client_automation" sessions/planning.md
+sessions/client_agent.md` → 0 matches; `test -f
+projects/planning/plan.md && test -f projects/server_multiagent/plan.md
+&& test -f projects/slides/plan.md && test -f
+projects/prompting_basics/plan.md` → exit 0.
+
+---
+
+### Step 41.3: Add a README.md (with root CLAUDE.md execution note) to every projects/* dir; link the orphaned client_application/prompts.md
+
+[x] Status
+
+CONTEXT: `projects/planning/`, `projects/client_work_automation/`,
+`projects/server_multiagent/`, `projects/slides/`,
+`projects/prompting_basics/`, `projects/client_multiagent/`,
+`projects/prompting_advanced/`, `projects/claude_review/`,
+`projects/embedding/`, `projects/group_meetup/`,
+`projects/web_site/`, and `projects/software_enhancement/` lack a
+`README.md` entirely; `projects/llm_wiki/README.md` and
+`projects/tower_of_hanoi/README.md` exist but predate the protocol
+note below. `projects/client_application/prompts.md` is orphaned —
+confirmed (with user) it should be linked, not deleted, as generic
+SDD prompt examples relevant to every row of `sessions/sdd_basics.md`'s
+"Specification Driven Beyond Code" table — and the directory renamed
+to `projects/sdd_prompts/` to match. User also asked (2026-06-20)
+that every `projects/<name>/README.md` always instruct the agent to
+execute that directory's `plan.md` per the repo root `CLAUDE.md`
+operating protocol — root `CLAUDE.md` already auto-loads in any
+subdirectory, but students need this spelled out explicitly.
+ACTION: (1) Create/add a `README.md` in each of the twelve
+directories above (planning, client_work_automation,
+server_multiagent, slides, prompting_basics, client_multiagent,
+prompting_advanced, claude_review, embedding, group_meetup, web_site,
+software_enhancement). Each follows one short template: a one-line
+heading + purpose sentence, a backreference link to the corresponding
+session's Exercise section (e.g.
+`[Exercise](../../sessions/planning.md#exercise)`), a forward-reference
+list of the artifacts in that directory (plan.md, generated code,
+REVIEW.md, etc. — for `projects/slides/`, distinguish `demo/plan.md`
+(instructor) from `plan.md` (student); `software_enhancement/` keeps
+its own `CLAUDE.md` for file-level fencing, referenced from its new
+README), a bullet "Ask the agent to read this directory's `plan.md`
+(if present) and execute it per the repo root `CLAUDE.md` operating
+protocol (Plan Update Protocol, one step per turn, commit after each
+step)," and a closing bullet: "Commit and push your solution to your
+feature branch (`feature/from_$GITHUB_USERNAME`) after completing the
+exercise." (2) Add the same "execute per repo root CLAUDE.md" bullet
+to the existing `projects/llm_wiki/README.md` and
+`projects/tower_of_hanoi/README.md`. (3) `git mv
+projects/client_application projects/sdd_prompts`. (4) Create
+`projects/sdd_prompts/README.md` (using the same template, including
+the CLAUDE.md-execution bullet) describing `prompts.md` as generic,
+reusable SDD prompt templates (Plan Review / Scoped Execution /
+Failure Analysis) — backreference
+`sessions/sdd_basics.md#specification-driven-beyond-code`, not
+`client_application.md` (whose own exercise output lives in
+`projects/group_meetup/`). (5) In `sessions/sdd_basics.md`, add one
+sentence immediately after the "Specification Driven Beyond Code"
+table: "See [example SDD prompts](../projects/sdd_prompts/prompts.md)
+for reusable templates that apply across any row above." (6) Append a
+new item 6 to the `### Update Exercise and Projects` section of
+`sdw/prompt_history.md` (after existing item 5), recording, for
+historical reasons, the user's 2026-06-20 instruction that every
+`projects/<project_name>/README.md` must always direct the agent to
+execute that project's `plan.md` per the repo root `CLAUDE.md`
+operating protocol.
+CONSTRAINTS: Do not rewrite existing artifact files (`organizer.py`,
+`REVIEW.md`, `prompt.md`, `embed.py`, `labsetup.py`, etc.) or
+`software_enhancement/CLAUDE.md` — only add/amend `README.md` files,
+the rename, the one-sentence link in `sdd_basics.md`, and the
+`prompt_history.md` addendum; check no other file references
+`projects/client_application` before/after the rename; ≤79
+chars/line; 2-space indent.
+OUTPUT: Thirteen new `README.md` files (twelve project dirs +
+`sdd_prompts`) and two amended ones (llm_wiki, tower_of_hanoi), all
+containing the CLAUDE.md-execution bullet; `projects/client_application/`
+renamed to `projects/sdd_prompts/`; `sdd_basics.md` links to the
+now-non-orphaned `prompts.md` at its new path; `prompt_history.md`
+records the README protocol instruction.
+VERIFY: `for d in planning client_work_automation server_multiagent
+slides prompting_basics client_multiagent prompting_advanced
+claude_review embedding group_meetup web_site software_enhancement
+sdd_prompts llm_wiki tower_of_hanoi; do test -f
+projects/$d/README.md || echo "MISSING $d"; done` → no output; `grep
+-rLn "root CLAUDE.md" projects/*/README.md` → no output (every
+README contains the phrase); `grep -rn "projects/client_application"`
+(repo-wide) → 0 matches; `grep -n "sdd_prompts/prompts.md"
+sessions/sdd_basics.md` → 1 match; `grep -n "execute that project's
+.plan.md." sdw/prompt_history.md` → 1 match.
+
+---
+
+### Step 41.4: Gate `.devcontainer/` creation to macOS only
+
+[x] Status
+
+CONTEXT: VS Code shows its "Create/Reopen in Container" prompt purely
+based on the presence of `.devcontainer/devcontainer.json` at the repo
+root — it has no built-in per-OS gate. Today that file is committed at
+the repo root, so the prompt fires on Windows/WSL and native Linux too,
+where the Ubuntu environment is already native and the prompt is
+noise. `tools/VM/setup.md`'s macOS section depends on that file being
+present to trigger the prompt.
+ACTION: (1) Move `Dockerfile` and `devcontainer.json` from
+`.devcontainer/` to a new tracked path `tools/VM/devcontainer/` (the
+canonical, git-tracked source). (2) Add `.devcontainer/` to
+`.gitignore`. (3) Add a new idempotent step to
+`projects/group_meetup/labsetup.py`: if `platform.system() == "Darwin"`,
+copy `tools/VM/devcontainer/{Dockerfile,devcontainer.json}` into
+`.devcontainer/` (creating the dir if absent); otherwise (WSL/Linux),
+remove `.devcontainer/` if it exists, so VS Code's auto-prompt never
+fires. Document this as a new numbered step in the script's module
+docstring, following the existing numbering convention. (4) Update
+`tools/VM/setup.md` lines 154–156 to reference
+`tools/VM/devcontainer/devcontainer.json` / `Dockerfile` as the source
+files and note that `labsetup.py` materializes `.devcontainer/` on
+macOS only.
+CONSTRAINTS: Only touch `.devcontainer/*`, `tools/VM/devcontainer/*`
+(new), `.gitignore`, `projects/group_meetup/labsetup.py`,
+`tools/VM/setup.md`; do not change WSL-specific sections of
+`setup.md`; ≤79 chars/line; 2-space indent; idempotent script logic
+only (no destructive prompts).
+OUTPUT: `.devcontainer/` untracked and OS-conditional;
+`tools/VM/devcontainer/` holds the canonical files; `labsetup.py`
+materializes/removes `.devcontainer/` based on `platform.system()`;
+`setup.md` references the new canonical path.
+VERIFY: `git check-ignore .devcontainer` → matches; `test -f
+tools/VM/devcontainer/Dockerfile && test -f
+tools/VM/devcontainer/devcontainer.json` → exit 0; `python3 -c
+"import ast; ast.parse(open('projects/group_meetup/labsetup.py').read())"`
+→ no error; `grep -n "tools/VM/devcontainer" tools/VM/setup.md` → ≥1
+match.
+
+---
+
+### Step 41.5: Mark Phase 41 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 41.1–41.4 executed and individually verified.
+ACTION: (1) Re-run each step's VERIFY command and confirm all pass.
+(2) Confirm every `[ ] Status` under a `### Step 41.` heading in
+`sdw/plan.md` reads `[x] Status`. (3) Stage and commit
+`sdw/plan.md`, `sdw/prompt_history.md`, `tools/claude/cloud.md`,
+`sessions/planning.md`, `sessions/client_agent.md`,
+`sessions/prompting_basics.md`, `sessions/sdd_basics.md`, the new
+`projects/planning/plan.md`, `projects/server_multiagent/plan.md`,
+`projects/slides/plan.md`, `projects/prompting_basics/plan.md`, the
+new `projects/*/README.md` files (including
+`projects/sdd_prompts/README.md`), the
+`git mv projects/client_application projects/sdd_prompts` rename,
+`.gitignore`, `tools/VM/devcontainer/*`, the `.devcontainer/`
+removal, `projects/group_meetup/labsetup.py`, and
+`tools/VM/setup.md`. (4) Tag `v41.5-env-update-step-completed` and
+push the current branch (`fix/continue`) with `--tags`.
+CONSTRAINTS: Only flip status checkboxes — never push to `main`.
+OUTPUT: All Phase 41 `[ ] Status` lines read `[x] Status`; annotated
+tag `v41.5-env-update-step-completed` pushed to `fix/continue`.
+VERIFY: `grep -A1 "### Step 41\." sdw/plan.md | grep "\[ \] Status"`
+→ 0 matches; `git tag | grep "v41\."`.

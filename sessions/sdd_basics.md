@@ -49,6 +49,9 @@ typist; the human defines the spec and validates the output:
 | Engineering Design | **SDCAD** | Design constraints + tolerances | AutoDesk drawings, simulation configs |
 | Creative Tooling | **SDCT** | Scene description + style guide | Blender models, shader scripts, animations |
 | Research synthesis | **SDRS** | Research question + source list | Literature summaries, citation graphs |
+
+See [example SDD prompts](../projects/sdd_prompts/prompts.md) for
+reusable templates that apply across any row above.
 | Data pipelines | [**SDDP**](client_multiagent.md#exercise-2-mini-data-pipeline) | Schema + transformation rules | ETL scripts, dbt models, validation tests |
 
 > This workbench itself is built using Specifications.

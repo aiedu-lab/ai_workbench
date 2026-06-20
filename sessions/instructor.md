@@ -60,7 +60,7 @@ private — only the form owner (you) can see them.
 4. Settings → **Get pre-filled link** → copy the base URL
    (remove everything from `?entry.` onward).
    Set `GOOGLE_FORM_URL` in
-   `projects/group_meetup/labenv.yaml` to this URL.
+   `setup/labenv.yaml` to this URL.
 
 ### Per-cohort — Extract Roster CSV
 
@@ -182,7 +182,7 @@ before the lab — students cannot do this themselves.
 - Outbound internet access (to pull Docker images, reach Discord)
 
 > **labenv.yaml:** Record `DOCKER_SERVER_ID`, `DOCKER_SERVER_USERNAME`,
-> and `DOCKER_SERVER_SSH_PORT` in `projects/group_meetup/labenv.yaml`.
+> and `DOCKER_SERVER_SSH_PORT` in `setup/labenv.yaml`.
 > `labsetup.py` reads these and writes a student `.ssh/config` entry
 > automatically (see SSH Convenience Setup below and Section 6).
 
@@ -234,7 +234,7 @@ Complete **Phase A** before **Phase B**.
 
 #### Phase A — Student runs `labsetup.py` (before instructor installs keys)
 
-Before the lab, ensure `projects/group_meetup/labenv.yaml` has
+Before the lab, ensure `setup/labenv.yaml` has
 real values (not placeholders) for:
 
 | Variable | Value |
@@ -247,7 +247,7 @@ Students run:
 
 ```bash
 export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
-python3 projects/group_meetup/labsetup.py
+python3 setup/labsetup.py
 ```
 
 `labsetup.py` will:
@@ -288,7 +288,7 @@ After all keys are installed, notify students to run Phase C.
 > server. SSH connectivity will FAIL until that step is complete.
 
 ```bash
-python3 projects/group_meetup/preflight_check.py
+python3 setup/preflight_check.py
 ```
 
 `preflight_check.py` reads `labenv.yaml` directly for non-secret
@@ -317,7 +317,7 @@ ssh ai-lab docker ps   # must return empty table header
 **Instructor validation — confirm all students show PASS:**
 
 ```bash
-python3 projects/group_meetup/preflight_check.py
+python3 setup/preflight_check.py
 ```
 
 Every item must show `PASS` before the lab begins.
@@ -348,7 +348,7 @@ options:
 ```
 
 > **labenv.yaml:** Also update `DISCORD_SERVER` in
-> `projects/group_meetup/labenv.yaml` to match the server name
+> `setup/labenv.yaml` to match the server name
 > set in Section 2 (e.g. `meetup-lab-2026-spring`).
 
 Save as `config.yaml` in the project directory. Validation:
@@ -378,7 +378,7 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/REPLACE_ME
 
 ```bash
 export DISCORD_WEBHOOK_URL="<paste URL from #meetup-notifications>"
-python3 projects/group_meetup/labsetup.py
+python3 setup/labsetup.py
 ```
 
 ---
@@ -386,16 +386,16 @@ python3 projects/group_meetup/labsetup.py
 ## Section 7 — Full End-to-End Smoke Test (10 min)
 
 > **Prerequisite:** Complete Phase 4 (Step 4.6) first.
-> That step creates `projects/group_meetup/` with `config.yaml`,
+> That step creates `setup/` with `config.yaml`,
 > `poller.py`, `selector.py`, `notifier.py`, and
 > `preflight_check.py`. Do not run this section until all five
 > files exist and Step 4.6 is marked complete.
 
 Run all three scripts in sequence using the `config.yaml` from
-`projects/group_meetup/`:
+`setup/`:
 
 ```bash
-cd projects/group_meetup
+cd setup
 python3 poller.py    # enter responses for each member manually
 python3 selector.py  # check decision.json output
 python3 notifier.py  # confirm Discord message arrives

@@ -251,4 +251,5 @@ You will see CoT formalized as a **reusable skill** and built into
 * [Planning](planning.md) — CoT applied to plan-first thinking
 
 ## Output
+* [Plan](../projects/prompting_basics/plan.md)
 * [Notes](../learnings/session_notes/prompting.md)
