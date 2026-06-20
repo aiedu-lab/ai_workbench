@@ -2504,3 +2504,94 @@ Specifically the below changes:
 - claude/cli.md, claude/cloud.md is about setting the API KEY
   and OAUTH_TOKEN and saving it in environment variables
 - cline.md: about linking it LLM for different choices.
+
+## Environmant Update
+[ ] Status
+
+### Keys and Tokens
+Reference
+* tools/claude/cli.md
+* tools/claude/cloud.md
+
+### Disable Claude Connectors
+Add a section to cloud.md where we save API_KEY and OAUTH_TOKEN to 
+disable Claude Connectors - set ENABLE_CLAUDEAI_MCP_SERVERS=false 
+env var. Add test to ensure connectors are disabled disabled.
+Otherwise, claude will silently inject into every student's 
+Claude Code CLI session and eat into context/token budget 
+without anyone realizing why.
+
+### Update "Planning"
+Reference
+* README.md
+* sessions/planning.md
+
+The README.md agenda table has "Concept: Planning" session that goes 
+over both the Concept of planning and an Exercise. 
+
+1. Update the sessions/planning.md to reference the 
+projects/planning/plan.md that students should create.
+
+2. Create an appropriate directory projects/planning that will 
+host the solution.
+
+3. Create with an empty plan.md with just the heading. 
+
+4. Create a README.md in projects/planning with a heading 
+and description that reflects the exercise section of 
+sessions/planning.md. Create a back reference from 
+projects/planning/README.md to the exercise section of 
+the sessions/planning.md.
+
+### Update Exercise and Projects
+
+Review all sessions in the repo root README.md agenda section. 
+
+Ensure the following: 
+
+1. All sessions with an Exercise section (note sessions 
+are in sessions/ directory) has a correspondingly 
+appropriate directory in the projects/<project_name> 
+directory inside which students can create or generate 
+a solution. Note this is already done for the 
+"tower_of_hanoi" exercise.
+
+2. All projects/<project_name> has a corresponding 
+README.md that has a heading and description with 
+backreferences to the exercise section of the 
+corresponding session (in sessions directory). 
+
+3. The solution artifact could be inside one or more 
+subdirs that has one or more or any of the following:
+* plan.md eg planning/
+* generated code eg tower_of_hanoi
+* wiki knowledge graph (Home.md) eg llm_wiki
+* ...
+
+4. In any case the README.md of the 
+projects/<project_name> heading and description 
+must clearly layout the organization of the 
+solution, the artifacts, the backreference to the
+session with the Exercise section and the 
+forwardreference from the session's Exercise section
+to the projects/<project_name> folder where the 
+solution is expected.
+
+5. After completion of each exercise, add a small 
+comment to git commit and push the solution to the 
+corresponding origin branch created by and for the student, 
+such as feature/from_john where 'john' is the github 
+username environment variable ie $GITHUB_USERNAME='john'.  
+
+## Update Environment
+Reference:
+* .devcontainer/Dockerfile
+* .devcontainer/devcontainer.json
+
+The linux LTS container is only built and updated in MacOS. 
+Windows WSL takes care of Ubuntu-LTS VM creation. However,
+whenever VSCode is opened in the repo root, the 
+"Create DevContainer" message keeps appearing.
+
+Device a way so that the devcontainer creation or udpate 
+is not triggered in Windows/WSL or LinuxOS systems.
