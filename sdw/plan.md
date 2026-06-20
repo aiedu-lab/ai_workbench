@@ -5383,3 +5383,122 @@ OUTPUT: All Phase 41 `[ ] Status` lines read `[x] Status`; annotated
 tag `v41.5-env-update-step-completed` pushed to `fix/continue`.
 VERIFY: `grep -A1 "### Step 41\." sdw/plan.md | grep "\[ \] Status"`
 → 0 matches; `git tag | grep "v41\."`.
+
+---
+
+## Phase 42: Prescribe Student Workflow + Git/GitHub Cheat Sheet
+
+**Source:** `sdw/prompt_history.md` lines 2607-2650 — `## Prescribe
+Workflow` and `## Familiarize with foundational tooling:`.
+
+**Context:** The user already started this work outside the plan
+protocol: `tools/dev_workbench/github.md` was renamed to
+`tools/dev_workbench/github_and_git.md` (uncommitted), breaking 8
+markdown links across `README.md`, `sessions/dev_workbench.md`, and
+`sessions/code_review.md`. `github_and_git.md` was copied verbatim —
+it has no cheat sheet yet, and `README.md` has no student-facing
+workflow section. Phase 42 fixes the broken links and adds both
+pieces of requested content.
+
+provider:model used to generate this plan = Claude Code:claude-sonnet-4-6
+
+### Step 42.1: Repoint broken `github.md` links to `github_and_git.md`
+
+[ ] Status
+
+CONTEXT: `tools/dev_workbench/github.md` no longer exists on disk
+(deleted, uncommitted); content now lives at
+`tools/dev_workbench/github_and_git.md` (untracked, uncommitted). 8
+links across `README.md:18`, `sessions/dev_workbench.md:52,57,62,
+65,67`, `sessions/code_review.md:99,100` still reference the dead
+path.
+ACTION: In those 3 files, replace every occurrence of
+`tools/dev_workbench/github.md` with
+`tools/dev_workbench/github_and_git.md`, preserving any `#anchor`
+suffix unchanged.
+CONSTRAINTS: Only edit the path string; do not touch link text,
+surrounding prose, or `sdw/plan.md` / `sdw/prompt_history.md`.
+OUTPUT: `README.md`, `sessions/dev_workbench.md`,
+`sessions/code_review.md` link to `github_and_git.md`.
+VERIFY: `grep -rln "dev_workbench/github\.md" README.md sessions/`
+→ 0 matches; `grep -rln "dev_workbench/github_and_git\.md"
+README.md sessions/dev_workbench.md sessions/code_review.md` →
+3 matches.
+
+---
+
+### Step 42.2: Add Git/GitHub cheat sheet to `github_and_git.md`
+
+[ ] Status
+
+CONTEXT: `tools/dev_workbench/github_and_git.md` has Account/
+Identity/SSH setup and a Hands-on Activity section, but no quick-
+reference cheat sheet for day-to-day collaboration commands.
+ACTION: Insert a new `## Cheat Sheet` section after `## Activity
+(Hands-on)` and before `## Output`, with fenced `bash` blocks for:
+(1) inspect git history — `git log --oneline --graph --decorate
+--all -10`; (2) create-or-switch to a personal branch off `main` —
+`git checkout -b fix/from_$GITHUB_USERNAME main` /
+`git checkout fix/from_$GITHUB_USERNAME`; (3) compare branch vs
+`main` — `git log --oneline --graph --decorate --left-right
+fix/from_$GITHUB_USERNAME...main`; (4) push/pull/merge/rebase; (5)
+create a PR — `gh pr create --base main --head
+fix/from_$GITHUB_USERNAME`. One short WHY/when-to-use line per
+command group, ≤79 chars/line, 2-space indent.
+CONSTRAINTS: Do not alter existing sections or anchors; add only
+the new section.
+OUTPUT: `tools/dev_workbench/github_and_git.md` has a `## Cheat
+Sheet` section with the 5 command groups above.
+VERIFY: `grep -n "^## Cheat Sheet" tools/dev_workbench/github_and_git.md`
+→ 1 match; `grep -c '^```bash' tools/dev_workbench/github_and_git.md`
+→ ≥ previous count + 5.
+
+---
+
+### Step 42.3: Add "Student Workflow" section to `README.md`
+
+[ ] Status
+
+CONTEXT: `README.md` has an Agenda table (`## 📅 Agenda`) but no
+section telling students how to move through it session-by-session.
+ACTION: Insert a new `## 🔁 Student Workflow` section in `README.md`
+immediately after `## 📅 Agenda` and before `## 🧭 Tools`. Content:
+(a) go through sessions serially, complete `sessions/dev_workbench.md`
+setup before lab day, join the class Discord channel; (b) a
+numbered "For each session" checklist — branch (pull/merge latest
+`main`, create-or-switch to personal branch), grok the Concept
+section, design/develop/test the Exercise solution under the
+matching `projects/<project>/` folder, commit and tag, push the
+branch, open a PR to `main`, notify the instructor on Discord and
+request feedback; (c) a closing link to
+`tools/dev_workbench/github_and_git.md` for the exact commands.
+CONSTRAINTS: Do not modify the Agenda table or any other existing
+section; new section only; ≤79 chars/line, 2-space indent.
+OUTPUT: `README.md` contains `## 🔁 Student Workflow` between
+Agenda and Tools.
+VERIFY: `grep -n "^## 🔁 Student Workflow" README.md` → 1 match;
+`awk '/^## 📅 Agenda/{a=NR} /^## 🔁 Student Workflow/{b=NR}
+/^## 🧭 Tools/{c=NR} END{print (a<b && b<c)}' README.md` → `1`.
+
+---
+
+### Step 42.4: Mark Phase 42 complete, commit, tag, push
+
+[ ] Status
+
+CONTEXT: Steps 42.1-42.3 executed and individually verified.
+ACTION: (1) Re-run each step's VERIFY command and confirm all pass.
+(2) Confirm every `[ ] Status` under a `### Step 42.` heading in
+`sdw/plan.md` reads `[x] Status`. (3) Stage and commit
+`sdw/plan.md`, `sdw/prompt_history.md`, `README.md`,
+`sessions/dev_workbench.md`, `sessions/code_review.md`,
+`tools/dev_workbench/github_and_git.md` (new file), and the removal
+of `tools/dev_workbench/github.md`. (4) Tag
+`v42.4-student-workflow-step-completed` and push the current branch
+(`fix/ongoing`) with `--tags`.
+CONSTRAINTS: Only flip status checkboxes — never push to `main`.
+OUTPUT: All Phase 42 `[ ] Status` lines read `[x] Status`;
+annotated tag `v42.4-student-workflow-step-completed` pushed to
+`fix/ongoing`.
+VERIFY: `grep -A1 "### Step 42\." sdw/plan.md | grep "\[ \] Status"`
+→ 0 matches; `git tag | grep "v42\."` → 1 match.

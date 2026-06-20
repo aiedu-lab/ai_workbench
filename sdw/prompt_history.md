@@ -2603,3 +2603,47 @@ whenever VSCode is opened in the repo root, the
 
 Device a way so that the devcontainer creation or udpate 
 is not triggered in Windows/WSL or LinuxOS systems.
+
+## Prescribe Workflow
+[x] Status
+
+Reference: README.md
+
+Add a section to README.md that specifies a typical workflow of students 
+on every session in the agenda, namely:
+* Go through the sessions serially, do not jump ahead.
+* Complete the development workbench setup 
+* Join the discord channel for online lessons and coordination
+
+## Familiarize with foundational tooling:
+Reference: tools/dev_workbench/github_and_git.md
+
+Basic GitHub/Git: Add a cheat sheet of commands that helps a developer 
+collaboratively develop solutions with human peers and AI agents. 
+
+Example of cheat sheet of "how to" scenarios and commands are: 
+* inspect the history of git changes:
+  git log --oneline --graph --decorate --all -10
+* checkout a local branch fix/from_john (john is GITHUB_USERNAME)
+  off of main. if the local branch is already created switch 
+  to local branch.
+* track changes made in the branch vs main:
+  git log --oneline --graph --decorate --left-right \
+  fix/from_john...main
+* push, pull, merge, and rebase git branch
+* create a pull request to merge the branch changes to main
+
+
+For each session:
+* Branch: Pull in and merge the latest in origin/main to local main. 
+* Create a local branch off of local main if not existing OR 
+  Switch to local branch if already created and ensure it has the latest
+  merged changes from main.
+* Grok the concept section
+* Design, Develop, and Test the solution for the exercise section using the 
+  appropriate AI tools inside the projects subfolder.
+* Commit and Tag the changes to the local branch
+* Push the validated code in the branch to origin/branch
+* Submit a pull request to merge the branch changes to main.
+* Send a note on discord channel to instructor letting her know the session 
+  that you completed asking for feedback from the pull request submission
