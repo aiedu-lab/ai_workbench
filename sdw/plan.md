@@ -5360,7 +5360,7 @@ match.
 
 ### Step 41.5: Mark Phase 41 complete, commit, tag, push
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 41.1–41.4 executed and individually verified.
 ACTION: (1) Re-run each step's VERIFY command and confirm all pass.
