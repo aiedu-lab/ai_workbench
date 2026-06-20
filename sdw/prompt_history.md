@@ -2506,7 +2506,7 @@ Specifically the below changes:
 - cline.md: about linking it LLM for different choices.
 
 ## Environmant Update
-[ ] Status
+[x] Status
 
 ### Keys and Tokens
 Reference
@@ -2583,7 +2583,15 @@ corresponding origin branch created by and for the student,
 such as feature/from_john where 'john' is the github 
 username environment variable ie $GITHUB_USERNAME='john'.  
 
-## Update Environment
+6. Every projects/<project_name>/README.md must always
+direct the agent to execute that project's plan.md per
+the repo root CLAUDE.md operating protocol (Plan Update
+Protocol, one step per turn, commit after each step).
+The root CLAUDE.md already auto-loads regardless of cwd,
+but students need this stated explicitly so they invoke
+the agent correctly from inside a project subdirectory.
+
+### Update DevContainer Environment
 Reference:
 * .devcontainer/Dockerfile
 * .devcontainer/devcontainer.json
