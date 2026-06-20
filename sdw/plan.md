@@ -5165,7 +5165,7 @@ Verified current repo state (read-only audit, no code changed yet):
 
 ### Step 41.1: Add Claude Connectors disable section to cloud.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: `tools/claude/cloud.md` documents API key / OAuth token setup
 but has no guidance on disabling Claude Connectors, so MCP servers can
