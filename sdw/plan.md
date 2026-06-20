@@ -5233,7 +5233,7 @@ projects/prompting_basics/plan.md` → exit 0.
 
 ### Step 41.3: Add a README.md (with root CLAUDE.md execution note) to every projects/* dir; link the orphaned client_application/prompts.md
 
-[ ] Status
+[x] Status
 
 CONTEXT: `projects/planning/`, `projects/client_work_automation/`,
 `projects/server_multiagent/`, `projects/slides/`,

@@ -37,7 +37,7 @@ repo and Discord server.
 Find the form URL in the lab config file:
 
 ```bash
-grep GOOGLE_FORM_URL projects/group_meetup/labenv.yaml
+grep GOOGLE_FORM_URL setup/labenv.yaml
 ```
 
 Open the URL printed and submit your details.

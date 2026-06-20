@@ -28,6 +28,7 @@ ai_workbench/
   plans/             # Plan files (canonical + drafts)
   sdw/               # Specification Driven Workbench
     plan.md          # Creates contents for the lab and each session
+  setup/             # Lab environment setup scripts (not exercises)
   tools/             # Tool configuration guides
   learnings/         # Session notes and retrospectives
   docs/archive/      # Completed phase archives

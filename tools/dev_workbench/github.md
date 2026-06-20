@@ -74,7 +74,7 @@ actual name and GitHub-registered email address.
 
 Keys are named `~/.ssh/<username>_id_ed25519_github` — parallel
 to the lab server key `~/.ssh/<username>_id_ed25519` from
-`projects/group_meetup/labsetup.py`.
+`setup/labsetup.py`.
 
 **Generate** (skip if `labsetup.py` has already done this):
 

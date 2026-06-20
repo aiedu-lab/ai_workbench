@@ -1,5 +1,5 @@
 # Non-confidential lab environment variables.
-# Load with: python3 projects/group_meetup/labsetup.py
+# Load with: python3 setup/labsetup.py
 #
 # Replace <CLASS_ID> and <hostname> with values for this run
 # before distributing to students.
