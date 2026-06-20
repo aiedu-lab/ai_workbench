@@ -5317,7 +5317,7 @@ sessions/sdd_basics.md` → 1 match; `grep -n "execute that project's
 
 ### Step 41.4: Gate `.devcontainer/` creation to macOS only
 
-[ ] Status
+[x] Status
 
 CONTEXT: VS Code shows its "Create/Reopen in Container" prompt purely
 based on the presence of `.devcontainer/devcontainer.json` at the repo
