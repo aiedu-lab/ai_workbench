@@ -5429,7 +5429,7 @@ README.md sessions/dev_workbench.md sessions/code_review.md` →
 
 ### Step 42.2: Add Git/GitHub cheat sheet to `github_and_git.md`
 
-[ ] Status
+[x] Status
 
 CONTEXT: `tools/dev_workbench/github_and_git.md` has Account/
 Identity/SSH setup and a Hands-on Activity section, but no quick-
