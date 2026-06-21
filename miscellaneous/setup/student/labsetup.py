@@ -29,10 +29,11 @@ Steps performed:
    authentication. Skipped with WARN if not authenticated — run
    `gh auth login` first (dev_workbench.md).
 10. On macOS, materialize .devcontainer/ from
-    tools/VM/devcontainer/ so VSCode's Dev Containers prompt
-    fires (tools/VM/setup.md). On Windows/WSL or native Linux,
-    remove .devcontainer/ if present — the lab environment is
-    already native there and the prompt is redundant. Idempotent.
+    miscellaneous/tools/VM/devcontainer/ so VSCode's Dev
+    Containers prompt fires (miscellaneous/tools/VM/setup.md).
+    On Windows/WSL or native Linux, remove .devcontainer/ if
+    present — the lab environment is already native there and
+    the prompt is redundant. Idempotent.
 
 Steps 2–5 are skipped when labenv.yaml still contains placeholder
 values (strings wrapped in < >). DISCORD_WEBHOOK_URL must be set
@@ -549,9 +550,10 @@ def _setup_devcontainer() -> None:
   """Materialize .devcontainer/ on macOS only; remove it elsewhere.
 
   VSCode's "Create/Reopen in Container" prompt fires purely on
-  .devcontainer/devcontainer.json's presence (tools/VM/setup.md) —
-  on Windows/WSL or native Linux the lab environment is already
-  native, so the container is redundant and the prompt is noise.
+  .devcontainer/devcontainer.json's presence
+  (miscellaneous/tools/VM/setup.md) — on Windows/WSL or native
+  Linux the lab environment is already native, so the container
+  is redundant and the prompt is noise.
   Idempotent in both directions.
   """
   if os.uname().sysname == "Darwin":
@@ -639,7 +641,8 @@ def main() -> None:
     print(
       "  WARN GitHub CLI not authenticated — skipping GitHub SSH.\n"
       "  Run: gh auth login\n"
-      "  See: tools/dev_workbench/github.md#account-setup",
+      "  See: miscellaneous/tools/dev_workbench/"
+      "github_and_git.md#account-setup",
       file=sys.stderr,
     )
 

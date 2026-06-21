@@ -156,7 +156,8 @@ def check_gh_auth():
   if result.returncode != 0:
     raise RuntimeError(
       "gh not authenticated — run: gh auth login\n"
-      "  See: tools/dev_workbench/github.md#account-setup"
+      "  See: miscellaneous/tools/dev_workbench/"
+      "github_and_git.md#account-setup"
     )
 
 

@@ -5673,7 +5673,7 @@ docs|prompts|experimental)/" sessions/ .claude/commands/ | grep
 
 ### Step 43.5: Update `miscellaneous/setup/student/*.py` path strings
 
-[ ] Status
+[x] Status
 
 CONTEXT: `labsetup.py` and `preflight_check.py` (now in
 `miscellaneous/setup/student/`) contain embedded path strings
