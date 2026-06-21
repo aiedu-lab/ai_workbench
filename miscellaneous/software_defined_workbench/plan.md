@@ -5750,3 +5750,141 @@ annotated tag `v43.7-repo-cleanup-step-completed` pushed to
 `fix/ongoing`.
 VERIFY: `grep -A1 "### Step 43\." miscellaneous/software_defined_workbench/plan.md | grep "\[ \] Status"`
 -> 0 matches; `git tag | grep "v43\."` -> 1 match.
+
+---
+
+## Phase 44: README.md Consistency Pass
+
+**Source:** `miscellaneous/software_defined_workbench/prompt_history.md`
+lines 2711-2737 - `## Consistency` ([x] Status).
+
+### Context
+
+Phase 43 moved nine top-level support directories under
+`miscellaneous/` and repointed every cross-reference, but the
+README.md-specific consistency pass was not thorough enough. Four
+concrete defects remain, all confined to `README.md`: (1) the
+"Repository Structure" tree (lines 84-100) is unfenced prose so
+its indentation collapses on render, and lists `setup/student/`
+and `setup/instructor/` as flat siblings instead of nesting them
+under `setup/`; (2) the "Instructor Guidelines" preflight link
+still points at `sessions/instructor.md`, which Phase 43 moved to
+`miscellaneous/setup/instructor/instructor.md`; (3) the "SDW"
+subsection uses bare `SDW_DIR/plan.md` shorthand before the
+explicit `SDW_DIR` definition appears later in "Workbench Update
+Workflow"; (4) the "What Goes Where" table lists rarely-used
+`Best prompts`/`Failed prompts`/`Plan frameworks` rows and omits
+the `setup/student/`/`setup/instructor/` paths used every session.
+
+### Plan provenance
+
+provider:model used to generate this plan = Claude Code:claude-sonnet-4-6
+
+---
+
+### Step 44.1: Fix "Repository Structure" tree readability
+
+[x] Status
+
+CONTEXT: README.md lines 84-100 ("Repository Structure") render
+as unfenced prose, collapsing all tree indentation; the section
+lists `setup/student/` and `setup/instructor/` as two separate
+flat entries instead of nesting them under `setup/`.
+ACTION: Wrap the tree in a fenced text code block using
+tree-drawing connectors; nest `student/` and `instructor/` under
+one `setup/` entry; align trailing `#` description comments in a
+single column; rename the top label from `ai-education-lab/` to
+`ai_workbench/` to match the actual repo name; keep every listed
+directory and its description unchanged in meaning.
+CONSTRAINTS: Do not add or remove any directory from the listing;
+do not touch any other README.md section; keep every line <=79
+chars per `.agent/rules/always-line-length.md`.
+OUTPUT: "Repository Structure" renders as a fenced, correctly
+indented tree with `setup/` containing nested `student/` and
+`instructor/` children.
+VERIFY: code-fence count inside the section is 2 (open + close);
+longest line inside the section is <=79 chars.
+
+---
+
+### Step 44.2: Fix broken Instructor Preflight link
+
+[x] Status
+
+CONTEXT: README.md "Instructor Guidelines" (lines 116-120) links
+`sessions/instructor.md`, but Phase 43 moved that file to
+`miscellaneous/setup/instructor/instructor.md`; the old path no
+longer exists.
+ACTION: Update the link target to
+`miscellaneous/setup/instructor/instructor.md`.
+CONSTRAINTS: Path-substitution only - do not change surrounding
+prose or heading.
+OUTPUT: The Instructor Preflight link resolves to the file's
+current location.
+VERIFY: link target is `miscellaneous/setup/instructor/instructor.md`
+and that file exists.
+
+---
+
+### Step 44.3: Define `SDW_DIR` before its first use
+
+[x] Status
+
+CONTEXT: README.md "Specification Driven Workbench (SDW)"
+subsection uses bare `SDW_DIR/plan.md` shorthand before the
+explicit `SDW_DIR` = `miscellaneous/software_defined_workbench`
+definition appears later in "Workbench Update Workflow".
+ACTION: Move the explicit `SDW_DIR` definition into the SDW
+subsection's first sentence, ahead of its first bare-shorthand
+use; simplify the later "Workbench Update Workflow" line to
+reference the alias without redefining it.
+CONSTRAINTS: Do not change the meaning of the protocol described
+- reordering/wording only; keep every line <=79 chars.
+OUTPUT: The first occurrence of `SDW_DIR` in README.md is its
+explicit definition; every later occurrence is bare shorthand.
+VERIFY: the first `SDW_DIR` match in README.md is the explicit
+definition line, not a bare `SDW_DIR/...` reference.
+
+---
+
+### Step 44.4: Repoint "What Goes Where" table to setup dirs
+
+[x] Status
+
+CONTEXT: README.md "What Goes Where" table has `Best prompts`,
+`Failed prompts`, and `Plan frameworks` rows that are rarely
+used, and omits `miscellaneous/setup/student/` and
+`miscellaneous/setup/instructor/`, used every session.
+ACTION: Remove the `Best prompts`, `Failed prompts`, and `Plan
+frameworks` rows; add `Student setup` ->
+`/miscellaneous/setup/student/` and `Instructor setup` ->
+`/miscellaneous/setup/instructor/` rows.
+CONSTRAINTS: Keep the `Project code` and `Session notes` rows
+unchanged; do not move or rename the table/heading.
+OUTPUT: "What Goes Where" lists exactly: Project code, Session
+notes, Student setup, Instructor setup.
+VERIFY: table has 0 matches for Best/Failed prompts or Plan
+frameworks, and 2 matches for "setup".
+
+---
+
+### Step 44.5: Mark Phase 44 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 44.1-44.4 executed and individually verified.
+ACTION: (1) Re-run each step's VERIFY and confirm all pass. (2)
+Confirm `## Consistency` `[x] Status` in
+`miscellaneous/software_defined_workbench/prompt_history.md`
+(already flipped at plan-approval time). (3) Confirm every
+`[ ] Status` under a `### Step 44.` heading in
+`miscellaneous/software_defined_workbench/plan.md` reads
+`[x] Status`. (4) Stage and commit all edited files. (5) Tag
+`v44.5-readme-consistency-step-completed` and push the current
+branch (`fix/ongoing`) with `--tags`.
+CONSTRAINTS: Only flip status checkboxes - never push to `main`.
+OUTPUT: All Phase 44 `[ ] Status` lines read `[x] Status`;
+annotated tag `v44.5-readme-consistency-step-completed` pushed to
+`fix/ongoing`.
+VERIFY: `grep -A1 "### Step 44\." miscellaneous/software_defined_workbench/plan.md | grep "\[ \] Status"`
+-> 0 matches; `git tag | grep "v44\."` -> 1 match.

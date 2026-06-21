@@ -2707,3 +2707,30 @@ Phase 43 moved `sessions/instructor.md` to
 the question above ("does creating a corresponding labsetup.py
 and preflight_check.py for instructor make sense?") is left open
 for a future phase.
+
+## Consistency
+[x] Status
+
+The consistency check in the previous setction ('Cleanup Repo') was not 
+thorough and we need to do more.
+
+Reference REPO root README.md
+
+1. README section 'Repository Structure' is NOT readable. 
+It does not looks like a repo tree structure with descriptions
+annotated against the tree. Clean up.
+
+2. README section 'Instructor Guidelines' is messed up. The
+instructo preflight hyperlink points to the wrong location.
+
+3. README subsection 'Contribution Guidelines' of section 
+'Instructor Guidelines' referenced SDW_DIR/plan.md before first
+defining the location of SDW_DIR.
+
+4. README section 'What Goes Where' has references to 
+'Best prompts', 'Failed prompts' and 'Plan frameworks'. We hardly
+use those references. Remove them. 
+On the other hand, students use 'setup/student/' for setting up 
+their machine/VM and environment. Similarly, instructors will use 
+'setup/instructor' for setting and validating student set up. 
+Add those references in the 'Artifact' table of 'What Goes Where'.

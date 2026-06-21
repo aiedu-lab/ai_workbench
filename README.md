@@ -83,21 +83,23 @@ exact commands behind each step.
 
 ## 📁 Repository Structure
 
-ai-education-lab/
-│
-├── sessions/ # Session-wise exercises and materials
-├── projects/ # Generated apps and automation projects
+```text
+ai_workbench/
+├── sessions/                    # Lesson exercises & materials
+├── projects/                    # Generated apps & automation
 └── miscellaneous/
-    ├── prompts/ # Prompt library (best, failures, templates)
-    ├── plans/ # plan.md templates and canonical examples
-    ├── learnings/ # Notes, reflections, and patterns
-    ├── tools/ # Setup guides and guardrails
-    ├── software_defined_workbench/ # SDW plan + prompt history
-    ├── setup/student/ # Student lab setup scripts
-    ├── setup/instructor/ # Instructor preflight/roster instructions
-    ├── docs/ # Brand assets, archived phases
-    ├── experimental/ # Draft sessions not yet promoted
-    └── tests/ # Repo-level smoke tests
+    ├── software_defined_workbench/  # SDW plan + history
+    ├── setup/
+    │   ├── student/              # Student lab setup scripts
+    │   └── instructor/           # Instructor preflight/roster
+    ├── tools/                    # Setup guides and guardrails
+    ├── plans/                    # plan.md templates + canonical
+    ├── learnings/                # Notes, reflections, patterns
+    ├── prompts/                  # Prompt library (best/failures)
+    ├── docs/                     # Brand assets, archived phases
+    ├── experimental/             # Draft sessions not promoted
+    └── tests/                    # Repo-level smoke tests
+```
 
 ---
 
@@ -105,17 +107,17 @@ ai-education-lab/
 
 | Artifact          | Location                                   |
 |-------------------|---------------------------------------------|
-| Best prompts      | `/miscellaneous/prompts/best.md`             |
-| Failed prompts    | `/miscellaneous/prompts/failures.md`         |
 | Project code      | `/projects/<project>/`                       |
-| Plan frameworks   | `/miscellaneous/plans/`                      |
 | Session notes     | `/miscellaneous/learnings/session-notes/`    |
+| Student setup     | `/miscellaneous/setup/student/`              |
+| Instructor setup  | `/miscellaneous/setup/instructor/`           |
 
 ---
 
 ## 🧑‍🏫 Instructor Guidelines
 
-Execute [**Instructor Preflight**](sessions/instructor.md) before starting 
+Execute [**Instructor Preflight**](
+miscellaneous/setup/instructor/instructor.md) before starting 
 the workbench lab sessions and check off on setting up the student roster, 
 discord server, docker server, student laptops, etc.
 
@@ -127,10 +129,10 @@ discord server, docker server, student laptops, etc.
 
 This repository is a **Specification Driven Workbench (SDW)**: all
 content changes flow from a written specification, never from
-direct edits. The specification plan
-(`miscellaneous/software_defined_workbench/plan.md`, hereafter
-`SDW_DIR/plan.md`) is the single source of truth — it is
-append-only, never rewritten. AI executes each plan step under
+direct edits. `SDW_DIR` below means
+`miscellaneous/software_defined_workbench`; its `SDW_DIR/plan.md`
+is the single source of truth — it is append-only, never
+rewritten. AI executes each plan step under
 instructor review; the resulting content, plan entries, and
 prompt history are committed together, creating a full audit
 trail from intent to implementation.
@@ -140,8 +142,7 @@ trail from intent to implementation.
 
 ### Workbench Update Workflow
 
-All content changes must follow this sequence in strict order
-(`SDW_DIR` = `miscellaneous/software_defined_workbench`):
+All content changes must follow this sequence in strict order:
 
 1. **Specify** — append the new prompt to
    `SDW_DIR/prompt_history.md`. The prompt directs AI to extend
