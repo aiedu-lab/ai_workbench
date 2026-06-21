@@ -1,4 +1,4 @@
-# GitHub
+# GitHub and Git
 
 ## Objective
 Learn how to save, track, and share your work safely
@@ -7,6 +7,7 @@ Learn how to save, track, and share your work safely
 
 ## Tools
 - GitHub
+- Git
 
 ---
 

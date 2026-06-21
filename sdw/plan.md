@@ -5404,7 +5404,7 @@ provider:model used to generate this plan = Claude Code:claude-sonnet-4-6
 
 ### Step 42.1: Repoint broken `github.md` links to `github_and_git.md`
 
-[ ] Status
+[x] Status
 
 CONTEXT: `tools/dev_workbench/github.md` no longer exists on disk
 (deleted, uncommitted); content now lives at

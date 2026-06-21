@@ -49,22 +49,22 @@ guide for that tool — no content is duplicated here.
 
 ## GitHub Account and SSH Setup
 
-[GitHub Setup Guide](../tools/dev_workbench/github.md)
+[GitHub Setup Guide](../tools/dev_workbench/github_and_git.md)
 
 - Create a GitHub account at `github.com`
 - Install the `gh` CLI inside Ubuntu (WSL2 or Dev Container) —
   full steps in the
-  [GitHub Setup Guide](../tools/dev_workbench/github.md#account-setup)
+  [GitHub Setup Guide](../tools/dev_workbench/github_and_git.md#account-setup)
 - [Generate and upload an SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
   for GitHub authentication
 - Set your global git identity — see
   [Git Identity Setup](
-  ../tools/dev_workbench/github.md#git-identity-setup)
+  ../tools/dev_workbench/github_and_git.md#git-identity-setup)
 - Test the SSH connection and verify the greeting — see
   [SSH Validation](
-  ../tools/dev_workbench/github.md#ssh-key-setup-for-github)
+  ../tools/dev_workbench/github_and_git.md#ssh-key-setup-for-github)
 - Clone `ai_workbench` and create your personal branch — see
-  [Clone & Branch](../tools/dev_workbench/github.md#git-command-line-local)
+  [Clone & Branch](../tools/dev_workbench/github_and_git.md#git-command-line-local)
 
 ---
 

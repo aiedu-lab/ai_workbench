@@ -2647,3 +2647,13 @@ For each session:
 * Submit a pull request to merge the branch changes to main.
 * Send a note on discord channel to instructor letting her know the session 
   that you completed asking for feedback from the pull request submission
+
+### Pre-approval file rename (recorded per prompt history protocol)
+
+Before Phase 42 was planned, the user manually renamed
+`tools/dev_workbench/github.md` to
+`tools/dev_workbench/github_and_git.md` to match the broadened
+scope of this section (GitHub setup + Git cheat sheet, not GitHub
+alone). Phase 42 Step 42.1 repoints the 8 markdown links across
+`README.md`, `sessions/dev_workbench.md`, and
+`sessions/code_review.md` that referenced the old filename.
