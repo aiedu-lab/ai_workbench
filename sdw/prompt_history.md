@@ -2657,3 +2657,45 @@ scope of this section (GitHub setup + Git cheat sheet, not GitHub
 alone). Phase 42 Step 42.1 repoints the 8 markdown links across
 `README.md`, `sessions/dev_workbench.md`, and
 `sessions/code_review.md` that referenced the old filename.
+
+## Cleanup Repo
+[x] Status
+
+### Directories
+Students mainly operate with below mentioned directories (any other 
+directories are of use but not use regularly):
+* setup: machine setup, environment setup, and installation of scripts
+* projects: exercises
+* sessions: for concepts and exercise descriptions
+
+Work on the below directory reorganization:
+* Rename sdw to 'software_defined_workbench'
+* Reorganize all directores except projects and sessions under
+a 'miscellaneous' directory. 
+* Feel free to rename and create more subdirectories or flatten
+directories under 'miscellaneous'.
+
+### Setup Directory
+'setup' directory should have two subdirectories:
+* student: all configs (yaml) and scripts used by students
+* instructor: all configs (yaml) and scripts used by instructors
+
+#### Student
+Move all the files in 'setup' prior to reorganization is moved inside
+'setup/student/'.
+
+#### Instructor
+'sessions/instructor.md' has all the instructions for instructor. Move 
+that to 'setup/instuctor/'. If there are scripts that better serve setting
+up work for instructor (just as we had for student), does 
+creating a corresponding labsetup.py and preflight_check.py for instructor 
+make sense?
+
+#### README
+Update the README.md of the repo appropriately to reflect the reorganization
+and any setup files/scripts reference that are relevant and appropriate
+for a top level README.md file. 
+
+### Consistency Check
+Ensure all links and references to files and directories are 
+consistent after the regoranization.

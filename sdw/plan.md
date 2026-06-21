@@ -5502,3 +5502,251 @@ annotated tag `v42.4-student-workflow-step-completed` pushed to
 `fix/ongoing`.
 VERIFY: `grep -A1 "### Step 42\." sdw/plan.md | grep "\[ \] Status"`
 → 0 matches; `git tag | grep "v42\."` → 1 match.
+
+---
+
+## Phase 43: Repo Cleanup - `miscellaneous/` Reorganization
+
+**Source:** `sdw/prompt_history.md` lines 2661-2702 -
+`## Cleanup Repo` ([x] Status).
+
+### Context
+
+The repo root has accumulated nine support directories (`docs`,
+`experimental`, `learnings`, `plans`, `prompts`, `sdw`, `setup`,
+`tests`, `tools`) alongside the two directories students actually
+work in day to day (`projects`, `sessions`). The prompt asks to:
+(1) rename `sdw/` to `software_defined_workbench/`, (2) move it and
+the other seven support directories under one `miscellaneous/`
+directory so the root reads cleanly for students, (3) split
+`setup/` into `setup/student/` (existing scripts) and
+`setup/instructor/` (move `sessions/instructor.md` there), and
+(4) keep every link/path reference consistent afterward.
+
+Per user clarification: only the nine content directories above
+move under `miscellaneous/` - `.agent/`, `.claude/`, `.github/`
+stay at top level since Claude Code, Antigravity, and GitHub
+Actions resolve them by fixed convention paths. Also per user
+clarification: this phase moves files only - it does **not**
+write new `labsetup.py`/`preflight_check.py` scripts for
+instructors (that question in the prompt is logged as a deferred
+follow-up in `sdw/prompt_history.md`, not implemented now).
+
+`sdw/plan.md` and `sdw/prompt_history.md` are append-only
+historical records (per `CLAUDE.md` "Never Touch These"): their
+own *content* is left untouched (old-path mentions inside step
+history are not rewritten), only their *location* moves via
+`git mv`. Same principle applied in Phase 42 for `tools/`.
+
+### Plan provenance
+
+provider:model used to generate this plan = Claude Code:claude-sonnet-4-6
+
+---
+
+### Step 43.1: Move directories under `miscellaneous/`, split `setup/`
+
+[ ] Status
+
+CONTEXT: Repo root has `docs/`, `experimental/`, `learnings/`,
+`plans/`, `prompts/`, `sdw/`, `setup/`, `tests/`, `tools/` at top
+level; `setup/` has student-only content
+(`labsetup.py`, `preflight_check.py`, `config.yaml`,
+`labenv.yaml`, `notifier.py`, `poller.py`, `selector.py`,
+`README.md`); `sessions/instructor.md` holds instructor
+instructions.
+ACTION: `mkdir -p miscellaneous`. `git mv docs experimental
+learnings plans prompts tests tools miscellaneous/`. `git mv sdw
+miscellaneous/software_defined_workbench`. `mkdir -p
+miscellaneous/setup/student miscellaneous/setup/instructor`;
+`git mv setup/{labsetup.py,preflight_check.py,config.yaml,
+labenv.yaml,notifier.py,poller.py,selector.py,README.md}
+miscellaneous/setup/student/`; remove the now-empty `setup/`
+directory; `git mv sessions/instructor.md
+miscellaneous/setup/instructor/instructor.md`.
+CONSTRAINTS: Do not move `projects/`, `sessions/` (except
+`instructor.md`), `.agent/`, `.claude/`, `.github/`, or dotfiles.
+Do not edit file contents in this step - moves only. Do not
+create instructor automation scripts.
+OUTPUT: `miscellaneous/{docs,experimental,learnings,plans,
+prompts,tests,tools,software_defined_workbench,setup/student,
+setup/instructor}` exist; old `setup/` and `sdw/` no longer
+exist; `sessions/instructor.md` no longer exists.
+VERIFY: `test -d miscellaneous/software_defined_workbench &&
+test -d miscellaneous/setup/student && test -d
+miscellaneous/setup/instructor && test -f
+miscellaneous/setup/instructor/instructor.md && ! test -d sdw &&
+! test -d setup && ! test -f sessions/instructor.md && echo OK`
+-> `OK`.
+
+---
+
+### Step 43.2: Update `CLAUDE.md` (and `AGENTS.md` via symlink)
+
+[ ] Status
+
+CONTEXT: `CLAUDE.md` hardcodes the old layout in its "Repository
+root layout" block, "Session Rehydration" reading order
+(references `sdw/plan.md`), "Never Touch These" rules
+(`docs/archive/`, `plan.md`), and "Project-Specific Notes"
+(`sdw/plan.md`, `learnings/session_notes/`). `AGENTS.md` is a
+symlink to `CLAUDE.md`, so editing one updates both.
+ACTION: Update every path reference in `CLAUDE.md` to the new
+locations: `sdw/plan.md` ->
+`miscellaneous/software_defined_workbench/plan.md` (same for
+`prompt_history.md`); `setup/` -> `miscellaneous/setup/student/`
+or `miscellaneous/setup/instructor/` as appropriate per mention;
+`plans/`, `tools/`, `learnings/`, `docs/archive/` ->
+`miscellaneous/plans/`, `miscellaneous/tools/`,
+`miscellaneous/learnings/`, `miscellaneous/docs/archive/`. Update
+the root layout tree diagram to show `miscellaneous/` containing
+the eight moved directories, with `projects/` and `sessions/`
+remaining at top level.
+CONSTRAINTS: Do not change any protocol rule's meaning - path
+substitution only. Do not touch `.agent/rules/*.md` references
+(those files did not move).
+OUTPUT: `CLAUDE.md` (and `AGENTS.md`) contains zero references to
+the old `sdw/`, `setup/`, `plans/`, `tools/`, `learnings/`,
+`docs/` top-level paths.
+VERIFY: `grep -nE "(^|[^/a-z])(sdw|setup|plans|tools|learnings)/"
+CLAUDE.md | grep -v miscellaneous` -> 0 matches.
+
+---
+
+### Step 43.3: Update `README.md`
+
+[ ] Status
+
+CONTEXT: `README.md` references old paths in: the brand image
+(`docs/brand/aiedu-lab.png`), the Agenda table's tool
+links (`tools/...`), the "Repository Structure" tree
+and "What Goes Where" table, the SDW section
+(`sdw/plan.md`, `sdw/prompt_history.md`), and the
+Student Workflow section's cheat-sheet link
+(`tools/dev_workbench/github_and_git.md`).
+ACTION: Repoint every old-path reference to its new
+`miscellaneous/...` location. Update the "Repository Structure"
+tree and "What Goes Where" table to reflect
+`miscellaneous/{docs,plans,prompts,tools,
+software_defined_workbench,setup/student,setup/instructor,
+learnings,experimental,tests}/`, with `projects/` and `sessions/`
+unchanged.
+CONSTRAINTS: Do not change section ordering, wording, or
+non-path content. Keep all `#anchor` suffixes unchanged.
+OUTPUT: `README.md` has zero references to old top-level paths.
+VERIFY: `grep -nE "(^|[^/a-z])(sdw|setup|plans|tools|learnings|
+docs|prompts|experimental|tests)/" README.md | grep -v
+miscellaneous` -> 0 matches.
+
+---
+
+### Step 43.4: Update `sessions/*.md` and `.claude/commands/*.md`
+
+[ ] Status
+
+CONTEXT: Several `sessions/*.md` files link into the moved
+directories (`setup/labsetup.py`, `preflight_check.py`,
+`labenv.yaml` in `dev_workbench.md`/`introduction.md`;
+`tools/...` in `dev_workbench.md`/`pluggable_models.md`/
+`sdd_basics.md`; `plans/specs/event_organizer.md` in several
+session files; `prompts/skill.md` in `client_agent.md`/
+`client_multiagent.md`/`prompting_advanced.md`;
+`tests/vscode/hello.py`, `tests/data/pipeline/sample.csv` in
+`client_multiagent.md`/`dev_workbench.md`/
+`software_enhancement.md`). `.claude/commands/plan-step.md` and
+`replan.md` reference `sdw/plan.md`/`sdw/prompt_history.md` by
+path.
+ACTION: Repoint all listed references (and any other matching
+old-path occurrences found by the VERIFY grep below) to their
+`miscellaneous/...` equivalents.
+CONSTRAINTS: Do not modify `projects/` content or any link text/
+prose - path substitution only. Skip any reference that is a
+project-local path under `projects/.../tests/` or
+`projects/.../prompts/` (those did not move).
+OUTPUT: All top-level-directory links in `sessions/*.md` and
+`.claude/commands/*.md` point at `miscellaneous/...`.
+VERIFY: `grep -rnE "(^|[^/a-z])(sdw|setup|plans|tools|learnings|
+docs|prompts|experimental)/" sessions/ .claude/commands/ | grep
+-v miscellaneous` -> 0 matches.
+
+---
+
+### Step 43.5: Update `miscellaneous/setup/student/*.py` path strings
+
+[ ] Status
+
+CONTEXT: `labsetup.py` and `preflight_check.py` (now in
+`miscellaneous/setup/student/`) contain embedded path strings
+pointing into `tools/` for SSH-key/config setup steps, and
+`tools/VM/setup.md`, `tools/dev_workbench/github_and_git.md`
+cross-reference `setup/` (now `miscellaneous/setup/student/`).
+ACTION: Update the embedded path strings in
+`miscellaneous/setup/student/labsetup.py` and
+`preflight_check.py` to point at
+`miscellaneous/tools/...`; update
+`miscellaneous/tools/VM/setup.md` and
+`miscellaneous/tools/dev_workbench/github_and_git.md` to point
+at `miscellaneous/setup/student/...`.
+CONSTRAINTS: Path-string substitution only; do not change script
+logic or markdown prose.
+OUTPUT: No remaining `tools/` or `setup/` path strings without
+the `miscellaneous/` prefix in these 4 files.
+VERIFY: `grep -nE "(^|[^/a-z])(tools|setup)/"
+miscellaneous/setup/student/labsetup.py
+miscellaneous/setup/student/preflight_check.py
+miscellaneous/tools/VM/setup.md
+miscellaneous/tools/dev_workbench/github_and_git.md | grep -v
+miscellaneous` -> 0 matches.
+
+---
+
+### Step 43.6: Repo-wide consistency sweep + log deferred follow-up
+
+[ ] Status
+
+CONTEXT: Steps 43.1-43.5 covered every reference found by the
+initial inventory; a final sweep catches anything missed (e.g.
+`plans/canonical/phased_plan_template.md` boilerplate copied into
+`projects/*/plan.md` files, which are historical and should stay
+as-is since they document what existed at the time they were
+written).
+ACTION: Run a repo-wide grep (excluding `.git/`,
+`miscellaneous/software_defined_workbench/` self-references, and
+`projects/**/plan.md` historical boilerplate) for old top-level
+path prefixes; fix any live (non-historical) stragglers found.
+Append a short "### Deferred: instructor automation scripts"
+subsection under `## Cleanup Repo` in `sdw/prompt_history.md`
+(now `miscellaneous/software_defined_workbench/prompt_history.md`)
+noting that `setup/instructor/labsetup.py` and
+`preflight_check.py` were intentionally not created in Phase 43
+and remain an open question for a future phase.
+CONSTRAINTS: Do not rewrite historical content inside `plan.md`/
+`prompt_history.md` or `projects/*/plan.md` - append only.
+OUTPUT: No remaining live broken references; deferred-work note
+recorded.
+VERIFY: `grep -rnE "(^|[^/a-z])(sdw|setup)/" --include=*.md
+--include=*.py --include=*.yaml . | grep -v miscellaneous |
+grep -v "/.git/"` -> 0 matches (or only matches inside
+`projects/*/plan.md` historical boilerplate, which is expected).
+
+---
+
+### Step 43.7: Mark Phase 43 complete, commit, tag, push
+
+[ ] Status
+
+CONTEXT: Steps 43.1-43.6 executed and individually verified.
+ACTION: (1) Re-run each step's VERIFY command and confirm all
+pass. (2) Flip the `## Cleanup Repo` `[ ] Status` -> `[x] Status`
+in `miscellaneous/software_defined_workbench/prompt_history.md`.
+(3) Confirm every `[ ] Status` under a `### Step 43.` heading in
+`miscellaneous/software_defined_workbench/plan.md` reads
+`[x] Status`. (4) Stage and commit all moved/edited files. (5)
+Tag `v43.7-repo-cleanup-step-completed` and push the current
+branch (`fix/ongoing`) with `--tags`.
+CONSTRAINTS: Only flip status checkboxes - never push to `main`.
+OUTPUT: All Phase 43 `[ ] Status` lines read `[x] Status`;
+annotated tag `v43.7-repo-cleanup-step-completed` pushed to
+`fix/ongoing`.
+VERIFY: `grep -A1 "### Step 43\." miscellaneous/software_defined_workbench/plan.md | grep "\[ \] Status"`
+-> 0 matches; `git tag | grep "v43\."` -> 1 match.
