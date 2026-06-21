@@ -130,10 +130,10 @@ discord server, docker server, student laptops, etc.
 
 This repository is a **Specification Driven Workbench (SDW)**: all
 content changes flow from a written specification, never from
-direct edits. The specification plan
-(`miscellaneous/software_defined_workbench/plan.md`, hereafter
-`SDW_DIR/plan.md`) is the single source of truth — it is
-append-only, never rewritten. AI executes each plan step under
+direct edits. `SDW_DIR` below means
+`miscellaneous/software_defined_workbench`; its `SDW_DIR/plan.md`
+is the single source of truth — it is append-only, never
+rewritten. AI executes each plan step under
 instructor review; the resulting content, plan entries, and
 prompt history are committed together, creating a full audit
 trail from intent to implementation.
@@ -143,8 +143,7 @@ trail from intent to implementation.
 
 ### Workbench Update Workflow
 
-All content changes must follow this sequence in strict order
-(`SDW_DIR` = `miscellaneous/software_defined_workbench`):
+All content changes must follow this sequence in strict order:
 
 1. **Specify** — append the new prompt to
    `SDW_DIR/prompt_history.md`. The prompt directs AI to extend

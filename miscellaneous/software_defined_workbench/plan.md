@@ -5828,7 +5828,7 @@ and that file exists.
 
 ### Step 44.3: Define `SDW_DIR` before its first use
 
-[ ] Status
+[x] Status
 
 CONTEXT: README.md "Specification Driven Workbench (SDW)"
 subsection uses bare `SDW_DIR/plan.md` shorthand before the
