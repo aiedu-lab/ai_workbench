@@ -5809,7 +5809,7 @@ longest line inside the section is <=79 chars.
 
 ### Step 44.2: Fix broken Instructor Preflight link
 
-[ ] Status
+[x] Status
 
 CONTEXT: README.md "Instructor Guidelines" (lines 116-120) links
 `sessions/instructor.md`, but Phase 43 moved that file to

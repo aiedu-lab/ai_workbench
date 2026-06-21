@@ -117,7 +117,8 @@ ai_workbench/
 
 ## 🧑‍🏫 Instructor Guidelines
 
-Execute [**Instructor Preflight**](sessions/instructor.md) before starting 
+Execute [**Instructor Preflight**](
+miscellaneous/setup/instructor/instructor.md) before starting 
 the workbench lab sessions and check off on setting up the student roster, 
 discord server, docker server, student laptops, etc.
 
