@@ -5702,7 +5702,7 @@ miscellaneous` -> 0 matches.
 
 ### Step 43.6: Repo-wide consistency sweep + log deferred follow-up
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 43.1-43.5 covered every reference found by the
 initial inventory; a final sweep catches anything missed (e.g.

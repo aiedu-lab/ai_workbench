@@ -2699,3 +2699,11 @@ for a top level README.md file.
 ### Consistency Check
 Ensure all links and references to files and directories are 
 consistent after the regoranization.
+
+### Deferred: instructor automation scripts
+Phase 43 moved `sessions/instructor.md` to
+`miscellaneous/setup/instructor/instructor.md` but did not create
+`labsetup.py`/`preflight_check.py` equivalents for instructors —
+the question above ("does creating a corresponding labsetup.py
+and preflight_check.py for instructor make sense?") is left open
+for a future phase.
