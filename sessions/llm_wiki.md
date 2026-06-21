@@ -200,7 +200,7 @@ not the Phase 4 incremental-ingestion pattern.
 1. Create a `GroupMeetup/` subdirectory at the vault root.
 2. Copy and adapt `silicon_ai/proc_article.md` for the
    `GroupMeetup` taxonomy (`concepts/`, `tech/`).
-3. Add `plans/specs/event_organizer.md` as a private article
+3. Add `miscellaneous/plans/specs/event_organizer.md` as a private article
    in `GroupMeetup/articles.md` (state `[ ]`).
 4. Run Phases 1–4 of the new `proc_article.md`:
    - Initialise dirs, `Home.md`, `articles.md`

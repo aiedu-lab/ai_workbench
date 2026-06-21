@@ -1,4 +1,4 @@
-# GitHub
+# GitHub and Git
 
 ## Objective
 Learn how to save, track, and share your work safely
@@ -7,6 +7,7 @@ Learn how to save, track, and share your work safely
 
 ## Tools
 - GitHub
+- Git
 
 ---
 
@@ -74,7 +75,7 @@ actual name and GitHub-registered email address.
 
 Keys are named `~/.ssh/<username>_id_ed25519_github` — parallel
 to the lab server key `~/.ssh/<username>_id_ed25519` from
-`setup/labsetup.py`.
+`miscellaneous/setup/student/labsetup.py`.
 
 **Generate** (skip if `labsetup.py` has already done this):
 
@@ -204,6 +205,55 @@ git push
 - What changed after commit?
 - Can you go back to old version?
 - Why is this safer than local files?
+
+---
+
+## Cheat Sheet
+
+Quick-reference commands for collaborating across sessions — with
+human peers and AI agents alike.
+
+**Inspect history** — see what happened, in order, across all
+branches:
+
+```bash
+git log --oneline --graph --decorate --all -10
+```
+
+**Create or switch to your personal branch off `main`** — run once
+per session; `git branch --list` tells you whether it already
+exists:
+
+```bash
+git switch main && git pull
+git branch --list fix/from_$GITHUB_USERNAME \
+  | grep -q . && git switch fix/from_$GITHUB_USERNAME \
+  || git switch -c fix/from_$GITHUB_USERNAME main
+```
+
+**Compare your branch against `main`** — see what you have that
+`main` doesn't, and vice versa:
+
+```bash
+git log --oneline --graph --decorate --left-right \
+  fix/from_$GITHUB_USERNAME...main
+```
+
+**Push, pull, merge, rebase** — keep your branch synced with
+`main`:
+
+```bash
+git push                # publish your commits to origin
+git pull                # fetch + merge latest from your branch
+git merge main          # bring main's changes into your branch
+git rebase main         # replay your commits on top of main
+```
+
+**Create a pull request** — once your branch is ready for review:
+
+```bash
+gh pr create --base main --head fix/from_$GITHUB_USERNAME
+```
 
 ---
 

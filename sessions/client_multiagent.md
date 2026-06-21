@@ -239,13 +239,13 @@ Example Prompt for Lovable:
 5. Unit Test Sample Data
 
 Before running your cleaning script on the full dataset, validate
-it against the sample data in `tests/data/pipeline/sample.csv`
+it against the sample data in `miscellaneous/tests/data/pipeline/sample.csv`
 (20 rows, one intentionally missing `open` value):
 
 ```bash
 python3 -c "
 import pandas as pd
-df = pd.read_csv('tests/data/pipeline/sample.csv')
+df = pd.read_csv('miscellaneous/tests/data/pipeline/sample.csv')
 print('Rows before clean:', len(df))
 df = df.dropna(subset=['open', 'close', 'volume'])
 print('Rows after clean:', len(df))
@@ -281,10 +281,10 @@ applied to any CSV pipeline task.
 Confirm the template has at least these placeholders:
 `[INPUT_CSV]`, `[OUTPUT_CSV]`, `[DROP_CONDITION]`, `[NEW_COLUMNS]`.
 
-**CATALOG** — Ask Claude Code to add it to `prompts/skill.md`:
+**CATALOG** — Ask Claude Code to add it to `miscellaneous/prompts/skill.md`:
 
 ```text
-Add the skill to prompts/skill.md with these four fields:
+Add the skill to miscellaneous/prompts/skill.md with these four fields:
 - Skill name
 - Description (one sentence)
 - Template (the generalized prompt)
@@ -292,7 +292,7 @@ Add the skill to prompts/skill.md with these four fields:
 ```
 
 Verify the entry appears in
-[`prompts/skill.md`](../prompts/skill.md).
+[`miscellaneous/prompts/skill.md`](../miscellaneous/prompts/skill.md).
 
 7. Specification Plan
 
@@ -304,13 +304,13 @@ reproduce it from scratch:
 
 ### Phase 1: Setup
 - [ ] Define input source and target schema.
-- [ ] Copy sample data to tests/data/pipeline/sample.csv.
+- [ ] Copy sample data to miscellaneous/tests/data/pipeline/sample.csv.
 
 ### Phase 2: Collection
 - [ ] Download raw CSV via Claude CoWork.
 
 ### Phase 3: Cleaning
-- [ ] Run clean-and-transform skill (prompts/skill.md).
+- [ ] Run clean-and-transform skill (miscellaneous/prompts/skill.md).
 - [ ] Validate against sample data (Stage 5 test).
 
 ### Phase 4: Analysis
@@ -374,7 +374,8 @@ atomically; a crash leaves the collection intact.
 Show me a step-by-step plan and wait for my approval before
 writing any code or running any command.
 
-Context: plans/specs/event_organizer.md — Component Contract.
+Context: miscellaneous/plans/specs/event_organizer.md —
+  Component Contract.
 Task: Generate three Python scripts:
   - poller_agent.py: reads config.yaml, stores responses
     in MongoDB collection `responses`
@@ -462,7 +463,8 @@ temporal server start-dev
 Show me a step-by-step plan and wait for my approval before
 writing any code or running any command.
 
-Context: plans/specs/event_organizer.md — Component Contract.
+Context: miscellaneous/plans/specs/event_organizer.md —
+  Component Contract.
 Task: Generate a Temporal workflow (Python SDK) with three
   activities wrapping the Group Meetup Organizer agents:
   - PollActivity: poll logic (config.yaml → MongoDB responses)

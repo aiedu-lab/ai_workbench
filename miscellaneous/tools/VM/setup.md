@@ -95,7 +95,7 @@ Recommended minimums for this lab: 8 GB RAM, 4 cores, 40 GB disk.
    sudo apt-get install -y python3 python3-pip git
 
    # Claude Code: use the native installer (matches
-   # tools/claude/cli.md) — the npm package is deprecated
+   # miscellaneous/tools/claude/cli.md) — npm package deprecated
    curl -fsSL https://claude.ai/install.sh | bash
    ```
 5. Keep all project files under `~/` (inside WSL), not under
@@ -149,9 +149,11 @@ git clone https://github.com/aiedu-lab/ai_workbench.git
 cd ai_workbench
 ```
 
-4. Run `python3 setup/labsetup.py` once — on macOS it copies
+4. Run `python3 miscellaneous/setup/student/labsetup.py` once —
+on macOS it copies
 [devcontainer.json](devcontainer/devcontainer.json) and
-[Dockerfile](devcontainer/Dockerfile) from `tools/VM/devcontainer/`
+[Dockerfile](devcontainer/Dockerfile) from
+`miscellaneous/tools/VM/devcontainer/`
 (the canonical source) into `.devcontainer/`; on Windows/WSL or
 native Linux it removes `.devcontainer/` if present, since the lab
 environment is already native there.

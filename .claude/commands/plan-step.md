@@ -1,7 +1,9 @@
 # SDW Plan Step Skill
 
-Generate or validate a single `sdw/plan.md` step that strictly
-conforms to the CLAUDE.md §Plan Update Protocol five-field template.
+Generate or validate a single
+`miscellaneous/software_defined_workbench/plan.md` step (hereafter
+`SDW_DIR/plan.md`) that strictly conforms to the CLAUDE.md §Plan
+Update Protocol five-field template.
 
 ## Invocation
 
@@ -40,7 +42,7 @@ VERIFY: <exact shell command or manual check with expected result>
 
 The `[ ] Status` line is flipped to `[x] Status` when the step
 is executed, providing an at-a-glance execution tracker inside
-`sdw/plan.md`.
+`SDW_DIR/plan.md`.
 
 ## Self-Check (apply before accepting any step)
 
@@ -57,5 +59,5 @@ guessing. Do not append a step that fails the self-check.
 ## Output
 
 Present the formatted step as a fenced markdown block ready to
-copy-paste into `sdw/plan.md`. Do not append to any file unless
-the user explicitly confirms.
+copy-paste into `SDW_DIR/plan.md`. Do not append to any file
+unless the user explicitly confirms.

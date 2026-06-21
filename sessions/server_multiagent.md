@@ -2,8 +2,9 @@
 
 ## Tools
 
-* [OpenClaw CLI](../tools/openclaw/cli.md) — agent executor
-* [Temporal CLI](../tools/temporal/cli.md) — workflow orchestrator
+* [OpenClaw CLI](../miscellaneous/tools/openclaw/cli.md) — agent executor
+* [Temporal CLI](../miscellaneous/tools/temporal/cli.md) —
+  workflow orchestrator
 
 ## Setup
 
@@ -36,15 +37,16 @@ shows an empty workflow list.
 * Scope each agent to exactly one external API.
 * Require human approval before any step that touches external
   systems (email, calendar, payment).
-* Reference [⚠️ OpenClaw Guardrails](../tools/openclaw/cli.md#guardrails).
+* Reference [⚠️ OpenClaw Guardrails](
+  ../miscellaneous/tools/openclaw/cli.md#guardrails).
 
 ### Tokenomics
 * Token cost multiplies with each agent hop — keep workflows
   shallow and agent prompts narrow.
 * Use an API proxy between OpenClaw and your LLM provider to
   monitor and cap spend.
-* Reference [💰 Cost Control](../tools/dev_workbench/provider_cost_control.md#pay-per-use)
-  and [OpenClaw Tokenomics](../tools/openclaw/cli.md#tokenomics).
+* Reference [💰 Cost Control](../miscellaneous/tools/dev_workbench/provider_cost_control.md#pay-per-use)
+  and [OpenClaw Tokenomics](../miscellaneous/tools/openclaw/cli.md#tokenomics).
 
 ## CoWork vs OpenClaw
 
@@ -83,7 +85,7 @@ Key properties:
 ## Exercise — Group Meetup Organizer Pipeline
 
 Three-agent pipeline using the
-[Group Meetup Organizer spec](../plans/specs/event_organizer.md):
+[Group Meetup Organizer spec](../miscellaneous/plans/specs/event_organizer.md):
 
 | Agent | Responsibility |
 |---|---|
@@ -152,7 +154,8 @@ export DISCORD_WEBHOOK_URL="<paste from instructor>"
 Show me a step-by-step plan and wait for my approval before
 writing any code or running any command.
 
-Context: plans/specs/event_organizer.md — Component Contract.
+Context: miscellaneous/plans/specs/event_organizer.md —
+  Component Contract.
 Task: Generate Docker deployment files for the Group Meetup
   Organizer Temporal stack:
   - Dockerfile for each of the three worker services

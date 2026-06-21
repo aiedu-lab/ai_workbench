@@ -25,13 +25,16 @@ ai_workbench/
     web_site/        # Lovable & Claude Code web exercises
     client_*/        # Local app & workflow exercises
     server_*/        # Server-side exercises
-  plans/             # Plan files (canonical + drafts)
-  sdw/               # Specification Driven Workbench
-    plan.md          # Creates contents for the lab and each session
-  setup/             # Lab environment setup scripts (not exercises)
-  tools/             # Tool configuration guides
-  learnings/         # Session notes and retrospectives
-  docs/archive/      # Completed phase archives
+  miscellaneous/
+    plans/           # Plan files (canonical + drafts)
+    software_defined_workbench/  # Specification Driven Workbench
+      plan.md        # Creates contents for the lab and each session
+    setup/
+      student/       # Lab environment setup scripts (not exercises)
+      instructor/    # Instructor preflight and roster instructions
+    tools/           # Tool configuration guides
+    learnings/       # Session notes and retrospectives
+    docs/archive/    # Completed phase archives
 ```
 
 ---
@@ -135,13 +138,16 @@ git commit -m "feat: Phase 1: Step 2 - add history list to index.html"
 ### 5. Update Plan, Tag, and Push
 
 **Per step:** after each step's VERIFY command passes, flip that
-step's `[ ] Status` → `[x] Status` in `sdw/plan.md` and include
+step's `[ ] Status` → `[x] Status` in
+`miscellaneous/software_defined_workbench/plan.md` and include
 the update in the same commit as the step's code changes:
 
 ```bash
-# In sdw/plan.md, change the step's status line:
+# In miscellaneous/software_defined_workbench/plan.md, change
+# the step's status line:
 # [ ] Status  →  [x] Status
-git add sdw/plan.md <changed-files>
+git add miscellaneous/software_defined_workbench/plan.md \
+  <changed-files>
 git commit -m "<type>: Phase X: Step Y - <summary>"
 ```
 
@@ -177,7 +183,8 @@ All the below decisions are manual:
 
 Unless explicitly instructed by the user:
 
-* `docs/archive/` — read-only; never modify archived phases
+* `miscellaneous/docs/archive/` — read-only; never modify archived
+  phases
 * `plan.md` — only update to mark steps COMPLETED or add new steps;
   never delete existing history
 * Files outside the current working directory for a task
@@ -199,15 +206,18 @@ To maintain a clean project lineage and ensure repeatability:
 
 * **Record Significant Prompts:** Whenever a significant new task, 
   specification, or architectural change is initiated (especially if 
-  delivered via a `sdw/*_prompt.md` file), the prompt must be recorded 
-  in `sdw/prompt_history.md`.
+  delivered via a
+  `miscellaneous/software_defined_workbench/*_prompt.md` file), the
+  prompt must be recorded in
+  `miscellaneous/software_defined_workbench/prompt_history.md`.
 * **Sanitize & Summarize:** Prompts should be sanitized of any 
   sensitive information and summarized if they are excessively 
   long, while preserving all core objectives and constraints.
 * **Instructor Approval:** Propose the entry for `prompt_history.md` 
   and wait for instructor approval before appending.
 * **Keep Ledger Chronological:** Maintain the chronological order 
-  in `sdw/prompt_history.md` using `## [Topic/Filename]` headers.
+  in `miscellaneous/software_defined_workbench/prompt_history.md`
+  using `## [Topic/Filename]` headers.
 
 ---
 
@@ -291,7 +301,8 @@ reading these files in order before taking any action:
    flags). These apply to all providers; CLAUDE.md rules take
    precedence on conflict.
 1. `CLAUDE.md` (this file) — operating protocol
-2. `sdw/plan.md` - plan to create content for the lab
+2. `miscellaneous/software_defined_workbench/plan.md` - plan to
+   create content for the lab
 3. `projects/[project_directory]/plan.md` — current phase, active step, 
    last completed step
 4. The specific file(s) targeted by the active step
@@ -353,14 +364,15 @@ git push origin feature/my-branch --tags
 
 ## PROJECT-SPECIFIC NOTES
 
-* **Content** creation plan lives in `sdw/plan.md`.
+* **Content** creation plan lives in
+  `miscellaneous/software_defined_workbench/plan.md`.
 * **Projects** live in `projects/[project directory]/`. 
   Each sub-project has its own `CLAUDE.md` with file-level fencing rules.
 * **Plan template** follows the phased template in
-  `plans/canonical/phased_template.md`.
+  `miscellaneous/plans/canonical/phased_template.md`.
 * **Plans** live in `projects/[project directory]/`. 
   Each sub-project has its own `plan.md`
-* **Session notes** go in `learnings/session_notes/` — one file per
-  session.
+* **Session notes** go in `miscellaneous/learnings/session_notes/`
+  — one file per session.
 * **Tokenomics:** Use Sonnet for 80%+ of tasks. Reserve Opus only for
   complex multi-file architecture decisions.

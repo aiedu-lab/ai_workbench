@@ -44,7 +44,7 @@ typist; the human defines the spec and validates the output:
 | Software | [**SDD**](client_application.md#exercise--group-meetup-organizer-non-agentic-version) | `CLAUDE.md` + `plan.md` | Code, tests, configs |
 | Presentation | [**SDP**](presentation_n_design.md#exercise-b--group-meetup-organizer-pitch-deck-toy-version-0-gamma) | Slide outline or brief | Decks, UI mockups |
 | Knowledge base | [**SDPKM**](llm_wiki.md#the-exercise-compounding-knowledge) | Topic list + vault structure | Cross-linked wiki notes |
-| Workbench | [**SDW**](../sdw/plan.md) | `sdw/plan.md` | Lab sessions, tools, exercises |
+| Workbench | [**SDW**](../miscellaneous/software_defined_workbench/plan.md) | `miscellaneous/software_defined_workbench/plan.md` | Lab sessions, tools, exercises |
 | Bootstrapping | **SDB** | Idea brief + market scope | Research memos, GTM plans, product mocks |
 | Engineering Design | **SDCAD** | Design constraints + tolerances | AutoDesk drawings, simulation configs |
 | Creative Tooling | **SDCT** | Scene description + style guide | Blender models, shader scripts, animations |
@@ -55,8 +55,9 @@ reusable templates that apply across any row above.
 | Data pipelines | [**SDDP**](client_multiagent.md#exercise-2-mini-data-pipeline) | Schema + transformation rules | ETL scripts, dbt models, validation tests |
 
 > This workbench itself is built using Specifications.
-> See [`sdw/plan.md`](../sdw/plan.md) as a live example of SDW —
-> every session and exercise in the lab was generated from that plan.
+> See [`plan.md`](../miscellaneous/software_defined_workbench/plan.md)
+> as a live example of SDW — every session and exercise in the lab
+> was generated from that plan.
 
 The SDD session teaches the pattern for code. The same mindset —
 write the spec first, generate from it, iterate — transfers directly

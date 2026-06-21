@@ -2,8 +2,8 @@
 
 ## Tools
 
-* [Claude Desktop (CoWork, Code)](../tools/claude/desktop.md)
-* [OpenClaw](../tools/openclaw/cli.md)
+* [Claude Desktop (CoWork, Code)](../miscellaneous/tools/claude/desktop.md)
+* [OpenClaw](../miscellaneous/tools/openclaw/cli.md)
 
 ## Setup
 
@@ -66,8 +66,8 @@ The File Organizer prompt above follows the
 `Context / Task / Constraints / Output` structure introduced in
 [Advanced Prompting — §1 Skills](prompting_advanced.md#1-skills-reusable-prompts).
 It is saved as `file-organizer-skill` in
-[`prompts/skill.md`](../prompts/skill.md) so you can reuse it
-across sessions with a single invocation.
+[`skill.md`](../miscellaneous/prompts/skill.md) so you can reuse
+it across sessions with a single invocation.
 
 ### Validation
 After completing the exercise, verify each item before moving on:
@@ -112,7 +112,7 @@ so no work is lost if the agent is interrupted.
 
 ### Step 0 — Reuse the Spec
 
-Open `plans/specs/event_organizer.md`. The component contract is
+Open `miscellaneous/plans/specs/event_organizer.md`. The component contract is
 unchanged — the agent must produce the same `responses.json`,
 `decision.json`, and Discord notification as the scripts did.
 
@@ -128,7 +128,8 @@ unchanged — the agent must produce the same `responses.json`,
 Show me a step-by-step plan and wait for my approval before
 writing any code or running any command.
 
-Context: plans/specs/event_organizer.md — Component Contract table.
+Context: miscellaneous/plans/specs/event_organizer.md —
+  Component Contract table.
 Task: Generate agent_meetup.py — a Python script that runs
   all three steps in sequence:
   1. Poll each member (read config.yaml, write responses.json)

@@ -1,6 +1,7 @@
 # Applications on Pluggable Models
 
-<!-- AI-GENERATED: Phase 17 Step 17.7 (sdw/plan.md) -->
+<!-- AI-GENERATED: Phase 17 Step 17.7
+     (miscellaneous/software_defined_workbench/plan.md) -->
 
 Learn to build AI-powered apps where the "brain" (LLM) is a
 pluggable component — swap providers without changing your
@@ -49,9 +50,9 @@ Only two variables change. Your application code is identical.
 
 | Tool | Purpose | Setup |
 |---|---|---|
-| Groq | Ultra-fast LPU inference | [tools/groq/setup.md](../tools/groq/setup.md) |
-| OpenRouter | Gateway to 100+ models | [tools/openrouter/openrouter.md](../tools/openrouter/openrouter.md) |
-| Cline | VSCode AI assistant | [tools/dev_workbench/cline.md](../tools/dev_workbench/cline.md) |
+| Groq | Ultra-fast LPU inference | [miscellaneous/tools/groq/setup.md](../miscellaneous/tools/groq/setup.md) |
+| OpenRouter | Gateway to 100+ models | [miscellaneous/tools/openrouter/openrouter.md](../miscellaneous/tools/openrouter/openrouter.md) |
+| Cline | VSCode AI assistant | [miscellaneous/tools/dev_workbench/cline.md](../miscellaneous/tools/dev_workbench/cline.md) |
 
 ---
 
@@ -59,12 +60,13 @@ Only two variables change. Your application code is identical.
 
 Install the OpenAI Python library (works with any provider) — see
 [Install OpenAI Python Library](
-../tools/dev_workbench/multimodel.md#install-openai-python-library).
+../miscellaneous/tools/dev_workbench/multimodel.md
+#install-openai-python-library).
 
 Set your API keys:
-- **Groq:** see [Groq Setup](../tools/groq/setup.md)
+- **Groq:** see [Groq Setup](../miscellaneous/tools/groq/setup.md)
 - **OpenRouter:** see
-  [OpenRouter Setup](../tools/openrouter/openrouter.md)
+  [OpenRouter Setup](../miscellaneous/tools/openrouter/openrouter.md)
 
 ---
 
@@ -77,7 +79,8 @@ the underlying LLM without changing your code.
 
 1. Install dependencies — see
    [Install OpenAI Python Library](
-   ../tools/dev_workbench/multimodel.md#install-openai-python-library).
+   ../miscellaneous/tools/dev_workbench/multimodel.md
+   #install-openai-python-library).
 
 2. Get API keys from the Tool Setup guides above.
 
