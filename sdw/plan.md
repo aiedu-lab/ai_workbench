@@ -5457,7 +5457,7 @@ VERIFY: `grep -n "^## Cheat Sheet" tools/dev_workbench/github_and_git.md`
 
 ### Step 42.3: Add "Student Workflow" section to `README.md`
 
-[ ] Status
+[x] Status
 
 CONTEXT: `README.md` has an Agenda table (`## 📅 Agenda`) but no
 section telling students how to move through it session-by-session.

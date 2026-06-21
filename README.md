@@ -41,6 +41,34 @@ specific tool or concept.
 
 ---
 
+## 🔁 Student Workflow
+
+* Go through the sessions serially — do not jump ahead.
+* Complete the [Development Workbench Setup](sessions/dev_workbench.md)
+  once, before lab day.
+* Join the class Discord channel for live sessions and coordination
+  with the instructor and your peers.
+
+For each session:
+
+1. **Branch** — pull and merge the latest `origin/main` into local
+   `main`, then create your personal branch off `main` if it does
+   not exist yet, or switch to it and merge in the latest `main`.
+2. **Grok** the session's Concept section.
+3. **Design, develop, and test** the Exercise section's solution
+   with the appropriate AI tools, inside the matching
+   `projects/<project>/` subfolder.
+4. **Commit and tag** the changes on your branch.
+5. **Push** the validated branch to `origin`.
+6. **Submit a pull request** to merge your branch into `main`.
+7. **Notify** the instructor on Discord that you completed the
+   session, and ask for PR feedback.
+
+See [GitHub and Git](tools/dev_workbench/github_and_git.md) for the
+exact commands behind each step.
+
+---
+
 ## 🧭 Tools
 
 | Platform | Application | Tools |
