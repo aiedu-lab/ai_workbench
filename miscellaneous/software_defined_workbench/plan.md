@@ -5583,7 +5583,7 @@ miscellaneous/setup/instructor/instructor.md && ! test -d sdw &&
 
 ### Step 43.2: Update `CLAUDE.md` (and `AGENTS.md` via symlink)
 
-[ ] Status
+[x] Status
 
 CONTEXT: `CLAUDE.md` hardcodes the old layout in its "Repository
 root layout" block, "Session Rehydration" reading order
