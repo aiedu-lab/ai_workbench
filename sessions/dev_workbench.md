@@ -1,6 +1,7 @@
 # Development Workbench
 
-<!-- AI-GENERATED: Phase 14 Step 14.1.1 (sdw/plan.md) -->
+<!-- AI-GENERATED: Phase 14 Step 14.1.1
+     (miscellaneous/software_defined_workbench/plan.md) -->
 
 This session walks every student through a one-time platform and
 tooling setup. Both supported platforms produce an identical Ubuntu
@@ -39,7 +40,7 @@ guide for that tool — no content is duplicated here.
 
 ## VM / Container Setup
 
-[VM Setup Guide](../tools/VM/setup.md)
+[VM Setup Guide](../miscellaneous/tools/VM/setup.md)
 
 - **Win11:** install WSL2 + Ubuntu 22.04; verify with `wsl --status`
 - **macOS:** install Docker Desktop + Dev Containers extension;
@@ -49,22 +50,24 @@ guide for that tool — no content is duplicated here.
 
 ## GitHub Account and SSH Setup
 
-[GitHub Setup Guide](../tools/dev_workbench/github_and_git.md)
+[GitHub Setup Guide](../miscellaneous/tools/dev_workbench/github_and_git.md)
 
 - Create a GitHub account at `github.com`
 - Install the `gh` CLI inside Ubuntu (WSL2 or Dev Container) —
   full steps in the
-  [GitHub Setup Guide](../tools/dev_workbench/github_and_git.md#account-setup)
+  [GitHub Setup Guide](
+  ../miscellaneous/tools/dev_workbench/github_and_git.md#account-setup)
 - [Generate and upload an SSH key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
   for GitHub authentication
 - Set your global git identity — see
   [Git Identity Setup](
-  ../tools/dev_workbench/github_and_git.md#git-identity-setup)
+  ../miscellaneous/tools/dev_workbench/github_and_git.md#git-identity-setup)
 - Test the SSH connection and verify the greeting — see
   [SSH Validation](
-  ../tools/dev_workbench/github_and_git.md#ssh-key-setup-for-github)
+  ../miscellaneous/tools/dev_workbench/github_and_git.md
+  #ssh-key-setup-for-github)
 - Clone `ai_workbench` and create your personal branch — see
-  [Clone & Branch](../tools/dev_workbench/github_and_git.md#git-command-line-local)
+  [Clone & Branch](../miscellaneous/tools/dev_workbench/github_and_git.md#git-command-line-local)
 
 ---
 
@@ -72,12 +75,12 @@ guide for that tool — no content is duplicated here.
 
 | Tool | Setup guide |
 |------|-------------|
-| Claude Account Setup | [cloud account](../tools/claude/cloud.md) |
-| Claude Code CLI | [cli](../tools/claude/cli.md) | 
-| Claude Desktop (Chat + CoWork) | [desktop](../tools/claude/desktop.md) |
+| Claude Account Setup | [cloud account](../miscellaneous/tools/claude/cloud.md) |
+| Claude Code CLI | [cli](../miscellaneous/tools/claude/cli.md) | 
+| Claude Desktop (Chat + CoWork) | [desktop](../miscellaneous/tools/claude/desktop.md) |
 
 ### Advanced & Optional
-* Reference [LLM Provider Cost Control](../tools/dev_workbench/provider_cost_control.md)
+* Reference [LLM Provider Cost Control](../miscellaneous/tools/dev_workbench/provider_cost_control.md)
 * Set spending limits and enable usage notifications before running
 any multi-turn or automated workflows.
 
@@ -87,23 +90,24 @@ Set up alternative LLM providers for the
 [Pluggable Models](../sessions/pluggable_models.md) session:
 
 - **Groq** (ultra-fast LPU inference) — see
-  [tools/groq/setup.md](../tools/groq/setup.md)
+  [miscellaneous/tools/groq/setup.md](../miscellaneous/tools/groq/setup.md)
 - **OpenRouter** (gateway to 100+ models) — see
-  [tools/openrouter/openrouter.md](
-  ../tools/openrouter/openrouter.md)
+  [miscellaneous/tools/openrouter/openrouter.md](
+  ../miscellaneous/tools/openrouter/openrouter.md)
 - **Cline** (VSCode AI assistant via OpenRouter) — see
-  [tools/dev_workbench/cline.md](
-  ../tools/dev_workbench/cline.md)
+  [miscellaneous/tools/dev_workbench/cline.md](
+  ../miscellaneous/tools/dev_workbench/cline.md)
 
 Install shared Python dependencies — see
 [Install OpenAI Python Library](
-../tools/dev_workbench/multimodel.md#install-openai-python-library).
+../miscellaneous/tools/dev_workbench/multimodel.md
+#install-openai-python-library).
 
 ---
 
 ## VSCode Setup
 
-[VSCode Setup Guide](../tools/dev_workbench/vscode.md)
+[VSCode Setup Guide](../miscellaneous/tools/dev_workbench/vscode.md)
 
 - Install VSCode on your host OS
 - **Win11:** install **Remote - WSL** extension
@@ -112,16 +116,17 @@ Install shared Python dependencies — see
 - Install and sign in to the **Claude Code** extension
 - Install and sign in to the **GitHub Pull Requests** extension —
   full steps in
-  [VSCode Setup Guide](../tools/dev_workbench/vscode.md#setup)
+  [VSCode Setup Guide](../miscellaneous/tools/dev_workbench/vscode.md#setup)
 - Validate both extensions per
-  [VSCode Validation](../tools/dev_workbench/vscode.md#validation)
+  [VSCode Validation](
+  ../miscellaneous/tools/dev_workbench/vscode.md#validation)
 
 ### Claude Multimode
 
 Configure Claude Code for two authentication modes — Pro
 Subscription (default) and PAYG (pay-as-you-go) API. See
 [Claude Multimode Set Up](
-../tools/dev_workbench/vscode.md#claude-multimode-set-up).
+../miscellaneous/tools/dev_workbench/vscode.md#claude-multimode-set-up).
 
 ---
 
@@ -145,12 +150,12 @@ git switch feature/from_$GITHUB_USERNAME || \
 In VSCode, open the Source Control panel (`Ctrl+Shift+G`).
 Click the **⋯** menu → **Pull**. Confirm no errors.
 
-**Step 2 — Use Claude Code to update `tests/vscode/hello.py`:**
+**Step 2 — Use Claude Code to update `miscellaneous/tests/vscode/hello.py`:**
 
 Open the Claude Code panel in VSCode and send this prompt:
 
 ```text
-Update tests/vscode/hello.py to print:
+Update miscellaneous/tests/vscode/hello.py to print:
 hello, joesmith!
 where joesmith is your GitHub username
 ```
@@ -158,7 +163,7 @@ where joesmith is your GitHub username
 Claude should create or update the file. Run it to confirm:
 
 ```bash
-python3 tests/vscode/hello.py
+python3 miscellaneous/tests/vscode/hello.py
 ```
 
 Expected output: `hello, <your_github_username>!`
@@ -166,7 +171,7 @@ Expected output: `hello, <your_github_username>!`
 **Step 3 — Push the change to your personal branch:**
 
 In the Source Control panel:
-1. Stage `tests/vscode/hello.py` (click the `+` icon).
+1. Stage `miscellaneous/tests/vscode/hello.py` (click the `+` icon).
 2. Enter a commit message: `feat: add hello.py`
 3. Click **Commit**, then **Sync Changes** (push).
 
@@ -193,8 +198,8 @@ then run both scripts from inside Ubuntu:
 
 ```bash
 export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
-python3 setup/labsetup.py
-python3 setup/preflight_check.py
+python3 miscellaneous/setup/student/labsetup.py
+python3 miscellaneous/setup/student/preflight_check.py
 ```
 
 `labsetup.py` generates your SSH key pair, posts your public key
@@ -207,7 +212,7 @@ Every item in `preflight_check.py` output must show **PASS**.
 ## Additional Setups
 
 **ALL** the below setups are automatically effected when you
-ran the [lab setup script](setup/labsetup.py)
+ran the [lab setup script](miscellaneous/setup/student/labsetup.py)
 above.
 
 ### AI Local
@@ -222,7 +227,7 @@ Reference [Run Lab Setup Script](#run-lab-setup-script) -
 it installs Ollama automatically.
 
 To install manually, follow the guide for your OS:
-[Local AI Setup Guide](../tools/ollama/setup.md).
+[Local AI Setup Guide](../miscellaneous/tools/ollama/setup.md).
 
 #### Test
 
@@ -250,12 +255,12 @@ it creates the Python virtual environment, installs
 all dependencies, and registers the Jupyter kernel automatically.
 
 To set up manually, see
-[Python venv Setup](../tools/dev_workbench/venv.md).
+[Python venv Setup](../miscellaneous/tools/dev_workbench/venv.md).
 
 #### Test
 
 Verify the environment is ready — see the
-[Validation](../tools/dev_workbench/venv.md#validation)
+[Validation](../miscellaneous/tools/dev_workbench/venv.md#validation)
 section in the venv setup guide.
 
 ### PKM

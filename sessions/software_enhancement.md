@@ -76,7 +76,7 @@ Create test files that verify current behavior before any changes.
 " --allowedTools "Write,Bash" > /dev/null
 
 # Run tests to establish baseline
-python3 -m pytest tests/
+python3 -m pytest miscellaneous/tests/
 
 # Phase 4: Execute next phase, re-run tests, commit
 ```

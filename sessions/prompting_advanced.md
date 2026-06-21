@@ -72,7 +72,7 @@ pattern (e.g. "scope-bounding", "output-anchoring").
 `[PLACEHOLDER]` variables: broad enough to reuse across domains,
 specific enough to prevent the original failure mode.
 
-**CATALOG** — add to `prompts/skill.md` with four fields:
+**CATALOG** — add to `miscellaneous/prompts/skill.md` with four fields:
 - **Skill name** — a short descriptive label
 - **Description** — one sentence on what problem it solves
 - **Template** — the generalized prompt with `[PLACEHOLDER]` slots

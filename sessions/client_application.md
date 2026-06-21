@@ -2,7 +2,7 @@
 
 ## Tools
 
-* [Claude Desktop](../tools/claude/desktop.md)
+* [Claude Desktop](../miscellaneous/tools/claude/desktop.md)
 * [IDE - VSCode](https://code.visualstudio.com/)
 * [Python in VSCode](https://code.visualstudio.com/docs/languages/python)
 
@@ -61,7 +61,8 @@ Expected: `OK` and your message appears in `#meetup-notifications`.
 
 ### Step 1 — Read the Spec
 
-Open [`plans/specs/event_organizer.md`](../plans/specs/event_organizer.md).
+Open
+[`event_organizer.md`](../miscellaneous/plans/specs/event_organizer.md).
 Read the Component Contract and Data Model sections. You will
 implement exactly those interfaces — nothing more.
 
@@ -128,14 +129,14 @@ Attending: Alice, Bob, David
 
 ## Guardrails & Tokenomics
 
-* Reference [⚠️ Guardrails - CLI Agents](../tools/dev_workbench/provider_cost_control.md#cli-agents)
-* Reference [💰 Cost Control - API](../tools/dev_workbench/provider_cost_control.md#pay-per-use)
+* Reference [⚠️ Guardrails - CLI Agents](../miscellaneous/tools/dev_workbench/provider_cost_control.md#cli-agents)
+* Reference [💰 Cost Control - API](../miscellaneous/tools/dev_workbench/provider_cost_control.md#pay-per-use)
 
 ---
 
 ## Output
 
-* [Project Spec](../plans/specs/event_organizer.md)
+* [Project Spec](../miscellaneous/plans/specs/event_organizer.md)
 * [Notes](../learnings/session_notes/client_app.md)
 
 ---

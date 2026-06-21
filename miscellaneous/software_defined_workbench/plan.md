@@ -5642,7 +5642,7 @@ miscellaneous` -> 0 matches.
 
 ### Step 43.4: Update `sessions/*.md` and `.claude/commands/*.md`
 
-[ ] Status
+[x] Status
 
 CONTEXT: Several `sessions/*.md` files link into the moved
 directories (`setup/labsetup.py`, `preflight_check.py`,
