@@ -107,11 +107,10 @@ ai_workbench/
 
 | Artifact          | Location                                   |
 |-------------------|---------------------------------------------|
-| Best prompts      | `/miscellaneous/prompts/best.md`             |
-| Failed prompts    | `/miscellaneous/prompts/failures.md`         |
 | Project code      | `/projects/<project>/`                       |
-| Plan frameworks   | `/miscellaneous/plans/`                      |
 | Session notes     | `/miscellaneous/learnings/session-notes/`    |
+| Student setup     | `/miscellaneous/setup/student/`              |
+| Instructor setup  | `/miscellaneous/setup/instructor/`           |
 
 ---
 

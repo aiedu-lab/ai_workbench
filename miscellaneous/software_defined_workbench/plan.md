@@ -5849,7 +5849,7 @@ definition line, not a bare `SDW_DIR/...` reference.
 
 ### Step 44.4: Repoint "What Goes Where" table to setup dirs
 
-[ ] Status
+[x] Status
 
 CONTEXT: README.md "What Goes Where" table has `Best prompts`,
 `Failed prompts`, and `Plan frameworks` rows that are rarely
