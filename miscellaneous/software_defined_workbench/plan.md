@@ -5546,7 +5546,7 @@ provider:model used to generate this plan = Claude Code:claude-sonnet-4-6
 
 ### Step 43.1: Move directories under `miscellaneous/`, split `setup/`
 
-[ ] Status
+[x] Status
 
 CONTEXT: Repo root has `docs/`, `experimental/`, `learnings/`,
 `plans/`, `prompts/`, `sdw/`, `setup/`, `tests/`, `tools/` at top
