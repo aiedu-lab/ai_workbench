@@ -5784,7 +5784,7 @@ provider:model used to generate this plan = Claude Code:claude-sonnet-4-6
 
 ### Step 44.1: Fix "Repository Structure" tree readability
 
-[ ] Status
+[x] Status
 
 CONTEXT: README.md lines 84-100 ("Repository Structure") render
 as unfenced prose, collapsing all tree indentation; the section
