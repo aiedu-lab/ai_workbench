@@ -5615,7 +5615,7 @@ CLAUDE.md | grep -v miscellaneous` -> 0 matches.
 
 ### Step 43.3: Update `README.md`
 
-[ ] Status
+[x] Status
 
 CONTEXT: `README.md` references old paths in: the brand image
 (`docs/brand/aiedu-lab.png`), the Agenda table's tool

@@ -1,4 +1,4 @@
-# <img src="docs/brand/aiedu-lab.png" alt="aiedu-lab" width="32" valign="middle"> AI Workbench
+# <img src="miscellaneous/docs/brand/aiedu-lab.png" alt="aiedu-lab" width="32" valign="middle"> AI Workbench
 
 ## Objective
 A hands-on, community-driven program to learn about generative AI solutions, 
@@ -13,29 +13,29 @@ specific tool or concept.
 
 | Topic of Lesson | Description | Lesson Duration | Tool | Tool Duration |
 | :--- | :--- | :---: | :--- | :---: |
-| [**Why learn GenAI?**](sessions/motivation.md) | Understand why generative AI matters and what the AI Computer shift means for builders. | 30 mins | [Claude Chat](tools/claude/desktop.md) | |
-| [**Introduction**](sessions/introduction.md) | Orient to the course arc, tools, and the Group Meetup Organizer project thread. | 30 mins | [Claude Chat](tools/claude/desktop.md) |  |
-| [**Development Workbench Setup**](sessions/dev_workbench.md) | Install and verify WSL2/Dev Container, VSCode, and GitHub before lab day. | Before lab | [VM/WSL2/DevContainer](tools/VM/setup.md), [VSCode](tools/dev_workbench/vscode.md), [GitHub](tools/dev_workbench/github_and_git.md), [Claude](tools/claude/cloud.md), [Claude Code](tools/dev_workbench/vscode.md) | 30 mins |
+| [**Why learn GenAI?**](sessions/motivation.md) | Understand why generative AI matters and what the AI Computer shift means for builders. | 30 mins | [Claude Chat](miscellaneous/tools/claude/desktop.md) | |
+| [**Introduction**](sessions/introduction.md) | Orient to the course arc, tools, and the Group Meetup Organizer project thread. | 30 mins | [Claude Chat](miscellaneous/tools/claude/desktop.md) |  |
+| [**Development Workbench Setup**](sessions/dev_workbench.md) | Install and verify WSL2/Dev Container, VSCode, and GitHub before lab day. | Before lab | [VM/WSL2/DevContainer](miscellaneous/tools/VM/setup.md), [VSCode](miscellaneous/tools/dev_workbench/vscode.md), [GitHub](miscellaneous/tools/dev_workbench/github_and_git.md), [Claude](miscellaneous/tools/claude/cloud.md), [Claude Code](miscellaneous/tools/dev_workbench/vscode.md) | 30 mins |
 | [**Concept: Basic Prompting Techniques**](sessions/prompting_basics.md) | Learn the vocabulary and mental models for directing AI effectively. | 30 mins | [Browser Chat](https://gemini.google.com) |  |
 | [**Exercise: Problem Solving**](sessions/problem_solving.md) | Apply prompting to real problems and build a structured AI feedback loop. | 45 mins | [Browser Chat](https://gemini.google.com) |  |
-| [**Concept: Planning**](sessions/planning.md) | Draft, critique, and refine plans with AI — the foundation of spec-driven work. | 45 mins | [Claude Desktop (Chat)](tools/claude/desktop.md) | 15 mins |
+| [**Concept: Planning**](sessions/planning.md) | Draft, critique, and refine plans with AI — the foundation of spec-driven work. | 45 mins | [Claude Desktop (Chat)](miscellaneous/tools/claude/desktop.md) | 15 mins |
 | [**Exercise: Presentation & Design**](sessions/presentation_n_design.md) | Generate slide decks and visual designs with AI in minutes. | 60 mins | [Gamma](https://gamma.app/), [Claude Design](https://claude.ai/design) | 15 mins |
-| [**Exercise: Create/Run Web Site on Laptop/Lovable**](sessions/web_site.md) | Build and deploy a working web page using AI code generation. | 60 mins | [Lovable.dev](https://lovable.ai), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
-| [**Concept: Advanced Prompting Techniques**](sessions/prompting_advanced.md) | Master skills, few-shot examples, chain-of-thought, RAG, and agent patterns. | 90 mins | [Claude Chat](tools/claude/desktop.md) |  |
-| [**Concept: Human Driven Development**](sessions/hdd.md) | Human conceptualizes plan; AI executes detail. High-confidence pattern for high-penalty domains. | 30 mins | [Claude Code (CLI)](tools/claude/cli.md) | |
+| [**Exercise: Create/Run Web Site on Laptop/Lovable**](sessions/web_site.md) | Build and deploy a working web page using AI code generation. | 60 mins | [Lovable.dev](https://lovable.ai), [Claude Code (CLI)](miscellaneous/tools/claude/cli.md) | 15 mins |
+| [**Concept: Advanced Prompting Techniques**](sessions/prompting_advanced.md) | Master skills, few-shot examples, chain-of-thought, RAG, and agent patterns. | 90 mins | [Claude Chat](miscellaneous/tools/claude/desktop.md) |  |
+| [**Concept: Human Driven Development**](sessions/hdd.md) | Human conceptualizes plan; AI executes detail. High-confidence pattern for high-penalty domains. | 30 mins | [Claude Code (CLI)](miscellaneous/tools/claude/cli.md) | |
 | [**Exercise: Embeddings Visualization**](sessions/embedding.md) | Visualize word vectors: map, cluster, concept direction, similarity, and nearest-neighbor context with GloVe. | 40 mins | Python, GloVe | 10 mins |
-| [**Concept: Assistants and Agents**](sessions/assistants_agents.md) | See how an AI assistant (Claude Desktop, CLI, Codex) hosts agents that loop with an LLM and its tools to get work done. | 30 mins | [Claude Chat](tools/claude/desktop.md) |  |
-| [**Concept: Spec Driven Development (SDD)**](sessions/sdd_basics.md) | Write a specification first, then let AI generate matching code reliably. | 45 mins | [Claude Code (CLI)](tools/claude/cli.md) | |
-| [**Exercise: Create Group Meetup Organizer using SDD, App runs on Laptop**](sessions/client_application.md) | Implement the Poller → Selector → Notifier pipeline with AI-generated code. | 45 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) | 15 mins |
-| [**Concept: Code Review**](sessions/code_review.md) | Use AI to catch bugs, enforce style, and explain unfamiliar code. | 30 mins | [Claude Code (Pro)](tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) |  |
-| [**Concept: AI Across the SDLC**](sessions/sdlc_ai.md) | See how AI integrates across the entire software development lifecycle. | 45 mins | [Claude Code (CLI)](tools/claude/cli.md), GitHub Actions |  |
-| [**Exercise: Create/Run Agent App on Laptop**](sessions/client_agent.md) | Build a single-agent CoWork workflow that plans and executes file tasks. | 75 mins | [Claude CoWork](tools/claude/desktop.md) | 15 mins |
-| [**Exercise: Create/Run Multi-Agent Workflows on Laptop**](sessions/client_multiagent.md) | Coordinate specialized agents for problems no single agent handles reliably. | 60 mins | [Claude Code (CLI)](tools/claude/cli.md), [OpenAI Codex (CLI)](tools/openai/codex_cli.md) | 15 mins |
-| [**Exercise: Run Multi-Agent Workflows on Server**](sessions/server_multiagent.md) | Deploy a durable multi-agent system using Temporal on a shared server. | 60 mins | [OpenClaw](tools/openclaw/cli.md), [Temporal](tools/temporal/cli.md) | 15 mins |
-| [**Concept: Solution Architecture**](sessions/solution.md) | Design full-stack AI solutions using patterns learned across the lab. | 45 mins | [Claude Chat](tools/claude/desktop.md), Python |  |
-| [**Exercise: Personal Knowledge Management (LLM Wiki)**](sessions/llm_wiki.md) | Use an AI agent as librarian for a knowledge base that grows with each ingest. | 60 mins | [Obsidian](https://obsidian.md), [Claude Code (CLI)](tools/claude/cli.md) | 15 mins |
-| [**Exercise: Applications on Pluggable Models**](sessions/pluggable_models.md) | Swap LLM providers without changing code — compare open-weight and closed models side by side. | 45 mins | [Groq](tools/groq/setup.md), [OpenRouter](tools/openrouter/openrouter.md), [Cline](tools/dev_workbench/cline.md) | 15 mins |
-| [**Exercise: AI Local**](sessions/ai_local.md) | Run an LLM entirely offline for privacy, custom personas, and zero cloud cost. | 45 mins | [Ollama](tools/ollama/setup.md) | 15 mins |
+| [**Concept: Assistants and Agents**](sessions/assistants_agents.md) | See how an AI assistant (Claude Desktop, CLI, Codex) hosts agents that loop with an LLM and its tools to get work done. | 30 mins | [Claude Chat](miscellaneous/tools/claude/desktop.md) |  |
+| [**Concept: Spec Driven Development (SDD)**](sessions/sdd_basics.md) | Write a specification first, then let AI generate matching code reliably. | 45 mins | [Claude Code (CLI)](miscellaneous/tools/claude/cli.md) | |
+| [**Exercise: Create Group Meetup Organizer using SDD, App runs on Laptop**](sessions/client_application.md) | Implement the Poller → Selector → Notifier pipeline with AI-generated code. | 45 mins | [Claude Code (Pro)](miscellaneous/tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) | 15 mins |
+| [**Concept: Code Review**](sessions/code_review.md) | Use AI to catch bugs, enforce style, and explain unfamiliar code. | 30 mins | [Claude Code (Pro)](miscellaneous/tools/claude/desktop.md), [VSCode](https://code.visualstudio.com/) |  |
+| [**Concept: AI Across the SDLC**](sessions/sdlc_ai.md) | See how AI integrates across the entire software development lifecycle. | 45 mins | [Claude Code (CLI)](miscellaneous/tools/claude/cli.md), GitHub Actions |  |
+| [**Exercise: Create/Run Agent App on Laptop**](sessions/client_agent.md) | Build a single-agent CoWork workflow that plans and executes file tasks. | 75 mins | [Claude CoWork](miscellaneous/tools/claude/desktop.md) | 15 mins |
+| [**Exercise: Create/Run Multi-Agent Workflows on Laptop**](sessions/client_multiagent.md) | Coordinate specialized agents for problems no single agent handles reliably. | 60 mins | [Claude Code (CLI)](miscellaneous/tools/claude/cli.md), [OpenAI Codex (CLI)](miscellaneous/tools/openai/codex_cli.md) | 15 mins |
+| [**Exercise: Run Multi-Agent Workflows on Server**](sessions/server_multiagent.md) | Deploy a durable multi-agent system using Temporal on a shared server. | 60 mins | [OpenClaw](miscellaneous/tools/openclaw/cli.md), [Temporal](miscellaneous/tools/temporal/cli.md) | 15 mins |
+| [**Concept: Solution Architecture**](sessions/solution.md) | Design full-stack AI solutions using patterns learned across the lab. | 45 mins | [Claude Chat](miscellaneous/tools/claude/desktop.md), Python |  |
+| [**Exercise: Personal Knowledge Management (LLM Wiki)**](sessions/llm_wiki.md) | Use an AI agent as librarian for a knowledge base that grows with each ingest. | 60 mins | [Obsidian](https://obsidian.md), [Claude Code (CLI)](miscellaneous/tools/claude/cli.md) | 15 mins |
+| [**Exercise: Applications on Pluggable Models**](sessions/pluggable_models.md) | Swap LLM providers without changing code — compare open-weight and closed models side by side. | 45 mins | [Groq](miscellaneous/tools/groq/setup.md), [OpenRouter](miscellaneous/tools/openrouter/openrouter.md), [Cline](miscellaneous/tools/dev_workbench/cline.md) | 15 mins |
+| [**Exercise: AI Local**](sessions/ai_local.md) | Run an LLM entirely offline for privacy, custom personas, and zero cloud cost. | 45 mins | [Ollama](miscellaneous/tools/ollama/setup.md) | 15 mins |
 | [**Future Advancements**](sessions/future_advancements.md) | Survey the AI frontier and what it means for the tools you just built. | 30 mins |  |  |
 | [**Recap**](sessions/recap.md) | Reflect on what was built, what surprised you, and how to keep improving. | 30 mins |  |  |
 
@@ -64,7 +64,8 @@ For each session:
 7. **Notify** the instructor on Discord that you completed the
    session, and ask for PR feedback.
 
-See [GitHub and Git](tools/dev_workbench/github_and_git.md) for the
+See [GitHub and
+Git](miscellaneous/tools/dev_workbench/github_and_git.md) for the
 exact commands behind each step.
 
 ---
@@ -85,23 +86,30 @@ exact commands behind each step.
 ai-education-lab/
 │
 ├── sessions/ # Session-wise exercises and materials
-├── prompts/ # Prompt library (best, failures, templates)
 ├── projects/ # Generated apps and automation projects
-├── plans/ # plan.md templates and canonical examples
-├── learnings/ # Notes, reflections, and patterns
-└── tools/ # Setup guides and guardrails
+└── miscellaneous/
+    ├── prompts/ # Prompt library (best, failures, templates)
+    ├── plans/ # plan.md templates and canonical examples
+    ├── learnings/ # Notes, reflections, and patterns
+    ├── tools/ # Setup guides and guardrails
+    ├── software_defined_workbench/ # SDW plan + prompt history
+    ├── setup/student/ # Student lab setup scripts
+    ├── setup/instructor/ # Instructor preflight/roster instructions
+    ├── docs/ # Brand assets, archived phases
+    ├── experimental/ # Draft sessions not yet promoted
+    └── tests/ # Repo-level smoke tests
 
 ---
 
 ## 📚 What Goes Where
 
-| Artifact          | Location                      |
-|-------------------|-------------------------------|
-| Best prompts      | `/prompts/best.md`            |
-| Failed prompts    | `/prompts/failures.md`        |
-| Project code      | `/projects/<project>/`        |
-| Plan frameworks   | `/plans/`                     |
-| Session notes     | `/learnings/session-notes/`   |
+| Artifact          | Location                                   |
+|-------------------|---------------------------------------------|
+| Best prompts      | `/miscellaneous/prompts/best.md`             |
+| Failed prompts    | `/miscellaneous/prompts/failures.md`         |
+| Project code      | `/projects/<project>/`                       |
+| Plan frameworks   | `/miscellaneous/plans/`                      |
+| Session notes     | `/miscellaneous/learnings/session-notes/`    |
 
 ---
 
@@ -118,26 +126,30 @@ discord server, docker server, student laptops, etc.
 ### 🔧 Specification Driven Workbench (SDW)
 
 This repository is a **Specification Driven Workbench (SDW)**: all
-content changes flow from a written specification, never from direct
-edits. The specification plan (`sdw/plan.md`) is the single source
-of truth — it is append-only, never rewritten. AI executes each
-plan step under instructor review; the resulting content, plan
-entries, and prompt history are committed together, creating a full
-audit trail from intent to implementation.
+content changes flow from a written specification, never from
+direct edits. The specification plan
+(`miscellaneous/software_defined_workbench/plan.md`, hereafter
+`SDW_DIR/plan.md`) is the single source of truth — it is
+append-only, never rewritten. AI executes each plan step under
+instructor review; the resulting content, plan entries, and
+prompt history are committed together, creating a full audit
+trail from intent to implementation.
 
 > **In short:** prompt → plan → execute → review → commit.
 > No content is created outside the plan.
 
 ### Workbench Update Workflow
 
-All content changes must follow this sequence in strict order:
+All content changes must follow this sequence in strict order
+(`SDW_DIR` = `miscellaneous/software_defined_workbench`):
 
 1. **Specify** — append the new prompt to
-   `sdw/prompt_history.md`. The prompt directs AI to extend
-   `sdw/plan.md` with new phases or steps; never edit plan.md
-   directly.
-2. **Plan** — AI appends the new phase/steps to `sdw/plan.md`.
-   Both files are append-only and serve as the system of record.
+   `SDW_DIR/prompt_history.md`. The prompt directs AI to extend
+   `SDW_DIR/plan.md` with new phases or steps; never edit
+   plan.md directly.
+2. **Plan** — AI appends the new phase/steps to
+   `SDW_DIR/plan.md`. Both files are append-only and serve as
+   the system of record.
 3. **Execute** — AI executes each plan step one at a time under
    reviewer approval, following `CLAUDE.md` operating protocol.
 4. **Commit** — commit `prompt_history.md`, `plan.md`, and the
@@ -148,14 +160,15 @@ All content changes must follow this sequence in strict order:
    ```
 5. **PR & Review** — submit a pull request to `main`. The PR
    description must include:
-   * `provider:model` used to append changes to `sdw/plan.md`
+   * `provider:model` used to append changes to
+     `SDW_DIR/plan.md`
    * `provider:model` used to execute the plan and generate content
-   * Link to the executed section in `sdw/plan.md`
+   * Link to the executed section in `SDW_DIR/plan.md`
    Maintainers run AI-assisted style checks (80-col, 2-space
    indent) then review content before approving the merge.
 
 > **No direct content edits.** All changes originate in
-> `sdw/prompt_history.md` and flow through `sdw/plan.md`.
+> `SDW_DIR/prompt_history.md` and flow through `SDW_DIR/plan.md`.
 
 ### SDW Skills
 
@@ -165,8 +178,8 @@ opened in this repo.
 
 | Skill | Invocation | Purpose |
 |---|---|---|
-| `/replan` | `/replan` or `/replan <section>` | Run the full Specify→Plan→Approve→Execute cycle. Without argument, targets the last `## [ ]` section in `sdw/prompt_history.md`. With argument, targets the named section. |
-| `/plan-step` | `/plan-step [draft]` | Generate or validate a single plan step against the CONTEXT/ACTION/CONSTRAINTS/OUTPUT/TEST template before appending it to `sdw/plan.md`. |
+| `/replan` | `/replan` or `/replan <section>` | Run the full Specify→Plan→Approve→Execute cycle. Without argument, targets the last `## [ ]` section in `SDW_DIR/prompt_history.md`. With argument, targets the named section. |
+| `/plan-step` | `/plan-step [draft]` | Generate or validate a single plan step against the CONTEXT/ACTION/CONSTRAINTS/OUTPUT/TEST template before appending it to `SDW_DIR/plan.md`. |
 
 **Examples:**
 ```
