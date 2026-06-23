@@ -2734,3 +2734,102 @@ On the other hand, students use 'setup/student/' for setting up
 their machine/VM and environment. Similarly, instructors will use 
 'setup/instructor' for setting and validating student set up. 
 Add those references in the 'Artifact' table of 'What Goes Where'.
+
+---
+
+## Enhanced Speed Reading
+[ ] Status
+
+### Objective
+* Add sections on 'Vibe Agentic' and 'Dynamic Agenting' to 
+session 'LLM Wiki'.
+* Expand the exercises on session 'LLM Wiki' with the 
+subsection on 'Optional Extension - Speed Reading Mindmap' to
+elaborate and illustrate the 'Vibe Agenting' and 'Dynamic Agenting'
+concepts with corrresponding exercises
+
+Please review (and rephrase as appropriate) to incorporate the 
+below concept and exercises. 
+
+### Concept
+
+#### Vibe Agenting
+Here the LLM decides fully:
+* subagent creation - dynamically created on demand
+* subagent function allocation - dynamically determined
+
+The activation of LLM to 'vibe agent' is automatic and can be explicitly 
+triggerd by adding a high level prompt to the assistant asking to 
+"use subagents as needed to complete the task."
+
+#### Dynamic Agenting - Concept
+Here the subagent functionality is pre-determined based on 
+an already specified prompt that are passed to each subagent. 
+However, the number of subagents created for each subtask 
+is dynamically determined by the LLM.
+
+#### References 
+[Mohit Aron]
+
+
+### Exercise
+
+### Consolidate 'speed-reading' & 'speed-reading2'
+Reference:
+* projects/llm_wiki/speed-reading
+* projects/llm_wiki/speed-reading2
+
+Both runs a multi-agent solution to speed read books and
+create mind maps.
+
+However, speed-reading illustrates the concept of 'Static Agenting' whereas 
+speed-reading2 illustrates 'Vibe Agenting' and 'Dynamic Agenting'.
+
+Nonetheless, the agent definitions and template definitions may be
+such that both cases can be combined with the differences
+in 'static agentic' vs 'vibe agenting' vs 'dynamic agenting' could 
+just be differences in prompts to the 'AI assistant'.
+
+#### Identify Differences
+What are the differences in the agent 
+definitions as defined by the prompts in their
+respective 'agent/' folders?
+
+What are the differences in the templates
+that the agent references per the contents
+in their respective 'templates/' folders?
+
+#### Consolidation Plan
+Create a plan to consolidate the two directories if 
+the differences are minor or move both of them
+in the same 'speed-reading' folder but into 
+distinct subdirectories.
+
+Next we will add two exercises to illustrate
+'Vibe Agenting' and 'Dynamic Agentic'.
+
+### Vibe Agenting
+Prompt your AI assistant:
+```text
+```
+
+### Dynamic Agenting - 'Speed Reading' Exercise
+Prompt your AI assistant:
+```text
+1. Study the contents of speed_reading directory.
+2. Study a book-pdf placed in any directory
+3. Start drawing a mind map in that directory by descending into layer 1.
+4. Render the drawing built so far and based on choice you can 
+descend on a given layer 1 node or nodes to layer 2 and so on.
+```
+
+### Add Credits
+Reference:
+* sessions/hdd.md
+* sessions/assistants_agent.md
+* sessions/llm_wiki.md
+
+#### Credits
+* Add a 'References' section to llm_wiki. Add a reference stating 
+"Assistant, Agents, and Vibe & Dynamic Agenting" that hyperlinks to 
+https://drive.google.com/file/d/1BUnt-rTb0X1Nc93z6by6B5ndFViPu8IH/view?usp=sharing
