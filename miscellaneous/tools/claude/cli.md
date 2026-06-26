@@ -39,48 +39,80 @@ source ~/.bashrc
 ```
 #### Convenience functions to switch modes
 
-Claude Code supports two authentication modes, selected by
-environment variables. `CLAUDE_CODE_OAUTH_TOKEN` (Pro/Max
-subscription) takes precedence over `ANTHROPIC_API_KEY`
-(pay-as-you-go) when both are set; unset the token to fall
-back to the API key.
+Claude Code supports three authentication modes, selected by
+environment variables.
 
 Add to `~/.bashrc`:
 
 ```bash
-# MY_CLAUDE_CODE_OAUTH_TOKEN is the Pro/Max subscription token
-# MY_ANTHROPIC_API_KEY is the pay-as-you-go API key
-
+#
+# Credentials and entitlements depends on from where it was picked -
+# 1) ~/.credentials/.credentials.json - personal user agent case
+# 2) MY_CLAUDE_CODE_OAUTH_TOKEN - headless use - subscription mode inferencing
+# 3) MY_ANTHROPIC_API_KEY - pay-as-you-go API key
+#
+#
+# By default Do NOT enable either API KEY (PAYG) or OAUTH TOKEN
+#
+# $HOME/.claude/.credentials.json is for interactive human
+# use on a persistent machine;
+#
+# Whereas CLAUDE_CODE_OAUTH_TOKEN is for automated/headless use
+# where you accept the inference-only tradeoff in exchange
+# for portability.
+#
+# Enable OAUTH TOKEN only when using headless mode
+# Enable API KEY only when you have exhausted subscription mode
+# and want to continue until tokens are refreshed
+#
+# Convenience functions to switch claude modes:
+#
+# Long lived oAuth Token - Subscription
 claude-subscribe() {
   unset ANTHROPIC_API_KEY
   export CLAUDE_CODE_OAUTH_TOKEN="$MY_CLAUDE_CODE_OAUTH_TOKEN"
-  echo "claude set to - $(claude auth status --text) - mode"
+  claude auth logout && claude auth login
+  echo "claude set to - `claude auth status --text` - mode"
+  # shows: 'Auth token: CLAUDE_CODE_OAUTH_TOKEN'
 }
+# API Key - PAYG
 claude-api() {
   unset CLAUDE_CODE_OAUTH_TOKEN
   export ANTHROPIC_API_KEY="$MY_ANTHROPIC_API_KEY"
-  echo "claude set to - $(claude auth status --text) - mode"
+  claude auth logout && claude auth login
+  echo "claude set to - `claude auth status --text` - mode"
+  # first line shows: 'API key: /login managed key'
 }
-
-# Default to subscription mode — OAuth token takes precedence
-# when both are set
-export CLAUDE_CODE_OAUTH_TOKEN="$MY_CLAUDE_CODE_OAUTH_TOKEN"
+# Auth picked up from Local Credentials that is set by last
+# `claude auth login` mode
+# Default Mode is Local
+claude-local() {
+  unset CLAUDE_CODE_OAUTH_TOKEN && unset ANTHROPIC_API_KEY
+  claude auth logout && claude auth login
+  echo "claude set to - `claude auth status --text` - mode"
+  # first line shows: 'Login method: Claude Pro/Max account'
+}
 ```
 
 #### Validation
 
 ```bash
+echo "Initial claude code mode"
+claude auth status --text
+
 echo "Switching claude code to API PAYG mode"
 # must print api key (not empty)
 claude-api && \
-echo "ANTHROPIC_API_KEY is \"$ANTHROPIC_API_KEY\""
+  echo "ANTHROPIC_API_KEY is \"$ANTHROPIC_API_KEY\"" && \
+  claude auth status --text
 
 echo "Switching claude code to OAUTH Subscription mode"
 # must print auth token (not empty)
 claude-subscribe && \
-  echo "CLAUDE_CODE_OAUTH_TOKEN is \"$CLAUDE_CODE_OAUTH_TOKEN\"" 
+  echo "CLAUDE_CODE_OAUTH_TOKEN is \"$CLAUDE_CODE_OAUTH_TOKEN\"" && \
+  claude auth status --text
 
-echo "Final claude code mode"
+echo "Initial claude code mode"
 claude auth status --text
 ```
 

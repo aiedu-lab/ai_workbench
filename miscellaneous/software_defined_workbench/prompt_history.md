@@ -2740,18 +2740,53 @@ Add those references in the 'Artifact' table of 'What Goes Where'.
 ## Enhanced Speed Reading
 [ ] Status
 
-### Objective
-* Add sections on 'Vibe Agentic' and 'Dynamic Agenting' to 
-session 'LLM Wiki'.
-* Expand the exercises on session 'LLM Wiki' with the 
-subsection on 'Optional Extension - Speed Reading Mindmap' to
-elaborate and illustrate the 'Vibe Agenting' and 'Dynamic Agenting'
-concepts with corrresponding exercises
+### Clean up Anthropic Auth
+Reference:
+* `miscellaneous/tools/claude/cloud.md`
+* `miscellaneous/tools/claude/cli.md`
+* `$HOME/.claude/.credentials.json`
 
-Please review (and rephrase as appropriate) to incorporate the 
+Note `$HOME/.claude/.credentials.json` is for interactive human use 
+on a persistent machine whereas CLAUDE_CODE_OAUTH_TOKEN is for 
+automated/headless use where you accept the inference-only tradeoff 
+in exchange for portability.
+
+Hence, I made changes to `cloud.md` and `cli.md`.
+
+Validate:
+* `miscellaneous/tools/claude/cloud.md` does not set API KEY or OAUTH TOKEN
+* `miscellaneous/tools/claude/cli.md` does not set API KEY or OAUTH TOKEN
+* `$HOME/.claude/.credentials.json` is used for authenticating.
+
+### Objective
+
+* assistants_agents.md was renamed to assistant-family_assistant_and_agent.md
+  Review the rewording of the file, validate correctness, add the examples. Edit
+  as appropriate for clarity and simplicity.
+
+* Expand the concept and exercises sections on 'Vibe Agentic' and 
+  'Dynamic Agenting' to session 'LLM Wiki' per sections below.
+  * Expand the exercises on session 'LLM Wiki' with the 
+    subsection on 'Optional Extension - Speed Reading Mindmap' to
+    elaborate and illustrate the 'Vibe Agenting' and 'Dynamic Agenting'
+    concepts with corrresponding exercises per guidelines below.
+
+To elaborate, review (and rephrase as appropriate) to incorporate the 
 below concept and exercises. 
 
 ### Concept
+
+#### Static Agenting - Concept
+Here the LLM is used to execute the specifications defined 
+for each agent. That is the allocation of function to an agent 
+is static - agent type. The number of 'Child Agents' spawned 
+by the 'Coordinating Agent' is also per the specification.
+
+#### Dynamic Agenting - Concept
+Here the subagent functionality is pre-determined based on 
+an already specified prompt that are passed to each subagent. 
+However, the number of subagents created for each subtask 
+is dynamically determined by the LLM.
 
 #### Vibe Agenting
 Here the LLM decides fully:
@@ -2762,56 +2797,41 @@ The activation of LLM to 'vibe agent' is automatic and can be explicitly
 triggerd by adding a high level prompt to the assistant asking to 
 "use subagents as needed to complete the task."
 
-#### Dynamic Agenting - Concept
-Here the subagent functionality is pre-determined based on 
-an already specified prompt that are passed to each subagent. 
-However, the number of subagents created for each subtask 
-is dynamically determined by the LLM.
-
-#### References 
-[Mohit Aron]
-
-
 ### Exercise
 
-### Consolidate 'speed-reading' & 'speed-reading2'
+#### Static Agenting - Exercise
 Reference:
 * projects/llm_wiki/speed-reading
-* projects/llm_wiki/speed-reading2
 
-Both runs a multi-agent solution to speed read books and
-create mind maps.
+Current exercise content illustrates and only focuses on the concept 
+of 'Static Agenting' where the agent functions are determined per the 
+markdown descriptions of each agent in 
+projects/llm_wiki/speed-reading/agents.
 
-However, speed-reading illustrates the concept of 'Static Agenting' whereas 
-speed-reading2 illustrates 'Vibe Agenting' and 'Dynamic Agenting'.
+##### Reorganize examples
 
-Nonetheless, the agent definitions and template definitions may be
-such that both cases can be combined with the differences
-in 'static agentic' vs 'vibe agenting' vs 'dynamic agenting' could 
-just be differences in prompts to the 'AI assistant'.
+Create sub-directories:
+* static_agenting
+* dynamic_agenting
+* vibe_agenting
 
-#### Identify Differences
-What are the differences in the agent 
-definitions as defined by the prompts in their
-respective 'agent/' folders?
+The contents/ folder will be shared by the static_agenting,
+dynamic_agenting, and vibe_agenting exercises.
 
-What are the differences in the templates
-that the agent references per the contents
-in their respective 'templates/' folders?
+Move the read-list.md and the mindmap html files to static_agenting. 
 
-#### Consolidation Plan
-Create a plan to consolidate the two directories if 
-the differences are minor or move both of them
-in the same 'speed-reading' folder but into 
-distinct subdirectories.
+##### Update Exercise
 
-Next we will add two exercises to illustrate
-'Vibe Agenting' and 'Dynamic Agentic'.
+1. Modify the piper.py script in source to accept two optional arguments:
+* --from-node 'node-name' - node from where we descend; when no argument is 
+specified we assume it is start from root.
+* --level <int> - the level number that we descend from that node; when
+no argument is specified we descend down to all levels from that node.
 
-### Vibe Agenting
-Prompt your AI assistant:
-```text
-```
+2. Update README.md that is completely focused on 'Static Agenting' to have 
+three sections, one each for the different kinds of agenting.
+* Modify the exercise section to only descend till level 1 from root.
+
 
 ### Dynamic Agenting - 'Speed Reading' Exercise
 Prompt your AI assistant:
@@ -2821,6 +2841,15 @@ Prompt your AI assistant:
 3. Start drawing a mind map in that directory by descending into layer 1.
 4. Render the drawing built so far and based on choice you can 
 descend on a given layer 1 node or nodes to layer 2 and so on.
+```
+
+
+### Vibe Agenting - Exercise
+
+
+
+Prompt your AI assistant:
+```text
 ```
 
 ### Add Credits

@@ -43,16 +43,22 @@ for any lab work.
 
 ## Disable Claude Connectors
 
-Claude Connectors let claude.ai silently attach MCP servers to
-every conversation, consuming context and token budget without
-explanation. Disable them before using any lab tool.
+Claude Connectors let claude.ai silently syncs skills and
+connectors. Thus, those MCP servers are attached to every conversation, 
+consuming context and token budget without explanation. This is enabled
+by default. Thus DISABLE them before using any lab tool.
 
-1. Set the environment variable: `ENABLE_CLAUDEAI_MCP_SERVERS=false`.
-2. Add it to `~/.bashrc` so it persists across sessions (the lab's
-   dev container is Linux-based and always sources `~/.bashrc`).
-
-**Validation:** `echo $ENABLE_CLAUDEAI_MCP_SERVERS` → expect
-`false`.
+1. `unset ENABLE_CLAUDEAI_MCP_SERVERS && claude mcp list` → 
+   expect list of 'skills & connectors' that you've set locally 
+   AND those you have set up in claude.ai cloud account
+2. Set the environment variable: `ENABLE_CLAUDEAI_MCP_SERVERS=false`.
+   and add it to `~/.bashrc` so it persists across sessions 
+   (lab's WSL/dev container is Linux and always sources `~/.bashrc`).
+```bash
+echo "ENABLE_CLAUDEAI_MCP_SERVERS=false" >> ~/.bashrc
+```
+3. Validation `echo $ENABLE_CLAUDEAI_MCP_SERVERS` → expect `false`
+   `claude mcp list` → expect only locally set up 'skills & connectors'.
 
 ---
 
@@ -66,7 +72,7 @@ and any Python/Node code that uses the Anthropic SDK.
 3. Navigate to **Settings → API Keys → Create Key**.
 4. Name the key (e.g. `ai-lab-key`) and copy it — it is shown
    only once.
-5. Reference [set `ANTHROPIC_API_KEY` in environment variable](
+5. Reference [set `MY_ANTHROPIC_API_KEY` in environment variable](
    cli.md#api-key-mode) so every tool can find it without hardcoding.
 
 > **Do NOT share or commit your API key.** If it is ever exposed,
