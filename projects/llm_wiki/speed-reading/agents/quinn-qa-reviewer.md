@@ -14,6 +14,8 @@ Purpose: inspect the rendered mind map and identify readability or hierarchy fai
 
 ## Responsibilities
 - Review screenshots or browser renders.
+- Review both a full-map view and a zoomed-in dense-branch view whenever the map
+  includes Layer 2+ detail.
 - Report collisions, clutter, weak hierarchy, or excessive detail.
 - Explicitly check for edge routing failures, not just general readability.
 - Explicitly check for any visible node-oval overlap, not just same-depth overlap.
@@ -24,7 +26,7 @@ Purpose: inspect the rendered mind map and identify readability or hierarchy fai
 - **Hierarchy Consolidation**: Flag any parent node (Branch or Anchor) that has more than **5-6 direct children**. Recommend introducing a "synthetic grouping layer" to move children deeper and preserve the radial spine's clarity.
 - Flag when useful detail is missing and should be restored in `detailed-notes.md` rather than the map.
 - **Verify portability**: Ensure `mindmap.html` correctly handles `file://` access by checking for the presence of the data fallback logic.
-- **Compliance Pass: Color Palette**: Explicitly verify that the node/edge colors for Layers 0–6 match the official hex codes in `ai-mindmap.md` (e.g., Layer 4 MUST be Red `#e74c3c`).
+- **Compliance Pass: Color Palette**: Explicitly verify that the node/edge colors for Layers 0–6 match the official hex codes in `ai-mindmap.md` (e.g., Layer 4 MUST be Red `#ff1744`).
 - Treat your routing review as **secondary visual QA**, not as the sole proof that no crossings exist.
 
 ## Output Targets
@@ -45,6 +47,8 @@ Purpose: inspect the rendered mind map and identify readability or hierarchy fai
 - `Render Path Honest`
   - Does the page clearly state whether it rendered from external JSON or inline fallback?
   - If the visible source/status signal is missing or misleading, fail.
+- `Render Actually Initialized`
+  - If the browser shows only background chrome, placeholder validation text, or a partial shell without the actual graph, fail.
 - `Manifest Matches Requested Scope`
   - If the task says Layer 1 only, only Layer 1 should be rendered.
   - If the task says a deeper layer is included, the visible render must include exactly that requested depth.
@@ -159,3 +163,8 @@ Purpose: inspect the rendered mind map and identify readability or hierarchy fai
 - High: any visible node-oval overlap, edge-edge crossing, edge-node crossing, unreadable routing, or branch structure failure.
 - Medium: too many nodes, weak emphasis, poor density.
 - Low: cosmetic inconsistency, minor spacing polish.
+
+## Review Procedure
+- Screenshot review is visual QA, not sole proof of routing correctness.
+- If the renderer or main agent reports a geometry-aware validation failure, do not approve even if the screenshot looks mostly acceptable.
+- If a problem appears only in the zoomed-in branch inspection, it is still a real failure.

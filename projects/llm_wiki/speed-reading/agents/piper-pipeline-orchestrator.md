@@ -1,12 +1,6 @@
 # Piper: Pipeline Orchestrator
 
-> **Implementation**: `src/piper.py` is the concrete
-> implementation of this doctrine. The coordination rules,
-> agent sequencing, retry policy, and Sentinel verification
-> described here are all realised in that script.
-
-Purpose: coordinate the workflow across specialized agents
-without mixing responsibilities.
+Purpose: coordinate the workflow across specialized agents without mixing responsibilities.
 
 ## Standard Pipeline
 1. Reader or summarizer updates `detailed-notes.md` from the source material.
@@ -15,6 +9,11 @@ without mixing responsibilities.
 4. Quinn inspects the result and reports issues.
 5. Piper independently double-checks any Quinn approval against the actual rendered artifact.
 6. Only genuine cross-book doctrine changes go into `ai-mindmap.md`.
+
+## Role Boundary
+- Treat `ai-mindmap.md` as shared doctrine only.
+- Keep role-owned execution guidance in the agent files.
+- If a new rule is only about how one role should work, put it in that role's file rather than in `ai-mindmap.md`.
 
 For Layer 1 review passes:
 1. Build the full Layer 1 skeleton first.
@@ -42,8 +41,11 @@ For deeper-layer review passes:
 - When the renderer supports both external JSON and embedded `file://` fallback data,
   explicitly verify which source the browser is using before concluding that a content
   or layout change took effect.
+- Require the fallback data and external JSON to stay synchronized before sending a
+  render to QA.
 - If a worker changes layout/config semantics, verify the render path end-to-end before
   handing the result to QA. Do not send Quinn an empty or partially failed render.
+- Treat renderer startup failure as a blocking pipeline failure, not a partial pass.
 - Quinn approval is provisional until Piper has independently reviewed the same render.
 - If Piper sees any visible failure that Quinn missed, Piper must overrule the approval,
   send the work back for fixes, and keep the pass in `NOT APPROVED` status.
@@ -56,3 +58,6 @@ For deeper-layer review passes:
   baseline before attempting more elaborate routing.
 - Apply the same rule in deeper layers: if custom routing makes ownership or
   readability worse, revert to the simpler native vis-network path first.
+- The final approval gate requires both:
+  - a geometry-aware validation pass
+  - a real-browser visual review
