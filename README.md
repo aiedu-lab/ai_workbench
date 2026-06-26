@@ -1,4 +1,4 @@
-# <img src="miscellaneous/docs/brand/aiedu-lab.png" alt="aiedu-lab" width="32" valign="middle"> AI Workbench
+# <img src="miscellaneous/docs/images/aiedu-lab.png" alt="aiedu-lab" width="32" valign="middle"> AI Workbench
 
 ## Objective
 A hands-on, community-driven program to learn about generative AI solutions, 
