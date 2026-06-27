@@ -2747,13 +2747,14 @@ Reference:
 * `$HOME/.claude/.credentials.json`
 
 Note `$HOME/.claude/.credentials.json` is for interactive human use 
-on a persistent machine whereas CLAUDE_CODE_OAUTH_TOKEN is for 
-automated/headless use where you accept the inference-only tradeoff 
-in exchange for portability.
+on a client laptop (personal device) whereas CLAUDE_CODE_OAUTH_TOKEN 
+is for automated/headless use (CI/CD job, container service) where you 
+accept that we are using for inference trading it off in exchange for 
+portability.
 
 Hence, I made changes to `cloud.md` and `cli.md`.
 
-Validate:
+Validate that the isntructions are consistent in the files AND that:
 * `miscellaneous/tools/claude/cloud.md` does not set API KEY or OAUTH TOKEN
 * `miscellaneous/tools/claude/cli.md` does not set API KEY or OAUTH TOKEN
 * `$HOME/.claude/.credentials.json` is used for authenticating.
@@ -2766,15 +2767,24 @@ Validate:
 
 * Expand the concept and exercises sections on 'Vibe Agentic' and 
   'Dynamic Agenting' to session 'LLM Wiki' per sections below.
-  * Expand the exercises on session 'LLM Wiki' with the 
-    subsection on 'Optional Extension - Speed Reading Mindmap' to
-    elaborate and illustrate the 'Vibe Agenting' and 'Dynamic Agenting'
-    concepts with corrresponding exercises per guidelines below.
+
+* Expand the exercises on session 'LLM Wiki' with the 
+  subsection on 'Optional Extension - Speed Reading Mindmap' to
+  elaborate and illustrate the 'Vibe Agenting' and 'Dynamic Agenting'
+  concepts with corrresponding exercises per guidelines below.
 
 To elaborate, review (and rephrase as appropriate) to incorporate the 
 below concept and exercises. 
 
 ### Concept
+
+#### Vibe Agenting - Concept
+Here the LLM decides fully:
+* subagent creation - dynamically created on demand
+* subagent function allocation - dynamically determined
+
+The activation of LLM to 'vibe agent' is automatic and can be explicitly 
+triggerd by adding a high level prompt to the assistant.
 
 #### Static Agenting - Concept
 Here the LLM is used to execute the specifications defined 
@@ -2788,37 +2798,130 @@ an already specified prompt that are passed to each subagent.
 However, the number of subagents created for each subtask 
 is dynamically determined by the LLM.
 
-#### Vibe Agenting
-Here the LLM decides fully:
-* subagent creation - dynamically created on demand
-* subagent function allocation - dynamically determined
-
-The activation of LLM to 'vibe agent' is automatic and can be explicitly 
-triggerd by adding a high level prompt to the assistant asking to 
-"use subagents as needed to complete the task."
-
 ### Exercise
 
+#### Reorganize
+
+I've already done the following:
+
+1. Created sub-directories inside 'projects/llm_wiki/speed-reading' dir:
+* static: all the files (except README.md) that was previously in 
+ 'speed-reading' has been moved to that dir except README.md
+* dynamic: 
+* vibe: soft link ai-mindmap.md, speed-reading.md, and templates
+  in that directory.
+
+2. Moved the contents (webpage and PDF files) to 
+   'projects/llm_wiki/speed-reading' directory.
+
+Note that the contents/ folder will be shared by the static, dynamic, 
+and vibe agenting exercises.
+
+
+### Vibe Agenting - Exercise
+
+Prompt your AI assistant:
+```text
+Study the contents of speed_reading directory.
+Study a book-pdf placed in any directory
+Start drawing a mind map in that directory by descending into layer 1.
+Render the drawing built so far and based on choice you can 
+descend on a given layer 1 node or nodes to layer 2 and so on.
+```
+
+
+### Dynamic Agenting - 'Speed Reading' Exercise
+
+This is an exercise similar to 'vibe agenting' except that the 
+agent work for a given agent is decided statically ie the prompt
+that decides functionality of a given agents (what an agent 
+does) is 'pinned' using the corresponding md file. 
+
+Reference 'projects/llm_wiki/speed-reading/dynamic/' directory
+
+1. Ensure that only following files are visible to the assistant:
+
+* ai-mindmap.md
+* speed-reading.md
+* templates/
+
+Specifically the agents directory should NOT be visible as we 
+want claude to do vibe agenting, where we ask AI to create the
+Child or Specialist agents based on functions it wants these
+Specialists to run as well as when to create these agents.
+ 
+2. Run the 'Claude CLI' inside the 'dynamic' dir.
+
+* In the interest of speed, convenience, and to save yourself 
+the pain of approving permissions everytime claude runs a 
+command, grant 'full access' by run `/permissions` 
+so that it does not ask you again and again when running 
+various commands.
+
+* Prompt 'Claude CLI' assistant to create an agent 'plan':
+
+```text
+Study the speed reading system in the current directory. 
+
+You be the Orchestrator agent.
+Suggest what specialized subagents we create to do the work 
+by creating additional subagents. 
+In addition, ensure you create a QA subagent to validate 
+the work created.
+
+Create an agents sub directory in the subdirectory 
+"examples/.tmp/" and make md files for each of these 
+sub agents inside the "examples/.tmp/agents" subdirectory.
+```
+
+3. Exit the 'Claude CLI' session to start afresh again in the 
+'dynamic' directory. 
+
+* The objective is to demonstrate how the agent mindmap
+artifact definitions are read and then those agents
+run to create a mindmap.
+
+* Prompt 'Claude CLI' assistant:
+```text
+Study the material in the current directory.
+
+Read the book that is in the examples/ subdirectory.
+
+Create subagents corresponding to the information in 
+"examples/.tmp/agents" subdirectory while you be the 
+orchestrator.
+
+Produce the mindmap html in the examples/ subdirectory. 
+
+Create any intermediate artifacts, such as json, md, 
+logs, jsonl, etc. files in examples/.tmp subdirectory.  
+
+Descend only into layer 1.
+```
+
+4. You can exit a 'Claude CLI' session (Ctrl-C) and 
+'resume' the last session: `claude --resume`
+
+5. View the mindmap.html in the browser as it builds
+over time.
+
+6. Review the layer-1 mindmap and then expand the 
+map from a specific node(s) of your choice.
+
+Replace <name> with the name of any specific node 
+where you'd like to descend and build mindmap. 
+```text
+Descend into layer2 for the node <name>
+```
+
+
 #### Static Agenting - Exercise
-Reference:
-* projects/llm_wiki/speed-reading
+Reference: 'projects/llm_wiki/speed-reading' dir
 
 Current exercise content illustrates and only focuses on the concept 
 of 'Static Agenting' where the agent functions are determined per the 
 markdown descriptions of each agent in 
 projects/llm_wiki/speed-reading/agents.
-
-##### Reorganize examples
-
-Create sub-directories:
-* static_agenting
-* dynamic_agenting
-* vibe_agenting
-
-The contents/ folder will be shared by the static_agenting,
-dynamic_agenting, and vibe_agenting exercises.
-
-Move the read-list.md and the mindmap html files to static_agenting. 
 
 ##### Update Exercise
 
@@ -2831,26 +2934,6 @@ no argument is specified we descend down to all levels from that node.
 2. Update README.md that is completely focused on 'Static Agenting' to have 
 three sections, one each for the different kinds of agenting.
 * Modify the exercise section to only descend till level 1 from root.
-
-
-### Dynamic Agenting - 'Speed Reading' Exercise
-Prompt your AI assistant:
-```text
-1. Study the contents of speed_reading directory.
-2. Study a book-pdf placed in any directory
-3. Start drawing a mind map in that directory by descending into layer 1.
-4. Render the drawing built so far and based on choice you can 
-descend on a given layer 1 node or nodes to layer 2 and so on.
-```
-
-
-### Vibe Agenting - Exercise
-
-
-
-Prompt your AI assistant:
-```text
-```
 
 ### Add Credits
 Reference:
