@@ -2737,10 +2737,43 @@ Add those references in the 'Artifact' table of 'What Goes Where'.
 
 ---
 
-## Enhanced Speed Reading
+## Enhancing Sessions
 [ ] Status
 
-### Clean up Anthropic Auth
+### Update Assistant Family, Assistant, Agents
+Reference 
+* `sessions/assistant-family_assistant_and_agent.md`
+* `miscellaneous/experimental/docs/agent_loop.md`
+
+#### Add agent loop visual 
+
+Enhance section `### 🔹 Layer 1: The **Agent** — does *one* job well` of 
+`assistant-family_assistant_and_agent.md`: 
+
+* Picturize an ascii art the agent that accepts a 'task' and then executes 
+'three nested loops' with description as laid out below:
+
+```text
+The clean mental model: **a skill is a *procedure* (possibly complex, possibly with embedded code and conditional logic) that runs in your context; a subagent is a *delegated reasoner* with its own context and its own loop.** If the work is "follow these steps," a skill suffices. If the work is "go figure this out, I don't want to watch you think, just give me the answer" — that's a subagent, and the value is the isolation, not anything the steps couldn't technically express.
+
+A useful unifying picture: there are **three nested loops** — the outer agent loop (LLM-driven, dynamic, conditional), skills as **fixed sub-programs** that run beneath a single step of it, and subagents as **entire nested copies** of the outer loop with their own context. Your instinct to collapse everything into "one agent + skills" is architecturally coherent for *procedural* work; it breaks specifically where you need **isolated reasoning contexts**, which is a property of the runtime, not of what the steps can express.
+
+- But the **subagent (the runtime construct)** is a place the harness can *attach* a distinct permission boundary. The parent might have filesystem-write; the subagent it spawns is configured by the harness with read-only.
+
+A skill, by contrast, **executes within the parent's runtime and therefore under the parent's permission set** — it has no separate enforcement boundary the harness can independently scope. So "different tool permissions" is correctly stated as: *the harness can enforce a different permission scope on a subagent's context than on the parent's*, because the subagent is a separate runtime construct. It was never a property of the LLM. Your correction stands; the capability lives in the harness binding policy to context, not in the model.
+
+A subagent boundary is *also* a permission boundary the harness controls — which is exactly why "subagent as isolated context" and "least-privilege enforcement" are deeply related. The isolation that gives you the context firewall is the *same* isolation that gives the harness a clean seam to attach a tighter credential scope. One mechanism, two payoffs.
+```
+
+* Add a subsection on subagent as a context firewall with its own set of 
+scoped permissions as handed out by the parent agent's harness instance as 
+called out by referenced `agent_loop.md`
+ 
+* Add a subsection on skills as a 'fixed sub-program' but within the 
+context of the agent and within the scope of permissions of the agent harness 
+as called out by referenced `agent_loop.md`
+
+### Update Anthropic Auth
 Reference:
 * `miscellaneous/tools/claude/cloud.md`
 * `miscellaneous/tools/claude/cli.md`
@@ -2817,7 +2850,6 @@ I've already done the following:
 Note that the contents/ folder will be shared by the static, dynamic, 
 and vibe agenting exercises.
 
-
 ### Vibe Agenting - Exercise
 
 Prompt your AI assistant:
@@ -2828,7 +2860,6 @@ Start drawing a mind map in that directory by descending into layer 1.
 Render the drawing built so far and based on choice you can 
 descend on a given layer 1 node or nodes to layer 2 and so on.
 ```
-
 
 ### Dynamic Agenting - 'Speed Reading' Exercise
 
@@ -2914,7 +2945,6 @@ where you'd like to descend and build mindmap.
 Descend into layer2 for the node <name>
 ```
 
-
 #### Static Agenting - Exercise
 Reference: 'projects/llm_wiki/speed-reading' dir
 
@@ -2934,6 +2964,17 @@ no argument is specified we descend down to all levels from that node.
 2. Update README.md that is completely focused on 'Static Agenting' to have 
 three sections, one each for the different kinds of agenting.
 * Modify the exercise section to only descend till level 1 from root.
+
+### Validation
+* README.md in each subdirectory of 
+'projects/llm_wiki/speed-reading/', namely vibe, dynamic, static correctly 
+captures the purpose and how to execute 'vibe agenting', 'dynamic agenting'
+and 'static agenting' respectively. 
+* README.md in 'projects/llm_wiki/speed-reading/README.md'
+* 'projects/llm_wiki/speed-reading/static' contents was formerly directly 
+under 'projects/llm_wiki/speed-reading/'. This reorganization may have
+broken the code in src and references in the various directories. Please 
+review, validate, and re-reference cross links across files.
 
 ### Add Credits
 Reference:
