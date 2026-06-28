@@ -442,3 +442,34 @@ Validate student platform before the lab:
 uname -a   # must show Linux
 python3 --version  # must be >= 3.10
 ```
+
+---
+
+## Teaching Philosophy
+
+Each lesson follows the same structure:
+
+1. **Start with a real-world problem.**
+2. **Explain why the problem is difficult.**
+3. **Introduce the mathematical idea that solves it.**
+4. **Visualize the concept whenever possible.**
+5. **Connect it to modern AI.**
+
+### Linear Algebra
+
+**Reinforce the idea with a short NumPy/PyTorch exercise.**
+
+#### Learning Outcomes
+
+By the end of this session, students should be able to explain:
+
+* What a machine learning model is and how it differs from a traditional program.
+* Why vectors are an effective representation of information.
+* Why embeddings capture semantic similarity.
+* Why cosine similarity is widely used.
+* Why a neural network layer is a matrix transformation.
+* Why inference consists primarily of repeated matrix multiplication and nonlinear activation functions.
+* Why backpropagation computes gradients efficiently.
+* Why GPUs and TPUs are optimized for matrix operations.
+* How these concepts prepare them for the mathematics presented in Gilbert Strang's lectures and the geometric intuition developed in 3Blue1Brown's *Essence of Linear Algebra*.
+
