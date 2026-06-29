@@ -2812,24 +2812,55 @@ below concept and exercises.
 ### Concept
 
 #### Vibe Agenting - Concept
-Here the LLM decides fully:
-* subagent creation - dynamically created on demand
-* subagent function allocation - dynamically determined
+
+The model/LLM of the coordinator decides fully on subagents:
+* when are they created - dynamically created on demand
+* what is the function - dynamically determined
+* what is the permission boundary - usualy downscoped from 
+  parent scope but not explicitly managed via declaration file.
+* observability, tracing, and lifecycle is managed by parent harness
 
 The activation of LLM to 'vibe agent' is automatic and can be explicitly 
-triggerd by adding a high level prompt to the assistant.
-
-#### Static Agenting - Concept
-Here the LLM is used to execute the specifications defined 
-for each agent. That is the allocation of function to an agent 
-is static - agent type. The number of 'Child Agents' spawned 
-by the 'Coordinating Agent' is also per the specification.
+triggerd by adding a high level prompt to the assistant
+`use subagents as appropriate`.
 
 #### Dynamic Agenting - Concept
-Here the subagent functionality is pre-determined based on 
-an already specified prompt that are passed to each subagent. 
-However, the number of subagents created for each subtask 
-is dynamically determined by the LLM.
+
+The subagent functionality is pre-determined and declared - 
+(name, description, and tool surface) and captured in a 
+markdown file specification document. 
+
+The discoverability of these child agents and routing is driven 
+by the model/LLM of the `coordinator agent`. The parent model 
+can see and choose among these subagents. 
+
+The first-class agent definition is also a natural seam to 
+attach scoped tool permissions, a distinct system prompt, 
+a different model, and audit identity — declaratively, is 
+enfored by and is the job of the harness. The subagent 
+declaration can also help in customizing the permissions 
+boundary to the agent specification.
+
+Platforms treats declared agents as first-class objects with 
+per-agent traces, token accounting, rate-limit handling, retries, 
+failure isolation, "which agent did what", etc. 
+
+#### Static Agenting - Concept
+
+The model/LLM of the cooridnator is used to drive and execute each 
+subagent. That function of each agent is static. The number of 
+sub-agents spawned by the 'Coordinating Agent' is predetermined.
+
+The routing decision and judgment of which *specialist* to invoke 
+is moved from the model to the code. In addition, the developer is 
+responsible for configuring the permissions/scope for each subagent.
+
+Subagent dispatch logic, lifecycle management, retries on errors and 
+failures, gathering the result from each subagent, passing appropriate 
+permission boundary (picked from declaration or decided directly in 
+code), directing the observability stats of each subagent, etc could 
+now come from the developer's imperative code - something that offers 
+more control but may lead to more mistakes as code audits are harder.
 
 ### Exercise
 
