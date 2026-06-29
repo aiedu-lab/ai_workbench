@@ -7,6 +7,12 @@ etc. through exercises.
 The program is structured as a series of sessions, each focusing on a 
 specific tool or concept.
 
+> **Companion Repository:** [LA Workbench](https://github.com/aiedu-lab/la_workbench)
+> is an independent Linear Algebra curriculum that pairs well with
+> this lab. Its NumPy/PyTorch exercises build the math intuition —
+> vectors, matrices, transformations — that powers the embeddings,
+> inference, and training concepts exercised here.
+
 ---
 
 ## 📅 Agenda
