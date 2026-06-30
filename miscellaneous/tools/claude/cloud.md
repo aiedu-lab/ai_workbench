@@ -90,7 +90,12 @@ API calls return a 429 error.
 
 ## 4. Validate End-to-End
 
-Confirm your account, key, and env var all work together:
+Confirm your account, key, and env var all work together.
+
+> **Prerequisite:** `$ANTHROPIC_API_KEY` is only active after
+> running `source ~/.bashrc && claude-api` (defined in
+> [CLI Setup](cli.md#convenience-functions-to-switch-modes)).
+> Run that first, then:
 
 ```bash
 curl https://api.anthropic.com/v1/messages \

@@ -5954,7 +5954,7 @@ sessions/assistant-family_assistant_and_agent.md` → ≥1.
 
 ### Step 45.2: Validate and fix Anthropic auth documentation
 
-[ ] Status
+[x] Status
 
 CONTEXT: `miscellaneous/tools/claude/cloud.md` and
 `miscellaneous/tools/claude/cli.md` were manually edited;
