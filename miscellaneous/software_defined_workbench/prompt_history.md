@@ -3017,3 +3017,23 @@ Reference:
 * Add a 'References' section to llm_wiki. Add a reference stating 
 "Assistant, Agents, and Vibe & Dynamic Agenting" that hyperlinks to 
 https://drive.google.com/file/d/1BUnt-rTb0X1Nc93z6by6B5ndFViPu8IH/view?usp=sharing
+
+---
+
+## Repo Hygiene Documentation
+[x] Status
+
+Documented the existing GitHub branch-protection configuration for
+`main` (required_approving_review_count=0,
+require_code_owner_reviews=false, dismiss_stale_reviews=true,
+required_linear_history=true, enforce_admins=true, no
+force-push/deletion) in a new file
+`miscellaneous/setup/instructor/repo.md`. Also documented how to
+generate CLAUDE_CODE_OAUTH_TOKEN (`claude setup-token`) and
+ANTHROPIC_API_KEY (`console.anthropic.com`) and set them as
+optional GitHub Actions secrets for the `@claude review` PR
+workflow. Cross-referenced `repo.md` from `instructor.md` and
+from the README Contribution Guidelines. Mirrored the same doc
+and cross-links into the companion `la_workbench` repo.
+Marked [x] Status directly — this is a repo hygiene/ops record,
+not a curriculum content phase routed through SDW_DIR/plan.md.
