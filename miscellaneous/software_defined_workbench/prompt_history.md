@@ -2737,21 +2737,37 @@ Add those references in the 'Artifact' table of 'What Goes Where'.
 
 ---
 
+## Repo Hygiene Documentation
+[x] Status
+
+Documented the existing GitHub branch-protection configuration for
+`main` (required_approving_review_count=0,
+require_code_owner_reviews=false, dismiss_stale_reviews=true,
+required_linear_history=true, enforce_admins=true, no
+force-push/deletion) in a new file
+`miscellaneous/setup/instructor/repo.md`. Also documented how to
+generate CLAUDE_CODE_OAUTH_TOKEN (`claude setup-token`) and
+ANTHROPIC_API_KEY (`console.anthropic.com`) and set them as
+optional GitHub Actions secrets for the `@claude review` PR
+workflow. Cross-referenced `repo.md` from `instructor.md` and
+from the README Contribution Guidelines. Mirrored the same doc
+and cross-links into the companion `la_workbench` repo.
+Marked [x] Status directly — this is a repo hygiene/ops record,
+not a curriculum content phase routed through SDW_DIR/plan.md.
+
+---
+
 ## Enhancing Sessions
-[ ] Status
+[x] Status
 
 ### Update Assistant Family, Assistant, Agents
+
 Reference 
 * `sessions/assistant-family_assistant_and_agent.md`
 * `miscellaneous/experimental/docs/agent_loop.md`
-
-#### Add agent loop visual 
-
-Enhance section `### 🔹 Layer 1: The **Agent** — does *one* job well` of 
-`assistant-family_assistant_and_agent.md`: 
-
-* Picturize an ascii art the agent that accepts a 'task' and then executes 
-'three nested loops' with description as laid out below:
+* Markdown section below describing the mental model of agents with 
+3 nested loopsk, skills, subagents, skill execution boundaries, 
+subscription vs payg accounts, etc.
 
 ```text
 The clean mental model: **a skill is a *procedure* (possibly complex, possibly with embedded code and conditional logic) that runs in your context; a subagent is a *delegated reasoner* with its own context and its own loop.** If the work is "follow these steps," a skill suffices. If the work is "go figure this out, I don't want to watch you think, just give me the answer" — that's a subagent, and the value is the isolation, not anything the steps couldn't technically express.
@@ -2765,13 +2781,125 @@ A skill, by contrast, **executes within the parent's runtime and therefore under
 A subagent boundary is *also* a permission boundary the harness controls — which is exactly why "subagent as isolated context" and "least-privilege enforcement" are deeply related. The isolation that gives you the context firewall is the *same* isolation that gives the harness a clean seam to attach a tighter credential scope. One mechanism, two payoffs.
 ```
 
-* Add a subsection on subagent as a context firewall with its own set of 
-scoped permissions as handed out by the parent agent's harness instance as 
-called out by referenced `agent_loop.md`
+#### Add agent loop visual 
+
+Enhance section `### 🔹 Layer 1: The **Agent** — does *one* job well` of 
+`assistant-family_assistant_and_agent.md`: 
+
+1. Conceptualize the agent as an 'artificial human' and the LLM as its brain.
+  Picturize an ascii art the agent that accepts a 'task' and then executes 
+  'three nested loops' with description as laid out below:
+
+2. Add a subsection on subagent as a context firewall with its own set of 
+  scoped permissions as handed out by the parent agent's harness instance as 
+  called out by referenced `agent_loop.md`
  
-* Add a subsection on skills as a 'fixed sub-program' but within the 
-context of the agent and within the scope of permissions of the agent harness 
-as called out by referenced `agent_loop.md`
+3. Add a subsection on skills as a 'fixed sub-program' but within the 
+  context of the agent and within the scope of permissions of the agent 
+  harness as called out by referenced `agent_loop.md`
+
+
+#### Assistant
+
+Enhance section `### 🔹 Layer 2: The **Assistant** — the resource manager (an "Agent OS")` 
+of `assistant-family_assistant_and_agent.md`: 
+
+Add a subsection on 'agent harness'. Define what 'harnesses' provide and how 
+it is distinct from assistants.
+
+State where some of the below example functionalities lie (harness or assistants): 
+* managing interaction with users on interactive assistants 
+* managing interaction with LLMs including error handling and 
+  gathering response when it is trickling in.
+* spawning agents/subagents and tracking their lifecycle
+* managing interaction with tools including error handlign and
+  gathering response from tools when it is streamed
+* making skills/plugins and connectors available to agents
+* scoping the permissions offered to subagents
+
+---
+
+Review the section below wrt subscription vs PAYG account and reword,
+summarize, restate as appropriate.
+
+#### Account
+
+Add a separate section on different types of accounts. 
+
+1. Subscription Account - example claude.ai
+2. Pay-As-You-Go (PAYG) Account - example platform.claude.com
+
+##### Table contrasting **Subscrition vs PAYG** account 
+Create a table contrasting the `Subscription` account (claude.ai) vs 
+`PAYG` (platform.claude.com) account wrt:
+
+1. For Subscription account:
+
+* Credential Generation is user friendly as personal assistants 
+redirect the session to a user browser login session using oAuth 
+flow. An example trigger is via `claude CLI` command line options 
+`claude auth <login | setup >`. 
+
+* Credential Storage is local either inside user's home directory 
+(eg. ~/.claude/.credentials.json) or saved in shell's environment 
+variables (eg. CLAUDE_CODE_OAUTH_TOKEN).
+
+* Credential Submission is automatic as the personal 
+assistant applications are already programmed to look at specific 
+file locations or shell environment variables. 
+
+* Resources: Connectors and skills uploaded to claude.ai account are 
+automatically synchronized and made available to personal assistants 
+that are running on client devices, such as Claude CLI, Desktop, 
+Browser extension, Powerpoint extension, etc.
+
+* Token cost: reference below (PAYG account) Tokenomics section to 
+compare and contrast the cost.
+
+2. For PAYG account:
+
+* Credential Generation is via specific workflow in the account to 
+generate API_KEY.
+
+* Credential Storage: As this is stored in cloud (not user's personal device),
+one has to upload and store them in a vault. 
+
+* Resources: Every resource must be separately uplodaed and made availabe 
+to the agents. 
+
+* `Tokenomics`: As of now, the price per token for PAYG API KEYS vs subscription 
+based is almost 7:1. Thus, for any use case that can be solved by individuls, 
+users are encouraged to use subscrition mode.
+
+##### Managed Agents
+Add a subsection on `Managed Agents`. 
+
+`Managed Agents` are used in cases where the agent's purpose is not tied 
+to a specific user. To relieve one from the DevOps burden of operating
+the underlying infrastructure (kubernetes), these agents are run 
+on provider's infrastructure ie. NOT on user owned client devices.
+
+Example of use cases where `Managed Agents` are used:
+
+* Non-interactive use cases, such as CI/CD, Pull Request, Cron Jobs, and 
+Slack channel initiated tasks.  
+
+* Multiple-player collaboratively executing a goal/task on the same session 
+(eg. troubleshooting) where players hand off a session midway to other players 
+without losing any context. The multi-player scenario uses claude tags as 
+identity for scenarios where user identity does not make sense. An example, 
+is a slack channel triggered task with the channel members having 3 engineers 
+and one product manager that kick off set of work items.
+
+Since `Managed Agents` are not linked to a specific user, it is only available in 
+PAYG account (platform.claude.com) rather than a user's tied subscription account.
+Thus, API_KEY is the only supported consumtion mode.
+
+Furthermore, they require a separate manual submission of
+* credentials as the underlying task is not necessarily tied 
+to a single user and does not inherit user credentials.
+* connectors for mcp server tool calls as specific user 
+tools aren't appropriate for a groups of users or server tasks. 
 
 ### Update Anthropic Auth
 Reference:
@@ -2814,10 +2942,15 @@ below concept and exercises.
 #### Vibe Agenting - Concept
 
 The model/LLM of the coordinator decides fully on subagents:
-* when are they created - dynamically created on demand
-* what is the function - dynamically determined
-* what is the permission boundary - usualy downscoped from 
-  parent scope but not explicitly managed via declaration file.
+* when are they created - dynamically created on demand by parent model
+* what is the function - dynamically determined by parent model as to 
+the functions each subagent would provide
+* what is the permission boundary - determined by the parent harness
+and permissions may even be downscoped as the harness spanws the 
+subagent. note permissions are never determined by LLM to maintain
+separation of concerns and make it deterministic. note scoping is 
+not managed via declaration file and scoping subagents are limited
+by the ceiling of permissions held by the parent agent.
 * observability, tracing, and lifecycle is managed by parent harness
 
 The activation of LLM to 'vibe agent' is automatic and can be explicitly 
@@ -2883,13 +3016,23 @@ and vibe agenting exercises.
 
 ### Vibe Agenting - Exercise
 
+Confirm that only the ai-mindmap.md, speed-reading.md and templates/
+are visible in the vibe directory.
+
 Prompt your AI assistant:
 ```text
 Study the contents of speed_reading directory.
 Study a book-pdf placed in any directory
 Start drawing a mind map in that directory by descending into layer 1.
-Render the drawing built so far and based on choice you can 
-descend on a given layer 1 node or nodes to layer 2 and so on.
+Render the drawing built so far. 
+Use subagents as appropriate.
+```
+
+Note that based on the mindmap drawing you could choose a node <name> 
+and prompt your AI assistant: 
+```text 
+Descend on layer 1 node <name> to layer 2.
+Use subagents as appropriate.
 ```
 
 ### Dynamic Agenting - 'Speed Reading' Exercise
@@ -3019,21 +3162,3 @@ Reference:
 https://drive.google.com/file/d/1BUnt-rTb0X1Nc93z6by6B5ndFViPu8IH/view?usp=sharing
 
 ---
-
-## Repo Hygiene Documentation
-[x] Status
-
-Documented the existing GitHub branch-protection configuration for
-`main` (required_approving_review_count=0,
-require_code_owner_reviews=false, dismiss_stale_reviews=true,
-required_linear_history=true, enforce_admins=true, no
-force-push/deletion) in a new file
-`miscellaneous/setup/instructor/repo.md`. Also documented how to
-generate CLAUDE_CODE_OAUTH_TOKEN (`claude setup-token`) and
-ANTHROPIC_API_KEY (`console.anthropic.com`) and set them as
-optional GitHub Actions secrets for the `@claude review` PR
-workflow. Cross-referenced `repo.md` from `instructor.md` and
-from the README Contribution Guidelines. Mirrored the same doc
-and cross-links into the companion `la_workbench` repo.
-Marked [x] Status directly — this is a repo hygiene/ops record,
-not a curriculum content phase routed through SDW_DIR/plan.md.
