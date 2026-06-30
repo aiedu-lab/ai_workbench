@@ -198,7 +198,13 @@ opened in this repo.
 
 `/plan-step` is applied internally by `/replan` when generating
 each step — no separate invocation needed during a replan cycle.
-> Contributors may not commit directly to `main`.
+
+> Contributors may not commit directly to `main`. Write-access
+> contributors (instructors) do **not** need a separate reviewer to
+> merge their own PR — a PR is required, but zero additional
+> approvals are needed. See
+> [repo.md](miscellaneous/setup/instructor/repo.md) for the
+> underlying GitHub branch-protection settings.
 
 ---
 
