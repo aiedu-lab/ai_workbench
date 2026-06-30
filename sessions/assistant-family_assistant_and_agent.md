@@ -52,6 +52,53 @@ An **agent** is a small worker powered by an LLM (the "brain" behind ChatGPT-sty
 
 > **Benefit of this layer:** a focused worker that figures things out on its own, instead of you clicking through a website by hand.
 
+#### The agent loop — three nested layers of control
+
+An agent cycles through a loop until the task is done. Inside
+that loop, two more control layers are available:
+
+```text
+OUTER LOOP  (LLM-driven, dynamic)
+  Task → LLM → pick action → run tool → observe → LLM → …
+    │
+    ├─ SKILL  (fixed sub-program, runs in parent context)
+    │    └─ [tool A → script → tool B — no LLM between steps]
+    │       Returns a single result to the parent LLM.
+    │
+    └─ SUBAGENT  (nested outer loop, own isolated context)
+         └─ Task → LLM → tools → … → clean 200-token summary
+            Parent sees only the clean summary; not the mess.
+```
+
+#### Subagent — context firewall
+
+A **subagent** is a complete copy of the outer loop running in
+its own **isolated context**. Its defining property:
+
+- It can churn through 50 tool calls and 100 K tokens of noisy
+  work, then return a clean 200-token summary to the parent.
+  The parent never sees the mess — its context stays focused.
+- The parent's **harness** spawns it, scopes its permissions
+  (which may be *narrower* than the parent's), and manages its
+  lifecycle (retries, failure isolation).
+- It can run a *different model*, system prompt, or tighter
+  tool allowlist — all enforced by the harness, not the LLM.
+
+#### Skill — fixed sub-program
+
+A **skill** is a procedure that runs *beneath one step* of the
+agent loop, inside the **parent's context and permissions**:
+
+- The LLM invokes a skill as a single action step.
+- The harness executes the recipe (tool calls, scripts, branching
+  logic) without returning to the LLM between sub-steps. When
+  done, control returns to the LLM with one combined result.
+- Because a skill runs in the parent's context, its intermediate
+  outputs land in the same conversation the parent reasons over.
+
+> **Rule of thumb:** "follow these steps" → skill.
+> "Go figure it out, bring me the answer" → subagent.
+
 ### 🔹 Layer 2: The **Assistant** — the resource manager (an "Agent OS")
 
 One agent can't plan a whole trip. An **assistant** is the full app you actually open and talk to. Think of it as an **operating system for agents** that manages **resources** and hands them out to agents as needed. There are four kinds of resources, namely:
@@ -83,6 +130,29 @@ One agent can't plan a whole trip. An **assistant** is the full app you actually
 The Chief Coordinator gives each child only the tools and permissions it needs, gathers their results, and brings back **one finished plan**.
 
 > **Benefit of this layer:** turns a messy, many-step project into a single request. You talk to one boss; it manages every tool and every helper for you.
+
+#### Agent Harness
+
+The **harness** is the runtime machinery that sits between the
+LLM and the outside world. It is distinct from the *assistant*
+(the user-facing app) and from the *LLM* (the brain). It:
+
+- **Spawns and manages subagent lifecycles** — starts, retries,
+  and terminates child agent loops.
+- **Dispatches tool calls** — takes the LLM's tool-call request,
+  runs the actual API or script, and feeds the result back.
+- **Enforces permissions** — the LLM requests actions; the
+  harness decides what it is *allowed* to do. Subagents can be
+  given a *narrower* permission set than the parent, enforced
+  by the harness, not by the LLM.
+- **Handles streaming** — buffers and routes incremental model
+  output to the UI or caller.
+- **Isolates failures** — a subagent crash stays within the
+  harness boundary; users see a clean error, not a raw exception.
+
+Claude Code, Claude Desktop, and cloud-hosted agent runners are
+all examples of harnesses. The assistant is what the *user*
+opens; the harness is what the *agent code* runs inside.
 
 ### 🔹 Layer 3: The **Assistant Family** — a shared toolbox across all your apps
 
@@ -151,6 +221,46 @@ Because a "split-the-bill" skill and a Venmo connector were added to the family,
 | Handles surprises gracefully | Asks "beach or mountains?"; reroutes a sold-out flight |
 | Fits you with no setup | Remembers veggie Sam and carsick Maya |
 | Gets smarter for free | New "split-the-bill" skill helps every app |
+
+---
+
+## Account Types
+
+Claude tools support two authentication paths. Choose based on
+whether the agent is tied to a specific user.
+
+### Subscription vs PAYG
+
+| Aspect | Subscription (claude.ai) | PAYG (platform.claude.com) |
+|---|---|---|
+| Auth flow | OAuth via `claude auth login` | API key from dashboard |
+| Storage | `~/.claude/.credentials.json` or env var | Secrets vault |
+| Resources | claude.ai skills + connectors synced | Manual per agent |
+| Cost | Flat monthly fee; high limits | Pay-per-token; ~7x cheaper |
+
+> **Lab default:** Subscription mode (OAuth, `credentials.json`)
+> for interactive work. Switch to PAYG only when subscription
+> limits are exhausted.
+
+### Managed Agents
+
+**Managed Agents** run non-interactively and are not tied to a
+specific user. Use cases:
+
+- **CI/CD pipelines** — automated code review, test generation,
+  or deploy gates triggered by a push or PR.
+- **Slack / webhook tasks** — an agent spawned by a channel
+  message, shared among team members who hand off work.
+- **Scheduled jobs** — nightly summaries, batch data processing.
+
+Because Managed Agents are not tied to one user, they:
+
+- Run on the provider's infrastructure, not a personal device.
+- Require **PAYG** (API key) — no personal subscription applies.
+- Need **manual credential submission** (cannot inherit a user's
+  `credentials.json`).
+- Need **manual connector configuration** — personal skills from
+  a user's claude.ai account are not automatically available.
 
 ---
 
