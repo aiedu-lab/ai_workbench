@@ -6122,7 +6122,7 @@ VERIFY: `grep -c "### 4\." .claude/commands/replan.md` → 0;
 ### Step 46.2: Refactor `projects/llm_wiki/README.md`; create
 `silicon_ai/README.md`
 
-[ ] Status
+[x] Status
 
 CONTEXT: `projects/llm_wiki/README.md` mixes a general PKM intro
 with `silicon_ai`-specific workflow sections (Add Subject, Add
