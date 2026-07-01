@@ -62,6 +62,12 @@ OPTIONS
                         backgrounded process). Final entry shows
                         completion state. Also check read-list.md:
                         [✓] = fully approved; [<phase>] = last done.
+  --from-node <name>    Start mindmap from node named <name>.
+                        When absent, starts from the root node.
+  --level <int>         Limit mindmap depth to <int> levels.
+                        Level 1 = root children only (fast;
+                        recommended for lab exercises).
+                        When absent, descends to all levels.
 
 PHASES (run in order)
   sanitizer           Parse args, validate input, resolve paths.
@@ -105,6 +111,19 @@ EXAMPLES
     --from-phase sentinel \\
     --input  examples/TheComingWave.pdf \\
     --output examples/TheComingWave-mindmap.html
+
+  # Build a level-1 mindmap only (fast — good for exercises)
+  python3 src/piper.py \\
+    --input  examples/the-coming-wave.pdf \\
+    --output examples/the-coming-wave-mindmap.html \\
+    --level  1
+
+  # Expand a specific node to level 2
+  python3 src/piper.py \\
+    --input     examples/the-coming-wave.pdf \\
+    --output    examples/the-coming-wave-mindmap.html \\
+    --from-node "The Coming Wave" \\
+    --level     2
 """
 
 
@@ -136,6 +155,16 @@ def main() -> int:
     default=None, dest="waterfall_log",
     help="File to append waterfall snapshots to.",
   )
+  parser.add_argument(
+    "--from-node", metavar="<name>",
+    default=None, dest="from_node",
+    help="Start mindmap from named node (default: root).",
+  )
+  parser.add_argument(
+    "--level", metavar="<int>",
+    default=None, type=int, dest="level",
+    help="Limit mindmap depth (default: all levels).",
+  )
   args = parser.parse_args()
 
   if args.help:
@@ -161,6 +190,8 @@ def main() -> int:
     args.input, args.output, args.from_phase,
     log_dir=args.log_dir,
     waterfall_log=args.waterfall_log,
+    from_node=args.from_node,
+    level=args.level,
   ).run()
 
 

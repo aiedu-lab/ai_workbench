@@ -6008,7 +6008,7 @@ VERIFY: `grep -c "Vibe Agenting" sessions/llm_wiki.md` → ≥2;
 ### Step 45.4: Validate static code after move; add `--from-node`
 and `--level` to piper.py
 
-[ ] Status
+[x] Status
 
 CONTEXT: `projects/llm_wiki/speed-reading/static/` was created by
 moving files from the parent directory. `orchestrator.py` resolves
