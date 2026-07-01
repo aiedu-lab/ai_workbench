@@ -6093,7 +6093,7 @@ v45.6-enhancing-sessions-step-completed.
 
 ### Step 46.1: Split `/replan` — create `/execute` skill
 
-[ ] Status
+[x] Status
 
 CONTEXT: `.claude/commands/replan.md` handles both planning
 (Steps 1–3a) and execution (Steps 4–5) in one skill; no
