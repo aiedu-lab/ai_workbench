@@ -189,6 +189,52 @@ not modify the existing subject's `Home.md`.
 
 ---
 
+## Agenting Concepts
+
+The Speed Reading Mindmap extension (below) is built three ways —
+one per agenting style. Understanding the differences first makes
+the exercises meaningful.
+
+### Vibe Agenting
+
+The coordinator LLM **dynamically decides** everything about
+subagents at runtime: how many to create, what function each one
+performs, and when to spawn them. There are no pre-declared agent
+specs. You trigger it with a high-level prompt such as:
+
+> "Study the speed-reading materials and build a mindmap.
+> Use subagents as appropriate."
+
+The harness gives the coordinator full autonomy; the coordinator
+invents specialists on the fly.
+
+### Dynamic Agenting
+
+Agent functions are **pre-declared in markdown spec files** (name,
+description, tool surface). The coordinator LLM reads those specs,
+discovers the specialists, and decides which ones to invoke and
+when. Routing is still LLM-driven — but the *what-each-agent-does*
+is pinned by the declarations.
+
+The platform treats declared agents as first-class objects: per-
+agent traces, token accounting, scoped permission boundaries, and
+failure isolation — all managed declaratively by the harness.
+
+### Static Agenting
+
+Agent functions are **pre-declared in markdown specs** (same
+as Dynamic). The key difference: **instantiation, routing,
+lifecycle management, retries, and observability are all fixed in
+the developer's imperative code** — not driven by the LLM.
+
+The developer hand-rolls the dispatch logic (e.g. always run
+Seth → Leo → Quinn → Sentinel in that order). This gives more
+deterministic control but means every orchestration decision that
+Dynamic gets "for free" from the LLM must be coded and maintained
+by hand, making audits harder.
+
+---
+
 ### Optional Extension — Group Meetup Organizer PKM
 
 This is a **new subject** exercise — follow the
@@ -219,31 +265,124 @@ through every other session in the lab.
 
 ## Optional Extension — Speed Reading Mindmap
 
-Transform any book or article into an interactive HTML
-mindmap using a four-agent AI pipeline (Seth → Leo → Quinn →
-Sentinel). The pipeline converts the input to plain text,
-synthesises the key concepts into structured JSON, renders
-a navigable mindmap, and runs two independent QA passes
-before producing the final HTML.
+Transform any book or article into an interactive HTML mindmap
+using an AI pipeline. The same problem is solved three ways —
+one per agenting style — in three subdirectories of
+`projects/llm_wiki/speed-reading/`.
 
-Full documentation and usage examples:
+See
 [`projects/llm_wiki/speed-reading/README.md`](
 ../projects/llm_wiki/speed-reading/README.md)
+for the pipeline overview and the Three Agenting Modes index.
+
+### Static Agenting Exercise
+
+Working directory: `projects/llm_wiki/speed-reading/static/`
+
+A four-agent pipeline (Seth → Leo → Quinn → Sentinel) is
+**orchestrated entirely by developer code** (`src/piper.py`).
+Agent functions are declared in `agents/*.md`; the sequencing,
+retries, and observability are fixed in code. This is **Static
+Agenting**: predictable, deterministic, and fully traceable.
 
 ```bash
-cd projects/llm_wiki/speed-reading
+cd projects/llm_wiki/speed-reading/static
 
-# Show all options and phase names
+# Show all options (including --level and --from-node)
 python3 src/piper.py --help
 
-# Convert a PDF book to a mindmap
+# Build a level-1 mindmap only (fast — good for the exercise)
 python3 src/piper.py \
-  --input  examples/TheComingWave.pdf \
-  --output examples/TheComingWave-mindmap.html
+  --input  examples/the-coming-wave.pdf \
+  --output examples/the-coming-wave-mindmap.html \
+  --level  1
 
-# Resume if Seth wrote JSON but validator-loop failed
+# Resume from the validator loop if Seth already wrote JSON
 python3 src/piper.py \
   --from-phase validator-loop \
-  --input  examples/TheComingWave.pdf \
-  --output examples/TheComingWave-mindmap.html
+  --input  examples/the-coming-wave.pdf \
+  --output examples/the-coming-wave-mindmap.html \
+  --level  1
 ```
+
+See
+[`projects/llm_wiki/speed-reading/static/README.md`](
+../projects/llm_wiki/speed-reading/static/README.md).
+
+### Dynamic Agenting Exercise
+
+Working directory: `projects/llm_wiki/speed-reading/dynamic/`
+
+This is a **two-pass** exercise. Agent functions are declared in
+markdown specs created by the LLM itself in pass 1; the LLM then
+reads those specs to route work in pass 2. Routing is still
+**LLM-driven** — Dynamic Agenting.
+
+**Pass 1 — Create agent specs:**
+
+Open Claude CLI inside `dynamic/`, then prompt:
+
+```text
+Study the speed reading system in the current directory.
+
+You be the Orchestrator agent.
+Suggest what specialized subagents we create to do the work.
+In addition, ensure you create a QA subagent to validate the work.
+
+Create an agents sub directory in examples/.tmp/ and make md files
+for each subagent inside examples/.tmp/agents/.
+```
+
+**Pass 2 — Produce the mindmap:**
+
+Exit and reopen Claude CLI (fresh session), then prompt:
+
+```text
+Study the material in the current directory.
+Read the book in the examples/ subdirectory.
+Create subagents from the specs in examples/.tmp/agents/ while
+you be the orchestrator.
+Produce a mindmap html in examples/.
+Create intermediate artifacts (json, md, logs) in examples/.tmp/.
+Descend only into layer 1.
+```
+
+See
+[`projects/llm_wiki/speed-reading/dynamic/README.md`](
+../projects/llm_wiki/speed-reading/dynamic/README.md).
+
+### Vibe Agenting Exercise
+
+Working directory: `projects/llm_wiki/speed-reading/vibe/`
+
+One prompt. No pre-declared specs. The assistant invents its own
+subagents on the fly — **Vibe Agenting**.
+
+Open Claude CLI inside `vibe/`, grant full permissions
+(`/permissions`), then:
+
+```text
+Study the contents of the speed_reading directory.
+Study the book in the examples/ subdirectory.
+Build a mindmap in the examples/ directory, descending
+to layer 1 only.
+Use subagents as appropriate.
+```
+
+To descend further into a specific node `<name>`:
+
+```text
+Descend into layer 2 for the node <name>.
+```
+
+See
+[`projects/llm_wiki/speed-reading/vibe/README.md`](
+../projects/llm_wiki/speed-reading/vibe/README.md).
+
+---
+
+## References
+
+- [Assistant, Agents, and Vibe & Dynamic Agenting — Mohit Aron](
+  https://drive.google.com/file/d/1BUnt-rTb0X1Nc93z6by6B5ndFViPu8IH/view?usp=sharing
+  )

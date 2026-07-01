@@ -5981,7 +5981,7 @@ convenience-function blocks.
 ### Step 45.3: Expand `sessions/llm_wiki.md` — agenting concepts,
 exercises, and credits
 
-[ ] Status
+[x] Status
 
 CONTEXT: `sessions/llm_wiki.md` Speed Reading section only
 references the static piper.py pipeline; the three agenting modes
