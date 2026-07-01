@@ -58,15 +58,18 @@ An agent cycles through a loop until the task is done. Inside
 that loop, two more control layers are available:
 
 ```text
-OUTER LOOP  (LLM-driven, dynamic)
-  Task → LLM → pick action → run tool → observe → LLM → …
+OUTER LOOP-0 (LLM-driven, dynamic)
+│
+└─LOOP-1 (Goal Defined: User/Agent <-> agent converse to agree on goal)
+  │
+  └─Goal → LLM → pick action → run tool → observe → LLM → …
     │
     ├─ SKILL  (fixed sub-program, runs in parent context)
     │    └─ [tool A → script → tool B — no LLM between steps]
     │       Returns a single result to the parent LLM.
     │
     └─ SUBAGENT  (nested outer loop, own isolated context)
-         └─ Task → LLM → tools → … → clean 200-token summary
+         └─ Goal → LLM → tools → … → clean 200-token summary
             Parent sees only the clean summary; not the mess.
 ```
 
