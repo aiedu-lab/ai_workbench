@@ -6040,7 +6040,7 @@ files.
 
 ### Step 45.5: Add per-mode README files; update top-level README
 
-[ ] Status
+[x] Status
 
 CONTEXT: `speed-reading/` has `static/`, `dynamic/`, `vibe/`
 subdirectories; only `static/` has `README-mindmap-system.md`
