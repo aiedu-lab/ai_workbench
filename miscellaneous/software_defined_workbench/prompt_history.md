@@ -3162,3 +3162,36 @@ Reference:
 https://drive.google.com/file/d/1BUnt-rTb0X1Nc93z6by6B5ndFViPu8IH/view?usp=sharing
 
 ---
+
+## Modularize
+
+[x] Status
+
+### Replan
+Current /replan skill does the planning as well as executes (from Step 4) onwards.
+Create a `/execute` skill that executes the plan starting Step 4 and strip those
+steps from `/replan`.
+
+### Update README
+
+Reference `projects/llm_wiki/README.md` 
+
+Current `README.md` solely focused on building knowledge
+graph that is exhibited in `silicon_ai/` rather than `building knowledge`, 
+which could be `creating a knowlege graph wiki`, `building mindmap`, or 
+any other exercise that enhances personal knowledge.
+
+Move the content inside README.md that is specific to `silicon_ai/` or 
+knowledge graph wiki part into `silicon_ai/`.
+
+Reformat or create the content in the README.md to cover any 
+personal knowledge management.
+
+Add references to the subdirectories that supports PKM. Review and reword 
+as appropriate - a sample references:
+* `silicon_ai`: builds wiki and enhances understanding by supporting 
+questions or analysis only relying on the wiki content
+* `speed-reading`": builds mindmap that enhances knowledge by 
+organizing content in visually intuitive concepts showing relationships 
+and organized in layers.  
+

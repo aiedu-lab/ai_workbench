@@ -6086,3 +6086,88 @@ miscellaneous/software_defined_workbench/plan.md |
 grep "\[ \] Status"` → 0 matches;
 `git tag | grep "v45\."` →
 v45.6-enhancing-sessions-step-completed.
+
+---
+
+## Phase 46: Modularize
+
+### Step 46.1: Split `/replan` — create `/execute` skill
+
+[ ] Status
+
+CONTEXT: `.claude/commands/replan.md` handles both planning
+(Steps 1–3a) and execution (Steps 4–5) in one skill; no
+`/execute` skill exists.
+ACTION: (a) Create `.claude/commands/execute.md` containing the
+execution loop: orient to the highest Phase N in `SDW_DIR/plan.md`,
+find the first `[ ] Status` step, execute it, run VERIFY, flip
+status, commit with `<type>: Phase N: Step K - <summary>`, show
+diff, stop for human approval; final step tags and pushes
+`vN.K-<brief-summary>-step-completed`. (b) Edit
+`.claude/commands/replan.md`: delete the `### 4. Execute` and
+`### 5. Final Step` sections; append a one-sentence handoff at end
+of `### 3a`: "After this commit, invoke `/execute` to run each
+step one at a time."
+CONSTRAINTS: Do not alter Steps 1, 2, 3, or 3a in `replan.md`;
+do not touch any other project files.
+OUTPUT: `.claude/commands/execute.md` exists with Steps 4–5;
+`.claude/commands/replan.md` ends after Step 3a (plus handoff
+note) with no Step 4 or 5 content.
+VERIFY: `grep -c "### 4\." .claude/commands/replan.md` → 0;
+`grep -c "### 4\." .claude/commands/execute.md` → 1;
+`ls .claude/commands/execute.md` → file exists.
+
+---
+
+### Step 46.2: Refactor `projects/llm_wiki/README.md`; create
+`silicon_ai/README.md`
+
+[ ] Status
+
+CONTEXT: `projects/llm_wiki/README.md` mixes a general PKM intro
+with `silicon_ai`-specific workflow sections (Add Subject, Add
+Article, Update Article); no `silicon_ai/README.md` exists;
+`speed-reading/README.md` exists but is not linked from top-level.
+ACTION: (a) Create `projects/llm_wiki/silicon_ai/README.md` with
+a one-sentence KG wiki intro and the three workflow sections
+verbatim from current top-level README (Adding a New Subject,
+Adding a New Article to an Existing Subject, Updating an Existing
+Article). (b) Rewrite `projects/llm_wiki/README.md` as a PKM
+overview: keep title and objective; replace Methodology, Repository
+Layout, and Workflows sections with a two-row table listing each
+PKM mode (silicon_ai / speed-reading), a one-sentence description,
+and a relative link to the mode's own README.
+CONSTRAINTS: Do not modify any existing file inside `silicon_ai/`
+or `speed-reading/`; keep lines ≤79 chars; 2-space indentation.
+OUTPUT: `projects/llm_wiki/silicon_ai/README.md` contains the
+three workflow sections; `projects/llm_wiki/README.md` has no
+workflow-specific silicon_ai content and links to both subdirectory
+READMEs.
+VERIFY: `grep -c "Adding a New Subject"
+projects/llm_wiki/silicon_ai/README.md` → 1;
+`grep -c "speed-reading" projects/llm_wiki/README.md` → ≥1;
+`grep -c "Adding a New Subject" projects/llm_wiki/README.md`
+→ 0.
+
+---
+
+### Step 46.3: Mark Phase 46 complete, commit, tag, push
+
+[ ] Status
+
+CONTEXT: Steps 46.1 and 46.2 executed and individually verified;
+all `[ ] Status` lines in Phase 46 of `plan.md` are already `[x]`.
+ACTION: Confirm every `[ ] Status` in the Phase 46 block of
+`miscellaneous/software_defined_workbench/plan.md` reads `[x]`.
+Commit: `chore: Phase 46 - mark modularize steps complete`. Tag:
+`git tag -a v46.3-modularize-step-completed -m "Completed Phase 46
+Step 3: mark all steps complete"`. Push:
+`git push origin fix/more --tags`.
+CONSTRAINTS: Do not modify `miscellaneous/docs/archive/`; do not
+push to `main`.
+OUTPUT: All Phase 46 step statuses show `[x]`; tag
+`v46.3-modularize-step-completed` exists on remote.
+VERIFY: `grep -A2 "### Step 46\."
+miscellaneous/software_defined_workbench/plan.md |
+grep "\[ \] Status"` → 0 matches;
+`git tag | grep "v46\."` → v46.3-modularize-step-completed.
