@@ -3195,3 +3195,44 @@ questions or analysis only relying on the wiki content
 organizing content in visually intuitive concepts showing relationships 
 and organized in layers.  
 
+---
+
+## Contribution Mechanism Reflected from la_workbench
+[x] Status
+
+The companion repo `la_workbench` (`../la_workbench/`) added a
+student solution submission and completion-report mechanism —
+reference its `SDW_DIR/prompt_history.md` `## Contribution` section
+(and its "Addendum: Refined Requirements" subsection) for the full
+prompt. Mirrored the same mechanism here:
+
+* README.md: new `## 📤 Submitting Exercise Solutions` section
+  (after `## 🔁 Student Workflow`) documenting the
+  `projects/<project>/<github-userid>/` submission layout, the
+  `project/<project>/<github-userid>` PR naming convention, and the
+  automatic completion reports that follow a merge.
+* `miscellaneous/report/report.py`: scans `projects/*/*/solution.md`
+  for bare-userid Contributors and generates two things:
+  1. `miscellaneous/report/report.md` — the class-wide topic x
+     student completion matrix.
+  2. `miscellaneous/report/student/<github-userid>-report.md` — a
+     **per-student report generated/updated on every checkin**
+     (every merged solution PR), not just the class-wide table.
+* Each contributor's **Full Name is resolved from their bare
+  GitHub-UserId** via the public GitHub Users API — students no
+  longer type their name into `solution.md` by hand.
+* `report.py` is **idempotent**: re-running it with no new or
+  changed submissions leaves every generated file byte-identical
+  (a student's report only changes, and its date only bumps, when
+  their actual completions change).
+* `.github/workflows/report.yml`: since `main` blocks direct pushes
+  even from Actions (`enforce_admins: true`, "restrict who can push:
+  no one" — see `miscellaneous/setup/instructor/repo.md`), the
+  workflow regenerates both the class-wide and per-student reports
+  on every merged solution PR and lands them via its own
+  auto-created, auto-merged PR (0 approvals required).
+
+Edits only — left uncommitted pending explicit maintainer
+confirmation before `git add`/`commit`/`push` in this repo, per this
+repo's own git-hygiene norms.
+
