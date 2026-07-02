@@ -91,9 +91,18 @@ Purpose: render the current content tree into a readable HTML mind map.
 - Read spacing/config from `mindmap-layout.json` if present.
 - **Mandatory portability**: Always inline a synchronized version of the content/layout data into `mindmap.html` to bypass browser CORS restrictions for `file://` access.
 - Avoid hardcoding content logic in `mindmap.html` beyond the data bridge.
+- Keep renderer/data truth aligned:
+  - if `mindmap-layout.json` changes, make sure `mindmap.html` reads the same keys
+  - if inline fallback data exists, keep it synchronized with the external JSON
+  - do not assume a patch worked just because parsing succeeded
+- Prefer a single source of truth or a generated inline snapshot over hand-maintained duplicated config blocks.
+- A useful implementation pattern is to keep any importance scoring logic in a
+  separate renderer function rather than scattering importance heuristics across
+  rendering code paths.
 
 ## Validation
 - Render in a real browser.
+- Prefer headless Chrome or an equivalent real browser render for validation screenshots.
 - Check for:
   - node-node overlap
   - edge-node intersection
@@ -128,6 +137,9 @@ Purpose: render the current content tree into a readable HTML mind map.
   - check routed edges against non-endpoint node footprints
   - check routed edges against already-accepted edges
   - treat any detected node overlap or crossing as a blocking defect, even if the screenshot looks mostly fine
+- Treat the final routing gate as two-part and mandatory:
+  - geometry-aware validation
+  - browser render review
 - If the renderer cannot yet perform this validation automatically, the main agent must do an explicit post-render routing check rather than relying only on Quinn.
 - Treat render initialization itself as a hard gate:
   - if the browser shows only background chrome, empty rings, or a validation panel stuck at a placeholder like `Waiting for render`, the renderer is broken

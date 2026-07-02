@@ -5888,3 +5888,286 @@ annotated tag `v44.5-readme-consistency-step-completed` pushed to
 `fix/ongoing`.
 VERIFY: `grep -A1 "### Step 44\." miscellaneous/software_defined_workbench/plan.md | grep "\[ \] Status"`
 -> 0 matches; `git tag | grep "v44\."` -> 1 match.
+
+---
+
+## Phase 45: ENHANCING SESSIONS
+
+**Source:** `miscellaneous/software_defined_workbench/prompt_history.md`
+lines 2762–3165 - `## Enhancing Sessions` ([x] Status).
+
+### Context
+
+`sessions/assistant-family_assistant_and_agent.md` covers three
+layers but omits the three-nested-loops agent loop visual, skill vs
+subagent distinction, agent harness definition, and account-type
+details. `sessions/llm_wiki.md` Speed Reading section only covers
+static agenting; the three agenting modes (Vibe, Dynamic, Static)
+now live in separate subdirectories under
+`projects/llm_wiki/speed-reading/` but lack per-mode READMEs and
+session documentation. The Static Agenting distinction: agent
+functions are pre-declared in markdown specs (same as Dynamic),
+BUT instantiation, routing, lifecycle, and observability are fixed
+in developer code (piper.py) — not LLM-driven. Auth docs
+(`cloud.md`, `cli.md`) need validation that no active auth vars
+are set directly outside convenience-function bodies.
+
+### Plan provenance
+
+provider:model used to generate this plan =
+Claude Code:claude-sonnet-4-6
+
+---
+
+### Step 45.1: Enhance `assistant-family_assistant_and_agent.md`
+
+[x] Status
+
+CONTEXT: Session covers three layers but lacks ASCII agent loop
+diagram, skill/subagent subsections, agent harness definition,
+and account-type section. ACTION: In Layer 1, add (a) ASCII
+three-nested-loops diagram (outer LLM-driven loop, skill as fixed
+sub-program, subagent as nested copy with own context); (b)
+"Subagent — context firewall" subsection (isolated context +
+scoped permissions from parent harness); (c) "Skill — fixed
+sub-program" subsection (runs in parent context + permission
+boundary). In Layer 2, add "Agent Harness" subsection defining
+spawn/lifecycle, tool dispatch, permission scoping, streaming,
+error handling. After summary tables, add "## Account Types"
+section with Subscription vs PAYG contrast table (Credential
+Generation, Storage, Resource sharing, Token cost) and
+"### Managed Agents" subsection (CI/CD, Slack-initiated,
+multi-player sessions; PAYG only; manual credential + connector
+submission). CONSTRAINTS: Do not remove existing content; lines
+≤79 chars; 2-space indent; no other session files touched. OUTPUT:
+`sessions/assistant-family_assistant_and_agent.md` has ASCII loop
+diagram, Subagent + Skill subsections, Agent Harness subsection,
+and Account Types section with Managed Agents. VERIFY:
+`grep -c "Managed Agents"
+sessions/assistant-family_assistant_and_agent.md` → ≥1;
+`grep -c "Agent Harness"
+sessions/assistant-family_assistant_and_agent.md` → ≥1;
+`grep -c "context firewall"
+sessions/assistant-family_assistant_and_agent.md` → ≥1.
+
+---
+
+### Step 45.2: Validate and fix Anthropic auth documentation
+
+[x] Status
+
+CONTEXT: `miscellaneous/tools/claude/cloud.md` and
+`miscellaneous/tools/claude/cli.md` were manually edited;
+invariants: neither file should set `CLAUDE_CODE_OAUTH_TOKEN`
+or `ANTHROPIC_API_KEY` directly outside convenience-function
+bodies; default interactive auth is `$HOME/.claude/credentials.json`.
+ACTION: Read both files. If `cloud.md` curl validation uses
+`$ANTHROPIC_API_KEY` directly, add a prerequisite note directing
+reader to run `source ~/.bashrc && claude-api` first. Verify
+`cli.md` stores keys only under `MY_`-prefixed variables and
+activates via convenience functions; remove any bare
+`export CLAUDE_CODE_OAUTH_TOKEN=` / `export ANTHROPIC_API_KEY=`
+outside those blocks. CONSTRAINTS: Minimal clarifications only;
+no new sections; lines ≤79 chars. OUTPUT: Both files conform to
+stated invariants; curl validation is unambiguously runnable.
+VERIFY: `grep -n "^export CLAUDE_CODE_OAUTH_TOKEN\|
+^export ANTHROPIC_API_KEY"
+miscellaneous/tools/claude/cloud.md
+miscellaneous/tools/claude/cli.md` → 0 matches outside
+convenience-function blocks.
+
+---
+
+### Step 45.3: Expand `sessions/llm_wiki.md` — agenting concepts,
+exercises, and credits
+
+[x] Status
+
+CONTEXT: `sessions/llm_wiki.md` Speed Reading section only
+references the static piper.py pipeline; the three agenting modes
+are undocumented. Key distinction: Vibe = LLM decides functions +
+dispatch dynamically; Dynamic = functions pre-declared in specs,
+LLM routes; Static = functions pre-declared in specs AND dispatch/
+instantiation fixed in developer code (not LLM-driven).
+ACTION: (a) Add `## Agenting Concepts` section (after
+`### Coherent Home.md Growth`, before Group Meetup extension) with
+three subsections: Vibe Agenting, Dynamic Agenting, Static Agenting
+using the corrected definitions above. (b) Expand
+`## Optional Extension — Speed Reading Mindmap` with three
+sub-exercises: Static (`--level 1`), Dynamic (two-pass), Vibe
+(one-prompt). (c) Add `## References` at end linking Mohit Aron
+doc. CONSTRAINTS: No existing content removed; lines ≤79 chars;
+2-space indent. OUTPUT: `sessions/llm_wiki.md` gains Agenting
+Concepts section, three per-mode exercises, and References.
+VERIFY: `grep -c "Vibe Agenting" sessions/llm_wiki.md` → ≥2;
+`grep -c "instantiation" sessions/llm_wiki.md` → ≥1;
+`grep -c "References" sessions/llm_wiki.md` → ≥1.
+
+---
+
+### Step 45.4: Validate static code after move; add `--from-node`
+and `--level` to piper.py
+
+[x] Status
+
+CONTEXT: `projects/llm_wiki/speed-reading/static/` was created by
+moving files from the parent directory. `orchestrator.py` resolves
+agent paths via `Path(__file__).resolve().parent.parent / "agents"`,
+which must resolve to `static/agents/`. Exercise requires `--level`
+to limit mindmap depth for quick lab completion.
+ACTION: (a) Confirm `--help` exits cleanly and `static/agents/`
+contains four agent markdown files. (b) Add `--from-node <name>`
+(default: root) and `--level <int>` (default: all levels) to
+`static/src/piper.py` CLI and `_HELP_TEXT`. (c) Update
+`static/src/orchestrator.py` `Piper.__init__` to accept
+`from_node: str | None = None` and `level: int | None = None`;
+append directives to Seth and Leo system prompts when set. Python
+3.12+; ≤79-char lines; 2-space indent. CONSTRAINTS: Do not touch
+`display.py`, `spinner.py`, or agent markdown files; default
+behaviour unchanged when args absent. OUTPUT: `piper.py` and
+`orchestrator.py` support `--from-node` and `--level`; `--help`
+documents them; path resolution confirmed correct.
+VERIFY: `python3
+projects/llm_wiki/speed-reading/static/src/piper.py
+--help | grep -c "from-node"` → 1;
+`python3
+projects/llm_wiki/speed-reading/static/src/piper.py
+--help | grep -c "\-\-level"` → 1;
+`ls projects/llm_wiki/speed-reading/static/agents/` → four .md
+files.
+
+---
+
+### Step 45.5: Add per-mode README files; update top-level README
+
+[x] Status
+
+CONTEXT: `speed-reading/` has `static/`, `dynamic/`, `vibe/`
+subdirectories; only `static/` has `README-mindmap-system.md`
+(pipeline doctrine); the top-level `README.md` covers only the
+static pipeline; no student-facing READMEs exist.
+ACTION: (a) Create `static/README.md`: static agenting concept
+(functions in specs; dispatch in code), layout (src/, agents/,
+templates/, examples/), quick-start using `--level 1`.
+(b) Create `dynamic/README.md`: dynamic agenting concept (functions
+in specs; LLM routes), layout (symlinks + examples/), two-pass
+exercise. (c) Create `vibe/README.md`: vibe agenting concept (LLM
+decides everything), layout, single-prompt exercise.
+All three READMEs reference `sessions/llm_wiki.md`.
+(d) Update `speed-reading/README.md`: insert
+`## Three Agenting Modes` section immediately above
+`## Pipeline — Waterfall View` listing subdirs with one-line
+descriptions and relative README links. CONSTRAINTS: Do not modify
+`static/agents/` or `static/src/`; lines ≤79 chars. OUTPUT:
+`static/README.md`, `dynamic/README.md`, `vibe/README.md` exist;
+top-level README has `## Three Agenting Modes`. VERIFY:
+`ls projects/llm_wiki/speed-reading/static/README.md
+projects/llm_wiki/speed-reading/dynamic/README.md
+projects/llm_wiki/speed-reading/vibe/README.md` → 3 files;
+`grep -c "Three Agenting Modes"
+projects/llm_wiki/speed-reading/README.md` → 1.
+
+---
+
+### Step 45.6: Mark Phase 45 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 45.1–45.5 executed and individually verified.
+ACTION: Confirm every `[ ] Status` under `### Step 45.` in
+`miscellaneous/software_defined_workbench/plan.md` reads `[x]`.
+Stage + commit all changed files:
+`chore: Phase 45 - mark enhancing-sessions steps complete`.
+Tag: `v45.6-enhancing-sessions-step-completed`. Push branch and
+tags. CONSTRAINTS: Do not push to `main`. OUTPUT: All Phase 45
+statuses `[x]`; tag pushed to remote. VERIFY:
+`grep -A1 "### Step 45\."
+miscellaneous/software_defined_workbench/plan.md |
+grep "\[ \] Status"` → 0 matches;
+`git tag | grep "v45\."` →
+v45.6-enhancing-sessions-step-completed.
+
+---
+
+## Phase 46: Modularize
+
+### Step 46.1: Split `/replan` — create `/execute` skill
+
+[x] Status
+
+CONTEXT: `.claude/commands/replan.md` handles both planning
+(Steps 1–3a) and execution (Steps 4–5) in one skill; no
+`/execute` skill exists.
+ACTION: (a) Create `.claude/commands/execute.md` containing the
+execution loop: orient to the highest Phase N in `SDW_DIR/plan.md`,
+find the first `[ ] Status` step, execute it, run VERIFY, flip
+status, commit with `<type>: Phase N: Step K - <summary>`, show
+diff, stop for human approval; final step tags and pushes
+`vN.K-<brief-summary>-step-completed`. (b) Edit
+`.claude/commands/replan.md`: delete the `### 4. Execute` and
+`### 5. Final Step` sections; append a one-sentence handoff at end
+of `### 3a`: "After this commit, invoke `/execute` to run each
+step one at a time."
+CONSTRAINTS: Do not alter Steps 1, 2, 3, or 3a in `replan.md`;
+do not touch any other project files.
+OUTPUT: `.claude/commands/execute.md` exists with Steps 4–5;
+`.claude/commands/replan.md` ends after Step 3a (plus handoff
+note) with no Step 4 or 5 content.
+VERIFY: `grep -c "### 4\." .claude/commands/replan.md` → 0;
+`grep -c "### 4\." .claude/commands/execute.md` → 1;
+`ls .claude/commands/execute.md` → file exists.
+
+---
+
+### Step 46.2: Refactor `projects/llm_wiki/README.md`; create
+`silicon_ai/README.md`
+
+[x] Status
+
+CONTEXT: `projects/llm_wiki/README.md` mixes a general PKM intro
+with `silicon_ai`-specific workflow sections (Add Subject, Add
+Article, Update Article); no `silicon_ai/README.md` exists;
+`speed-reading/README.md` exists but is not linked from top-level.
+ACTION: (a) Create `projects/llm_wiki/silicon_ai/README.md` with
+a one-sentence KG wiki intro and the three workflow sections
+verbatim from current top-level README (Adding a New Subject,
+Adding a New Article to an Existing Subject, Updating an Existing
+Article). (b) Rewrite `projects/llm_wiki/README.md` as a PKM
+overview: keep title and objective; replace Methodology, Repository
+Layout, and Workflows sections with a two-row table listing each
+PKM mode (silicon_ai / speed-reading), a one-sentence description,
+and a relative link to the mode's own README.
+CONSTRAINTS: Do not modify any existing file inside `silicon_ai/`
+or `speed-reading/`; keep lines ≤79 chars; 2-space indentation.
+OUTPUT: `projects/llm_wiki/silicon_ai/README.md` contains the
+three workflow sections; `projects/llm_wiki/README.md` has no
+workflow-specific silicon_ai content and links to both subdirectory
+READMEs.
+VERIFY: `grep -c "Adding a New Subject"
+projects/llm_wiki/silicon_ai/README.md` → 1;
+`grep -c "speed-reading" projects/llm_wiki/README.md` → ≥1;
+`grep -c "Adding a New Subject" projects/llm_wiki/README.md`
+→ 0.
+
+---
+
+### Step 46.3: Mark Phase 46 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 46.1 and 46.2 executed and individually verified;
+all `[ ] Status` lines in Phase 46 of `plan.md` are already `[x]`.
+ACTION: Confirm every `[ ] Status` in the Phase 46 block of
+`miscellaneous/software_defined_workbench/plan.md` reads `[x]`.
+Commit: `chore: Phase 46 - mark modularize steps complete`. Tag:
+`git tag -a v46.3-modularize-step-completed -m "Completed Phase 46
+Step 3: mark all steps complete"`. Push:
+`git push origin fix/more --tags`.
+CONSTRAINTS: Do not modify `miscellaneous/docs/archive/`; do not
+push to `main`.
+OUTPUT: All Phase 46 step statuses show `[x]`; tag
+`v46.3-modularize-step-completed` exists on remote.
+VERIFY: `grep -A2 "### Step 46\."
+miscellaneous/software_defined_workbench/plan.md |
+grep "\[ \] Status"` → 0 matches;
+`git tag | grep "v46\."` → v46.3-modularize-step-completed.

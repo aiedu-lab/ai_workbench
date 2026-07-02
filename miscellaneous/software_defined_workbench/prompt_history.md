@@ -2734,3 +2734,505 @@ On the other hand, students use 'setup/student/' for setting up
 their machine/VM and environment. Similarly, instructors will use 
 'setup/instructor' for setting and validating student set up. 
 Add those references in the 'Artifact' table of 'What Goes Where'.
+
+---
+
+## Repo Hygiene Documentation
+[x] Status
+
+Documented the existing GitHub branch-protection configuration for
+`main` (required_approving_review_count=0,
+require_code_owner_reviews=false, dismiss_stale_reviews=true,
+required_linear_history=true, enforce_admins=true, no
+force-push/deletion) in a new file
+`miscellaneous/setup/instructor/repo.md`. Also documented how to
+generate CLAUDE_CODE_OAUTH_TOKEN (`claude setup-token`) and
+ANTHROPIC_API_KEY (`console.anthropic.com`) and set them as
+optional GitHub Actions secrets for the `@claude review` PR
+workflow. Cross-referenced `repo.md` from `instructor.md` and
+from the README Contribution Guidelines. Mirrored the same doc
+and cross-links into the companion `la_workbench` repo.
+Marked [x] Status directly — this is a repo hygiene/ops record,
+not a curriculum content phase routed through SDW_DIR/plan.md.
+
+---
+
+## Enhancing Sessions
+[x] Status
+
+### Update Assistant Family, Assistant, Agents
+
+Reference 
+* `sessions/assistant-family_assistant_and_agent.md`
+* `miscellaneous/experimental/docs/agent_loop.md`
+* Markdown section below describing the mental model of agents with 
+3 nested loopsk, skills, subagents, skill execution boundaries, 
+subscription vs payg accounts, etc.
+
+```text
+The clean mental model: **a skill is a *procedure* (possibly complex, possibly with embedded code and conditional logic) that runs in your context; a subagent is a *delegated reasoner* with its own context and its own loop.** If the work is "follow these steps," a skill suffices. If the work is "go figure this out, I don't want to watch you think, just give me the answer" — that's a subagent, and the value is the isolation, not anything the steps couldn't technically express.
+
+A useful unifying picture: there are **three nested loops** — the outer agent loop (LLM-driven, dynamic, conditional), skills as **fixed sub-programs** that run beneath a single step of it, and subagents as **entire nested copies** of the outer loop with their own context. Your instinct to collapse everything into "one agent + skills" is architecturally coherent for *procedural* work; it breaks specifically where you need **isolated reasoning contexts**, which is a property of the runtime, not of what the steps can express.
+
+- But the **subagent (the runtime construct)** is a place the harness can *attach* a distinct permission boundary. The parent might have filesystem-write; the subagent it spawns is configured by the harness with read-only.
+
+A skill, by contrast, **executes within the parent's runtime and therefore under the parent's permission set** — it has no separate enforcement boundary the harness can independently scope. So "different tool permissions" is correctly stated as: *the harness can enforce a different permission scope on a subagent's context than on the parent's*, because the subagent is a separate runtime construct. It was never a property of the LLM. Your correction stands; the capability lives in the harness binding policy to context, not in the model.
+
+A subagent boundary is *also* a permission boundary the harness controls — which is exactly why "subagent as isolated context" and "least-privilege enforcement" are deeply related. The isolation that gives you the context firewall is the *same* isolation that gives the harness a clean seam to attach a tighter credential scope. One mechanism, two payoffs.
+```
+
+#### Add agent loop visual 
+
+Enhance section `### 🔹 Layer 1: The **Agent** — does *one* job well` of 
+`assistant-family_assistant_and_agent.md`: 
+
+1. Conceptualize the agent as an 'artificial human' and the LLM as its brain.
+  Picturize an ascii art the agent that accepts a 'task' and then executes 
+  'three nested loops' with description as laid out below:
+
+2. Add a subsection on subagent as a context firewall with its own set of 
+  scoped permissions as handed out by the parent agent's harness instance as 
+  called out by referenced `agent_loop.md`
+ 
+3. Add a subsection on skills as a 'fixed sub-program' but within the 
+  context of the agent and within the scope of permissions of the agent 
+  harness as called out by referenced `agent_loop.md`
+
+
+#### Assistant
+
+Enhance section `### 🔹 Layer 2: The **Assistant** — the resource manager (an "Agent OS")` 
+of `assistant-family_assistant_and_agent.md`: 
+
+Add a subsection on 'agent harness'. Define what 'harnesses' provide and how 
+it is distinct from assistants.
+
+State where some of the below example functionalities lie (harness or assistants): 
+* managing interaction with users on interactive assistants 
+* managing interaction with LLMs including error handling and 
+  gathering response when it is trickling in.
+* spawning agents/subagents and tracking their lifecycle
+* managing interaction with tools including error handlign and
+  gathering response from tools when it is streamed
+* making skills/plugins and connectors available to agents
+* scoping the permissions offered to subagents
+
+---
+
+Review the section below wrt subscription vs PAYG account and reword,
+summarize, restate as appropriate.
+
+#### Account
+
+Add a separate section on different types of accounts. 
+
+1. Subscription Account - example claude.ai
+2. Pay-As-You-Go (PAYG) Account - example platform.claude.com
+
+##### Table contrasting **Subscrition vs PAYG** account 
+Create a table contrasting the `Subscription` account (claude.ai) vs 
+`PAYG` (platform.claude.com) account wrt:
+
+1. For Subscription account:
+
+* Credential Generation is user friendly as personal assistants 
+redirect the session to a user browser login session using oAuth 
+flow. An example trigger is via `claude CLI` command line options 
+`claude auth <login | setup >`. 
+
+* Credential Storage is local either inside user's home directory 
+(eg. ~/.claude/.credentials.json) or saved in shell's environment 
+variables (eg. CLAUDE_CODE_OAUTH_TOKEN).
+
+* Credential Submission is automatic as the personal 
+assistant applications are already programmed to look at specific 
+file locations or shell environment variables. 
+
+* Resources: Connectors and skills uploaded to claude.ai account are 
+automatically synchronized and made available to personal assistants 
+that are running on client devices, such as Claude CLI, Desktop, 
+Browser extension, Powerpoint extension, etc.
+
+* Token cost: reference below (PAYG account) Tokenomics section to 
+compare and contrast the cost.
+
+2. For PAYG account:
+
+* Credential Generation is via specific workflow in the account to 
+generate API_KEY.
+
+* Credential Storage: As this is stored in cloud (not user's personal device),
+one has to upload and store them in a vault. 
+
+* Resources: Every resource must be separately uplodaed and made availabe 
+to the agents. 
+
+* `Tokenomics`: As of now, the price per token for PAYG API KEYS vs subscription 
+based is almost 7:1. Thus, for any use case that can be solved by individuls, 
+users are encouraged to use subscrition mode.
+
+##### Managed Agents
+Add a subsection on `Managed Agents`. 
+
+`Managed Agents` are used in cases where the agent's purpose is not tied 
+to a specific user. To relieve one from the DevOps burden of operating
+the underlying infrastructure (kubernetes), these agents are run 
+on provider's infrastructure ie. NOT on user owned client devices.
+
+Example of use cases where `Managed Agents` are used:
+
+* Non-interactive use cases, such as CI/CD, Pull Request, Cron Jobs, and 
+Slack channel initiated tasks.  
+
+* Multiple-player collaboratively executing a goal/task on the same session 
+(eg. troubleshooting) where players hand off a session midway to other players 
+without losing any context. The multi-player scenario uses claude tags as 
+identity for scenarios where user identity does not make sense. An example, 
+is a slack channel triggered task with the channel members having 3 engineers 
+and one product manager that kick off set of work items.
+
+Since `Managed Agents` are not linked to a specific user, it is only available in 
+PAYG account (platform.claude.com) rather than a user's tied subscription account.
+Thus, API_KEY is the only supported consumtion mode.
+
+Furthermore, they require a separate manual submission of
+* credentials as the underlying task is not necessarily tied 
+to a single user and does not inherit user credentials.
+* connectors for mcp server tool calls as specific user 
+tools aren't appropriate for a groups of users or server tasks. 
+
+### Update Anthropic Auth
+Reference:
+* `miscellaneous/tools/claude/cloud.md`
+* `miscellaneous/tools/claude/cli.md`
+* `$HOME/.claude/.credentials.json`
+
+Note `$HOME/.claude/.credentials.json` is for interactive human use 
+on a client laptop (personal device) whereas CLAUDE_CODE_OAUTH_TOKEN 
+is for automated/headless use (CI/CD job, container service) where you 
+accept that we are using for inference trading it off in exchange for 
+portability.
+
+Hence, I made changes to `cloud.md` and `cli.md`.
+
+Validate that the isntructions are consistent in the files AND that:
+* `miscellaneous/tools/claude/cloud.md` does not set API KEY or OAUTH TOKEN
+* `miscellaneous/tools/claude/cli.md` does not set API KEY or OAUTH TOKEN
+* `$HOME/.claude/.credentials.json` is used for authenticating.
+
+### Objective
+
+* assistants_agents.md was renamed to assistant-family_assistant_and_agent.md
+  Review the rewording of the file, validate correctness, add the examples. Edit
+  as appropriate for clarity and simplicity.
+
+* Expand the concept and exercises sections on 'Vibe Agentic' and 
+  'Dynamic Agenting' to session 'LLM Wiki' per sections below.
+
+* Expand the exercises on session 'LLM Wiki' with the 
+  subsection on 'Optional Extension - Speed Reading Mindmap' to
+  elaborate and illustrate the 'Vibe Agenting' and 'Dynamic Agenting'
+  concepts with corrresponding exercises per guidelines below.
+
+To elaborate, review (and rephrase as appropriate) to incorporate the 
+below concept and exercises. 
+
+### Concept
+
+#### Vibe Agenting - Concept
+
+The model/LLM of the coordinator decides fully on subagents:
+* when are they created - dynamically created on demand by parent model
+* what is the function - dynamically determined by parent model as to 
+the functions each subagent would provide
+* what is the permission boundary - determined by the parent harness
+and permissions may even be downscoped as the harness spanws the 
+subagent. note permissions are never determined by LLM to maintain
+separation of concerns and make it deterministic. note scoping is 
+not managed via declaration file and scoping subagents are limited
+by the ceiling of permissions held by the parent agent.
+* observability, tracing, and lifecycle is managed by parent harness
+
+The activation of LLM to 'vibe agent' is automatic and can be explicitly 
+triggerd by adding a high level prompt to the assistant
+`use subagents as appropriate`.
+
+#### Dynamic Agenting - Concept
+
+The subagent functionality is pre-determined and declared - 
+(name, description, and tool surface) and captured in a 
+markdown file specification document. 
+
+The discoverability of these child agents and routing is driven 
+by the model/LLM of the `coordinator agent`. The parent model 
+can see and choose among these subagents. 
+
+The first-class agent definition is also a natural seam to 
+attach scoped tool permissions, a distinct system prompt, 
+a different model, and audit identity — declaratively, is 
+enfored by and is the job of the harness. The subagent 
+declaration can also help in customizing the permissions 
+boundary to the agent specification.
+
+Platforms treats declared agents as first-class objects with 
+per-agent traces, token accounting, rate-limit handling, retries, 
+failure isolation, "which agent did what", etc. 
+
+#### Static Agenting - Concept
+
+The model/LLM of the cooridnator is used to drive and execute each 
+subagent. That function of each agent is static. The number of 
+sub-agents spawned by the 'Coordinating Agent' is predetermined.
+
+The routing decision and judgment of which *specialist* to invoke 
+is moved from the model to the code. In addition, the developer is 
+responsible for configuring the permissions/scope for each subagent.
+
+Subagent dispatch logic, lifecycle management, retries on errors and 
+failures, gathering the result from each subagent, passing appropriate 
+permission boundary (picked from declaration or decided directly in 
+code), directing the observability stats of each subagent, etc could 
+now come from the developer's imperative code - something that offers 
+more control but may lead to more mistakes as code audits are harder.
+
+### Exercise
+
+#### Reorganize
+
+I've already done the following:
+
+1. Created sub-directories inside 'projects/llm_wiki/speed-reading' dir:
+* static: all the files (except README.md) that was previously in 
+ 'speed-reading' has been moved to that dir except README.md
+* dynamic: 
+* vibe: soft link ai-mindmap.md, speed-reading.md, and templates
+  in that directory.
+
+2. Moved the contents (webpage and PDF files) to 
+   'projects/llm_wiki/speed-reading' directory.
+
+Note that the contents/ folder will be shared by the static, dynamic, 
+and vibe agenting exercises.
+
+### Vibe Agenting - Exercise
+
+Confirm that only the ai-mindmap.md, speed-reading.md and templates/
+are visible in the vibe directory.
+
+Prompt your AI assistant:
+```text
+Study the contents of speed_reading directory.
+Study a book-pdf placed in any directory
+Start drawing a mind map in that directory by descending into layer 1.
+Render the drawing built so far. 
+Use subagents as appropriate.
+```
+
+Note that based on the mindmap drawing you could choose a node <name> 
+and prompt your AI assistant: 
+```text 
+Descend on layer 1 node <name> to layer 2.
+Use subagents as appropriate.
+```
+
+### Dynamic Agenting - 'Speed Reading' Exercise
+
+This is an exercise similar to 'vibe agenting' except that the 
+agent work for a given agent is decided statically ie the prompt
+that decides functionality of a given agents (what an agent 
+does) is 'pinned' using the corresponding md file. 
+
+Reference 'projects/llm_wiki/speed-reading/dynamic/' directory
+
+1. Ensure that only following files are visible to the assistant:
+
+* ai-mindmap.md
+* speed-reading.md
+* templates/
+
+Specifically the agents directory should NOT be visible as we 
+want claude to do vibe agenting, where we ask AI to create the
+Child or Specialist agents based on functions it wants these
+Specialists to run as well as when to create these agents.
+ 
+2. Run the 'Claude CLI' inside the 'dynamic' dir.
+
+* In the interest of speed, convenience, and to save yourself 
+the pain of approving permissions everytime claude runs a 
+command, grant 'full access' by run `/permissions` 
+so that it does not ask you again and again when running 
+various commands.
+
+* Prompt 'Claude CLI' assistant to create an agent 'plan':
+
+```text
+Study the speed reading system in the current directory. 
+
+You be the Orchestrator agent.
+Suggest what specialized subagents we create to do the work 
+by creating additional subagents. 
+In addition, ensure you create a QA subagent to validate 
+the work created.
+
+Create an agents sub directory in the subdirectory 
+"examples/.tmp/" and make md files for each of these 
+sub agents inside the "examples/.tmp/agents" subdirectory.
+```
+
+3. Exit the 'Claude CLI' session to start afresh again in the 
+'dynamic' directory. 
+
+* The objective is to demonstrate how the agent mindmap
+artifact definitions are read and then those agents
+run to create a mindmap.
+
+* Prompt 'Claude CLI' assistant:
+```text
+Study the material in the current directory.
+
+Read the book that is in the examples/ subdirectory.
+
+Create subagents corresponding to the information in 
+"examples/.tmp/agents" subdirectory while you be the 
+orchestrator.
+
+Produce the mindmap html in the examples/ subdirectory. 
+
+Create any intermediate artifacts, such as json, md, 
+logs, jsonl, etc. files in examples/.tmp subdirectory.  
+
+Descend only into layer 1.
+```
+
+4. You can exit a 'Claude CLI' session (Ctrl-C) and 
+'resume' the last session: `claude --resume`
+
+5. View the mindmap.html in the browser as it builds
+over time.
+
+6. Review the layer-1 mindmap and then expand the 
+map from a specific node(s) of your choice.
+
+Replace <name> with the name of any specific node 
+where you'd like to descend and build mindmap. 
+```text
+Descend into layer2 for the node <name>
+```
+
+#### Static Agenting - Exercise
+Reference: 'projects/llm_wiki/speed-reading' dir
+
+Current exercise content illustrates and only focuses on the concept 
+of 'Static Agenting' where the agent functions are determined per the 
+markdown descriptions of each agent in 
+projects/llm_wiki/speed-reading/agents.
+
+##### Update Exercise
+
+1. Modify the piper.py script in source to accept two optional arguments:
+* --from-node 'node-name' - node from where we descend; when no argument is 
+specified we assume it is start from root.
+* --level <int> - the level number that we descend from that node; when
+no argument is specified we descend down to all levels from that node.
+
+2. Update README.md that is completely focused on 'Static Agenting' to have 
+three sections, one each for the different kinds of agenting.
+* Modify the exercise section to only descend till level 1 from root.
+
+### Validation
+* README.md in each subdirectory of 
+'projects/llm_wiki/speed-reading/', namely vibe, dynamic, static correctly 
+captures the purpose and how to execute 'vibe agenting', 'dynamic agenting'
+and 'static agenting' respectively. 
+* README.md in 'projects/llm_wiki/speed-reading/README.md'
+* 'projects/llm_wiki/speed-reading/static' contents was formerly directly 
+under 'projects/llm_wiki/speed-reading/'. This reorganization may have
+broken the code in src and references in the various directories. Please 
+review, validate, and re-reference cross links across files.
+
+### Add Credits
+Reference:
+* sessions/hdd.md
+* sessions/assistants_agent.md
+* sessions/llm_wiki.md
+
+#### Credits
+* Add a 'References' section to llm_wiki. Add a reference stating 
+"Assistant, Agents, and Vibe & Dynamic Agenting" that hyperlinks to 
+https://drive.google.com/file/d/1BUnt-rTb0X1Nc93z6by6B5ndFViPu8IH/view?usp=sharing
+
+---
+
+## Modularize
+
+[x] Status
+
+### Replan
+Current /replan skill does the planning as well as executes (from Step 4) onwards.
+Create a `/execute` skill that executes the plan starting Step 4 and strip those
+steps from `/replan`.
+
+### Update README
+
+Reference `projects/llm_wiki/README.md` 
+
+Current `README.md` solely focused on building knowledge
+graph that is exhibited in `silicon_ai/` rather than `building knowledge`, 
+which could be `creating a knowlege graph wiki`, `building mindmap`, or 
+any other exercise that enhances personal knowledge.
+
+Move the content inside README.md that is specific to `silicon_ai/` or 
+knowledge graph wiki part into `silicon_ai/`.
+
+Reformat or create the content in the README.md to cover any 
+personal knowledge management.
+
+Add references to the subdirectories that supports PKM. Review and reword 
+as appropriate - a sample references:
+* `silicon_ai`: builds wiki and enhances understanding by supporting 
+questions or analysis only relying on the wiki content
+* `speed-reading`": builds mindmap that enhances knowledge by 
+organizing content in visually intuitive concepts showing relationships 
+and organized in layers.  
+
+---
+
+## Contribution Mechanism Reflected from la_workbench
+[x] Status
+
+The companion repo `la_workbench` (`../la_workbench/`) added a
+student solution submission and completion-report mechanism —
+reference its `SDW_DIR/prompt_history.md` `## Contribution` section
+(and its "Addendum: Refined Requirements" subsection) for the full
+prompt. Mirrored the same mechanism here:
+
+* README.md: new `## 📤 Submitting Exercise Solutions` section
+  (after `## 🔁 Student Workflow`) documenting the
+  `projects/<project>/<github-userid>/` submission layout, the
+  `project/<project>/<github-userid>` PR naming convention, and the
+  automatic completion reports that follow a merge.
+* `miscellaneous/report/report.py`: scans `projects/*/*/solution.md`
+  for bare-userid Contributors and generates two things:
+  1. `miscellaneous/report/report.md` — the class-wide topic x
+     student completion matrix.
+  2. `miscellaneous/report/student/<github-userid>-report.md` — a
+     **per-student report generated/updated on every checkin**
+     (every merged solution PR), not just the class-wide table.
+* Each contributor's **Full Name is resolved from their bare
+  GitHub-UserId** via the public GitHub Users API — students no
+  longer type their name into `solution.md` by hand.
+* `report.py` is **idempotent**: re-running it with no new or
+  changed submissions leaves every generated file byte-identical
+  (a student's report only changes, and its date only bumps, when
+  their actual completions change).
+* `.github/workflows/report.yml`: since `main` blocks direct pushes
+  even from Actions (`enforce_admins: true`, "restrict who can push:
+  no one" — see `miscellaneous/setup/instructor/repo.md`), the
+  workflow regenerates both the class-wide and per-student reports
+  on every merged solution PR and lands them via its own
+  auto-created, auto-merged PR (0 approvals required).
+
+Edits only — left uncommitted pending explicit maintainer
+confirmation before `git add`/`commit`/`push` in this repo, per this
+repo's own git-hygiene norms.
+

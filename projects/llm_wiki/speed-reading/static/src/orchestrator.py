@@ -43,11 +43,15 @@ class Piper:
     from_phase: str,
     log_dir: str | None = None,
     waterfall_log: str | None = None,
+    from_node: str | None = None,
+    level: int | None = None,
   ) -> None:
     main_idx, vl_start = _PHASE_MAP[from_phase]
     self._input = input_path
     self._from_idx = main_idx
     self._vl_start = vl_start
+    self._from_node = from_node
+    self._level = level
     self._log_dir: Path | None = (
       Path(log_dir).resolve() if log_dir else None
     )
@@ -252,7 +256,8 @@ class Piper:
     try:
       self._run_agent(
         f"Synthesize {self._notes_file}"
-        f" into {self._content_json}",
+        f" into {self._content_json}"
+        + self._scope_suffix(),
         "seth-content-synthesizer.md",
         "Seth",
       )
@@ -361,7 +366,8 @@ class Piper:
     )
     try:
       self._run_agent(
-        f"Render {self._content_json} into {self._html_file}",
+        f"Render {self._content_json} into {self._html_file}"
+        + self._scope_suffix(),
         "leo-layout-engineer.md",
         "Leo",
         attempt=attempt,
@@ -400,6 +406,18 @@ class Piper:
       self._spinner.stop()
 
   # ── Utilities ─────────────────────────────────────────────────
+
+  def _scope_suffix(self) -> str:
+    """Return scope directive appended to Seth/Leo prompts."""
+    parts: list[str] = []
+    if self._from_node:
+      parts.append(f"Start from node '{self._from_node}'.")
+    if self._level is not None:
+      parts.append(
+        f"Descend only {self._level} level(s) deep"
+        " (level 1 = root children only)."
+      )
+    return (" " + " ".join(parts)) if parts else ""
 
   def _run_agent(
     self,

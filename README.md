@@ -1,4 +1,4 @@
-# <img src="miscellaneous/docs/brand/aiedu-lab.png" alt="aiedu-lab" width="32" valign="middle"> AI Workbench
+# <img src="miscellaneous/docs/images/aiedu-lab.png" alt="aiedu-lab" width="32" valign="middle"> AI Workbench
 
 ## Objective
 A hands-on, community-driven program to learn about generative AI solutions, 
@@ -6,6 +6,12 @@ such as agentic AI applications, AI driven workflows and intelligence,
 etc. through exercises. 
 The program is structured as a series of sessions, each focusing on a 
 specific tool or concept.
+
+> **Companion Repository:** [LA Workbench](https://github.com/aiedu-lab/la_workbench)
+> is an independent Linear Algebra curriculum that pairs well with
+> this lab. Its NumPy/PyTorch exercises build the math intuition —
+> vectors, matrices, transformations — that powers the embeddings,
+> inference, and training concepts exercised here.
 
 ---
 
@@ -67,6 +73,35 @@ For each session:
 See [GitHub and
 Git](miscellaneous/tools/dev_workbench/github_and_git.md) for the
 exact commands behind each step.
+
+---
+
+## 📤 Submitting Exercise Solutions
+
+Once you've completed a session's Exercise, submit it so it becomes
+a durable record of your work — useful later for internships, camp
+applications, or just to look back on.
+
+1. Create `projects/<project>/<github-userid>/` — `<project>` is the
+   matching project subfolder for the session (e.g.
+   `projects/embedding/`), and `<github-userid>` is any one member's
+   GitHub user id if you worked in a group. Inside it, add:
+   * `solution.md` with four sections: **Contributors** (one bare
+     GitHub-UserId per line — no need to type your full name, it's
+     looked up automatically), **Test Cases** (what you ran to
+     validate your solution), **Software Installs** (anything beyond
+     the repo's usual toolchain), and **Solution Manual** (how to run
+     your solution and its test cases).
+   * your source file(s) and a `requirements.in` (or equivalent) for
+     any extra installs.
+2. Open a pull request named `project/<project>/<github-userid>`.
+3. Once the maintainer approves and merges your PR,
+   [`.github/workflows/report.yml`](.github/workflows/report.yml)
+   automatically regenerates
+   [`miscellaneous/report/report.md`](miscellaneous/report/report.md)
+   (the whole class's completion record) and each contributor's own
+   `miscellaneous/report/student/<github-userid>-report.md` — no
+   manual step needed.
 
 ---
 
@@ -192,7 +227,13 @@ opened in this repo.
 
 `/plan-step` is applied internally by `/replan` when generating
 each step — no separate invocation needed during a replan cycle.
-> Contributors may not commit directly to `main`.
+
+> Contributors may not commit directly to `main`. Write-access
+> contributors (instructors) do **not** need a separate reviewer to
+> merge their own PR — a PR is required, but zero additional
+> approvals are needed. See
+> [repo.md](miscellaneous/setup/instructor/repo.md) for the
+> underlying GitHub branch-protection settings.
 
 ---
 

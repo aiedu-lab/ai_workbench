@@ -8,6 +8,19 @@ independent verification.
 
 ---
 
+## Three Agenting Modes
+
+The same speed-reading problem is solved three ways — one per
+agenting style — each in its own subdirectory:
+
+| Mode | Subdirectory | Description |
+|---|---|---|
+| Static | [`static/`](static/README.md) | Agent functions declared in specs; dispatch and lifecycle fixed in developer code (`src/piper.py`) |
+| Dynamic | [`dynamic/`](dynamic/README.md) | Agent functions declared in specs; coordinator LLM routes and orchestrates dynamically |
+| Vibe | [`vibe/`](vibe/README.md) | No pre-declared specs; the LLM invents agents and routing on the fly |
+
+---
+
 ## Pipeline — Waterfall View
 
 `src/piper.py` prints a 3-column waterfall at each phase
