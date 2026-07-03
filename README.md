@@ -84,7 +84,7 @@ so it becomes a durable record of your work.
 1. Create a branch off of main on which you make any changes
    `git checkout --branch fix/solution` and submit a pull request
    per the Step 3 below.
-2. Create `projects/<project>/<github-userid>/` — `<project>` is the
+2. Create `projects/<project>/solutions/<github-userid>/` — `<project>` is the
    matching project subfolder for the session (e.g.
    `projects/embedding/`), and `<github-userid>` is any one member's
    GitHub user id if you worked in a group. Inside it, add:
@@ -99,11 +99,11 @@ so it becomes a durable record of your work.
 3. Open a pull request named `project/<project>/<github-userid>`.
 4. Once the maintainer approves and merges your PR,
    [`.github/workflows/report.yml`](.github/workflows/report.yml)
-   automatically regenerates
-   [`miscellaneous/report/report.md`](miscellaneous/report/report.md)
-   (the whole class's completion record) and each contributor's own
-   `miscellaneous/report/student/<github-userid>-report.md` — no
-   manual step needed.
+   automatically regenerates [`summary_report.md`](
+   miscellaneous/reporting/summary_report.md) (the whole class's
+   completion record) and each contributor's own
+   `miscellaneous/reporting/for_each_student/<github-userid>-report.md`
+   — no manual step needed.
 
 ---
 

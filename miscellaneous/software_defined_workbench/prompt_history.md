@@ -3236,3 +3236,45 @@ Edits only — left uncommitted pending explicit maintainer
 confirmation before `git add`/`commit`/`push` in this repo, per this
 repo's own git-hygiene norms.
 
+---
+
+## Cleanup Contribution Reflected from la_workbench
+[x] Status
+
+The companion repo `la_workbench` (`../la_workbench/`) ran a
+cleanup/rename pass over the contribution mechanism reflected above —
+reference its `SDW_DIR/prompt_history.md` `## Cleanup Contribution`
+section for the full prompt. Mirrored the same restructure here:
+
+* Moved (would move) each exercise's student subdirectories under a
+  `solutions/` folder, e.g.
+  `projects/<project>/<github-userid>/` →
+  `projects/<project>/solutions/<github-userid>/` — no student
+  solutions exist yet in this repo, so there was nothing to move.
+* Renamed `miscellaneous/report/` → `miscellaneous/reporting/`,
+  `report.py` → `generate_reports.py`, the class-wide `report.md` →
+  `summary_report.md`, and `student/` → `for_each_student/`.
+* Added a `**Full Name:**` line to each per-student report (the full
+  name previously only appeared in the H1 title).
+* Generalized `collect_completions` to discover every `solutions/`
+  directory anywhere under a project via `rglob("solutions")`,
+  instead of assuming it always sits exactly one level down — a
+  project's exercise may be split into subparts (e.g.
+  `projects/<project>/partA/solutions/`), each with its own
+  `solutions/` directory at a different depth.
+* Tightened the idempotency guard to compare full per-student report
+  content (with only the date line normalized out), not just the
+  table body, so schema changes like the `Full Name` addition are
+  correctly detected as a one-time rewrite while unrelated re-runs
+  stay a no-op.
+* `.github/workflows/report.yml`'s changed-file detection switched
+  from a fixed-depth pathspec glob to a depth-agnostic regex match
+  (`^projects/.*/solutions/[^/]+/solution\.md$`) on the diff output,
+  matching the generalized directory discovery above.
+* README.md's submission section and the workflow's run
+  command/`git add` target updated to match the new paths.
+
+Edits only — left uncommitted pending explicit maintainer
+confirmation before `git add`/`commit`/`push` in this repo, per this
+repo's own git-hygiene norms.
+
