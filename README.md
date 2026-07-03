@@ -84,22 +84,27 @@ so it becomes a durable record of your work.
 1. Ensure you've the latest mainline branch:
    `git switch main && git pull origin main`
 2. Create (or Switch to) a branch off of main where you'll make the changes:
-   `git switch --create my-branch 2>/dev/null || git switch my-branch`
-   and submit a pull request per the Step 4 below.
-3. Create `projects/<project-name>/solutions/<github-userid>/` —
-   `<project-name>` is the matching project subfolder for the session
-   (e.g. `projects/embedding/`), and `<github-userid>` is any one member's
+   `git switch --create solutions-branch 2>/dev/null || git switch solutions-branch`
+3. Create projects/<project-name>/solutions/<github-userid>/ —
+   <project-name> is the matching project subfolder for the session
+   (e.g. projects/embedding/), and <github-userid> is any one member's
    GitHub user id if you worked in a group. Inside it, add:
-   * `solution.md` with four sections:
-     * **Contributors**: one GitHub-UserId per line
-     **Test Cases**: What you ran to validate your solution
-     **Software Installs**: Anything beyond the repo's usual toolchain 
-     **Solution Manual**: How to run your solution and its test cases
+   * solution.md with four sections:
+     ```text
+     * ## Contributors: one GitHub-UserId per line
+     * ## Test Cases: What you ran to validate your solution
+     * ## Software Installs: Anything beyond the repo's usual toolchain
+     * ## Solution Manual: How to run your solution and its test cases
+     ```
    * your file(s):
-     * `requirements.in` (or equivalent) for any extra installs
-     * source files
-4. Open a pull request named `project/<project-name>/<github-userid>`.
-5. Once the maintainer approves and merges your PR,
+     * requirements.in (or equivalent) for any extra installs
+     * all source files
+3. If you have spent a lot of time and submitting multiple solutions,
+   then prior to pushing your solution to origin please ensure you've
+   the latest version or origin/main: `git rebase origin/main`
+4. Push your changes to origin: `git push origin solutions-branch`
+5. Open a pull request named `projects/<project-name>/solutions/<github-userid>`.
+6. Once the maintainer approves and merges your PR,
    [`.github/workflows/report.yml`](.github/workflows/report.yml)
    automatically regenerates [`summary_report.md`](
    miscellaneous/reporting/summary_report.md) (the whole class's
