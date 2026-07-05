@@ -3278,3 +3278,40 @@ Edits only — left uncommitted pending explicit maintainer
 confirmation before `git add`/`commit`/`push` in this repo, per this
 repo's own git-hygiene norms.
 
+## Gaussian Elimination Reporting Reflected from la_workbench
+[x] Status
+
+The companion repo `la_workbench` (`../la_workbench/`) discovered
+that its Systems of Linear Equations session grew two distinct
+exercises (`np.linalg.solve` vs. hand-rolled Gaussian elimination)
+under one topic, and its completion report was lumping both into a
+single topic-level checkmark instead of crediting each separately —
+reference its `SDW_DIR/prompt_history.md` `## Gaussian Elimination`
+section for the full prompt. Mirrored the reporting fix here, since
+this repo shares the same `generate_reports.py` design:
+
+* Added `SOLUTION_TITLE_RE` and `parse_solution_title(solution_md,
+  default)`, reading a solution.md's own leading `# Solution:
+  <Title>` heading as its exercise identity (falling back to the
+  session's topic title if the heading is missing).
+* Changed `collect_completions`'s return type from `dict[str,
+  set[str]]` (slug → contributors) to `dict[str, dict[str,
+  set[str]]]` (slug → exercise title → contributors), built via a
+  single `rglob("solution.md")` per slug rather than walking
+  `solutions/` directories and assuming a fixed nesting depth.
+* `write_class_report` and `student_table` now add an `Exercise`
+  column and emit one row per (topic, exercise) pair, so a session
+  with multiple exercises shows multiple rows instead of one lumped
+  row.
+* README.md's submission section now documents that solution.md
+  must open with a `# Solution: <Exercise Title>` heading, since
+  the report depends on it to label and credit each exercise.
+* No student solutions exist yet in this repo, so the regenerated
+  `summary_report.md` still shows every topic with a blank
+  `Exercise` column — verified the script runs cleanly and stays
+  idempotent on a second run.
+
+Edits only — left uncommitted pending explicit maintainer
+confirmation before `git add`/`commit`/`push` in this repo, per this
+repo's own git-hygiene norms.
+
