@@ -239,12 +239,36 @@ opened in this repo.
 `/plan-step` is applied internally by `/replan` when generating
 each step — no separate invocation needed during a replan cycle.
 
+> **Note:** "Instructor" (see 🧑‍🏫 Instructor Guidelines above) is
+> an *education* role describing how you use this course.
+> "Contributor", "Maintainer", and "Admin" below are *GitHub* roles
+> describing your repo permissions — an instructor is often also a
+> GitHub admin, but doesn't have to be, and the two are independent.
+>
 > Contributors may not commit directly to `main`. Write-access
 > contributors (instructors) do **not** need a separate reviewer to
 > merge their own PR — a PR is required, but zero additional
 > approvals are needed. See
-> [repo.md](miscellaneous/setup/admin/repo.md) for the
-> underlying GitHub branch-protection settings.
+> [contributor.md](miscellaneous/setup/contributor/contributor.md)
+> for the `gh` commands to submit a pull request and validate your
+> contributor access.
+
+---
+
+## 🧭 Maintainer Guidelines
+
+Reviewing and merging pull requests is a maintainer's job. See
+[maintainer.md](miscellaneous/setup/maintainer/maintainer.md) for
+the full `gh` command reference.
+
+---
+
+## 🛠️ Admin Guidelines
+
+Repo hygiene (branch protection, CODEOWNERS, CI secrets) and
+collaborator-role management are admin tasks. See
+[admin.md](miscellaneous/setup/admin/admin.md) for the full `gh`
+command reference.
 
 ---
 

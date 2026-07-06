@@ -3356,3 +3356,36 @@ prompt explicitly authorized **committing** these changes here —
 push to origin is still left manual, per this repo's own
 git-hygiene norms.
 
+## Pull Request Reflected from la_workbench
+[x] Status
+
+The companion repo `la_workbench` (`../la_workbench/`) reorganized
+its three admin-facing docs around GitHub's three permission roles
+— reference its `SDW_DIR/prompt_history.md` `## Pull Request`
+section for the full prompt. Mirrored the same restructure here:
+
+* Consolidated `admin/repo.md` + `admin/member.md` into one
+  `admin/admin.md`, prefixed with a new "Section 1 — Validate your
+  admin role" (`gh auth status` + `.permissions.admin` check) and
+  renumbering both files' sections into one flat sequence.
+* Renamed `maintainer/pull_request.md` → `maintainer/maintainer.md`
+  ("everything a maintainer should know," not just PR review),
+  added a "Validate your maintainer role" section
+  (`.permissions.maintain` check), and fixed its cross-link from
+  the old `admin/repo.md` to `admin/admin.md`.
+* Added `contributor/contributor.md` (new): validating contributor
+  (`write`) access and submitting a PR named to match this repo's
+  `projects/<project>/solutions/<userid>` convention.
+* Updated README.md's "🤝 Contribution Guidelines" blockquote to
+  link `contributor.md` instead of the now-consolidated `repo.md`,
+  added a note distinguishing the "🧑‍🏫 Instructor Guidelines"
+  education role from the Contributor/Maintainer/Admin GitHub
+  roles, and added new "🧭 Maintainer Guidelines" and "🛠️ Admin
+  Guidelines" sections linking `maintainer.md`/`admin.md`.
+* Verified no remaining reference to the old `admin/repo.md`,
+  `admin/member.md`, or `maintainer/pull_request.md` paths anywhere
+  in live content, and that all three files' cross-links resolve.
+
+Per this phase's prompt, these changes are committed here — push
+to origin is left manual, per this repo's own git-hygiene norms.
+
