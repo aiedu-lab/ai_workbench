@@ -89,19 +89,18 @@ so it becomes a durable record of your work.
    <project-name> is the matching project subfolder for the session
    (e.g. projects/embedding/), and <github-userid> is any one member's
    GitHub user id if you worked in a group. Inside it, add:
-   * solution.md starting with a `# Solution: <Exercise Title>`
-     heading (the completion report uses this to label and credit
-     each exercise separately when a session has more than one),
-     then four sections:
-     ```text
-     * ## Contributors: one GitHub-UserId per line
-     * ## Test Cases: What you ran to validate your solution
-     * ## Software Installs: Anything beyond the repo's usual toolchain
-     * ## Solution Manual: How to run your solution and its test cases
-     ```
+   * solution.md — copy [solution_template.md](
+       miscellaneous/reporting/solution_template.md
+     ) and fill in each section. Keep the `# Solution: <Title>`
+     heading and section names exactly as given; the completion
+     report depends on them to label and credit your work.
    * your file(s):
      * requirements.in (or equivalent) for any extra installs
      * all source files
+
+   `labsetup.py` wires up a pre-commit hook that validates
+   solution.md automatically, rejecting the commit if the heading
+   or Contributors section is missing or malformed.
 3. If you have spent a lot of time and submitting multiple solutions,
    then prior to pushing your solution to origin please ensure you've
    the latest version or origin/main: `git rebase origin/main`
@@ -244,7 +243,7 @@ each step — no separate invocation needed during a replan cycle.
 > contributors (instructors) do **not** need a separate reviewer to
 > merge their own PR — a PR is required, but zero additional
 > approvals are needed. See
-> [repo.md](miscellaneous/setup/instructor/repo.md) for the
+> [repo.md](miscellaneous/setup/admin/repo.md) for the
 > underlying GitHub branch-protection settings.
 
 ---

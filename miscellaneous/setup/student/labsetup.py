@@ -49,6 +49,7 @@ import yaml
 import requests
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[3]
 LABENV = Path(__file__).parent / "labenv.yaml"
 SECRET_KEY = "DISCORD_WEBHOOK_URL"
 SSH_DIR = Path.home() / ".ssh"
@@ -590,7 +591,18 @@ def _ensure_gh_installed() -> bool:
     return False
 
 
+def _configure_git_hooks() -> None:
+  """Point git at .githooks/ so solution.md submissions are
+  validated before commit."""
+  subprocess.run(
+    ["git", "config", "core.hooksPath", ".githooks"],
+    cwd=str(REPO_ROOT), check=True,
+  )
+  print("  OK   git hooksPath set to .githooks")
+
+
 def main() -> None:
+  _configure_git_hooks()
   env = _load_env()
   _set_env(env)
   sudo_ok = _sudo_precheck()

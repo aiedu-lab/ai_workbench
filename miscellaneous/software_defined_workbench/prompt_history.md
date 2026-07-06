@@ -3315,3 +3315,44 @@ Edits only — left uncommitted pending explicit maintainer
 confirmation before `git add`/`commit`/`push` in this repo, per this
 repo's own git-hygiene norms.
 
+## Cleanup Solutioning Reflected from la_workbench
+[x] Status
+
+The companion repo `la_workbench` (`../la_workbench/`) ran a
+cleanup pass over three loose ends in the contribution mechanism —
+reference its `SDW_DIR/prompt_history.md` `## Cleanup Solutioning`
+section for the full prompt. Mirrored the applicable changes here:
+
+* Moved `miscellaneous/setup/instructor/repo.md` →
+  `miscellaneous/setup/admin/repo.md` (admin-facing content, not
+  teaching content) and updated README's link to it.
+* Added `miscellaneous/setup/admin/member.md` (`gh api` commands
+  to check your own/another's collaborator role and to add/promote/
+  demote contributors and maintainers) and
+  `miscellaneous/setup/maintainer/pull_request.md` (`gh pr`
+  commands to list, approve+merge, request changes, amend, and
+  close PRs).
+* Created `miscellaneous/reporting/solution_template.md` (a clean,
+  ready-to-copy solution.md with the `# Solution: <Title>` heading
+  and Contributors/Summary/Solution Manual/Test Cases/Software
+  Installs sections already laid out) and replaced README's
+  verbose inline section-list under the submission step 3 with a
+  pointer to copy this template instead.
+* Added `miscellaneous/reporting/validate_solution.py` (imports
+  `PROJECTS_DIR`, `SOLUTION_TITLE_RE`, and `parse_contributors`
+  from `generate_reports.py` to reject a solution.md missing the
+  Solution heading or an empty/placeholder Contributors section)
+  and `.githooks/pre-commit`, which runs it against staged
+  solution.md files. `labsetup.py` now runs `git config
+  core.hooksPath .githooks` automatically (a new `REPO_ROOT`
+  constant and `_configure_git_hooks()` call at the top of
+  `main()`), and README notes the automatic validation.
+* Verified `generate_reports.py` tolerates a malformed solution.md
+  without crashing (a scratch test in la_workbench confirmed it
+  simply credits no one for that file rather than raising).
+
+Unlike this repo's prior two reflected entries, this phase's
+prompt explicitly authorized **committing** these changes here —
+push to origin is still left manual, per this repo's own
+git-hygiene norms.
+
