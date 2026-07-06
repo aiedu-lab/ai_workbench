@@ -89,19 +89,18 @@ so it becomes a durable record of your work.
    <project-name> is the matching project subfolder for the session
    (e.g. projects/embedding/), and <github-userid> is any one member's
    GitHub user id if you worked in a group. Inside it, add:
-   * solution.md starting with a `# Solution: <Exercise Title>`
-     heading (the completion report uses this to label and credit
-     each exercise separately when a session has more than one),
-     then four sections:
-     ```text
-     * ## Contributors: one GitHub-UserId per line
-     * ## Test Cases: What you ran to validate your solution
-     * ## Software Installs: Anything beyond the repo's usual toolchain
-     * ## Solution Manual: How to run your solution and its test cases
-     ```
+   * solution.md — copy [solution_template.md](
+       miscellaneous/reporting/solution_template.md
+     ) and fill in each section. Keep the `# Solution: <Title>`
+     heading and section names exactly as given; the completion
+     report depends on them to label and credit your work.
    * your file(s):
      * requirements.in (or equivalent) for any extra installs
      * all source files
+
+   `labsetup.py` wires up a pre-commit hook that validates
+   solution.md automatically, rejecting the commit if the heading
+   or Contributors section is missing or malformed.
 3. If you have spent a lot of time and submitting multiple solutions,
    then prior to pushing your solution to origin please ensure you've
    the latest version or origin/main: `git rebase origin/main`
@@ -240,12 +239,36 @@ opened in this repo.
 `/plan-step` is applied internally by `/replan` when generating
 each step — no separate invocation needed during a replan cycle.
 
+> **Note:** "Instructor" (see 🧑‍🏫 Instructor Guidelines above) is
+> an *education* role describing how you use this course.
+> "Contributor", "Maintainer", and "Admin" below are *GitHub* roles
+> describing your repo permissions — an instructor is often also a
+> GitHub admin, but doesn't have to be, and the two are independent.
+>
 > Contributors may not commit directly to `main`. Write-access
 > contributors (instructors) do **not** need a separate reviewer to
 > merge their own PR — a PR is required, but zero additional
 > approvals are needed. See
-> [repo.md](miscellaneous/setup/instructor/repo.md) for the
-> underlying GitHub branch-protection settings.
+> [contributor.md](miscellaneous/setup/contributor/contributor.md)
+> for the `gh` commands to submit a pull request and validate your
+> contributor access.
+
+---
+
+## 🧭 Maintainer Guidelines
+
+Reviewing and merging pull requests is a maintainer's job. See
+[maintainer.md](miscellaneous/setup/maintainer/maintainer.md) for
+the full `gh` command reference.
+
+---
+
+## 🛠️ Admin Guidelines
+
+Repo hygiene (branch protection, CODEOWNERS, CI secrets) and
+collaborator-role management are admin tasks. See
+[admin.md](miscellaneous/setup/admin/admin.md) for the full `gh`
+command reference.
 
 ---
 

@@ -3315,3 +3315,77 @@ Edits only — left uncommitted pending explicit maintainer
 confirmation before `git add`/`commit`/`push` in this repo, per this
 repo's own git-hygiene norms.
 
+## Cleanup Solutioning Reflected from la_workbench
+[x] Status
+
+The companion repo `la_workbench` (`../la_workbench/`) ran a
+cleanup pass over three loose ends in the contribution mechanism —
+reference its `SDW_DIR/prompt_history.md` `## Cleanup Solutioning`
+section for the full prompt. Mirrored the applicable changes here:
+
+* Moved `miscellaneous/setup/instructor/repo.md` →
+  `miscellaneous/setup/admin/repo.md` (admin-facing content, not
+  teaching content) and updated README's link to it.
+* Added `miscellaneous/setup/admin/member.md` (`gh api` commands
+  to check your own/another's collaborator role and to add/promote/
+  demote contributors and maintainers) and
+  `miscellaneous/setup/maintainer/pull_request.md` (`gh pr`
+  commands to list, approve+merge, request changes, amend, and
+  close PRs).
+* Created `miscellaneous/reporting/solution_template.md` (a clean,
+  ready-to-copy solution.md with the `# Solution: <Title>` heading
+  and Contributors/Summary/Solution Manual/Test Cases/Software
+  Installs sections already laid out) and replaced README's
+  verbose inline section-list under the submission step 3 with a
+  pointer to copy this template instead.
+* Added `miscellaneous/reporting/validate_solution.py` (imports
+  `PROJECTS_DIR`, `SOLUTION_TITLE_RE`, and `parse_contributors`
+  from `generate_reports.py` to reject a solution.md missing the
+  Solution heading or an empty/placeholder Contributors section)
+  and `.githooks/pre-commit`, which runs it against staged
+  solution.md files. `labsetup.py` now runs `git config
+  core.hooksPath .githooks` automatically (a new `REPO_ROOT`
+  constant and `_configure_git_hooks()` call at the top of
+  `main()`), and README notes the automatic validation.
+* Verified `generate_reports.py` tolerates a malformed solution.md
+  without crashing (a scratch test in la_workbench confirmed it
+  simply credits no one for that file rather than raising).
+
+Unlike this repo's prior two reflected entries, this phase's
+prompt explicitly authorized **committing** these changes here —
+push to origin is still left manual, per this repo's own
+git-hygiene norms.
+
+## Pull Request Reflected from la_workbench
+[x] Status
+
+The companion repo `la_workbench` (`../la_workbench/`) reorganized
+its three admin-facing docs around GitHub's three permission roles
+— reference its `SDW_DIR/prompt_history.md` `## Pull Request`
+section for the full prompt. Mirrored the same restructure here:
+
+* Consolidated `admin/repo.md` + `admin/member.md` into one
+  `admin/admin.md`, prefixed with a new "Section 1 — Validate your
+  admin role" (`gh auth status` + `.permissions.admin` check) and
+  renumbering both files' sections into one flat sequence.
+* Renamed `maintainer/pull_request.md` → `maintainer/maintainer.md`
+  ("everything a maintainer should know," not just PR review),
+  added a "Validate your maintainer role" section
+  (`.permissions.maintain` check), and fixed its cross-link from
+  the old `admin/repo.md` to `admin/admin.md`.
+* Added `contributor/contributor.md` (new): validating contributor
+  (`write`) access and submitting a PR named to match this repo's
+  `projects/<project>/solutions/<userid>` convention.
+* Updated README.md's "🤝 Contribution Guidelines" blockquote to
+  link `contributor.md` instead of the now-consolidated `repo.md`,
+  added a note distinguishing the "🧑‍🏫 Instructor Guidelines"
+  education role from the Contributor/Maintainer/Admin GitHub
+  roles, and added new "🧭 Maintainer Guidelines" and "🛠️ Admin
+  Guidelines" sections linking `maintainer.md`/`admin.md`.
+* Verified no remaining reference to the old `admin/repo.md`,
+  `admin/member.md`, or `maintainer/pull_request.md` paths anywhere
+  in live content, and that all three files' cross-links resolve.
+
+Per this phase's prompt, these changes are committed here — push
+to origin is left manual, per this repo's own git-hygiene norms.
+
