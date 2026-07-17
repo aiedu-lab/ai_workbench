@@ -99,3 +99,8 @@ contract, the AI generates from it, and the human reviews diffs.
 **Vibe-Coded** maximises speed and is appropriate for exploration,
 prototypes, and throwaway scripts where correctness is not
 critical — iterate fast, throw away when done.
+
+## References
+* [SciFin Video Session - video session by Mohit Aron](
+    https://drive.google.com/file/d/1wYSUCL2zcvaK2kYEfbl-YGFicNZZSlxr/view
+  )
