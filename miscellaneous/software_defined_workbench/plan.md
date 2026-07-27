@@ -6236,7 +6236,7 @@ less than) the AI Local line number.
 
 ### Step 47.3: Mark Phase 47 complete, commit, tag, push
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 47.1–47.2 executed and individually verified; all
 `[ ] Status` lines in the Phase 47 block of
