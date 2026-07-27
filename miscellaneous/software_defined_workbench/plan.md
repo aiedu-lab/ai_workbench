@@ -6257,3 +6257,100 @@ VERIFY: `grep -A2 "### Step 47\."
 miscellaneous/software_defined_workbench/plan.md | grep "\[ \]
 Status"` → 0 matches; `git tag | grep "v47\."` →
 `v47.3-model-serving-stack-step-completed`.
+
+## Phase 48: Update Local
+
+### Step 48.1: Create `sessions/ai_local_model.md`
+
+[ ] Status
+
+CONTEXT: No Concept-only session exists for local model serving;
+`.tmp/model_serving_stack.md` has unused material on open-source
+agent harnesses (Aider, OpenCode feature lists) and Ollama's deeper
+serving mechanics (the "What value Ollama adds?" walkthrough and its
+four-box You → Agent → Ollama → Model diagram); the sibling session
+`sessions/model_serving_stack.md` already owns the four-layer
+mental model, the three-way stack comparison, Ollama's 5-bullet
+responsibility summary, and the local-vs-cloud table, so none of
+that is repeated here; `sessions/sdd_basics.md` is the template for
+a Concept session that closes with a link to its paired Exercise.
+ACTION: Create `sessions/ai_local_model.md` titled "# Concept: AI
+Local", with: 🎯 Objective (what running models locally unlocks and
+what this session adds beyond Model Serving Stack); a section on
+Local Open-Weight Models (Llama, Qwen, DeepSeek, Mistral, Gemma —
+the models you actually pull and run); a section on Agent Harnesses
+for Local Models covering Aider (git integration, automatic
+commits, broad provider support) and OpenCode (CLI/Desktop/IDE, 70+
+providers, MIT license) pairing with local servers; a section on
+How Ollama Serves a Model with the "What value Ollama adds?"
+walkthrough (finds model, downloads/verifies/stores, loads into
+RAM/GPU, starts inference, serves REST API, waits for and returns
+answers) and the four-box mental-model diagram (You → Agent →
+Ollama → Model); 🔑 Key Takeaway; and a closing `## 🏃 Exercise`
+section linking to [Exercise: AI
+Local](ai_local.md) for the hands-on lab.
+CONSTRAINTS: Do not modify `sessions/ai_local.md`,
+`sessions/model_serving_stack.md`, or `.tmp/model_serving_stack.md`;
+do not repeat the four-layer diagram, the commercial/free-CLI/local
+stack comparison, or the local-vs-cloud table already in
+`sessions/model_serving_stack.md`; do not add a hands-on exercise
+section beyond the closing link; 2-space indentation, ≤79-char
+lines (URLs exempt).
+OUTPUT: New file `sessions/ai_local_model.md` exists with Objective,
+Local Open-Weight Models, Agent Harnesses for Local Models, How
+Ollama Serves a Model, Key Takeaway, and Exercise-link sections.
+VERIFY: `test -f sessions/ai_local_model.md && echo exists` →
+`exists`; `awk 'length($0) > 79 {print NR}' sessions/ai_local_model.md`
+→ no output (or only bare-URL lines); `grep -c "four-layer\|Commercial Integrated Products" sessions/ai_local_model.md` → 0.
+
+---
+
+### Step 48.2: Insert AGENDA row in `README.md`
+
+[ ] Status
+
+CONTEXT: `README.md`'s AGENDA table has `Concept: Model Serving
+Stack` on line 44 and `Exercise: AI Local` on line 45; the prompt
+requires the new Concept session to sit immediately before the
+`Exercise: AI Local` row.
+ACTION: Edit `README.md` AGENDA table to insert a new row —
+`[**Concept: AI Local**](sessions/ai_local_model.md)` — with a
+one-sentence description (local open-weight models, agent harnesses
+that drive them, and how Ollama serves them), a lesson duration of
+30 mins, and blank Tool/Tool Duration columns (matching the Phase 47
+`Model Serving Stack` row style), placed immediately above the
+existing `Exercise: AI Local` row.
+CONSTRAINTS: Do not reorder, edit, or renumber any other AGENDA row;
+do not change any other section of `README.md`; ≤79-char lines,
+2-space indentation.
+OUTPUT: `README.md` AGENDA table contains the new `Concept: AI
+Local` row directly above the `Exercise: AI Local` row.
+VERIFY: `grep -n "Concept: AI Local\|Exercise: AI Local" README.md`
+→ the `Concept: AI Local` line number is immediately followed by
+(one less than) the `Exercise: AI Local` line number.
+
+---
+
+### Step 48.3: Mark Phase 48 complete, commit, tag, push
+
+[ ] Status
+
+CONTEXT: Steps 48.1–48.2 executed and individually verified; all
+`[ ] Status` lines in the Phase 48 block of
+`miscellaneous/software_defined_workbench/plan.md` still read
+`[ ]`.
+ACTION: Flip every `[ ] Status` in the Phase 48 block of
+`miscellaneous/software_defined_workbench/plan.md` to `[x] Status`.
+Commit with message `chore: Phase 48 - mark update local steps
+complete`. Tag:
+`git tag -a v48.3-update-local-step-completed -m "Completed Phase
+48 Step 3: AI Local concept session"`. Push:
+`git push origin fix/more6jul26 --tags`.
+CONSTRAINTS: Do not modify `miscellaneous/docs/archive/`; do not
+push to `main`.
+OUTPUT: All Phase 48 step statuses show `[x]`; tag
+`v48.3-update-local-step-completed` exists on remote.
+VERIFY: `grep -A2 "### Step 48\."
+miscellaneous/software_defined_workbench/plan.md | grep "\[ \]
+Status"` → 0 matches; `git tag | grep "v48\."` →
+`v48.3-update-local-step-completed`.

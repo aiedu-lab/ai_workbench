@@ -3399,3 +3399,17 @@ to origin is left manual, per this repo's own git-hygiene norms.
 any other session, say `Spec Driven Development`.
 * Insert the session in /README.md section AGENDA before the
 session on `AI Local`
+
+## Update Local
+[x] Status
+
+* Create a `Concept` session `AI Local` titled ai_local_model.md
+based on the content in /.tmp/model_serving_stack.md 
+* The content in /.tmp/model_serving_stack.md should go over all
+the examples of local model serving, local models, and functionalities
+provided by local model serving, etc. That is all `AI Local` related
+content, such as agent harness (Aider, OpenCode) as well as serving 
+(eg `Ollama`). No need to duplicate content that is already 
+reflected  `Model Serving Stack`.
+* Add this session in /README.md subsection AGENDA before the 
+`Exercise` session on `AI Local`. 

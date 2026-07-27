@@ -9,20 +9,27 @@ why you can swap Claude for Llama without rewriting your workflow,
 and what you gain or give up by running models locally instead of
 in the cloud.
 
-## 🧠 The Four Layers
+## 🧠 The Four Layers below User/Agent Goal-Prompt
 
 ```text
+              User
+        'Explain recursion'
+                 │
            Agent Harness
     (Aider, OpenCode, Gemini CLI,
      Claude Code, Codex)
+        'Plan tasks, edits files'
                  │
          Model Provider Layer
 (OpenAI, Anthropic, Google, Ollama,
  OpenRouter, Groq, LM Studio)
+  'Finds model, loads it, exposes an API,
+  manages inference and model files'
                  │
           Foundation Model
 (GPT-5.x, Claude, Gemini, Qwen,
  DeepSeek, Llama, Mistral)
+    'Predicts the next token'
                  │
       Execution Runtime / Tools
 (MCP, shell, git, Docker,
