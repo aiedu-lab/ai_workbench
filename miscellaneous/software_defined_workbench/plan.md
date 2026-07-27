@@ -6307,7 +6307,7 @@ VERIFY: `test -f sessions/ai_local_model.md && echo exists` →
 
 ### Step 48.2: Insert AGENDA row in `README.md`
 
-[ ] Status
+[x] Status
 
 CONTEXT: `README.md`'s AGENDA table has `Concept: Model Serving
 Stack` on line 44 and `Exercise: AI Local` on line 45; the prompt
