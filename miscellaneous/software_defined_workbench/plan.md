@@ -6210,7 +6210,7 @@ sessions/model_serving_stack.md` → no output.
 
 ### Step 47.2: Insert AGENDA row in `README.md`
 
-[ ] Status
+[x] Status
 
 CONTEXT: `README.md`'s AGENDA table lists the `AI Local` session
 (line 44) directly after `Applications on Pluggable Models`; the
