@@ -6171,3 +6171,89 @@ VERIFY: `grep -A2 "### Step 46\."
 miscellaneous/software_defined_workbench/plan.md |
 grep "\[ \] Status"` → 0 matches;
 `git tag | grep "v46\."` → v46.3-modularize-step-completed.
+
+## Phase 47: Model Serving Stack
+
+### Step 47.1: Create `sessions/model_serving_stack.md`
+
+[ ] Status
+
+CONTEXT: No session file exists for the "Model Serving Stack"
+concept; `.tmp/model_serving_stack.md` contains draft content on
+Agent Harness / Model Provider / Execution Runtime layers, product
+comparisons, and Ollama's local-serving role; `sessions/sdd_basics.md`
+is the template reference for a Concept-only session structure
+(Objective, core sections, Key Takeaway, References).
+ACTION: Create `sessions/model_serving_stack.md` titled "# Concept:
+Model Serving Stack", condensing `.tmp/model_serving_stack.md` into:
+🎯 Objective; a mental-model section with the four-layer diagram
+(Agent Harness → Model Provider → Foundation Model → Execution
+Runtime/Tools); a comparison of Commercial Integrated Products vs
+Free Agent CLI vs Local Model Server (Ollama, its 5 responsibilities,
+and what it does NOT provide); 🔑 Key Takeaway (local-first
+trade-offs: cost/privacy vs model strength/speed); and a References
+section citing the 3 URLs already present in
+`.tmp/model_serving_stack.md`.
+CONSTRAINTS: Do not modify or delete `.tmp/model_serving_stack.md`
+(source scratch file); do not add an Exercise section (prompt
+requests Concept content only, no hands-on exercise); do not touch
+any other session file in this step; 2-space indentation, ≤79-char
+lines throughout.
+OUTPUT: New file `sessions/model_serving_stack.md` exists with
+Objective, layered mental-model, product-comparison, Key Takeaway,
+and References sections.
+VERIFY: `test -f sessions/model_serving_stack.md && echo exists` →
+`exists`; `awk 'length($0) > 79 {print NR}'
+sessions/model_serving_stack.md` → no output.
+
+---
+
+### Step 47.2: Insert AGENDA row in `README.md`
+
+[ ] Status
+
+CONTEXT: `README.md`'s AGENDA table lists the `AI Local` session
+(line 44) directly after `Applications on Pluggable Models`; the
+prompt requires the new Model Serving Stack session to appear
+immediately before the `AI Local` row.
+ACTION: Edit `README.md` AGENDA table to insert a new row —
+`[**Concept: Model Serving Stack**](sessions/model_serving_stack.md)`
+— with a one-sentence description (the Agent Harness / Model
+Provider / Execution Runtime layering and product landscape), a
+lesson duration, no exercise Tool column entry (Concept-only,
+matching the style of other Concept rows with no Tool Duration),
+placed immediately above the existing `AI Local` row.
+CONSTRAINTS: Do not reorder, edit, or renumber any other AGENDA row;
+do not change any other section of `README.md`; ≤79-char lines,
+2-space indentation.
+OUTPUT: `README.md` AGENDA table contains the new Model Serving
+Stack row directly above the `AI Local` row.
+VERIFY: `grep -n "Model Serving Stack\|AI Local" README.md` → the
+Model Serving Stack line number is immediately followed by (one
+less than) the AI Local line number.
+
+---
+
+### Step 47.3: Mark Phase 47 complete, commit, tag, push
+
+[ ] Status
+
+CONTEXT: Steps 47.1–47.2 executed and individually verified; all
+`[ ] Status` lines in the Phase 47 block of
+`miscellaneous/software_defined_workbench/plan.md` still read
+`[ ]`.
+ACTION: Flip every `[ ] Status` in the Phase 47 block of
+`miscellaneous/software_defined_workbench/plan.md` to `[x] Status`.
+Commit with message `chore: Phase 47 - mark model serving stack
+steps complete`. Tag:
+`git tag -a v47.3-model-serving-stack-step-completed -m "Completed
+Phase 47 Step 3: model serving stack session"`. Push:
+`git push origin fix/more6jul26 --tags`.
+CONSTRAINTS: Do not modify `miscellaneous/docs/archive/`; do not
+push to `main`.
+OUTPUT: All Phase 47 step statuses show `[x]`; tag
+`v47.3-model-serving-stack-step-completed` exists on remote.
+VERIFY: `grep -A2 "### Step 47\."
+miscellaneous/software_defined_workbench/plan.md | grep "\[ \]
+Status"` → 0 matches; `git tag | grep "v47\."` →
+`v47.3-model-serving-stack-step-completed`.

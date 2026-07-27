@@ -3389,3 +3389,13 @@ section for the full prompt. Mirrored the same restructure here:
 Per this phase's prompt, these changes are committed here — push
 to origin is left manual, per this repo's own git-hygiene norms.
 
+## Model Serving Stack
+[x] Status
+
+* Add a session going over the Concept of `Model Serving Stack` -
+* The content of the session is based on based on 
+/.tmp/model_serving_stack.md
+* The structure/template of the session can follow the format of
+any other session, say `Spec Driven Development`.
+* Insert the session in /README.md section AGENDA before the
+session on `AI Local`
