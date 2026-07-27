@@ -41,6 +41,8 @@ specific tool or concept.
 | [**Concept: Solution Architecture**](sessions/solution.md) | Design full-stack AI solutions using patterns learned across the lab. | 45 mins | [Claude Chat](miscellaneous/tools/claude/desktop.md), Python |  |
 | [**Exercise: Personal Knowledge Management (LLM Wiki)**](sessions/llm_wiki.md) | Use an AI agent as librarian for a knowledge base that grows with each ingest. | 60 mins | [Obsidian](https://obsidian.md), [Claude Code (CLI)](miscellaneous/tools/claude/cli.md) | 15 mins |
 | [**Exercise: Applications on Pluggable Models**](sessions/pluggable_models.md) | Swap LLM providers without changing code — compare open-weight and closed models side by side. | 45 mins | [Groq](miscellaneous/tools/groq/setup.md), [OpenRouter](miscellaneous/tools/openrouter/openrouter.md), [Cline](miscellaneous/tools/dev_workbench/cline.md) | 15 mins |
+| [**Concept: Model Serving Stack**](sessions/model_serving_stack.md) | See the layers between your prompt and a model's reply — agent harness, provider, foundation model — and compare cloud, free-CLI, and local-Ollama stacks. | 30 mins | | |
+| [**Concept: AI Local**](sessions/ai_local_model.md) | Local open-weight models, the agent harnesses that drive them, and how Ollama serves them. | 30 mins | | |
 | [**Exercise: AI Local**](sessions/ai_local.md) | Run an LLM entirely offline for privacy, custom personas, and zero cloud cost. | 45 mins | [Ollama](miscellaneous/tools/ollama/setup.md) | 15 mins |
 | [**Future Advancements**](sessions/future_advancements.md) | Survey the AI frontier and what it means for the tools you just built. | 30 mins |  |  |
 | [**Recap**](sessions/recap.md) | Reflect on what was built, what surprised you, and how to keep improving. | 30 mins |  |  |

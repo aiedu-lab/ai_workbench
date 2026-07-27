@@ -1,4 +1,4 @@
-# Concept & Exercise: AI Local (The Sovereign Developer)
+# Exercise: AI Local (The Sovereign Developer)
 
 ## 🎯 Objective
 Run a high-performance Large Language Model (LLM) entirely on your local 
