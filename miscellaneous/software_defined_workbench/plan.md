@@ -6176,7 +6176,7 @@ grep "\[ \] Status"` → 0 matches;
 
 ### Step 47.1: Create `sessions/model_serving_stack.md`
 
-[ ] Status
+[x] Status
 
 CONTEXT: No session file exists for the "Model Serving Stack"
 concept; `.tmp/model_serving_stack.md` contains draft content on
