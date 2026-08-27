@@ -57,30 +57,6 @@ Open or generously-free harnesses (Gemini CLI, Aider, OpenCode)
 that work with almost any provider — GPT, Claude, Gemini, DeepSeek,
 Ollama — so you pay only for the model, or nothing at all.
 
-### Local Model Server (Ollama)
-Runs entirely on your laptop. Ollama itself does not plan, edit
-code, or manage git — it only:
-1. finds and downloads a model from a registry, verifying it
-2. loads it into RAM/GPU
-3. starts inference and a local REST API (e.g.
-   `http://localhost:11434`)
-4. manages installed models (list, remove, swap)
-5. supports quantized model formats to fit smaller hardware
-
-Ollama does **not** provide planning, git workflows, autonomous
-execution, code editing, memory, or subagents — an agent harness
-(Aider, OpenCode) still does the planning; Ollama just serves the
-model underneath it.
-
-## ⚖️ Why Local-First Stacks
-
-| | Local (Ollama) | Cloud (Claude, GPT, Gemini) |
-|---|---|---|
-| Cost | $0/month after hardware | Pay per token |
-| Privacy | Fully offline | Data leaves your machine |
-| Model strength | Weaker, open-weight | Frontier-grade |
-| Speed | GPU-bound, can be slow | Fast, provider-managed |
-
 ## 🔑 Key Takeaway
 The harness, the provider, and the model are three independent,
 swappable layers — not one product. Picking a commercial

@@ -101,6 +101,9 @@ prototypes, and throwaway scripts where correctness is not
 critical — iterate fast, throw away when done.
 
 ## References
-* [SciFin Video Session - video session by Mohit Aron](
-    https://drive.google.com/file/d/1wYSUCL2zcvaK2kYEfbl-YGFicNZZSlxr/view
-  )
+* [Spec Driven Development - SciFin private talk - by Mohit Aron](
+  https://drive.google.com/file/d/1wYSUCL2zcvaK2kYEfbl-YGFicNZZSlxr/view
+)
+* [Spec Driven Development - Open public talk - by Mohit Aron](
+  https://drive.google.com/file/d/1K6S24hCKnkB0LTne0WVuBGU-ozsIbA-u/view
+)
