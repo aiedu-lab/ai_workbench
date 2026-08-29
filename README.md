@@ -200,7 +200,7 @@ All content changes must follow this sequence in strict order:
    `SDW_DIR/plan.md`. Both files are append-only and serve as
    the system of record.
 3. **Execute** — AI executes each plan step one at a time under
-   reviewer approval, following `CLAUDE.md` operating protocol.
+   reviewer approval, following `AGENTS.md` operating protocol.
 4. **Commit** — commit `prompt_history.md`, `plan.md`, and the
    generated content together on a feature branch. Annotate every
    AI-generated section:
@@ -299,8 +299,8 @@ Each tool reads its own loader file, which references Layer 1:
 
 | Tool | Loader file | Notes |
 |---|---|---|
-| Claude Code | `CLAUDE.md` | Full protocol; step 0 reads `.agent/rules/` |
-| Codex CLI | `AGENTS.md` | Symlink → `CLAUDE.md` (zero duplication) |
+| Codex CLI | `AGENTS.md` | Full protocol; step 0 reads `.agent/rules/` |
+| Claude Code | `CLAUDE.md` | Symlink → `AGENTS.md` (zero duplication) |
 | Antigravity | `AGENTS.md` + `.agent/` | Reads both natively |
 | Cursor | `.cursor/rules/*.mdc` | **Not yet wired** |
 | Windsurf | `.windsurfrules` | **Not yet wired** |
@@ -316,6 +316,17 @@ tools (plan mode, SDW protocol) and are not portable:
 | `/replan` | Full Specify→Plan→Approve→Execute cycle |
 | `/plan-step` | Generate/validate a single plan.md step |
 | `/proc-article` | Knowledge ingestion pipeline |
+
+`.claude/skills/` (loaded by name, not slash commands):
+
+| Skill | Purpose |
+|---|---|
+| `pr_submit_plugin` | 3-step gated PR submit chain: branch/tree hook → `tools/scripts/repo_utils/submit_pr.py` → confirm hook. No bazel/act here (non-coding repo). |
+| `model_modernizer` | Reports current model vs. latest; recommends, never auto-switches. |
+
+`tools/scripts/repo_utils/` also has `submit_pr.py`/`approve_pr.py`,
+runnable directly (`python3 tools/scripts/repo_utils/submit_pr.py`)
+since this repo has no bazel.
 
 ---
 

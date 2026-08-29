@@ -35,7 +35,7 @@ Valid subjects: `eapm`, `silicon_ai`
    - Any `[x]` → skip Phases 1–3; run Phase 5 only.
    - Any `[ ]` → run Phases 1–4 in order.
 
-4. **Execute.** Follow all CLAUDE.md behavioral invariants:
+4. **Execute.** Follow all AGENTS.md behavioral invariants:
    - Explore before acting (read files before modifying).
    - One step at a time; show diff; wait for approval.
    - Commit after each completed step.
