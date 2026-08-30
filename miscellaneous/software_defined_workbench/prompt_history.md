@@ -3400,6 +3400,73 @@ any other session, say `Spec Driven Development`.
 * Insert the session in /README.md section AGENDA before the
 session on `AI Local`
 
+## check_pr/merge_pr Migration Reflected from ITDev
+[x] Status
+
+The companion repo `ITDev` (`../ITDev/`) asked to test its "review
+count 1 except admin" branch protection change by migrating its
+latest `check_pr`/`submit_pr`/`approve_pr`/`merge_pr` bazel targets
+and `tools/scripts/repo_utils/` scripts here (this repo has no bazel
+setup, so ported as plain `python3`-invoked scripts instead), run
+the hermetic tests without touching a real PR, commit/push, then
+live-test against a real PR. Reference `../ITDev`'s own
+`prompt_history.md` for that session's full prompt sequence.
+
+* Added `check_pr.py` (read-only mergeability report) and
+  `merge_pr.py` (merges only after explicitly confirming every check
+  finished with none failing and any required review is satisfied),
+  extracting the shared auth/permission preflight and PR-status
+  lookup into a new `_pr_utils.py`.
+* `pr_tools_test.py`: 32 hermetic tests, `subprocess.run` fully
+  mocked, no real git/gh call made.
+* Live-tested against a real PR (#70): `merge_pr.py` initially
+  hard-blocked on `reviewDecision=REVIEW_REQUIRED` even for an
+  admin, despite this repo's branch protection being configured to
+  exempt admins. Fixed to retry with `gh pr merge --admin`
+  specifically in that case (discovered live: `gh` refuses to
+  exercise a configured admin bypass unless `--admin` is passed
+  explicitly) -- `CHANGES_REQUESTED` still hard-blocks regardless of
+  permission, since that's an explicit human objection rather than
+  "no review yet." Validated end-to-end via PR #71, which the fix
+  itself was used to merge.
+
+Both PRs merged live via `merge_pr.py`'s admin-bypass path.
+
+## PR Tooling DRY + pr_merge_plugin Reflected from ITDev
+[x] Status
+
+The companion repo `ITDev` (`../ITDev/`) asked to DRY the PR tooling
+(`check_pr`/`submit_pr`/`approve_pr`/`merge_pr` and the
+`pr_submit_plugin` skill built on them) and propagate the same set
+consistently across all sister repos — reference its
+`specification_driven_development/prompt_history.md`'s "DRY PR
+tooling..." entry for the full prompt. Mirrored the relevant parts
+here (this repo has no bazel setup, so the four scripts already
+existed as plain `python3`-invoked tools rather than bazel targets;
+only `submit_pr.py`/`approve_pr.py` had landed before this session):
+
+* Extracted the branch/clean-tree guard `pr_submit_plugin.py` had a
+  near-copy of `submit_pr.py`'s own into `_pr_utils.py`'s
+  `check_clean_branch`, fixing a latent bug along the way:
+  `pr_submit_plugin.py` hardcoded `"main"` instead of respecting
+  `--base`.
+* Added `pr_merge_plugin`: a "wait for checks, then merge, then
+  confirm" 3-step chain mirroring `pr_submit_plugin`'s pattern,
+  deliberately never inspecting `reviewDecision` itself since
+  `merge_pr.py` is the sole authority on whether an unsatisfied
+  review blocks the merge or is admin-bypassable (see this repo's
+  earlier `check_pr`/`merge_pr` migration entry for how that
+  admin-bypass logic itself was discovered and validated live
+  against this repo's own required-review-except-admin branch
+  protection, PRs #70/#71).
+* `pr_tools_test.py` grows to 35 tests; `pr_merge_plugin_test.py`
+  adds 12 more. Both fully mocked -- no real git/gh call ever made.
+
+Committed and pushed to `origin/fix/27aug26` here; per this phase's
+scope decision, no new live PR was opened/merged for this specific
+change (the admin-bypass path was already proven live by the prior
+check_pr/merge_pr migration entry).
+
 ## Update Local
 [x] Status
 
