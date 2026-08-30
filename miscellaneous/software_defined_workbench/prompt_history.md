@@ -3480,3 +3480,67 @@ content, such as agent harness (Aider, OpenCode) as well as serving
 reflected  `Model Serving Stack`.
 * Add this session in /README.md subsection AGENDA before the 
 `Exercise` session on `AI Local`. 
+
+## Bazel Bootstrap + PR Tooling Reflected from aim
+[x] Status
+
+The companion repo `ITDev` (`../ITDev/`) drove a cross-repo
+consistency decision: `ai_workbench` should be bootstrapped with the
+same minimal bazel scaffold `aim` has (`aim` also started with no
+real service code, but was bootstrapped with a full bazel scaffold
+anyway — see `aim`'s own bootstrap commit and its subsequent
+DRY/check_pr/merge_pr/pr_merge_plugin history), rather than staying
+bazel-free. This session mirrors `aim`'s *current* complete state
+file-for-file (only the repo name changes, e.g.
+`module(name = "aim")` → `module(name = "ai_workbench")`).
+
+* Added the bazel scaffold: `.bazelversion`, `MODULE.bazel`,
+  `WORKSPACE`, `.gitignore` additions (`bazel-*`, `external/` —
+  `.venv/` was already ignored here), and a stub
+  `.github/workflows/pr-validation.yaml` (a placeholder `echo` step)
+  so `//:pr_check` (wrapping `act`) has something real-but-trivial
+  to validate against.
+* Ported `tools/scripts/build_utils/_container_checks.py` and
+  `pr_check.py` verbatim from `aim`.
+* **Replaced** the bazel-free PR tooling added in the two prior
+  entries above ("check_pr/merge_pr Migration Reflected from ITDev"
+  and "PR Tooling DRY + pr_merge_plugin Reflected from ITDev") with
+  `aim`'s bazel-based equivalents: `_pr_utils.py`, `check_pr.py`,
+  `submit_pr.py`, `approve_pr.py`, `merge_pr.py` (all now py_binary
+  targets invoked via `bazel run //:<name> -- ...` instead of bare
+  `python3 tools/scripts/repo_utils/<name>.py`), plus
+  `pr_submit_plugin.py`/`pr_merge_plugin.py` (still run directly via
+  `python3`, since they shell out to `bazel` themselves — a bazel
+  target re-invoking bazel from its own sandbox is a known
+  anti-pattern) and their hermetic test files.
+  `pr_submit_plugin.py`'s build+test step mirrors `aim`'s deliberate
+  2-command stub (`bazel build //...` / `bazel test //...` only, no
+  container-test commands), matching `ai_workbench`'s identical
+  "no real bazel-buildable code yet" situation rather than ITDev's
+  fuller 4-command version.
+* Added root `BUILD.bazel` (`pr_check`/`submit_pr`/`check_pr`/
+  `approve_pr`/`merge_pr` py_binary targets) and `tools/BUILD.bazel`
+  (`container_checks`/`pr_utils` py_library, `pr_submit_plugin_lib`/
+  `pr_merge_plugin_lib` py_library with `deps = [":pr_utils"]`, and
+  the three py_test targets), mirroring `aim` exactly.
+* Updated `.claude/skills/pr_submit_plugin/skill.md` and
+  `pr_merge_plugin/skill.md` from "runs directly via `python3` (this
+  repo has no `.venv` or bazel)" wording to the bazel-based
+  `aim`-style invocation (`bazel run //:submit_pr -- ...` etc.); the
+  existing symlinks under `scripts/` needed no change. Updated
+  stale `python3 tools/scripts/repo_utils/...` references in
+  `README.md` to the bazel invocation style, and added the missing
+  `pr_merge_plugin` row to its skills table.
+* Validation: `bazel build //...` succeeded cleanly (first-ever
+  bazel build in this repo — downloaded and registered the
+  `rules_python` 3.12 toolchain). All 3 hermetic test targets
+  (`pr_submit_plugin_test`, `pr_merge_plugin_test`, `pr_tools_test`)
+  passed. All four `bazel run //:<name> -- --help` invocations
+  printed usage cleanly. `bazel run //:pr_check` correctly invoked
+  `act` against the stub workflow but hit a Docker/WSL
+  credential-socket gap in this environment (`UtilAcceptVsock`
+  accept4 failure) — an expected, pre-existing environment gap, not
+  a bug in the ported code.
+
+No real GitHub pull request was opened, approved, or merged during
+this session — only `--help`/build/test invocations were run.
