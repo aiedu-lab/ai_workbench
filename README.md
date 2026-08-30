@@ -321,12 +321,15 @@ tools (plan mode, SDW protocol) and are not portable:
 
 | Skill | Purpose |
 |---|---|
-| `pr_submit_plugin` | 3-step gated PR submit chain: branch/tree hook → `tools/scripts/repo_utils/submit_pr.py` → confirm hook. No bazel/act here (non-coding repo). |
+| `pr_submit_plugin` | 7-step gated PR submit chain: branch/tree hook → build+test (stub) → `bazel run //:pr_check` (act) → `bazel run //:submit_pr` → confirm hook. Bazel-based, mirroring `aim`. |
+| `pr_merge_plugin` | 3-step gated PR merge chain: wait-for-checks hook → `bazel run //:merge_pr` → confirm-merged hook. |
 | `model_modernizer` | Reports current model vs. latest; recommends, never auto-switches. |
 
-`tools/scripts/repo_utils/` also has `submit_pr.py`/`approve_pr.py`,
-runnable directly (`python3 tools/scripts/repo_utils/submit_pr.py`)
-since this repo has no bazel.
+`tools/scripts/repo_utils/` also has `check_pr.py`/`approve_pr.py`/
+`merge_pr.py`, run via bazel (`bazel run //:check_pr -- <PR#>`,
+etc.) — this repo now has a minimal bazel scaffold (mirroring
+`aim`'s "no real code yet, full bazel scaffold anyway" pattern) so
+these no longer run as bare `python3` scripts.
 
 ---
 
