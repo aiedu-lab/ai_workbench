@@ -340,6 +340,13 @@ these no longer run as bare `python3` scripts.
 | `approve_pr` | Approves a PR (never your own -- GitHub rejects self-approval) | `bazel run //:approve_pr -- <PR#> --body "..."` |
 | `merge_pr` | Merges a PR only after confirming checks passed and any required review is satisfied (retries with `--admin` when review is required but exempt via branch protection) | `bazel run //:merge_pr -- <PR#> --method squash --delete-branch` |
 
+Preferred entry points: `/pr_submit_plugin` (drafts the title/body
+from the branch's actual content, then runs the submit chain),
+`/pr_approve_plugin` (MAINTAIN/ADMIN only), and `/pr_merge_plugin`
+(WRITE+, gated on checks passing and review
+satisfied/not-required/admin-exempt) -- see
+`.claude/commands/pr_*_plugin.md` for each one's exact scope.
+
 **Cross-repo consistency:** this tooling is intentionally duplicated
 (not symlinked) across every sister repo -- ITDev, aim, personal,
 ai_workbench, la_workbench. Any change here must be ported to the
