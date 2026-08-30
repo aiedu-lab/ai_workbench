@@ -89,6 +89,8 @@ def check_auth_and_permission(workspace_root, min_permission, tool_name):
     )
     sys.exit(1)
 
+  return permission
+
 
 def get_viewer_login(workspace_root):
   cmd = ["gh", "api", "user", "-q", ".login"]

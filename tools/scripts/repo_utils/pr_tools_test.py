@@ -259,7 +259,7 @@ class MergePrCheckMergeableTest(unittest.TestCase):
   def test_not_open_halts(self, mock_fetch):
     mock_fetch.return_value = {"state": "CLOSED"}
     with self.assertRaises(SystemExit):
-      merge_pr.check_mergeable(Path("/repo"), 42)
+      merge_pr.check_mergeable(Path("/repo"), 42, is_admin=False)
 
   @patch.object(merge_pr, "fetch_pr_status")
   def test_pending_checks_halt(self, mock_fetch):
@@ -270,7 +270,7 @@ class MergePrCheckMergeableTest(unittest.TestCase):
       "reviewDecision": "",
     }
     with self.assertRaises(SystemExit):
-      merge_pr.check_mergeable(Path("/repo"), 42)
+      merge_pr.check_mergeable(Path("/repo"), 42, is_admin=False)
 
   @patch.object(merge_pr, "fetch_pr_status")
   def test_failed_checks_halt(self, mock_fetch):
@@ -281,10 +281,10 @@ class MergePrCheckMergeableTest(unittest.TestCase):
       "reviewDecision": "",
     }
     with self.assertRaises(SystemExit):
-      merge_pr.check_mergeable(Path("/repo"), 42)
+      merge_pr.check_mergeable(Path("/repo"), 42, is_admin=False)
 
   @patch.object(merge_pr, "fetch_pr_status")
-  def test_unsatisfied_review_halts(self, mock_fetch):
+  def test_unsatisfied_review_halts_for_non_admin(self, mock_fetch):
     mock_fetch.return_value = {
       "state": "OPEN",
       "pending_checks": [],
@@ -292,27 +292,60 @@ class MergePrCheckMergeableTest(unittest.TestCase):
       "reviewDecision": "REVIEW_REQUIRED",
     }
     with self.assertRaises(SystemExit):
-      merge_pr.check_mergeable(Path("/repo"), 42)
+      merge_pr.check_mergeable(Path("/repo"), 42, is_admin=False)
 
   @patch.object(merge_pr, "fetch_pr_status")
-  def test_no_review_required_does_not_halt(self, mock_fetch):
+  def test_review_required_signals_admin_bypass(self, mock_fetch):
+    mock_fetch.return_value = {
+      "state": "OPEN",
+      "pending_checks": [],
+      "failed_checks": [],
+      "reviewDecision": "REVIEW_REQUIRED",
+    }
+    # admin bypass may apply -- caller should retry with --admin and
+    # let GitHub's own merge call be the final word
+    use_admin_bypass = merge_pr.check_mergeable(
+      Path("/repo"), 42, is_admin=True
+    )
+    self.assertTrue(use_admin_bypass)
+
+  @patch.object(merge_pr, "fetch_pr_status")
+  def test_changes_requested_halts_even_for_admin(self, mock_fetch):
+    mock_fetch.return_value = {
+      "state": "OPEN",
+      "pending_checks": [],
+      "failed_checks": [],
+      "reviewDecision": "CHANGES_REQUESTED",
+    }
+    # an explicit human objection isn't silently overridden by admin
+    with self.assertRaises(SystemExit):
+      merge_pr.check_mergeable(Path("/repo"), 42, is_admin=True)
+
+  @patch.object(merge_pr, "fetch_pr_status")
+  def test_no_review_required_does_not_use_admin_bypass(self, mock_fetch):
     mock_fetch.return_value = {
       "state": "OPEN",
       "pending_checks": [],
       "failed_checks": [],
       "reviewDecision": "",
     }
-    merge_pr.check_mergeable(Path("/repo"), 42)  # no raise
+    use_admin_bypass = merge_pr.check_mergeable(
+      Path("/repo"), 42, is_admin=False
+    )
+    self.assertFalse(use_admin_bypass)
 
   @patch.object(merge_pr, "fetch_pr_status")
-  def test_approved_review_does_not_halt(self, mock_fetch):
+  def test_approved_review_does_not_use_admin_bypass(self, mock_fetch):
     mock_fetch.return_value = {
       "state": "OPEN",
       "pending_checks": [],
       "failed_checks": [],
       "reviewDecision": "APPROVED",
     }
-    merge_pr.check_mergeable(Path("/repo"), 42)  # no raise
+    use_admin_bypass = merge_pr.check_mergeable(
+      Path("/repo"), 42, is_admin=False
+    )
+    self.assertFalse(use_admin_bypass)
 
 
 class SubmitPrGuardTest(unittest.TestCase):
