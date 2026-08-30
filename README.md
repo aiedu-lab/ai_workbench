@@ -321,7 +321,7 @@ tools (plan mode, SDW protocol) and are not portable:
 
 | Skill | Purpose |
 |---|---|
-| `pr_submit_plugin` | 7-step gated PR submit chain: branch/tree hook → build+test (stub) → `bazel run //:pr_check` (act) → `bazel run //:submit_pr` → confirm hook. Bazel-based, mirroring `aim`. |
+| `pr_submit_plugin` | 7-step gated PR submit chain: branch/tree hook → build+test+container-tests (stub) → `bazel run //:pr_check` (act) → `bazel run //:submit_pr` → confirm hook. Bazel-based, mirroring `aim`. |
 | `pr_merge_plugin` | 3-step gated PR merge chain: wait-for-checks hook → `bazel run //:merge_pr` → confirm-merged hook. |
 | `model_modernizer` | Reports current model vs. latest; recommends, never auto-switches. |
 
@@ -330,6 +330,20 @@ tools (plan mode, SDW protocol) and are not portable:
 etc.) — this repo now has a minimal bazel scaffold (mirroring
 `aim`'s "no real code yet, full bazel scaffold anyway" pattern) so
 these no longer run as bare `python3` scripts.
+
+#### PR Workflow Plugins — Example Usage
+
+| Script | Purpose | Example |
+|---|---|---|
+| `check_pr` | Read-only: reports state/checks/review-decision, exits 0 only if the PR looks mergeable right now | `bazel run //:check_pr -- <PR#>` |
+| `submit_pr` | Pushes the current branch and opens a PR | `bazel run //:submit_pr -- --title "..." --body "..." --base main --draft` |
+| `approve_pr` | Approves a PR (never your own -- GitHub rejects self-approval) | `bazel run //:approve_pr -- <PR#> --body "..."` |
+| `merge_pr` | Merges a PR only after confirming checks passed and any required review is satisfied (retries with `--admin` when review is required but exempt via branch protection) | `bazel run //:merge_pr -- <PR#> --method squash --delete-branch` |
+
+**Cross-repo consistency:** this tooling is intentionally duplicated
+(not symlinked) across every sister repo -- ITDev, aim, personal,
+ai_workbench, la_workbench. Any change here must be ported to the
+same path in every other repo; see each script's own "Sync note".
 
 ---
 
