@@ -146,3 +146,38 @@ def fetch_pr_status(workspace_root, pr_number, tool_name):
   data["passed_checks"] = [name for outcome, name in outcomes if outcome == "passed"]
   data["failed_checks"] = [name for outcome, name in outcomes if outcome == "failed"]
   return data
+
+
+def check_clean_branch(workspace_root, base, tool_name):
+  """Returns the current branch name after confirming it's not a
+  detached HEAD, not the same as `base`, and the working tree is
+  clean. Shared by submit_pr.py's own pre-push guard and
+  pr_submit_plugin.py's stricter pre-flight hook (which additionally
+  checks the local branch tip matches its pushed origin tip -- that
+  extra check has no other caller, so it stays local to that hook).
+  """
+  branch = run(["git", "branch", "--show-current"], workspace_root).stdout.strip()
+  if not branch:
+    print(
+      f"{tool_name}: not on a branch (detached HEAD) -- aborting.",
+      file=sys.stderr,
+    )
+    sys.exit(1)
+  if branch == base:
+    print(
+      f"{tool_name}: current branch is '{branch}', same as base -- "
+      "aborting.",
+      file=sys.stderr,
+    )
+    sys.exit(1)
+
+  status = run(["git", "status", "--porcelain"], workspace_root).stdout
+  if status.strip():
+    print(
+      f"{tool_name}: working tree is not clean -- commit or stash "
+      "changes first.",
+      file=sys.stderr,
+    )
+    sys.exit(1)
+
+  return branch

@@ -100,9 +100,12 @@ class CheckAuthAndPermissionTest(unittest.TestCase):
 
   @patch.object(_pr_utils, "run")
   @patch.object(_pr_utils.shutil, "which", return_value="/usr/bin/gh")
-  def test_sufficient_permission_passes(self, _mock_which, mock_run):
+  def test_sufficient_permission_returns_it(self, _mock_which, mock_run):
     mock_run.side_effect = [_proc(), _proc(stdout="ADMIN\n")]
-    _pr_utils.check_auth_and_permission(Path("/repo"), {"ADMIN"}, "t")
+    permission = _pr_utils.check_auth_and_permission(
+      Path("/repo"), {"ADMIN"}, "t"
+    )
+    self.assertEqual(permission, "ADMIN")
 
 
 class FetchPrStatusTest(unittest.TestCase):
@@ -129,6 +132,35 @@ class FetchPrStatusTest(unittest.TestCase):
     )
     with self.assertRaises(SystemExit):
       _pr_utils.fetch_pr_status(Path("/repo"), 999, "t")
+
+
+class CheckCleanBranchTest(unittest.TestCase):
+  @patch.object(_pr_utils, "run")
+  def test_detached_head_halts(self, mock_run):
+    mock_run.return_value = _proc(stdout="")
+    with self.assertRaises(SystemExit):
+      _pr_utils.check_clean_branch(Path("/repo"), "main", "t")
+
+  @patch.object(_pr_utils, "run")
+  def test_same_as_base_halts(self, mock_run):
+    mock_run.return_value = _proc(stdout="main")
+    with self.assertRaises(SystemExit):
+      _pr_utils.check_clean_branch(Path("/repo"), "main", "t")
+
+  @patch.object(_pr_utils, "run")
+  def test_dirty_tree_halts(self, mock_run):
+    mock_run.side_effect = [
+      _proc(stdout="feat/x"),
+      _proc(stdout=" M some_file.py\n"),
+    ]
+    with self.assertRaises(SystemExit):
+      _pr_utils.check_clean_branch(Path("/repo"), "main", "t")
+
+  @patch.object(_pr_utils, "run")
+  def test_clean_state_returns_branch(self, mock_run):
+    mock_run.side_effect = [_proc(stdout="feat/x"), _proc(stdout="")]
+    branch = _pr_utils.check_clean_branch(Path("/repo"), "main", "t")
+    self.assertEqual(branch, "feat/x")
 
 
 class CheckPrMainTest(unittest.TestCase):
@@ -350,49 +382,17 @@ class MergePrCheckMergeableTest(unittest.TestCase):
 
 class SubmitPrGuardTest(unittest.TestCase):
   @patch.object(submit_pr, "check_auth_and_permission")
-  @patch.object(submit_pr, "run")
+  @patch.object(submit_pr, "check_clean_branch")
   @patch("sys.argv", ["submit_pr.py", "--title", "t", "--body", "b"])
-  def test_detached_head_halts(self, mock_run, _auth):
-    mock_run.return_value = _proc(stdout="")  # empty branch name
-    with self.assertRaises(SystemExit):
-      submit_pr.main()
-
-  @patch.object(submit_pr, "check_auth_and_permission")
-  @patch.object(submit_pr, "run")
-  @patch("sys.argv", ["submit_pr.py", "--title", "t", "--body", "b"])
-  def test_same_as_base_halts(self, mock_run, _auth):
-    mock_run.return_value = _proc(stdout="main")
-    with self.assertRaises(SystemExit):
-      submit_pr.main()
-
-  @patch.object(submit_pr, "check_auth_and_permission")
-  @patch.object(submit_pr, "run")
-  @patch("sys.argv", ["submit_pr.py", "--title", "t", "--body", "b"])
-  def test_dirty_tree_halts(self, mock_run, _auth):
-    mock_run.side_effect = [
-      _proc(stdout="feat/x"),  # branch --show-current
-      _proc(stdout=" M some_file.py\n"),  # status --porcelain
-    ]
-    with self.assertRaises(SystemExit):
-      submit_pr.main()
-
-  @patch.object(submit_pr.subprocess, "run")
-  @patch.object(submit_pr, "check_auth_and_permission")
-  @patch.object(submit_pr, "run")
-  @patch("sys.argv", ["submit_pr.py", "--title", "t", "--body", "b"])
-  def test_clean_state_pushes_and_creates(
-    self, mock_run, _auth, mock_subprocess_run
-  ):
-    mock_run.side_effect = [
-      _proc(stdout="feat/x"),  # branch --show-current
-      _proc(stdout=""),  # status --porcelain (clean)
-    ]
-    mock_subprocess_run.side_effect = [
-      _proc(returncode=0),  # git push
-      _proc(returncode=0),  # gh pr create
-    ]
-    with self.assertRaises(SystemExit) as ctx:
-      submit_pr.main()
+  def test_delegates_to_check_clean_branch(self, mock_check_branch, _auth):
+    mock_check_branch.return_value = "feat/x"
+    with patch.object(submit_pr.subprocess, "run") as mock_subprocess_run:
+      mock_subprocess_run.side_effect = [
+        _proc(returncode=0),  # git push
+        _proc(returncode=0),  # gh pr create
+      ]
+      with self.assertRaises(SystemExit) as ctx:
+        submit_pr.main()
     self.assertEqual(ctx.exception.code, 0)
     push_call, create_call = mock_subprocess_run.call_args_list
     self.assertIn("push", push_call.args[0])

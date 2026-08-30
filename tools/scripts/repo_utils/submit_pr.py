@@ -24,7 +24,11 @@ import argparse
 import subprocess
 import sys
 
-from _pr_utils import check_auth_and_permission, find_repo_root, run
+from _pr_utils import (
+  check_auth_and_permission,
+  check_clean_branch,
+  find_repo_root,
+)
 
 # GitHub's viewerPermission values, highest to lowest: ADMIN,
 # MAINTAIN, WRITE, TRIAGE, READ, NONE. Submitting a PR needs push
@@ -46,32 +50,7 @@ def main():
   workspace_root = find_repo_root()
 
   check_auth_and_permission(workspace_root, MIN_PERMISSION, "submit_pr")
-
-  branch = run(
-    ["git", "branch", "--show-current"], workspace_root
-  ).stdout.strip()
-  if not branch:
-    print(
-      "submit_pr: not on a branch (detached HEAD) -- aborting.",
-      file=sys.stderr,
-    )
-    sys.exit(1)
-  if branch == args.base:
-    print(
-      f"submit_pr: current branch is '{branch}', same as --base "
-      "-- aborting.",
-      file=sys.stderr,
-    )
-    sys.exit(1)
-
-  status = run(["git", "status", "--porcelain"], workspace_root).stdout
-  if status.strip():
-    print(
-      "submit_pr: working tree is not clean -- commit or stash "
-      "changes first.",
-      file=sys.stderr,
-    )
-    sys.exit(1)
+  branch = check_clean_branch(workspace_root, args.base, "submit_pr")
 
   print(f"submit_pr: pushing '{branch}' to origin...")
   push_result = subprocess.run(
