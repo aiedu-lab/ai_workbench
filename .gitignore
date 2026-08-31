@@ -45,5 +45,5 @@ desktop.ini
 # canonical source files live in tools/VM/devcontainer/.
 .devcontainer/
 
-# Local, machine-specific opt-out for pr_check.py (act validation)
-.pr_check_skip
+# Local, machine-specific opt-out for act_check.py (act validation)
+.act_check_skip
