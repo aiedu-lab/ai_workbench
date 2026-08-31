@@ -44,3 +44,6 @@ desktop.ini
 # Devcontainer is materialized only on macOS by setup/labsetup.py;
 # canonical source files live in tools/VM/devcontainer/.
 .devcontainer/
+
+# Local, machine-specific opt-out for pr_check.py (act validation)
+.pr_check_skip

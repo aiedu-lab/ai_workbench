@@ -351,7 +351,12 @@ satisfied/not-required/admin-exempt) -- see
 between runs instead of removing it) to avoid a container-removal
 timeout on Docker Desktop's WSL2 backend -- see `pr_check.py`'s
 own comment. Run `docker container prune` occasionally to
-reclaim the containers this leaves behind.
+reclaim the containers this leaves behind. If the WSL2/Docker
+flakiness itself is blocking you, `touch .pr_check_skip` at the
+repo root to skip `act` entirely (exit 0 immediately, no Docker
+call at all); `rm .pr_check_skip` to re-enable. Git-ignored,
+local-machine-only -- ITDev's own `pr_check.py` deliberately has
+no such skip, since its CI gate must never be bypassable.
 
 **Cross-repo consistency:** this tooling is intentionally duplicated
 (not symlinked) across every sister repo -- ITDev, aim, personal,
