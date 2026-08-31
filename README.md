@@ -340,12 +340,14 @@ these no longer run as bare `python3` scripts.
 | `approve_pr` | Approves a PR (never your own -- GitHub rejects self-approval) | `bazel run //:approve_pr -- <PR#> --body "..."` |
 | `merge_pr` | Merges a PR only after confirming checks passed and any required review is satisfied (retries with `--admin` when review is required but exempt via branch protection) | `bazel run //:merge_pr -- <PR#> --method squash --delete-branch` |
 
-Preferred entry points: `/pr_submit_plugin` (drafts the title/body
-from the branch's actual content, then runs the submit chain),
-`/pr_approve_plugin` (MAINTAIN/ADMIN only), and `/pr_merge_plugin`
-(WRITE+, gated on checks passing and review
+Preferred entry points: `/check_pr <PR#>` and `/check_prs`
+(read-only), `/pr_submit` (drafts the title/body from the
+branch's actual content, then runs the submit chain),
+`/pr_approve` (MAINTAIN/ADMIN only), and `/pr_merge` (WRITE+,
+gated on checks passing and review
 satisfied/not-required/admin-exempt) -- see
-`.claude/commands/pr_*_plugin.md` for each one's exact scope.
+`.claude/commands/{check_pr,check_prs,pr_submit,pr_approve,
+pr_merge}.md` for each one's exact scope.
 
 `pr_check.py` passes `act` `--reuse` (keep the job container
 between runs instead of removing it) to avoid a container-removal
