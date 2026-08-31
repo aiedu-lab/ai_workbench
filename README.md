@@ -347,6 +347,12 @@ from the branch's actual content, then runs the submit chain),
 satisfied/not-required/admin-exempt) -- see
 `.claude/commands/pr_*_plugin.md` for each one's exact scope.
 
+`pr_check.py` passes `act` `--reuse` (keep the job container
+between runs instead of removing it) to avoid a container-removal
+timeout on Docker Desktop's WSL2 backend -- see `pr_check.py`'s
+own comment. Run `docker container prune` occasionally to
+reclaim the containers this leaves behind.
+
 **Cross-repo consistency:** this tooling is intentionally duplicated
 (not symlinked) across every sister repo -- ITDev, aim, personal,
 ai_workbench, la_workbench. Any change here must be ported to the
