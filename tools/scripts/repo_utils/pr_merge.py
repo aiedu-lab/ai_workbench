@@ -1,16 +1,12 @@
 # ===================================================================
-# tools/scripts/repo_utils/merge_pr.py
+# tools/scripts/repo_utils/pr_merge.py
 # ===================================================================
 """Merges a pull request via `gh pr merge`, after explicitly
 confirming it's actually safe to merge rather than trusting gh's own
-opaque mergeable/mergeStateStatus fields. Deliberately human-invoked
-only: this merges a real PR into a real branch, so it must only ever
-run when a human explicitly invokes it with an explicit PR number --
-never wired to a hook, CI, or any other automatic trigger.
-
-This repo has no bazel setup, so this runs via plain `python3` --
-see _pr_utils.py's docstring for why find_repo_root() walks up from
-its own file depth instead of `BUILD_WORKSPACE_DIRECTORY`.
+opaque mergeable/mergeStateStatus fields. Deliberately a py_binary,
+never py_test: this merges a real PR into a real branch, so it must
+only ever run when a human explicitly invokes it with an explicit PR
+number -- never wired to a hook, CI, or any other automatic trigger.
 
 Checks performed before merging:
   a) every check run has finished, and none of them failed
@@ -22,8 +18,7 @@ Checks performed before merging:
      (REVIEW_REQUIRED) and the caller is an ADMIN -- branch
      protection may exempt admins from the requirement, so that case
      is a soft warning, not a hard block: `gh pr merge` is retried
-     with `--admin` (confirmed by hand against this repo's own
-     required-review-except-admin setup: gh refuses to use an admin
+     with `--admin` (confirmed by hand: gh refuses to use an admin
      bypass that's actually configured unless --admin is passed
      explicitly, even though the plain command's own error message
      says the policy prohibits the merge) and GitHub's own API is
@@ -33,19 +28,32 @@ Checks performed before merging:
      status shouldn't silently override it.
 
 Run via:
-  python3 tools/scripts/repo_utils/merge_pr.py 123
-  python3 tools/scripts/repo_utils/merge_pr.py 123 --method squash \
-      --delete-branch
+  bazel run //:pr_merge -- 123
+  bazel run //:pr_merge -- 123 --method squash --delete-branch
+Or, preferably, via the `/pr_merge` slash command
+(`.claude/commands/pr_merge.md`), which wraps this target in
+the wait-for-checks/confirm-merged gated chain instead of calling it
+bare.
+
+Sync note: this file is intentionally duplicated (not symlinked)
+across every sister repo -- ITDev, aim, personal, ai_workbench,
+la_workbench -- so each stays a standalone checkout. Any change here
+(a bug fix, a new flag, a refactored helper) must be ported to the
+same path in every other repo, except for narrow, explicitly
+commented repo-specific differences (e.g. a STUB build/test step).
+Spot-check with:
+  diff <this-file> ../<other-repo>/<same-relative-path>
 """
 
 import argparse
 import subprocess
 import sys
+from pathlib import Path
 
-from _pr_utils import (
+from tools.scripts.build_utils._container_checks import find_workspace_root
+from tools.scripts.repo_utils._pr_utils import (
   check_auth_and_permission,
   fetch_pr_status,
-  find_repo_root,
 )
 
 MIN_PERMISSION = {"WRITE", "MAINTAIN", "ADMIN"}
@@ -67,11 +75,11 @@ def check_mergeable(workspace_root, pr_number, is_admin):
   protection may exempt them), False if a plain merge is fine.
   Exits directly for every case that should block the merge outright.
   """
-  data = fetch_pr_status(workspace_root, pr_number, "merge_pr")
+  data = fetch_pr_status(workspace_root, pr_number, "pr_merge")
 
   if data["state"] != "OPEN":
     print(
-      f"merge_pr: PR #{pr_number} is {data['state']}, not OPEN -- "
+      f"pr_merge: PR #{pr_number} is {data['state']}, not OPEN -- "
       "nothing to merge.",
       file=sys.stderr,
     )
@@ -80,7 +88,7 @@ def check_mergeable(workspace_root, pr_number, is_admin):
   pending = data["pending_checks"]
   if pending:
     print(
-      f"merge_pr: {len(pending)} check(s) still running on PR "
+      f"pr_merge: {len(pending)} check(s) still running on PR "
       f"#{pr_number}: {', '.join(pending)} -- wait for them to "
       "finish before merging.",
       file=sys.stderr,
@@ -90,7 +98,7 @@ def check_mergeable(workspace_root, pr_number, is_admin):
   failed = data["failed_checks"]
   if failed:
     print(
-      f"merge_pr: {len(failed)} check(s) failed on PR #{pr_number}: "
+      f"pr_merge: {len(failed)} check(s) failed on PR #{pr_number}: "
       f"{', '.join(failed)} -- fix them before merging.",
       file=sys.stderr,
     )
@@ -99,7 +107,7 @@ def check_mergeable(workspace_root, pr_number, is_admin):
   review_decision = data["reviewDecision"]
   if review_decision == "REVIEW_REQUIRED" and is_admin:
     print(
-      f"merge_pr: PR #{pr_number} hasn't been reviewed yet, but "
+      f"pr_merge: PR #{pr_number} hasn't been reviewed yet, but "
       "you're ADMIN -- retrying with --admin in case branch "
       "protection exempts you from the requirement. GitHub's own "
       "API has the final word on whether that bypass is real.",
@@ -114,7 +122,7 @@ def check_mergeable(workspace_root, pr_number, is_admin):
         "approve your own -- a different collaborator needs to.)"
       )
     print(
-      f"merge_pr: PR #{pr_number} requires a review that hasn't "
+      f"pr_merge: PR #{pr_number} requires a review that hasn't "
       f"been satisfied yet (reviewDecision={review_decision}).{note}",
       file=sys.stderr,
     )
@@ -124,10 +132,10 @@ def check_mergeable(workspace_root, pr_number, is_admin):
 
 def main():
   args = parse_args()
-  workspace_root = find_repo_root()
+  workspace_root = find_workspace_root(Path(__file__))
 
   permission = check_auth_and_permission(
-    workspace_root, MIN_PERMISSION, "merge_pr"
+    workspace_root, MIN_PERMISSION, "pr_merge"
   )
   use_admin_bypass = check_mergeable(
     workspace_root, args.pr_number, is_admin=(permission == "ADMIN")

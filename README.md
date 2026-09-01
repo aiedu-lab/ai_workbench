@@ -321,12 +321,58 @@ tools (plan mode, SDW protocol) and are not portable:
 
 | Skill | Purpose |
 |---|---|
-| `pr_submit_plugin` | 3-step gated PR submit chain: branch/tree hook → `tools/scripts/repo_utils/submit_pr.py` → confirm hook. No bazel/act here (non-coding repo). |
+| `pr_submit_plugin` | 7-step gated PR submit chain: branch/tree hook → build+test+container-tests (stub) → `bazel run //:act_check` → `bazel run //:pr_submit` → confirm hook. Bazel-based, mirroring `aim`. |
+| `pr_merge_plugin` | 3-step gated PR merge chain: wait-for-checks hook → `bazel run //:pr_merge` → confirm-merged hook. |
 | `model_modernizer` | Reports current model vs. latest; recommends, never auto-switches. |
 
-`tools/scripts/repo_utils/` also has `submit_pr.py`/`approve_pr.py`,
-runnable directly (`python3 tools/scripts/repo_utils/submit_pr.py`)
-since this repo has no bazel.
+`tools/scripts/repo_utils/` also has `pr_check.py`/`pr_approve.py`/
+`pr_merge.py`, run via bazel (`bazel run //:pr_check -- <PR#>`,
+etc.) — this repo now has a minimal bazel scaffold (mirroring
+`aim`'s "no real code yet, full bazel scaffold anyway" pattern) so
+these no longer run as bare `python3` scripts.
+
+#### PR Workflow Plugins — Example Usage
+
+| Script | Purpose | Example |
+|---|---|---|
+| `pr_check` | Read-only: reports state/checks/review-decision, exits 0 only if the PR looks mergeable right now | `bazel run //:pr_check -- <PR#>` |
+| `pr_submit` | Pushes the current branch and opens a PR | `bazel run //:pr_submit -- --title "..." --body "..." --base main --draft` |
+| `pr_approve` | Approves a PR (never your own -- GitHub rejects self-approval) | `bazel run //:pr_approve -- <PR#> --body "..."` |
+| `pr_merge` | Merges a PR only after confirming checks passed and any required review is satisfied (retries with `--admin` when review is required but exempt via branch protection) | `bazel run //:pr_merge -- <PR#> --method squash --delete-branch` |
+
+Each script's bazel target and slash command share its exact
+name (e.g. `pr_submit.py` → `//:pr_submit` → `/pr_submit`) --
+no transposition anywhere in the chain, by design.
+
+Preferred entry points: `/pr_check <PR#>` and `/pr_checks`
+(read-only), `/pr_submit` (drafts the title/body from the
+branch's actual content, then runs the submit chain),
+`/pr_approve` (MAINTAIN/ADMIN only), and `/pr_merge` (WRITE+,
+gated on checks passing and review
+satisfied/not-required/admin-exempt) -- see
+`.claude/commands/{pr_check,pr_checks,pr_submit,pr_approve,
+pr_merge}.md` for each one's exact scope.
+
+Named `act_check`, not `pr_check`, deliberately: distinct from
+`pr_check` above (a different, gh-based single-PR-status
+report). `act_check.py` passes `act` `--reuse` (keep the job container
+between runs instead of removing it) to avoid a container-removal
+timeout on Docker Desktop's WSL2 backend -- see `act_check.py`'s
+own comment. Run `docker container prune` occasionally to
+reclaim the containers this leaves behind. If the WSL2/Docker
+flakiness itself is blocking you (or you know a change doesn't
+need a full local act run -- docs/skill-only, say), `touch
+.act_check_skip` at the repo root to skip `act` entirely (exit 0
+immediately, no Docker call at all); `rm .act_check_skip` to
+re-enable. Git-ignored, local-machine-only, and only skips the
+local act simulation -- real GitHub Actions CI still runs
+pr-validation.yaml on every actual push/PR regardless. All 5
+repos, including ITDev, support this the same way.
+
+**Cross-repo consistency:** this tooling is intentionally duplicated
+(not symlinked) across every sister repo -- ITDev, aim, personal,
+ai_workbench, la_workbench. Any change here must be ported to the
+same path in every other repo; see each script's own "Sync note".
 
 ---
 

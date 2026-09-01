@@ -1,29 +1,45 @@
 # ===================================================================
-# tools/scripts/repo_utils/approve_pr.py
+# tools/scripts/repo_utils/pr_approve.py
 # ===================================================================
 """Approves a pull request as a repo maintainer, via `gh pr review
---approve`. Deliberately human-invoked only: this posts a real
-approval review to a real PR, so it must only ever run when a human
-explicitly invokes it with an explicit PR number -- never wired to a
-hook, CI, or any other automatic trigger.
+--approve`. Deliberately a py_binary, never py_test: this posts a
+real approval review to a real PR, so it must only ever run when a
+human explicitly invokes it with an explicit PR number -- never
+wired to a hook, CI, or any other automatic trigger. This matches
+AGENTS.md's own §6 ("Branching and Merging"): code review is always
+a manual decision, never something Claude triggers itself.
 
-This repo has no bazel setup, so this runs via plain `python3` --
-see _pr_utils.py's docstring for why find_repo_root() walks up from
-its own file depth instead of `BUILD_WORKSPACE_DIRECTORY`.
+Shares its auth/permission and PR-state-fetch logic with
+pr_check.py/pr_submit.py/pr_merge.py via _pr_utils.py (ported from
+../ITDev's DRY refactor of this file) so the repeated checks stay
+identical and get fixed in one place.
 
 Run via:
-  python3 tools/scripts/repo_utils/approve_pr.py 123
-  python3 tools/scripts/repo_utils/approve_pr.py 123 --body "LGTM"
+  bazel run //:pr_approve -- 123
+  bazel run //:pr_approve -- 123 --body "LGTM"
+Or via the `/pr_approve` slash command
+(`.claude/commands/pr_approve.md`), a thin argument-parsing
+wrapper around this same target.
+
+Sync note: this file is intentionally duplicated (not symlinked)
+across every sister repo -- ITDev, aim, personal, ai_workbench,
+la_workbench -- so each stays a standalone checkout. Any change here
+(a bug fix, a new flag, a refactored helper) must be ported to the
+same path in every other repo, except for narrow, explicitly
+commented repo-specific differences (e.g. a STUB build/test step).
+Spot-check with:
+  diff <this-file> ../<other-repo>/<same-relative-path>
 """
 
 import argparse
 import subprocess
 import sys
+from pathlib import Path
 
-from _pr_utils import (
+from tools.scripts.build_utils._container_checks import find_workspace_root
+from tools.scripts.repo_utils._pr_utils import (
   check_auth_and_permission,
   fetch_pr_status,
-  find_repo_root,
   get_viewer_login,
 )
 
@@ -53,11 +69,11 @@ def check_pr_state(workspace_root, pr_number, viewer_login):
        upfront avoids a cryptic GraphQL error and points at the
        actual next step instead.
   """
-  data = fetch_pr_status(workspace_root, pr_number, "approve_pr")
+  data = fetch_pr_status(workspace_root, pr_number, "pr_approve")
 
   if data["state"] != "OPEN":
     print(
-      f"approve_pr: PR #{pr_number} is {data['state']}, not OPEN -- "
+      f"pr_approve: PR #{pr_number} is {data['state']}, not OPEN -- "
       "nothing to approve.",
       file=sys.stderr,
     )
@@ -66,7 +82,7 @@ def check_pr_state(workspace_root, pr_number, viewer_login):
   pending = data["pending_checks"]
   if pending:
     print(
-      f"approve_pr: WARNING -- {len(pending)} check(s) still running "
+      f"pr_approve: WARNING -- {len(pending)} check(s) still running "
       f"on PR #{pr_number}: {', '.join(pending)}. Approving doesn't "
       "require checks to pass, but merging will stay blocked until "
       "they finish -- so if something below fails, it's likely "
@@ -89,7 +105,7 @@ def check_pr_state(workspace_root, pr_number, viewer_login):
         "or use the web UI's Merge button."
       )
     print(
-      f"approve_pr: PR #{pr_number} was opened by you ({viewer_login}). "
+      f"pr_approve: PR #{pr_number} was opened by you ({viewer_login}). "
       "GitHub rejects self-approval unconditionally -- there is no "
       f"permission level or repo/org setting that allows it. {next_step}",
       file=sys.stderr,
@@ -99,9 +115,9 @@ def check_pr_state(workspace_root, pr_number, viewer_login):
 
 def main():
   args = parse_args()
-  workspace_root = find_repo_root()
+  workspace_root = find_workspace_root(Path(__file__))
 
-  check_auth_and_permission(workspace_root, MIN_PERMISSION, "approve_pr")
+  check_auth_and_permission(workspace_root, MIN_PERMISSION, "pr_approve")
   viewer_login = get_viewer_login(workspace_root)
   check_pr_state(workspace_root, args.pr_number, viewer_login)
 

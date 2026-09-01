@@ -10,6 +10,10 @@ node_modules/
 # ignore language specific generated directories
 __pycache__/
 
+# Bazel build outputs and external repo cache
+bazel-*
+external/
+
 # Obsidian workspace state (machine-specific, regenerates automatically)
 **/.obsidian/workspace.json
 **/.obsidian/workspace-mobile.json
@@ -40,3 +44,6 @@ desktop.ini
 # Devcontainer is materialized only on macOS by setup/labsetup.py;
 # canonical source files live in tools/VM/devcontainer/.
 .devcontainer/
+
+# Local, machine-specific opt-out for act_check.py (act validation)
+.act_check_skip
