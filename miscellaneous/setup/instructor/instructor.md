@@ -189,6 +189,18 @@ before the lab — students cannot do this themselves.
 > and `DOCKER_SERVER_SSH_PORT` in `setup/labenv.yaml`.
 > `labsetup.py` reads these and writes a student `.ssh/config` entry
 > automatically (see SSH Convenience Setup below and Section 6).
+>
+> **Server host key:** whenever the server is (re)provisioned, copy
+> its public host key into `DOCKER_SERVER_HOST_KEY` in
+> `miscellaneous/setup/student/labenv.yaml` and commit it.
+> `labsetup.py` writes it to each student's `~/.ssh/known_hosts`, so
+> the BatchMode SSH checks trust the server without a prompt:
+>
+> ```bash
+> # On the server: print "<type> <base64>" (drops the comment)
+> awk '{print $1" "$2}' /etc/ssh/ssh_host_ed25519_key.pub
+> ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub   # fingerprint
+> ```
 
 **Provision the shared account:**
 

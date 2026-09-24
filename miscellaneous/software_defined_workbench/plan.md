@@ -7117,7 +7117,7 @@ Status'` → `0`; `git ls-remote --tags origin | grep v50.15` → 1 line.
 
 ### Step 51.1: Record the lab-server host key in labenv.yaml
 
-[ ] Status
+[x] Status
 
 CONTEXT: `labenv.yaml` holds the lab server's addresses and user but
 not its SSH host key.
@@ -7136,6 +7136,11 @@ OUTPUT: New `labenv.yaml` key plus doc updates.
 VERIFY: The `labenv.yaml` key run through `ssh-keygen -lf` prints
 `SHA256:3pSfDKCwLB82/BNUAbf3YMcz56+t6CNnKq/ir/VFPfs`; the file loads
 with `yaml.safe_load`.
+RESULT: key read from ailabvm's /etc/ssh/ssh_host_ed25519_key.pub,
+comment dropped; `ssh-keygen -lf` on the labenv.yaml value prints
+the expected SHA256:3pSfDKCw… fingerprint; YAML loads (8 keys).
+instructor.md Section 3 gains a "Server host key" note with the
+exact server commands; prerequisites.md row 8 names the key.
 
 ---
 

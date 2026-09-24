@@ -32,6 +32,17 @@ DOCKER_SERVER_SSH_PORT_EXTERNAL: 22439
 # Foramt: <username> (e.g. ailabuser)
 DOCKER_SERVER_USERNAME: "ailabuser"
 
+# AI-GENERATED: Phase 51 Step 51.1 (plan.md)
+# Lab server's PUBLIC SSH host key (not a secret). labsetup.py
+# writes it to ~/.ssh/known_hosts for both addresses above, so the
+# BatchMode SSH checks trust the server on a fresh machine without
+# an interactive "trust this host?" prompt. Update it whenever the
+# server is (re)provisioned. On the server, read it with:
+#   cat /etc/ssh/ssh_host_ed25519_key.pub   (drop the trailing comment)
+# and check the fingerprint with: ssh-keygen -lf <file>
+# Format: <type> <base64>  (e.g. ssh-ed25519 AAAAC3Nz...)
+DOCKER_SERVER_HOST_KEY: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPPHrYVUMx9kbcDxYoTQgvmuM25qMdt190CGdRL3bnVm"
+
 # Permanent Google Form URL for student roster collection.
 # Created once by the instructor (see instructor.md Section 1).
 # Students open this URL during the Introduction session to submit

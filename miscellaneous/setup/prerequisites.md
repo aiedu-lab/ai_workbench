@@ -17,7 +17,7 @@ Each row links to the guide with the full steps.
 | 5 | GitHub account, `gh` installed, `gh auth login -s admin:public_key` | Both | [Account Setup](../tools/dev_workbench/github_and_git.md#account-setup) | yes |
 | 6 | This repo cloned; run commands from its root | Both | `git clone https://github.com/aiedu-lab/ai_workbench.git` | implicit |
 | 7 | Joined the class Discord and exported the webhook: `export DISCORD_WEBHOOK_URL="<from #meetup-notifications>"` | Both | [Discord setup](instructor/instructor.md#section-2--discord-server-setup-and-student-invite-15-min) | yes |
-| 8 | Discord server and webhook created, real `labenv.yaml` values, lab server provisioned | Instructor | [Instructor Preflight](instructor/instructor.md) | no |
+| 8 | Discord server and webhook created, real `labenv.yaml` values (including the server host key `DOCKER_SERVER_HOST_KEY`), lab server provisioned | Instructor | [Instructor Preflight](instructor/instructor.md) | no |
 
 ## After install
 
