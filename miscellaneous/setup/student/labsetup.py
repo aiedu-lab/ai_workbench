@@ -23,7 +23,9 @@ Steps performed:
    only when a new key was generated in step 5 (idempotent).
 5. Write ~/.ssh/config entries (Host ailabvm-int and Host ailabvm)
    for the internal/external lab server addresses, replacing any
-   prior versions of either block.
+   prior versions of either block, and seed known_hosts with
+   the server host key from labenv.yaml (never replacing a
+   conflicting entry).
 6. Validate SSH connectivity to ailabvm-int and ailabvm (either
    succeeding is OK; ailabvm is the off-campus default).
 9. If `gh auth status` exits 0: generate
@@ -110,6 +112,65 @@ def _gh_env() -> dict[str, str]:
 def _is_placeholder(value: str) -> bool:
   stripped = value.strip()
   return stripped.startswith("<") and stripped.endswith(">")
+
+
+# AI-GENERATED: Phase 51 Step 51.2 (plan.md)
+def _ensure_lab_server_known_hosts(env: dict[str, str]) -> None:
+  """Seed ~/.ssh/known_hosts with the lab server's host key.
+
+  The BatchMode SSH checks here and in preflight_check.py cannot
+  answer an unknown-host prompt, so on a fresh machine they fail
+  with "Host key verification failed" even after the instructor
+  installs the student's key. The key comes from the committed,
+  instructor-set labenv.yaml (DOCKER_SERVER_HOST_KEY), mirroring the
+  gh api meta trust used for GitHub. Existing entries are never
+  replaced: a conflicting key is reported, not overwritten.
+  """
+  host_key = env.get("DOCKER_SERVER_HOST_KEY", "").strip()
+  if not host_key or _is_placeholder(host_key):
+    print(
+      "  WARN DOCKER_SERVER_HOST_KEY missing in labenv.yaml — lab "
+      "server host key not seeded; ask the instructor."
+    )
+    return
+  key_type, key_blob = host_key.split()[:2]
+  known_hosts = SSH_DIR / "known_hosts"
+  targets = (
+    ("DOCKER_SERVER_ID_INTERNAL", "DOCKER_SERVER_SSH_PORT_INTERNAL"),
+    ("DOCKER_SERVER_ID_EXTERNAL", "DOCKER_SERVER_SSH_PORT_EXTERNAL"),
+  )
+  for host_var, port_var in targets:
+    host, port = env[host_var], str(env[port_var])
+    # known_hosts names a non-22 port as "[host]:port".
+    name = host if port == "22" else f"[{host}]:{port}"
+    found = []
+    if known_hosts.exists():
+      out = subprocess.run(
+        ["ssh-keygen", "-F", name, "-f", str(known_hosts)],
+        capture_output=True, text=True,
+      ).stdout
+      # Lines are "<host-or-hash> <type> <base64>"; '#' lines are
+      # ssh-keygen's own "Host ... found" annotations.
+      found = [
+        tuple(line.split()[1:3]) for line in out.splitlines()
+        if line and not line.startswith("#")
+      ]
+    if (key_type, key_blob) in found:
+      print(f"  OK   lab server host key for {name} known (skipping)")
+    elif any(t == key_type for t, _ in found):
+      print(
+        f"  WARN known_hosts has a DIFFERENT {key_type} key for "
+        f"{name} than labenv.yaml — not changed. If the instructor "
+        f"re-provisioned the server, run: ssh-keygen -R '{name}' and "
+        "re-run install.sh.",
+        file=sys.stderr,
+      )
+    else:
+      SSH_DIR.mkdir(mode=0o700, exist_ok=True)
+      with known_hosts.open("a") as f:
+        f.write(f"{name} {key_type} {key_blob}\n")
+      known_hosts.chmod(0o600)
+      print(f"  WROTE lab server host key for {name} to known_hosts")
 
 
 def _generate_ssh_key() -> bool:
@@ -731,6 +792,7 @@ def main() -> None:
         "  SKIP Discord post — key already shared with instructor"
       )
     _write_ssh_config(env)
+    _ensure_lab_server_known_hosts(env)
     _validate_ssh()
   else:
     print(

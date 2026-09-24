@@ -7146,7 +7146,7 @@ exact server commands; prerequisites.md row 8 names the key.
 
 ### Step 51.2: Write the host key to known_hosts from labsetup.py
 
-[ ] Status
+[x] Status
 
 CONTEXT: `labsetup.py` writes the `ailabvm-int`/`ailabvm` SSH config
 but never gives `known_hosts` the server's key, so its BatchMode check
@@ -7173,6 +7173,12 @@ scratch `HOME`, the first call writes 2 entries (`192.168.4.43`,
 `[73.202.223.27]:22439`) and a second call prints `OK` for both; a
 planted different key for `192.168.4.43` yields a WARN and leaves the
 file unchanged.
+RESULT: py_compile ok (both); scratch HOME: fresh → 2 WROTE (mode
+600), rerun → 2 OK; planted different ed25519 key for .43 → WARN
+with `ssh-keygen -R` hint and that line untouched (the missing
+external entry is still added, so only the conflicting host is
+left unchanged); hashed known_hosts (`ssh-keygen -H`) → 2 OK; an
+RSA-only .43 entry → ed25519 added alongside (not a conflict).
 
 ---
 
