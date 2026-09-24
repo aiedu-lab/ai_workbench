@@ -247,7 +247,9 @@ real values (not placeholders) for:
 | `DOCKER_SERVER_USERNAME` | shared account name (e.g. `ailabuser`) |
 | `DOCKER_SERVER_SSH_PORT` | SSH port (default `22439`) |
 
-Students run (`install.sh` builds `.venv`, then runs `labsetup.py`):
+Students first complete the [Setup Prerequisites](../prerequisites.md)
+(`install.sh` checks them), then run (`install.sh` builds `.venv`,
+then runs `labsetup.py`):
 
 ```bash
 export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"

@@ -6932,7 +6932,7 @@ identity); addressed by the prerequisites step that follows.
 
 ### Step 50.10: Create miscellaneous/setup/prerequisites.md and link it
 
-[ ] Status
+[x] Status
 
 CONTEXT: Manual steps setup depends on (gh auth, git identity,
 webhook, platform) are scattered across `dev_workbench.md` and never
@@ -6956,6 +6956,12 @@ VERIFY: `test -f miscellaneous/setup/prerequisites.md`; `grep -l
 'prerequisites.md' README.md sessions/dev_workbench.md
 miscellaneous/setup/instructor/instructor.md
 miscellaneous/setup/student/README.md | wc -l` → `4`.
+RESULT: table with 8 rows (4 gated by install.sh) plus an "After
+install" note (Claude login, instructor installs SSH key); row 5
+uses `gh auth login -s admin:public_key` per github_and_git.md;
+linked from the 4 docs (count 4) and added to README's tree; all
+relative links and anchors resolve. The table describes the
+install.sh gate that 50.11 adds.
 
 ---
 

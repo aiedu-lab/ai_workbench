@@ -53,6 +53,11 @@ specific tool or concept.
      (plan.md) -->
 ## 🚀 First-Time Setup
 
+**First complete the [Setup
+Prerequisites](miscellaneous/setup/prerequisites.md)** (Linux shell,
+git identity, `gh auth login`, Discord webhook); `install.sh` checks
+them and stops until they are done.
+
 Run this once after cloning, and again after any `git pull` that
 changes `miscellaneous/setup/`. Every step is idempotent, so reruns
 are safe. Students and instructors run the same commands.
@@ -168,6 +173,7 @@ ai_workbench/
 └── miscellaneous/
     ├── software_defined_workbench/  # SDW plan + history
     ├── setup/
+    │   ├── prerequisites.md      # Manual steps before install.sh
     │   ├── install.sh            # One-command idempotent setup
     │   ├── validate.sh           # Read-only readiness check
     │   ├── requirements.*        # Setup-script Python deps

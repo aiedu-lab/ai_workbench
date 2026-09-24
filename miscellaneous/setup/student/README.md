@@ -17,7 +17,8 @@ or submitted.
   in `projects/client_multiagent/` and `projects/server_multiagent/`
 
 ## Usage
-Run from the repo root; the wrappers in `miscellaneous/setup/` build
+Complete the [Setup Prerequisites](../prerequisites.md) first. Then
+run from the repo root; the wrappers in `miscellaneous/setup/` build
 the `.venv` these scripts need and then run them:
 ```bash
 export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"

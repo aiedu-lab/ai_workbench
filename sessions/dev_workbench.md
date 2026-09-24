@@ -193,6 +193,10 @@ fully operational.
 
 ## Run Lab Setup Script
 
+Confirm every row of the [Setup
+Prerequisites](../miscellaneous/setup/prerequisites.md) table is done
+— `install.sh` checks them and stops until they are.
+
 Retrieve the Discord webhook URL from `#meetup-notifications`,
 then run both scripts from the repo root inside Ubuntu:
 
