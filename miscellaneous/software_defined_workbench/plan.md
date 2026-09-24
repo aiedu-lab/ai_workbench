@@ -6796,7 +6796,7 @@ bind-mounted repo and may need rebuilding there.
 
 ### Step 50.7: Fix fresh-install gaps found by the ailabvm test
 
-[ ] Status
+[x] Status
 
 CONTEXT: The first 50.8 attempt (fresh clone on ailabvm, Python 3.14)
 failed: gensim has no cp314 wheel and needs `Python.h`; `sudo -v`
@@ -6830,6 +6830,12 @@ pip-compile miscellaneous/setup/student/labsetup.py` → `0`; `grep
 -rn '22\.04' sessions/dev_workbench.md miscellaneous/tools/VM/setup.md`
 → no output; laptop `bash miscellaneous/setup/install.sh` still exits
 0 with no `VENV` line; behavior on a fresh machine is proven by 50.8.
+RESULT: static checks pass; `pip-compile` refs 0 (module docstring
+step 3 rewritten to match); no `22.04` left in the two docs; laptop
+install exit 0, no VENV/APT lines, embedding venv skipped by the
+new import probe, `sudo -n true` fell back to `sudo -v` silently.
+Of the 107 committed embedding pins only gensim 4.4.0 lacks a cp314
+wheel, which the new python3-dev/build-essential step covers.
 
 ---
 

@@ -46,7 +46,7 @@ wsl -l -v             # Ubuntu  Running  2
 If Ubuntu does not appear after reboot, install it explicitly:
 
 ```bash
-wsl --install -d Ubuntu-22.04
+wsl --install -d Ubuntu-24.04
 ```
 
 #### Create a Linux VM
@@ -83,7 +83,7 @@ Recommended minimums for this lab: 8 GB RAM, 4 cores, 40 GB disk.
 
 #### Suggested workflow
 
-1. Install WSL2 + Ubuntu-22.04 (steps above).
+1. Install WSL2 + Ubuntu-24.04 (steps above).
 2. Open VS Code on Windows; install the **Remote - WSL** extension.
 3. From the Ubuntu terminal:
    ```bash

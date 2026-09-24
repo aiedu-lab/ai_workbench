@@ -50,6 +50,16 @@ if ! python3 -c 'import venv, ensurepip' >/dev/null 2>&1; then
   sudo apt-get install -y -qq python3-venv
 fi
 
+# Some project deps (gensim) publish no wheel for the newest Python
+# and compile from source, which needs Python.h and a C toolchain.
+if ! python3 -c 'import os, sys, sysconfig
+sys.exit(not os.path.exists(
+  os.path.join(sysconfig.get_paths()["include"], "Python.h")))'; then
+  say "APT" "installing python3-dev build-essential (sudo)"
+  sudo apt-get update -qq
+  sudo apt-get install -y -qq python3-dev build-essential
+fi
+
 if [[ -x "${VENV}/bin/python" ]]; then
   say "OK" ".venv already exists (skipping)"
 else

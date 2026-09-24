@@ -10,8 +10,9 @@ step below runs if it is unset.
 Steps performed:
 1. Load non-confidential env vars from labenv.yaml.
 2. Install Ollama if absent (idempotent).
-3. Create projects/embedding/.venv, pip-compile, pip-sync,
-   and register Jupyter kernel if venv absent (idempotent).
+3. Create or repair projects/embedding/.venv from its committed
+   requirements.txt lock and register the Jupyter kernel, unless
+   its packages already import (idempotent).
 4. Install PKM CLI tools (poppler-utils, html2text) if absent
    (idempotent — skipped if both are already on PATH).
 5. Generate ~/.ssh/<username>_id_ed25519_server key pair if it does not
@@ -430,27 +431,32 @@ def _setup_embedding_venv() -> None:
   """Create the embedding Python venv and install dependencies.
 
   Required by the Embeddings Visualization session. Creates
-  projects/embedding/.venv, runs pip-compile + pip-sync, and
-  registers the Jupyter kernel. Idempotent — skips when the
-  venv Python binary already exists.
+  projects/embedding/.venv if absent, pip-syncs the committed
+  requirements.txt lock, and registers the Jupyter kernel.
+  Idempotent — skips only when the session's packages import.
   """
   venv_py = _EMBEDDING_VENV / "bin" / "python3"
-  if venv_py.exists():
+  # Readiness = packages import (same probe as preflight_check.py),
+  # not just bin/python3 existing, so a venv left half-built by an
+  # interrupted or failed run is repaired on the next run.
+  if venv_py.exists() and subprocess.run(
+    [str(venv_py), "-c", "import gensim, sklearn, matplotlib"],
+    capture_output=True,
+  ).returncode == 0:
     print("  OK   embedding venv already exists (skipping)")
     return
-  print("  VENV creating projects/embedding/.venv …")
-  subprocess.run(
-    ["python3", "-m", "venv", str(_EMBEDDING_VENV)],
-    check=True,
-  )
+  if not venv_py.exists():
+    print("  VENV creating projects/embedding/.venv …")
+    subprocess.run(
+      ["python3", "-m", "venv", str(_EMBEDDING_VENV)],
+      check=True,
+    )
+  else:
+    print("  VENV repairing projects/embedding/.venv …")
   pip = str(_EMBEDDING_VENV / "bin" / "pip")
   subprocess.run([pip, "install", "pip-tools"], check=True)
-  subprocess.run(
-    [str(_EMBEDDING_VENV / "bin" / "pip-compile"),
-     "requirements.in"],
-    check=True,
-    cwd=str(_EMBEDDING_DIR),
-  )
+  # Sync the committed lock rather than recompiling it, which would
+  # rewrite the tracked requirements.txt on every fresh setup.
   subprocess.run(
     [str(_EMBEDDING_VENV / "bin" / "pip-sync"),
      "requirements.txt"],
@@ -533,6 +539,14 @@ def _sudo_precheck() -> bool:
   passwordless sudo not configured — apt steps are skipped with
   manual-install instructions).
   """
+  # Try non-interactive sudo first: `sudo -v` demands a password when
+  # any matching sudoers rule requires one, even if a NOPASSWD rule
+  # also applies, which fails on VMs/CI with locked passwords.
+  if subprocess.run(
+    ["sudo", "-n", "true"], capture_output=True
+  ).returncode == 0:
+    print("  OK   sudo available without a password")
+    return True
   print(
     "  SUDO this script installs system packages via sudo.\n"
     "       Enter your password if prompted."

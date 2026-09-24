@@ -42,7 +42,7 @@ guide for that tool — no content is duplicated here.
 
 [VM Setup Guide](../miscellaneous/tools/VM/setup.md)
 
-- **Win11:** install WSL2 + Ubuntu 22.04; verify with `wsl --status`
+- **Win11:** install WSL2 + Ubuntu 24.04; verify with `wsl --status`
 - **macOS:** install Docker Desktop + Dev Containers extension;
   open repo in VSCode → "Reopen in Container"
 
