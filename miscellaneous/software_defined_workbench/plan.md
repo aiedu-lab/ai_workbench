@@ -7023,12 +7023,39 @@ unguarded pipe; left unchanged per CONSTRAINTS (follow-up).
 
 ---
 
-### Step 50.13: Re-validate the gate and Claude install on ailabvm
+### Step 50.13: Seed GitHub host keys from gh api meta in labsetup.py
 
 [ ] Status
 
-CONTEXT: Steps 50.10–50.12 are committed; asarcar@ailabvm has no git
-identity and no gh auth.
+CONTEXT: The first 50.14 pass showed that on a machine that never
+connected to GitHub, `_validate_github_ssh()` (and preflight's check)
+fails with `Host key verification failed`: `ssh -o BatchMode=yes`
+cannot answer the unknown-host prompt, although the key was uploaded.
+ACTION: Add `_ensure_github_known_hosts()` to
+`miscellaneous/setup/student/labsetup.py`: skip with `OK` if
+`ssh-keygen -F github.com` finds an entry; otherwise read GitHub's
+official host keys with `gh api meta --jq '.ssh_keys[]'` (HTTPS via
+the authenticated gh, `_gh_env()`), append `github.com <type> <key>`
+lines to `~/.ssh/known_hosts` (mode 600), and print `WROTE`; WARN if
+the API call fails. Call it in `main()` right before
+`_validate_github_ssh()` and add it to the docstring step list.
+CONSTRAINTS: No `StrictHostKeyChecking` relaxation; no ssh-keyscan
+(unauthenticated TOFU); do not change either script's SSH test.
+OUTPUT: `labsetup.py` seeds GitHub host keys idempotently.
+VERIFY: `python3 -m py_compile` passes; with a scratch `HOME` holding
+no known_hosts, the function writes 3 `github.com` lines and a second
+call prints `OK`; laptop `install.sh` prints the `OK` skip line; a
+fresh machine is proven in 50.14.
+
+---
+
+### Step 50.14: Re-validate the gate and Claude install on ailabvm
+
+[ ] Status
+
+CONTEXT: Steps 50.10–50.13 are committed; asarcar@ailabvm had no git
+identity and no gh auth (a first pass found the GitHub known_hosts
+gap fixed in 50.13).
 ACTION: `git push origin 1sep26`. Laptop: `install.sh` twice, then
 `validate.sh`. ailabvm: move `~/aiwb-fresh` to `~/aiwb-fresh.prev`
 (no deletion), fresh clone; Run G (webhook over stdin) must be stopped
@@ -7042,22 +7069,24 @@ instructor; webhook only over stdin; do not touch ailabuser.
 OUTPUT: Results in chat and this step's RESULT line.
 VERIFY: Laptop `validate.sh` exits 0; Run G exits 1 with `MISS` for
 git identity and gh auth and creates no `.venv`; Run H exits 0 and
-installs `claude`; ailabvm `validate.sh` FAILs only the lab-server
+installs `claude`; after 50.13, Run I (rerun, webhook over stdin)
+seeds GitHub host keys; ailabvm `validate.sh` (login shell, webhook
+set) FAILs only the lab-server
 SSH item (key not yet installed for ailabuser); clean git status.
 
 ---
 
-### Step 50.14: Mark Phase 50 complete, commit, tag, push
+### Step 50.15: Mark Phase 50 complete, commit, tag, push
 
 [ ] Status
 
-CONTEXT: Steps 50.1–50.13 executed and verified.
+CONTEXT: Steps 50.1–50.14 executed and verified.
 ACTION: Confirm every Phase 50 `[ ] Status` is `[x]`; commit `chore:
 Phase 50 - mark idempotent setup steps complete`; `git tag -a
-v50.14-idempotent-setup-step-completed -m "Completed Phase 50 Step 14:
+v50.15-idempotent-setup-step-completed -m "Completed Phase 50 Step 15:
 idempotent setup"`; `git push origin 1sep26 --tags`.
 CONSTRAINTS: No push to `main`, no PR or merge, no archive edits.
 OUTPUT: All Phase 50 statuses `[x]`; tag on remote.
 VERIFY: `grep -A2 '### Step 50\.'
 miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
-Status'` → `0`; `git ls-remote --tags origin | grep v50.14` → 1 line.
+Status'` → `0`; `git ls-remote --tags origin | grep v50.15` → 1 line.
