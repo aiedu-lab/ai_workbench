@@ -6435,7 +6435,7 @@ is re-pointed to .43:22 (instructor, manual).
 
 ### Step 49.3: Provision ailabuser lab facilities on ailabvm
 
-[ ] Status
+[x] Status
 
 CONTEXT: ailabvm has base Ubuntu 26.04 with accounts asarcar and
 ailabuser; `instructor.md` Section 3 defines the shared-account
@@ -6456,6 +6456,8 @@ Docker/compose on ailabvm.
 VERIFY: `ssh ailabvm-int 'docker ps && docker compose version &&
 python3 -V && test -d ai_workbench/.git && echo ok'` → empty table
 header, compose version, Python ≥3.12, `ok`.
+RESULT: Docker Compose 2.40.3, Python 3.14.4, gh 2.46.0; clone at
+`main` a3175d0; ufw inactive, so no rules added.
 
 ---
 
