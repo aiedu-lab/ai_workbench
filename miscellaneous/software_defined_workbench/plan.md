@@ -6364,7 +6364,7 @@ Status"` → 0 matches; `git tag | grep "v48\."` →
 
 ### Step 49.1: Create ailabvm domain on server-int
 
-[ ] Status
+[x] Status
 
 CONTEXT: server-int runs libvirt with `labvm`/`labbuddyvm` as qcow2
 overlays on
@@ -6392,6 +6392,11 @@ OUTPUT: libvirt domain `ailabvm` running with autostart, 4 vCPU,
 VERIFY: `ssh server-int 'sudo virsh dominfo ailabvm'` → State
 running, CPU(s) 4, Max memory 16777216 KiB; `ssh -i
 ~/.ssh/asarcar_id_ed25519_server asarcar@<IP> hostname` → `ailabvm`.
+DEVIATION: `--os-variant ubuntu20.04` used (matches labbuddyvm; the
+server's osinfo DB has no Ubuntu 24/26 entry); `ailabuser` docker
+group deferred to 49.3 (docker not yet installed). Result: MAC
+52:54:00:1e:5d:8f, DHCP IP 192.168.4.43; seed files kept in
+server-int `~/ailabvm-seed/`.
 
 ---
 
