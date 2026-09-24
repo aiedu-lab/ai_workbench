@@ -7184,7 +7184,7 @@ RSA-only .43 entry → ed25519 added alongside (not a conflict).
 
 ### Step 51.3: Prove it end to end
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 51.1–51.2 are committed; the laptop already knows
 `192.168.4.43`, asarcar@ailabvm may not.
@@ -7205,6 +7205,16 @@ longer reports `Host key verification failed` (it passes if the
 instructor installed asarcar@ailabvm's key, else fails only with
 `Permission denied`).
 
+RESULT: laptop BatchMode `ssh ailabvm-int echo ok` with ONLY the
+file seeded by `_ensure_lab_server_known_hosts` → `ok`; empty-file
+control → `Host key verification failed` (the recorded key is the
+real one). Laptop install exit 0 (.43 OK, external entry WROTE, the
+only known_hosts change), validate exit 0 incl. the new
+DOCKER_SERVER_HOST_KEY check. ailabvm Run K exit 0 (.43 OK — already
+trusted after the instructor's manual accept-new, so the no-entry
+path is proven by the laptop scratch-file test — external WROTE);
+validate 26/26 PASS now that the instructor installed
+asarcar@ailabvm's key; clean git status; webhook in no log.
 ---
 
 ### Step 51.4: Mark Phase 51 complete, commit, tag, push
