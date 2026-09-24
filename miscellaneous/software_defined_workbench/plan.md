@@ -7301,26 +7301,61 @@ read a token stored there.
 
 [ ] Status
 
-CONTEXT: External aliases in `~/.ssh/config` hard-code public IPs
-(`labserver`, `ailabvm`: `24.4.241.243`; `mylab`: `73.202.223.27`).
+CONTEXT: External aliases hard-code public IPs (`ailabvm`:
+`24.4.241.243`:22439; `mylab`: `73.202.223.27`:22438, a stale port);
+the instructor removed the 22436 forward, so only ailabvm (22439) is
+Internet-facing, and chose to keep alias names while other lab hosts
+are reached by jumping through ailabvm.
 ACTION: Back up `~/.ssh/config` and `~/.ssh/known_hosts` to the
-scratchpad; set `HostName aiedulab.duckdns.org` on `labserver`
-(22436), `ailabvm` (22439), and `mylab`, keeping port, user, and key;
-for each, add a `[aiedulab.duckdns.org]:<port>` `known_hosts` entry
-holding the key already trusted for that server's internal entry
-(`ssh-keygen -F`), so trust is carried over, never newly accepted.
-CONSTRAINTS: Internal `*-int` aliases stay on LAN IPs; no
-`StrictHostKeyChecking` relaxation or `ssh-keyscan`; no other hosts.
-OUTPUT: Three external aliases on `aiedulab.duckdns.org` with
-matching `known_hosts` entries.
-VERIFY: `ssh -G <alias> | grep ^hostname` → `aiedulab.duckdns.org`
-for all three; `ssh -o BatchMode=yes ailabvm whoami` → `ailabuser`;
-`ssh labserver` passes once the router's 22436 rule is fixed, else
-fails with `No route to host` (reported, not blocking).
+scratchpad. Set `ailabvm` (ailabuser) and `mylab` (asarcar) to
+`HostName aiedulab.duckdns.org`, `Port 22439`. Make `labserver`
+(asarcar@192.168.4.29), `labvm` (labuser@192.168.4.90) and
+`labbuddyvm` (labuser@192.168.4.42) use `ProxyJump mylab` with their
+LAN `HostName`, same user and key. Add one `known_hosts` entry
+`[aiedulab.duckdns.org]:22439` holding ailabvm's already-trusted key
+(from its internal entry via `ssh-keygen -F`); jumped hosts reuse
+their existing LAN entries.
+CONSTRAINTS: `*-int` aliases unchanged; no `StrictHostKeyChecking`
+relaxation or `ssh-keyscan`; no router changes; jump host holds no
+keys (the laptop authenticates end to end).
+OUTPUT: `ailabvm`/`mylab` on the FQDN; `labserver`/`labvm`/
+`labbuddyvm` jump via `mylab`; one new `known_hosts` entry.
+VERIFY: `ssh -G ailabvm` and `ssh -G mylab` show `hostname
+aiedulab.duckdns.org` and `port 22439`; BatchMode `ssh ailabvm
+whoami` → `ailabuser`, `ssh mylab whoami` → `asarcar`, `ssh labserver
+hostname` → `dev-1`, `ssh labvm hostname` and `ssh labbuddyvm
+hostname` return their names.
+---
+
+### Step 52.4: Remove credentials from asarcar@ailabvm
+
+[ ] Status
+
+CONTEXT: ailabvm is Internet-facing and every student (`ailabuser`,
+docker group) is effectively root there, yet asarcar@ailabvm holds a
+gh token (`repo`, `admin:public_key`), a GitHub SSH key uploaded to
+the instructor's account, `kahuna_id`, ghcr.io and ngrok logins, and
+a `~/.ssh/config` map of other hosts.
+ACTION: With the instructor confirming each deletion first: `gh auth
+logout` on ailabvm; instructor revokes that account's GitHub SSH key
+at github.com/settings/keys; copy `kahuna_id`, `.docker/config.json`,
+`.config/ngrok/ngrok.yml` and `.ssh/config` to a laptop location the
+instructor names (mode 600), then delete them and
+`asarcar_id_ed25519_github*` on ailabvm; also remove the copies under
+`~/migrated-arijit-dev/`.
+CONSTRAINTS: Never print credential contents; nothing deleted before
+its copy is verified (checksum) and the instructor confirms; do not
+touch ailabuser; keep `asarcar_id_ed25519_server` (lab-only key).
+OUTPUT: asarcar@ailabvm holds no private keys except the lab key and
+no gh/ghcr/ngrok credentials.
+VERIFY: On ailabvm, a scan of `~` finds only
+`.ssh/asarcar_id_ed25519_server` as a private key; `gh auth status`
+reports not logged in; no `.docker/config.json`, ngrok config, or
+`.config/gh/hosts.yml`; laptop copies' checksums match.
 
 ---
 
-### Step 52.4: Switch labenv.yaml and the docs to the hostname
+### Step 52.5: Switch labenv.yaml and the docs to the hostname
 
 [ ] Status
 
@@ -7343,11 +7378,11 @@ changed lines.
 
 ---
 
-### Step 52.5: Validate the durable setup end to end
+### Step 52.6: Validate the durable setup end to end
 
 [ ] Status
 
-CONTEXT: Steps 52.1–52.4 are committed; `labsetup.py` now writes the
+CONTEXT: Steps 52.1–52.5 are committed; `labsetup.py` now writes the
 hostname-based alias and `known_hosts` entry.
 ACTION: `git push origin 1sep26`. Laptop: `install.sh` (rewrites the
 `ailabvm` block with the hostname, adds
@@ -7363,17 +7398,17 @@ have `[aiedulab.duckdns.org]:22439` with fingerprint
 
 ---
 
-### Step 52.6: Mark Phase 52 complete, commit, tag, push
+### Step 52.7: Mark Phase 52 complete, commit, tag, push
 
 [ ] Status
 
-CONTEXT: Steps 52.1–52.5 executed and verified.
+CONTEXT: Steps 52.1–52.6 executed and verified.
 ACTION: Flip every Phase 52 `[ ] Status` to `[x]`; commit `chore:
 Phase 52 - mark durable hostname steps complete`; `git tag -a
-v52.6-durable-lab-hostname-step-completed -m "Completed Phase 52 Step
-6: durable lab hostname"`; `git push origin 1sep26 --tags`.
+v52.7-durable-lab-hostname-step-completed -m "Completed Phase 52 Step
+7: durable lab hostname"`; `git push origin 1sep26 --tags`.
 CONSTRAINTS: No push to `main`, no PR or merge.
 OUTPUT: All statuses `[x]`; tag on remote.
 VERIFY: `grep -A2 '### Step 52\.'
 miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
-Status'` → `0`; `git tag | grep v52.6` → 1 line.
+Status'` → `0`; `git tag | grep v52.7` → 1 line.
