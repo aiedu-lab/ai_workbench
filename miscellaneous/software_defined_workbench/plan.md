@@ -6699,7 +6699,7 @@ stubbed to raise, `main()` reached the stub and wrote nothing.
 
 ### Step 50.4: Create idempotent miscellaneous/setup/install.sh
 
-[ ] Status
+[x] Status
 
 CONTEXT: There is no single entry point; students run `labsetup.py`
 directly with a system Python that may lack its dependencies.
@@ -6723,6 +6723,14 @@ VERIFY: `bash -n miscellaneous/setup/install.sh && test -x
 miscellaneous/setup/install.sh && echo ok` → `ok`; `shellcheck` clean
 if installed; the smoke run exits 0, builds `.venv` with the pinned
 packages, prints `SKIP Discord post`, and posts nothing.
+RESULT: `bash -n` + mode 755 ok; shellcheck not installed (skipped).
+Smoke run exit 0: `.venv` created and `pip freeze` equals the lock
+exactly; sudo non-interactive so apt steps WARN-skipped (packages
+already present); `SKIP Discord post`, nothing posted; SSH to
+ailabvm-int verified; `core.hooksPath` set to `.githooks`.
+`~/.ssh/config` content unchanged but reordered (ailabvm blocks
+re-appended at end, one extra blank line); backup kept in the
+scratchpad. Runs labsetup.py (not exec) so the NEXT hint prints.
 
 ---
 
