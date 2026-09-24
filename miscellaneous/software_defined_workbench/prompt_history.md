@@ -3883,3 +3883,40 @@ merge.
   -- --help` directly.
 
 ---
+
+## Provision ailabvm
+
+[x] Status
+
+### Context
+Accidentally destroyed the LAB VM that was accessible via SSH 
+alias ai-lab. We are provisioning a VM with the user account
+and facilities that revives the facilities that server 
+account was providing. 
+
+### Provision VM
+* All machines referenced are VMs on a server referenced via SSH alias
+  server-int and has sudo access for my account 'asarcar'.
+* Provision ailabvm with SSH alias ailabvm-int on server-int.
+* The server ailabvm-int can reference the COW of labvm and needs only 
+  4 CPU, 16 GB RAM, and 40 GB Disk - similar profile as labbuddyvm.
+* Bring over the contents of VM arijit-dev referenced by SSH alias asarcar-int. 
+  arijit-dev has an older Ubuntu LTS and asarcar user account.
+* Deprovision and destroy arijit-dev and reclaim it disk (COW) etc. 
+  once ailabvm is fully provisioned and arijit-dev is migrated.
+
+### Provision Account
+Reference /sessions/dev_workbench.md and cross linked files 
+to understand what all we had expected from the account that
+was formerly reachable via SSH alias 'ai-lab' - review the 
+requirements of the account.
+
+* Provision the associated account and add all the facilities
+  that are expected on ailabvm.
+* Rename the SSH alias ai-lab-int to ailabvm-int and ensure
+  it does SSH to the expected account on ailabvm. note the
+  user account provisioned should be renamed ailabuser.
+* Redo all documentation and references where they are
+  expecting ai-lab to ailabvm and user to ailabuser.
+* Run any validation that ensures the account is fully restored
+  and students can continue their exercises as below.

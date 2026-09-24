@@ -6354,3 +6354,210 @@ VERIFY: `grep -A2 "### Step 48\."
 miscellaneous/software_defined_workbench/plan.md | grep "\[ \]
 Status"` → 0 matches; `git tag | grep "v48\."` →
 `v48.3-update-local-step-completed`.
+
+---
+
+## Phase 49: Provision ailabvm
+
+<!-- AI-GENERATED [anthropic:claude-opus-5-5]: Phase 49
+     (prompt_history.md "Provision ailabvm") -->
+
+### Step 49.1: Create ailabvm domain on server-int
+
+[ ] Status
+
+CONTEXT: server-int runs libvirt with `labvm`/`labbuddyvm` as qcow2
+overlays on
+`/var/kvm/images/master/ubuntu-26.04-20260919-master.qcow2` plus
+cloud-init seed ISOs, bridged on `br0`; no `ailabvm` domain exists.
+ACTION: On server-int via `ssh server-int sudo ...`: `qemu-img create
+-f qcow2 -F qcow2 -b <master> /var/kvm/images/ailabvm.qcow2 40G`;
+write cloud-init `user-data` (hostname `ailabvm`; users `asarcar`
+(sudo NOPASSWD) and `ailabuser` (group docker), both authorizing
+`~/.ssh/asarcar_id_ed25519_server.pub`; packages qemu-guest-agent,
+openssh-server) and `meta-data`; build
+`/var/kvm/images/ailabvm-seed.iso` with `genisoimage -V cidata -J
+-r`; `virt-install --name ailabvm --vcpus 4 --memory 16384 --import
+--disk /var/kvm/images/ailabvm.qcow2 --disk
+/var/kvm/images/ailabvm-seed.iso,device=cdrom --network
+bridge=br0,model=virtio --os-variant ubuntu24.04 --noautoconsole`;
+`virsh autostart ailabvm`; read IP via `virsh domifaddr ailabvm
+--source agent`. Report MAC + IP and pause so the instructor can
+attempt a router DHCP reservation of 192.168.4.23.
+CONSTRAINTS: Do not touch `labvm`, `labbuddyvm`, `arijit-dev`,
+`sivaram-dev`, `win2022-gold`, or the master image; no router changes
+(manual, instructor); no repo edits.
+OUTPUT: libvirt domain `ailabvm` running with autostart, 4 vCPU,
+16 GiB RAM, 40G qcow2 overlay; MAC and IP recorded in chat.
+VERIFY: `ssh server-int 'sudo virsh dominfo ailabvm'` → State
+running, CPU(s) 4, Max memory 16777216 KiB; `ssh -i
+~/.ssh/asarcar_id_ed25519_server asarcar@<IP> hostname` → `ailabvm`.
+
+---
+
+### Step 49.2: Rename local SSH aliases to ailabvm-int / ailabvm
+
+[ ] Status
+
+CONTEXT: `~/.ssh/config` has `Host ai-lab-int` (192.168.4.23,
+labuser) and `Host ai-lab` (73.202.223.27:22439, labuser), both
+pointing at the destroyed VM; ailabvm's IP is known from 49.1.
+ACTION: Back up `~/.ssh/config` to `~/.ssh/config.bak-49.2`; rename
+`Host ai-lab-int` → `Host ailabvm-int` with HostName = ailabvm's
+final IP (confirmed by instructor after 49.1) and User `ailabuser`;
+rename `Host ai-lab` → `Host ailabvm` with User `ailabuser`, keeping
+73.202.223.27:22439 (works once the router forward is re-pointed).
+CONSTRAINTS: Only these two Host blocks change; `labvm*`,
+`labbuddyvm-int`, `server-int`, `asarcar-int` untouched; no repo
+edits.
+OUTPUT: `~/.ssh/config` with `ailabvm-int` and `ailabvm` blocks and no
+`ai-lab` blocks.
+VERIFY: `ssh ailabvm-int whoami` → `ailabuser`; `grep -c 'Host
+ai-lab' ~/.ssh/config` → `0`.
+
+---
+
+### Step 49.3: Provision ailabuser lab facilities on ailabvm
+
+[ ] Status
+
+CONTEXT: ailabvm has base Ubuntu 26.04 with accounts asarcar and
+ailabuser; `instructor.md` Section 3 defines the shared-account
+facilities (docker, compose, git, python3, pip, repo clone, student
+authorized_keys, ports 22/8080/8088).
+ACTION: As asarcar on ailabvm: `sudo apt-get install -y docker.io
+docker-compose-v2 git python3 python3-pip gh`; `sudo usermod -aG
+docker ailabuser`; `sudo -u ailabuser git clone
+https://github.com/aiedu-lab/ai_workbench
+/home/ailabuser/ai_workbench`; ensure `/home/ailabuser/.ssh` is 700
+and `authorized_keys` 600, owned by ailabuser; if `ufw` is active,
+allow 22, 8080, 8088.
+CONSTRAINTS: Do not fabricate student keys — old keys were lost with
+ai-lab and are re-collected via instructor.md Phase A/B (manual); no
+secrets or `.env` written; no repo edits.
+OUTPUT: ailabuser in the docker group with a repo clone and working
+Docker/compose on ailabvm.
+VERIFY: `ssh ailabvm-int 'docker ps && docker compose version &&
+python3 -V && test -d ai_workbench/.git && echo ok'` → empty table
+header, compose version, Python ≥3.12, `ok`.
+
+---
+
+### Step 49.4: Migrate asarcar home from arijit-dev to ailabvm
+
+[ ] Status
+
+CONTEXT: arijit-dev (`asarcar-int`, Ubuntu 20.04) `/home/asarcar`
+(~112K) holds dotfiles, `.ssh`, `.docker`, `.config`, `.local`,
+`.bash_history`, `.viminfo`; k3s and the registry are out of scope.
+ACTION: `ssh asarcar-int 'tar -C /home/asarcar --exclude=.cache
+--exclude=.ssh/authorized_keys -czf - .' | ssh -l asarcar ailabvm-int
+'mkdir -p ~/migrated-arijit-dev && tar -C ~/migrated-arijit-dev -xzf
+-'`; copy the files into `~` without clobbering ailabvm's `.bashrc`/
+`.profile` (keep arijit-dev's as `*.arijit-dev`); append unique lines
+from arijit-dev's `authorized_keys` to ailabvm's.
+CONSTRAINTS: Do not modify arijit-dev; do not migrate k3s, docker
+images, or registry data; no repo edits.
+OUTPUT: `/home/asarcar` on ailabvm contains arijit-dev's files;
+`~/migrated-arijit-dev/` holds the pristine copy.
+VERIFY: `diff <(ssh asarcar-int 'cd ~ && find . -path ./.cache -prune
+-o -path ./.ssh/authorized_keys -prune -o -type f -print | sort')
+<(ssh -l asarcar ailabvm-int 'cd ~/migrated-arijit-dev && find .
+-type f | sort')` → no output.
+
+---
+
+### Step 49.5: Rename ai-lab/labuser references in repo docs & scripts
+
+[ ] Status
+
+CONTEXT: Seven live files still reference `ai-lab`, `ai-lab-int`,
+`labuser`, and 192.168.4.23.
+ACTION: In `miscellaneous/setup/student/labenv.yaml` set
+`DOCKER_SERVER_ID_INTERNAL` to ailabvm's final IP and
+`DOCKER_SERVER_USERNAME: "ailabuser"`, comments `ai-lab(-int)` →
+`ailabvm(-int)`; in `miscellaneous/setup/student/labsetup.py` and
+`preflight_check.py` set `SSH_HOST_ALIAS = "ailabvm"` and
+`SSH_HOST_ALIAS_INT = "ailabvm-int"` plus docstrings/comments; in
+`miscellaneous/setup/instructor/instructor.md`,
+`sessions/dev_workbench.md`, `sessions/server_multiagent.md`, and
+`miscellaneous/tools/claude/cloud.md` replace `ai-lab-int` →
+`ailabvm-int`, `ai-lab` → `ailabvm`, `labuser` → `ailabuser`
+(`ai-lab-key` → `ailabvm-key`).
+CONSTRAINTS: Do not edit `plan.md`/`prompt_history.md` history,
+`miscellaneous/docs/archive/`, or unrelated words (e.g. "available");
+external IP/port unchanged; ≤79-char lines, 2-space indent.
+OUTPUT: Seven files updated; no live `ai-lab`/`labuser` references.
+VERIFY: `grep -rnP '\bai-lab\b|ai-lab-int|(?<!ai)labuser'
+--exclude-dir=.git --exclude-dir=archive --exclude=plan.md
+--exclude=prompt_history.md .` → no output; `python3 -m py_compile
+miscellaneous/setup/student/{labsetup,preflight_check}.py` → exit 0;
+line-length check from `.agent/rules/always-line-length.md` → PASS.
+
+---
+
+### Step 49.6: End-to-end validation of ailabvm for students
+
+[ ] Status
+
+CONTEXT: ailabvm is provisioned (49.1–49.4) and the repo points to
+`ailabvm-int`/`ailabvm`/`ailabuser` (49.5).
+ACTION: From this laptop run `python3
+miscellaneous/setup/student/preflight_check.py`; run `ssh ailabvm-int
+docker ps`; replay `sessions/server_multiagent.md` Step 0 readiness
+as ailabuser: `ssh ailabvm-int 'cd ai_workbench && git pull && docker
+run --rm hello-world && docker pull temporalio/auto-setup && docker
+pull mongo:7'`; try `ssh ailabvm docker ps` (expected to fail until
+the router forward 22439 → ailabvm:22 is re-pointed).
+CONSTRAINTS: Do not run `labsetup.py` (posts to Discord and rewrites
+ssh config); no repo edits unless a check fails (then stop and
+report).
+OUTPUT: Validation results summarized in chat, including
+external-path status.
+VERIFY: preflight shows `PASS` for `SSH to ailabvm-int or ailabvm`
+(Discord-webhook item may FAIL if unset — reported, not blocking);
+`hello-world` prints "Hello from Docker!"; both image pulls succeed.
+
+---
+
+### Step 49.7: Deprovision arijit-dev and reclaim its disk
+
+[ ] Status
+
+CONTEXT: arijit-dev's home is migrated (49.4) and ailabvm is
+validated (49.6); arijit-dev still runs on raw
+`/var/kvm/images/ubuntu2004.img`.
+ACTION: Only after explicit instructor confirmation in that turn:
+`ssh server-int 'sudo virsh shutdown arijit-dev'` (wait for shut off;
+`virsh destroy` only if it hangs), then `sudo virsh undefine
+arijit-dev --remove-all-storage --nvram`; remove the `Host
+asarcar-int` block from `~/.ssh/config`.
+CONSTRAINTS: Never touch other domains, `master/`, or
+`~/arijit-dev.xml` on server-int (kept as a record); no repo edits.
+OUTPUT: No `arijit-dev` domain; `ubuntu2004.img` removed; no
+`asarcar-int` alias.
+VERIFY: `ssh server-int 'sudo virsh list --all | grep -c arijit-dev;
+ls /var/kvm/images/ubuntu2004.img'` → `0` and "No such file";
+`grep -c 'Host asarcar-int' ~/.ssh/config` → `0`.
+
+---
+
+### Step 49.8: Mark Phase 49 complete, commit, tag, push
+
+[ ] Status
+
+CONTEXT: Steps 49.1–49.7 executed and verified; Phase 49 `[ ]
+Status` lines in `miscellaneous/software_defined_workbench/plan.md`
+still read `[ ]`.
+ACTION: Flip every `[ ] Status` in the Phase 49 block to `[x]
+Status`; commit `chore: Phase 49 - mark provision ailabvm steps
+complete`; `git tag -a v49.8-provision-ailabvm-step-completed -m
+"Completed Phase 49 Step 8: provision ailabvm"`; `git push origin
+1sep26 --tags`.
+CONSTRAINTS: Do not modify `miscellaneous/docs/archive/`; do not push
+to `main`; no PR or merge.
+OUTPUT: All Phase 49 statuses `[x]`; tag
+`v49.8-provision-ailabvm-step-completed` on remote.
+VERIFY: `grep -A2 '### Step 49\.'
+miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
+Status'` → `0`; `git ls-remote --tags origin | grep v49.8` → 1 line.
