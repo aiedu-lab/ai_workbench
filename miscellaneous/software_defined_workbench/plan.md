@@ -6529,7 +6529,7 @@ prunes a student's stale `Host ai-lab`/`ai-lab-int` blocks
 
 ### Step 49.6: End-to-end validation of ailabvm for students
 
-[ ] Status
+[x] Status
 
 CONTEXT: ailabvm is provisioned (49.1–49.4) and the repo points to
 `ailabvm-int`/`ailabvm`/`ailabuser` (49.5).
@@ -6548,6 +6548,14 @@ external-path status.
 VERIFY: preflight shows `PASS` for `SSH to ailabvm-int or ailabvm`
 (Discord-webhook item may FAIL if unset — reported, not blocking);
 `hello-world` prints "Hello from Docker!"; both image pulls succeed.
+RESULT: preflight `SSH to ailabvm-int or ailabvm` PASS (21 of 24
+PASS); `ssh ailabvm-int docker ps` → empty table; as ailabuser,
+`git pull` at a3175d0, hello-world OK, `temporalio/auto-setup`
+(788MB) and `mongo:7` (1.18GB) pulled. The 3 FAILs are laptop-only,
+not ailabvm: `requests` missing, `projects/embedding/.venv`
+absent, and piper.py looked up at `miscellaneous/setup/llm_wiki/`
+(likely a pre-existing path bug in `_PIPER_PY`). External `ssh
+ailabvm` times out pending the router forward (instructor).
 
 ---
 
