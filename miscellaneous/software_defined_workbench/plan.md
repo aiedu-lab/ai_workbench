@@ -6410,7 +6410,7 @@ removed and .43 is final. Seed files kept in server-int
 
 ### Step 49.2: Rename local SSH aliases to ailabvm-int / ailabvm
 
-[ ] Status
+[x] Status
 
 CONTEXT: `~/.ssh/config` has `Host ai-lab-int` (192.168.4.23,
 labuser) and `Host ai-lab` (73.202.223.27:22439, labuser), both
@@ -6427,6 +6427,9 @@ OUTPUT: `~/.ssh/config` with `ailabvm-int` and `ailabvm` blocks and no
 `ai-lab` blocks.
 VERIFY: `ssh ailabvm-int whoami` → `ailabuser`; `grep -c 'Host
 ai-lab' ~/.ssh/config` → `0`.
+RESULT: `ailabvm-int` → 192.168.4.43 (ailabuser), verified;
+`ailabvm` (73.202.223.27:22439) times out until the router forward
+is re-pointed to .43:22 (instructor, manual).
 
 ---
 
