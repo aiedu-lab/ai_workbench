@@ -7299,7 +7299,7 @@ read a token stored there.
 
 ### Step 52.3: Rebuild the external SSH aliases on the durable name
 
-[ ] Status
+[x] Status
 
 CONTEXT: External aliases hard-code public IPs (`ailabvm`:
 `24.4.241.243`:22439; `mylab`: `73.202.223.27`:22438, a stale port);
@@ -7325,6 +7325,14 @@ aiedulab.duckdns.org` and `port 22439`; BatchMode `ssh ailabvm
 whoami` → `ailabuser`, `ssh mylab whoami` → `asarcar`, `ssh labserver
 hostname` → `dev-1`, `ssh labvm hostname` and `ssh labbuddyvm
 hostname` return their names.
+RESULT: backups in the scratchpad; `ailabvm`/`mylab` →
+aiedulab.duckdns.org:22439 (`mylab` was on stale port 22438);
+`labserver` (was 22436, now closed), new `labvm` and `labbuddyvm`
+→ ProxyJump mylab to LAN IPs; one known_hosts entry
+`[aiedulab.duckdns.org]:22439` copied from the trusted 192.168.4.43
+ed25519 key (SHA256:3pSfDKCw…). BatchMode tests: ailabvm →
+ailabuser, mylab → asarcar, labserver → dev-1, labvm → labvm,
+labbuddyvm → labbuddyvm.
 ---
 
 ### Step 52.4: Remove credentials from asarcar@ailabvm
