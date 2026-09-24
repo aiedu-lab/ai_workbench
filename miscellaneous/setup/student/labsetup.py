@@ -16,11 +16,11 @@ Steps performed:
 4. Post the public key to #meetup-notifications so the instructor
    can install it on the Docker server (instructor.md Section 3) —
    only when a new key was generated in step 5 (idempotent).
-5. Write ~/.ssh/config entries (Host ai-lab-int and Host ai-lab)
+5. Write ~/.ssh/config entries (Host ailabvm-int and Host ailabvm)
    for the internal/external lab server addresses, replacing any
    prior versions of either block.
-6. Validate SSH connectivity to ai-lab-int and ai-lab (either
-   succeeding is OK; ai-lab is the off-campus default).
+6. Validate SSH connectivity to ailabvm-int and ailabvm (either
+   succeeding is OK; ailabvm is the off-campus default).
 8. Validate that DISCORD_WEBHOOK_URL is set.
 9. If `gh auth status` exits 0: generate
    ~/.ssh/<username>_id_ed25519_github if absent, upload the
@@ -53,8 +53,8 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 LABENV = Path(__file__).parent / "labenv.yaml"
 SECRET_KEY = "DISCORD_WEBHOOK_URL"
 SSH_DIR = Path.home() / ".ssh"
-SSH_HOST_ALIAS = "ai-lab"
-SSH_HOST_ALIAS_INT = "ai-lab-int"
+SSH_HOST_ALIAS = "ailabvm"
+SSH_HOST_ALIAS_INT = "ailabvm-int"
 
 SSH_KEYS = (
   "DOCKER_SERVER_ID_INTERNAL",
@@ -165,16 +165,16 @@ def _post_pubkey_to_discord(env: dict[str, str]) -> None:
 
 
 def _write_ssh_config(env: dict[str, str]) -> None:
-  """Write or refresh the ai-lab-int/ai-lab Host blocks.
+  """Write or refresh the ailabvm-int/ailabvm Host blocks.
 
-  Replaces any existing Host ai-lab-int / Host ai-lab blocks in
+  Replaces any existing Host ailabvm-int / Host ailabvm blocks in
   ~/.ssh/config with fresh entries for the internal LAN and
   external WAN addresses — re-running after a labenv.yaml change
   keeps both correct instead of preserving stale blocks.
   """
   existing = SSH_CONFIG.read_text() if SSH_CONFIG.exists() else ""
 
-  # Drop any existing "Host ai-lab-int" / "Host ai-lab" blocks
+  # Drop any existing "Host ailabvm-int" / "Host ailabvm" blocks
   # (header line plus the indented option lines that follow).
   headers = {f"Host {SSH_HOST_ALIAS_INT}", f"Host {SSH_HOST_ALIAS}"}
   kept = []

@@ -24,7 +24,7 @@ plugin experience, and the same SSH access to the shared lab server.
 |-------|-------|-------|
 | Frontend | VSCode native | VSCode native |
 | Dev environment | WSL2 Ubuntu | Dev Container Ubuntu |
-| Server access | SSH → `ai-lab` | SSH → `ai-lab` (identical) |
+| Server access | SSH → `ailabvm` | SSH → `ailabvm` (identical) |
 
 > Both paths produce an identical Ubuntu shell. Every command in
 > this session works on both platforms unless noted otherwise.
@@ -203,7 +203,7 @@ python3 miscellaneous/setup/student/preflight_check.py
 ```
 
 `labsetup.py` generates your SSH key pair, posts your public key
-to Discord, writes the `ai-lab` SSH config entry, and installs
+to Discord, writes the `ailabvm` SSH config entry, and installs
 CLI tools required by optional sessions (poppler-utils,
 html2text).
 Every item in `preflight_check.py` output must show **PASS**.

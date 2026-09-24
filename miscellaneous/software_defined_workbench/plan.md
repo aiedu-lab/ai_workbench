@@ -6492,7 +6492,7 @@ instructor.
 
 ### Step 49.5: Rename ai-lab/labuser references in repo docs & scripts
 
-[ ] Status
+[x] Status
 
 CONTEXT: Seven live files still reference `ai-lab`, `ai-lab-int`,
 `labuser`, and 192.168.4.23.
@@ -6516,6 +6516,14 @@ VERIFY: `grep -rnP '\bai-lab\b|ai-lab-int|(?<!ai)labuser'
 --exclude=prompt_history.md .` → no output; `python3 -m py_compile
 miscellaneous/setup/student/{labsetup,preflight_check}.py` → exit 0;
 line-length check from `.agent/rules/always-line-length.md` → PASS.
+RESULT: 37 lines changed across the seven files; internal IP now
+192.168.4.43. The rule's whole-file line-length command reports 11
+long lines in instructor.md, dev_workbench.md, server_multiagent.md;
+all predate this step (per-file counts identical at HEAD) and none
+are in the diff. Follow-ups, not done here: `labsetup.py` no longer
+prunes a student's stale `Host ai-lab`/`ai-lab-int` blocks
+(harmless); instructor.md still cites pre-Phase-36 key names
+`DOCKER_SERVER_ID`/`DOCKER_SERVER_SSH_PORT`.
 
 ---
 

@@ -194,35 +194,35 @@ before the lab — students cannot do this themselves.
 
 ```bash
 # On the server (as root or a user with sudo)
-sudo useradd -m -s /bin/bash labuser
-sudo usermod -aG docker labuser
+sudo useradd -m -s /bin/bash ailabuser
+sudo usermod -aG docker ailabuser
 
 # Pre-install required tools
 sudo apt-get update
 sudo apt-get install -y docker.io docker-compose-v2 git python3 pip
 
 # Pre-clone the lab repo
-sudo -u labuser git clone \
+sudo -u ailabuser git clone \
   https://github.com/aiedu-lab/ai_workbench \
-  /home/labuser/ai_workbench
+  /home/ailabuser/ai_workbench
 ```
 
 **Add each student's SSH public key:**
 
 ```bash
-sudo -u labuser mkdir -p /home/labuser/.ssh
+sudo -u ailabuser mkdir -p /home/ailabuser/.ssh
 # Repeat for each student's public key:
 echo "ssh-ed25519 AAAA... alice@laptop" \
-  | sudo tee -a /home/labuser/.ssh/authorized_keys
-sudo chmod 700 /home/labuser/.ssh
-sudo chmod 600 /home/labuser/.ssh/authorized_keys
-sudo chown -R labuser:labuser /home/labuser/.ssh
+  | sudo tee -a /home/ailabuser/.ssh/authorized_keys
+sudo chmod 700 /home/ailabuser/.ssh
+sudo chmod 600 /home/ailabuser/.ssh/authorized_keys
+sudo chown -R ailabuser:ailabuser /home/ailabuser/.ssh
 ```
 
 **Validation — basic SSH (run from each student laptop):**
 
 ```bash
-ssh labuser@<SERVER_IP> docker ps
+ssh ailabuser@<SERVER_IP> docker ps
 ```
 
 Expected: empty table header (no error). If any student gets
@@ -244,7 +244,7 @@ real values (not placeholders) for:
 | Variable | Value |
 |---|---|
 | `DOCKER_SERVER_ID` | server hostname or IP (default 73.202.223.27) |
-| `DOCKER_SERVER_USERNAME` | shared account name (e.g. `labuser`) |
+| `DOCKER_SERVER_USERNAME` | shared account name (e.g. `ailabuser`) |
 | `DOCKER_SERVER_SSH_PORT` | SSH port (default `22439`) |
 
 Students run:
@@ -259,7 +259,7 @@ python3 setup/labsetup.py
    already exists)
 2. Post the public key to `#meetup-notifications` so the instructor
    can install it
-3. Write a `Host ai-lab` entry to `~/.ssh/config` (skipped if
+3. Write a `Host ailabvm` entry to `~/.ssh/config` (skipped if
    already present)
 4. Attempt SSH validation (will WARN — expected at this stage
    because the key is not yet installed on the server)
@@ -280,7 +280,7 @@ Check `#meetup-notifications` for each student's public key message
 ```bash
 # On the server, for each student key posted to the channel:
 echo "<paste student public key>" \
-  | sudo tee -a /home/labuser/.ssh/authorized_keys
+  | sudo tee -a /home/ailabuser/.ssh/authorized_keys
 ```
 
 After all keys are installed, notify students to run Phase C.
@@ -296,13 +296,13 @@ python3 setup/preflight_check.py
 ```
 
 `preflight_check.py` reads `labenv.yaml` directly for non-secret
-vars and checks SSH connectivity to `ai-lab`. Every item must show
+vars and checks SSH connectivity to `ailabvm`. Every item must show
 `PASS` before the lab begins.
 
 **Validation:**
 
 ```bash
-ssh ai-lab docker ps   # must return empty table header
+ssh ailabvm docker ps   # must return empty table header
 ```
 
 ---
@@ -437,7 +437,7 @@ from both.
 |-------|-------|-------|
 | Frontend | VSCode native | VSCode native |
 | Dev environment | WSL2 Ubuntu | Dev Container Ubuntu |
-| Server access | SSH → `ai-lab` | SSH → `ai-lab` (identical) |
+| Server access | SSH → `ailabvm` | SSH → `ailabvm` (identical) |
 
 Validate student platform before the lab:
 

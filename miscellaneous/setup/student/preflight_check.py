@@ -9,7 +9,7 @@ Checks for:
 - Non-confidential vars present in labenv.yaml with real values
 - DISCORD_WEBHOOK_URL set in the shell environment (secret)
 - SSH key exists at ~/.ssh/<username>_id_ed25519_server
-- SSH connectivity to ai-lab-int or ai-lab (~/.ssh/config)
+- SSH connectivity to ailabvm-int or ailabvm (~/.ssh/config)
 - gh CLI installed and authenticated (gh auth status)
 - GitHub SSH key exists at ~/.ssh/<username>_id_ed25519_github
 - GitHub SSH authentication (ssh git@github.com)
@@ -38,8 +38,8 @@ SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_server"
 GITHUB_SSH_KEY = (
   Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_github"
 )
-SSH_HOST_ALIAS = "ai-lab"
-SSH_HOST_ALIAS_INT = "ai-lab-int"
+SSH_HOST_ALIAS = "ailabvm"
+SSH_HOST_ALIAS_INT = "ailabvm-int"
 
 NON_SECRET_VARS = (
   "DISCORD_SERVER",
@@ -260,7 +260,7 @@ def main():
     check(f"{var} in labenv.yaml", lambda v=var: check_labenv_var(env, v))
   check("DISCORD_WEBHOOK_URL set", check_discord_webhook)
   check(f"SSH key {SSH_KEY.name}", check_ssh_key)
-  check("SSH to ai-lab-int or ai-lab", check_ssh)
+  check("SSH to ailabvm-int or ailabvm", check_ssh)
   check("gh installed", check_gh_install)
   check("gh authenticated", check_gh_auth)
   check(f"GitHub SSH key {GITHUB_SSH_KEY.name}", check_github_ssh_key)

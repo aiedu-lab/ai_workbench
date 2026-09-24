@@ -70,7 +70,7 @@ and any Python/Node code that uses the Anthropic SDK.
 1. Go to [platform.claude.com](https://platform.claude.com/).
 2. Sign in with the same account you created above.
 3. Navigate to **Settings → API Keys → Create Key**.
-4. Name the key (e.g. `ai-lab-key`) and copy it — it is shown
+4. Name the key (e.g. `ailabvm-key`) and copy it — it is shown
    only once.
 5. Reference [set `MY_ANTHROPIC_API_KEY` in environment variable](
    cli.md#api-key-mode) so every tool can find it without hardcoding.

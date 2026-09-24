@@ -140,7 +140,7 @@ isolation — nothing runs on your laptop.
 #### Step 0 — Connect to the Lab Server
 
 ```bash
-ssh labuser@<SERVER_IP>
+ssh ailabuser@<SERVER_IP>
 cd ai_workbench/setup
 export DISCORD_WEBHOOK_URL="<paste from instructor>"
 ```
