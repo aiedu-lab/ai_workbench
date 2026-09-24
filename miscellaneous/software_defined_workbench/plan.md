@@ -7337,7 +7337,7 @@ labbuddyvm → labbuddyvm.
 
 ### Step 52.4: Remove credentials from asarcar@ailabvm
 
-[ ] Status
+[x] Status
 
 CONTEXT: ailabvm is Internet-facing and every student (`ailabuser`,
 docker group) is effectively root there, yet asarcar@ailabvm holds a
@@ -7360,6 +7360,15 @@ VERIFY: On ailabvm, a scan of `~` finds only
 `.ssh/asarcar_id_ed25519_server` as a private key; `gh auth status`
 reports not logged in; no `.docker/config.json`, ngrok config, or
 `.config/gh/hosts.yml`; laptop copies' checksums match.
+DEVIATION: instructor chose delete-without-copy, so no laptop
+copies were made. RESULT: instructor revoked the ailabvm GitHub key
+(confirmed: `ssh -T git@github.com` with it → Permission denied);
+`gh auth logout` done (`gh auth status`: not logged in;
+`.config/gh/hosts.yml` left by gh as `{}`, no token); deleted by
+name: kahuna_id(.pub), asarcar_id_ed25519_github(.pub), .ssh/config,
+.docker/config.json, ngrok.yml, and their migrated-arijit-dev
+copies; the only private key left under ~ is the lab key
+asarcar_id_ed25519_server.
 
 ---
 
