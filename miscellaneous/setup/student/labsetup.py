@@ -386,14 +386,14 @@ def _validate_secret() -> None:
   print(f"  OK   {SECRET_KEY} is set (value hidden)")
 
 
-_EMBEDDING_DIR = (
-  Path(__file__).parent.parent / "embedding"
-)
+# Anchored on REPO_ROOT, not Path(__file__).parent.parent: that
+# resolved to projects/ only while this script lived in
+# projects/group_meetup/, so every later move broke it.
+_EMBEDDING_DIR = REPO_ROOT / "projects" / "embedding"
 _EMBEDDING_VENV = _EMBEDDING_DIR / ".venv"
 
 _SPEED_READING_DIR = (
-  Path(__file__).parent.parent
-  / "llm_wiki" / "speed-reading"
+  REPO_ROOT / "projects" / "llm_wiki" / "speed-reading"
 )
 _PIPER_VENV = _SPEED_READING_DIR / ".venv"
 

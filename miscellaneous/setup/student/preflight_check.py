@@ -33,6 +33,7 @@ import sys
 import yaml
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[3]
 LABENV = Path(__file__).parent / "labenv.yaml"
 SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_server"
 GITHUB_SSH_KEY = (
@@ -204,9 +205,11 @@ def check_git_identity():
     )
 
 
+# Anchored on REPO_ROOT, not Path(__file__).parent.parent: that
+# resolved to projects/ only while this script lived in
+# projects/group_meetup/, so every later move broke it.
 _EMBEDDING_VENV_PY = (
-  Path(__file__).parent.parent
-  / "embedding" / ".venv" / "bin" / "python3"
+  REPO_ROOT / "projects" / "embedding" / ".venv" / "bin" / "python3"
 )
 
 
@@ -228,9 +231,8 @@ def check_embedding_venv():
 
 
 _PIPER_PY = (
-  Path(__file__).parent.parent
-  / "llm_wiki" / "speed-reading"
-  / "src" / "piper.py"
+  REPO_ROOT / "projects" / "llm_wiki" / "speed-reading"
+  / "static" / "src" / "piper.py"
 )
 
 
