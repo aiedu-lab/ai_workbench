@@ -3974,3 +3974,26 @@ public key the instructor has installed still fails the
 lab-server SSH check with `Host key verification failed`,
 because the BatchMode checks in `labsetup.py` and
 `preflight_check.py` cannot accept an unknown host key.
+
+---
+
+## Durable lab hostname and SSH aliases
+[x] Status
+
+**Date:** 2026-09-24
+
+**Prompt:**
+* The SSH alias `server` was renamed to `labserver` and `server-int`
+  to `labserver-int`; ensure no references will be broken.
+* Set up a free dynamic-DNS hostname for the lab (`ailab` was
+  requested).
+* Redo the SSH aliases using those durable names.
+* Then update all scripts and documentation to use the names, such
+  as the Docker-server references in `labenv.yaml`.
+
+**Context:** the lab's public IP changed from `73.202.223.27` to
+`24.4.241.243`, silently breaking `ssh ailabvm` and the external
+address in `labenv.yaml`.
+
+**Clarifications:** DuckDNS; `ailab` is taken on DuckDNS and
+dedyn.io, so the hostname is `aiedulab.duckdns.org`.

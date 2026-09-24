@@ -7231,3 +7231,136 @@ OUTPUT: All Phase 51 statuses `[x]`; tag on remote.
 VERIFY: `grep -A2 '### Step 51\.'
 miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
 Status'` → `0`; `git tag | grep v51.4` → 1 line.
+
+---
+
+## Phase 52: Durable Lab Hostname and SSH Aliases
+
+<!-- AI-GENERATED [anthropic:claude-opus-5-5]: Phase 52
+     (prompt_history.md "Durable lab hostname and SSH aliases") -->
+
+### Step 52.1: Verify the server → labserver alias rename is safe
+
+[ ] Status
+
+CONTEXT: The instructor renamed the `~/.ssh/config` aliases `server` →
+`labserver` and `server-int` → `labserver-int`.
+ACTION: Read-only audit: search the repo (excluding `.git`, archive,
+and history files) for the old aliases as whole words; search
+`~/.ssh/config` for old aliases in `ProxyJump`/`ProxyCommand`/`Match`
+lines; confirm `ssh labserver-int` works. Record the result; edit
+nothing unless a live reference turns up (then stop and report).
+CONSTRAINTS: Do not edit history files (`plan.md`,
+`prompt_history.md`) or archives.
+OUTPUT: RESULT line listing any references found (none expected).
+VERIFY: The repo search prints nothing; `ssh -o BatchMode=yes
+labserver-int hostname` → `dev-1`.
+
+---
+
+### Step 52.2: Register aiedulab.duckdns.org and install the updater
+
+[ ] Status
+
+CONTEXT: There is no DNS name for the lab's public IP, which the ISP
+changes.
+ACTION: Instructor (manual): sign in at duckdns.org, add subdomain
+`aiedulab`, and pipe the token over stdin into root-only
+`/etc/duckdns/token` on `labserver` (it never lands on the laptop).
+Then on `labserver`: create `/usr/local/bin/duckdns-update` (reads the
+token, calls `https://www.duckdns.org/update?domains=aiedulab&token=…&ip=`
+via `curl -sK -` so the URL is on stdin, logs `OK`/`KO` without the
+token), `duckdns-update.service`, and `duckdns-update.timer`
+(`OnBootSec=1min`, `OnUnitActiveSec=5min`); `systemctl enable --now
+duckdns-update.timer`.
+CONSTRAINTS: Token never in the repo, argv, logs, or chat; no other
+`labserver` changes; no router changes.
+OUTPUT: `aiedulab.duckdns.org` resolves to the lab's public IP; timer
+active on `labserver`.
+VERIFY: `getent hosts aiedulab.duckdns.org` → `24.4.241.243`;
+`systemctl is-active duckdns-update.timer` → `active`; last
+`duckdns-update` journal line `OK`; `sudo stat -c '%a %U'
+/etc/duckdns/token` → `600 root`.
+
+---
+
+### Step 52.3: Rebuild the external SSH aliases on the durable name
+
+[ ] Status
+
+CONTEXT: External aliases in `~/.ssh/config` hard-code public IPs
+(`labserver`, `ailabvm`: `24.4.241.243`; `mylab`: `73.202.223.27`).
+ACTION: Back up `~/.ssh/config` and `~/.ssh/known_hosts` to the
+scratchpad; set `HostName aiedulab.duckdns.org` on `labserver`
+(22436), `ailabvm` (22439), and `mylab`, keeping port, user, and key;
+for each, add a `[aiedulab.duckdns.org]:<port>` `known_hosts` entry
+holding the key already trusted for that server's internal entry
+(`ssh-keygen -F`), so trust is carried over, never newly accepted.
+CONSTRAINTS: Internal `*-int` aliases stay on LAN IPs; no
+`StrictHostKeyChecking` relaxation or `ssh-keyscan`; no other hosts.
+OUTPUT: Three external aliases on `aiedulab.duckdns.org` with
+matching `known_hosts` entries.
+VERIFY: `ssh -G <alias> | grep ^hostname` → `aiedulab.duckdns.org`
+for all three; `ssh -o BatchMode=yes ailabvm whoami` → `ailabuser`;
+`ssh labserver` passes once the router's 22436 rule is fixed, else
+fails with `No route to host` (reported, not blocking).
+
+---
+
+### Step 52.4: Switch labenv.yaml and the docs to the hostname
+
+[ ] Status
+
+CONTEXT: `labenv.yaml` and `instructor.md` still name the old external
+IP; `instructor.md`'s table uses pre-Phase-36 key names.
+ACTION: `miscellaneous/setup/student/labenv.yaml`:
+`DOCKER_SERVER_ID_EXTERNAL: "aiedulab.duckdns.org"` with a comment
+that `labserver`'s DuckDNS timer keeps it current.
+`miscellaneous/setup/instructor/instructor.md`: replace the stale
+`DOCKER_SERVER_ID`/`DOCKER_SERVER_SSH_PORT` rows and "default
+73.202.223.27" with the current `_INTERNAL`/`_EXTERNAL` keys and
+values; add a short "Dynamic DNS" note (provider, hostname, updater
+and token location, `systemctl status duckdns-update.timer`).
+CONSTRAINTS: No labsetup/preflight code changes; no history or
+archive edits; ≤79-char lines.
+OUTPUT: Updated `labenv.yaml` and `instructor.md`.
+VERIFY: Searching live files for `73\.202\.223\.27|24\.4\.241\.243`
+prints nothing; `labenv.yaml` loads; line-length rule passes on
+changed lines.
+
+---
+
+### Step 52.5: Validate the durable setup end to end
+
+[ ] Status
+
+CONTEXT: Steps 52.1–52.4 are committed; `labsetup.py` now writes the
+hostname-based alias and `known_hosts` entry.
+ACTION: `git push origin 1sep26`. Laptop: `install.sh` (rewrites the
+`ailabvm` block with the hostname, adds
+`[aiedulab.duckdns.org]:22439`), then `validate.sh`. ailabvm: `git
+pull` in `~/aiwb-fresh`, Run L (`install.sh`, webhook over stdin),
+`validate.sh`. Optional (instructor): `ssh ailabvm whoami` from a
+network outside the lab, e.g. a phone hotspot.
+CONSTRAINTS: Webhook only over stdin; no router changes.
+OUTPUT: Results in chat and this step's RESULT line.
+VERIFY: Laptop and ailabvm `validate.sh` exit 0; both known_hosts
+have `[aiedulab.duckdns.org]:22439` with fingerprint
+`SHA256:3pSfDKCw…`; `ssh -G ailabvm` shows the hostname.
+
+---
+
+### Step 52.6: Mark Phase 52 complete, commit, tag, push
+
+[ ] Status
+
+CONTEXT: Steps 52.1–52.5 executed and verified.
+ACTION: Flip every Phase 52 `[ ] Status` to `[x]`; commit `chore:
+Phase 52 - mark durable hostname steps complete`; `git tag -a
+v52.6-durable-lab-hostname-step-completed -m "Completed Phase 52 Step
+6: durable lab hostname"`; `git push origin 1sep26 --tags`.
+CONSTRAINTS: No push to `main`, no PR or merge.
+OUTPUT: All statuses `[x]`; tag on remote.
+VERIFY: `grep -A2 '### Step 52\.'
+miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
+Status'` → `0`; `git tag | grep v52.6` → 1 line.
