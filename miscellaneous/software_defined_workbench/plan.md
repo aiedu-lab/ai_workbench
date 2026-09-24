@@ -6889,7 +6889,7 @@ comment made generic; the build-deps step itself is kept.
 
 ### Step 50.9: Validate a fresh-clone install and rerun idempotency
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 50.1–50.8 are committed; earlier attempts on ailabvm
 (asarcar, `mylab-int`) exposed the gaps fixed in 50.7 and left
@@ -6918,6 +6918,16 @@ and the project venvs and posts the key; Run C posts nothing and
 installs nothing new; `validate.sh` FAILs only on the ailabvm-SSH
 item (key not installed on ailabvm); the fresh clone's git status is
 clean.
+RESULT: laptop installs x2 exit 0 (run 2: no VENV/GEN/POST/WROTE),
+validate exit 0. ailabvm fresh clone (Python 3.14): Run A exit 1,
+no key, hooks untouched; Run B exit 0 — all venvs built, key
+generated and POSTed; Run C exit 0, nothing created or posted;
+clean git status; webhook in no log. Earlier attempts kept in
+`~/aiwb-fresh.failed-1` and `-2`. DEVIATION (accepted by
+instructor): validate.sh FAILs 6, not 1 — lab-server SSH (key not
+yet installed) plus 5 manual prerequisites never run on this bare
+dev account (Claude CLI, gh auth, GitHub SSH key/auth, git
+identity); addressed by the prerequisites step that follows.
 ---
 
 ### Step 50.10: Mark Phase 50 complete, commit, tag, push
