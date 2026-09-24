@@ -31,6 +31,7 @@ external/
 # Embedding — venv, GloVe cache, plot outputs, generated notebook
 projects/embedding/.venv/
 projects/embedding/*.bin
+projects/embedding/*.npz
 projects/embedding/*.png
 projects/embedding/*.ipynb
 

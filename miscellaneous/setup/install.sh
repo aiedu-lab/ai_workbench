@@ -50,8 +50,8 @@ if ! python3 -c 'import venv, ensurepip' >/dev/null 2>&1; then
   sudo apt-get install -y -qq python3-venv
 fi
 
-# Some project deps (gensim) publish no wheel for the newest Python
-# and compile from source, which needs Python.h and a C toolchain.
+# A project dep with no wheel for the newest Python compiles from
+# source, which needs Python.h and a C toolchain.
 if ! python3 -c 'import os, sys, sysconfig
 sys.exit(not os.path.exists(
   os.path.join(sysconfig.get_paths()["include"], "Python.h")))'; then

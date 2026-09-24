@@ -75,7 +75,7 @@ Verify the environment is ready:
 
 ```bash
 source projects/embedding/.venv/bin/activate
-python3 -c "import gensim, sklearn, matplotlib; print('OK')"
+python3 -c "import numpy, sklearn, matplotlib; print('OK')"
 ```
 
 Expected: `OK` printed without errors.
@@ -94,5 +94,5 @@ browser to see the 2×3 panel figure. Or if no display
 is available, saves `embedding_map.png` (Agg fallback).
 
 > First run downloads the GloVe model (~65 MB) and caches
-> it as `glove_50.bin` inside the project directory
+> it as `glove_50.npz` inside the project directory
 > (gitignored). Subsequent runs load from cache in seconds.

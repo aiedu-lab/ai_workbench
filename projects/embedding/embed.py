@@ -47,22 +47,91 @@ _setup_backend()
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch
 from sklearn.decomposition import PCA
-from gensim.models import KeyedVectors
-import gensim.downloader
+import gzip
+import urllib.request
+
+# AI-GENERATED: Phase 50 Step 50.8 (plan.md)
+# GloVe is loaded with plain NumPy instead of gensim: gensim's C
+# extensions do not build on Python 3.14. WordVectors mirrors the
+# few gensim KeyedVectors calls the panels below use.
+class WordVectors:
+  """Word → vector lookup with gensim-compatible similarity calls."""
+
+  def __init__(self, words, vectors):
+    self.words = [str(w) for w in words]  # plain str, not np.str_
+    self.index = {w: i for i, w in enumerate(self.words)}
+    self.vectors = vectors
+    # Unit-length copy so cosine similarity is a plain dot product.
+    self.unit = vectors / np.linalg.norm(vectors, axis=1, keepdims=True)
+
+  def __len__(self):
+    return len(self.words)
+
+  def __getitem__(self, word):
+    return self.vectors[self.index[word]]
+
+  def similarity(self, a, b):
+    """Cosine similarity of two words."""
+    return float(self.unit[self.index[a]] @ self.unit[self.index[b]])
+
+  def most_similar(self, positive, negative=(), topn=10):
+    """Top-n (word, cosine) pairs nearest to sum(+positive −negative).
+
+    Same rule as gensim: average the unit vectors (negatives
+    subtracted), then rank all words, skipping the input words.
+    """
+    if isinstance(positive, str):
+      positive = [positive]
+    terms = [self.unit[self.index[w]] for w in positive]
+    terms += [-self.unit[self.index[w]] for w in negative]
+    query = np.mean(terms, axis=0)
+    query /= np.linalg.norm(query)
+    scores = self.unit @ query
+    skip = {self.index[w] for w in (*positive, *negative)}
+    ranked = (i for i in np.argsort(-scores) if i not in skip)
+    return [
+      (self.words[i], float(scores[i]))
+      for _, i in zip(range(topn), ranked)
+    ]
+
+
+# Same file gensim.downloader fetches for "glove-wiki-gigaword-50":
+# gzip text, a "400000 50" header, then "word v1 … v50" per line.
+GLOVE_URL = (
+  "https://github.com/RaRe-Technologies/gensim-data/releases/"
+  "download/glove-wiki-gigaword-50/glove-wiki-gigaword-50.gz"
+)
+
+
+def _load_glove(cache):
+  """Load GloVe from the .npz cache, downloading it on first use."""
+  if os.path.exists(cache):
+    print("Loading GloVe from cache…")
+    data = np.load(cache)
+    return WordVectors(data["words"], data["vectors"])
+  print("Downloading GloVe (~65 MB)…")
+  # Stream line by line into a preallocated array; splitting the
+  # whole file at once would hold ~20M small strings in memory.
+  with urllib.request.urlopen(GLOVE_URL) as resp, \
+      gzip.open(resp, "rt", encoding="utf-8") as lines:
+    count, dim = map(int, next(lines).split())
+    words = []
+    vectors = np.empty((count, dim), dtype=np.float32)
+    for i, line in enumerate(lines):
+      word, *values = line.rstrip("\n").split(" ")
+      words.append(word)
+      vectors[i] = np.asarray(values, dtype=np.float32)
+  words = np.array(words)
+  np.savez(cache, words=words, vectors=vectors)
+  return WordVectors(words, vectors)
+
 
 # __file__ undefined in notebooks; cwd is the script/notebook dir
 try:
   _dir = pathlib.Path(__file__).parent
 except NameError:
   _dir = pathlib.Path.cwd()
-CACHE = str(_dir / "glove_50.bin")
-if os.path.exists(CACHE):
-  print(f"Loading GloVe from cache…")
-  model = KeyedVectors.load_word2vec_format(CACHE, binary=True)
-else:
-  print("Downloading GloVe (~65 MB)…")
-  model = gensim.downloader.load("glove-wiki-gigaword-50")
-  model.save_word2vec_format(CACHE, binary=True)
+model = _load_glove(str(_dir / "glove_50.npz"))
 print(f"Ready: {len(model)} words loaded.")
 
 # %%

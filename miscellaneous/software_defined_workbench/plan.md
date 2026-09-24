@@ -6841,7 +6841,7 @@ wheel, which the new python3-dev/build-essential step covers.
 
 ### Step 50.8: Replace gensim with a NumPy GloVe loader in projects/embedding
 
-[ ] Status
+[x] Status
 
 CONTEXT: gensim 4.4.0 (latest) cannot build on Python 3.14 (its C code
 uses removed CPython internals and a NumPy-1 field), which breaks the
@@ -6874,6 +6874,16 @@ writes `embedding_map.png`; `grep -rn gensim` over live files
 (excluding plan/history) → no output; `grep -cE
 '^(gensim|smart-open|wrapt)==' projects/embedding/requirements.txt`
 → `0`.
+RESULT: equivalence vs gensim 0 mismatches (4 pairs, 3 neighbor
+queries, analogy; max score diff < 1e-5); first download+parse
+17 s (streamed), cached reload 2 s. Lock regenerated on Python 3.12
+without --upgrade: only gensim, smart-open, wrapt removed. Python
+3.14.7 scratch venv from the new lock installs cleanly and
+`embed.py` (tornado hidden to force the documented Agg fallback)
+exits 0 and writes all six panels. DEVIATION: `grep gensim` still
+matches embed.py's WHY comments and the gensim-data URL (kept on
+purpose); no gensim import remains. install.sh's build-deps
+comment made generic; the build-deps step itself is kept.
 
 ---
 

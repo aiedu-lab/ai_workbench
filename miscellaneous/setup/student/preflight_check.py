@@ -15,7 +15,7 @@ Checks for:
 - GitHub SSH authentication (ssh git@github.com)
 - git global user.name and user.email configured
 - ollama CLI in PATH (AI Local session)
-- projects/embedding/.venv with gensim/sklearn/matplotlib
+- projects/embedding/.venv with numpy/sklearn/matplotlib
   (Embeddings Visualization session)
 - pdftotext (poppler-utils) and html2text CLIs in PATH (PKM)
 
@@ -221,19 +221,19 @@ _EMBEDDING_VENV_PY = (
 
 
 def check_embedding_venv():
-  """Check that the embedding venv has gensim/sklearn/matplotlib."""
+  """Check that the embedding venv has numpy/sklearn/matplotlib."""
   if not _EMBEDDING_VENV_PY.exists():
     raise RuntimeError(
       "projects/embedding/.venv not found — run labsetup.py"
     )
   result = subprocess.run(
     [str(_EMBEDDING_VENV_PY), "-c",
-     "import gensim, sklearn, matplotlib"],
+     "import numpy, sklearn, matplotlib"],
     capture_output=True,
   )
   if result.returncode != 0:
     raise RuntimeError(
-      "gensim/sklearn/matplotlib missing in embedding venv"
+      "numpy/sklearn/matplotlib missing in embedding venv"
     )
 
 

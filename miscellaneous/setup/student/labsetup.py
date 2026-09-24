@@ -440,7 +440,7 @@ def _setup_embedding_venv() -> None:
   # not just bin/python3 existing, so a venv left half-built by an
   # interrupted or failed run is repaired on the next run.
   if venv_py.exists() and subprocess.run(
-    [str(venv_py), "-c", "import gensim, sklearn, matplotlib"],
+    [str(venv_py), "-c", "import numpy, sklearn, matplotlib"],
     capture_output=True,
   ).returncode == 0:
     print("  OK   embedding venv already exists (skipping)")
