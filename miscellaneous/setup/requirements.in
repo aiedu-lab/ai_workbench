@@ -1,0 +1,21 @@
+# requirements.in — dependencies of the lab setup scripts themselves
+# AI-GENERATED: Phase 50 Step 50.1 (plan.md)
+#
+# install.sh installs these into the repo-root .venv before running
+# labsetup.py, because labsetup.py and preflight_check.py import
+# requests and yaml at load time: on a fresh machine (and on Ubuntu
+# 26.04, where the system Python refuses pip installs) they would
+# crash before they could install anything.
+#
+# Per-project dependencies (projects/embedding, speed-reading) stay in
+# their own requirements.in and venvs, managed by labsetup.py.
+#
+# pip-tools is listed so `pip-sync requirements.txt` does not uninstall
+# the very tool that runs it.
+#
+# Regenerate the lock after editing:
+#   pip-compile --strip-extras miscellaneous/setup/requirements.in
+
+requests
+pyyaml
+pip-tools

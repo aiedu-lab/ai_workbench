@@ -6617,7 +6617,7 @@ Status'` → `0`; `git ls-remote --tags origin | grep v49.8` → 1 line.
 
 ### Step 50.1: Add setup requirements.in and locked requirements.txt
 
-[ ] Status
+[x] Status
 
 CONTEXT: No repo-level Python requirements exist; `labsetup.py` and
 `preflight_check.py` need `requests` and `pyyaml`, which a fresh
@@ -6633,6 +6633,11 @@ OUTPUT: `miscellaneous/setup/requirements.in` and pinned
 `miscellaneous/setup/requirements.txt`.
 VERIFY: `grep -cE '^(requests|pyyaml|pip-tools)=='
 miscellaneous/setup/requirements.txt` → `3`.
+RESULT: locked with pip-compile 7.6.1 on Python 3.14.7: requests
+2.34.2, pyyaml 6.0.3, pip-tools 7.6.1 plus 9 transitive pins. The
+pip-compile command header line in requirements.txt exceeds 79
+chars; it is regenerated on every compile and `.txt` is outside
+the line-length rule, so it is left as generated.
 
 ---
 
