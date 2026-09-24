@@ -3920,3 +3920,22 @@ requirements of the account.
   expecting ai-lab to ailabvm and user to ailabuser.
 * Run any validation that ensures the account is fully restored
   and students can continue their exercises as below.
+
+### Idempotent environment setup
+
+**Date:** 2026-09-24
+
+**Prompt:** Create an idempotent construct to ensure setup is
+correct: a `requirements.in` (Python setup) and `install.sh` /
+`validate.sh` scripts in an appropriate folder (is `/tools/setup/`
+sensible?) so that a fresh `git pull` followed by an install sets
+up the entire environment correctly for a student or instructor.
+Document the first-time setup after a `git pull` in an
+appropriately placed section of `/README.md`.
+
+**Clarifications:** place the files in `miscellaneous/setup/` (not
+`/tools/`, which holds Bazel/PR tooling); `requirements.in` covers
+only the setup scripts' own dependencies, installed into a
+repo-root `.venv`, with per-project venvs still managed by
+`labsetup.py`; validate with a fresh clone on ailabvm (asarcar)
+and a rerun on an already-configured laptop.

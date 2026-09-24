@@ -6606,3 +6606,166 @@ OUTPUT: All Phase 49 statuses `[x]`; tag
 VERIFY: `grep -A2 '### Step 49\.'
 miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
 Status'` → `0`; `git ls-remote --tags origin | grep v49.8` → 1 line.
+
+---
+
+## Phase 50: Idempotent Environment Setup
+
+<!-- AI-GENERATED [anthropic:claude-opus-5-5]: Phase 50
+     (prompt_history.md "Provision ailabvm" → "Idempotent
+     environment setup") -->
+
+### Step 50.1: Add setup requirements.in and locked requirements.txt
+
+[ ] Status
+
+CONTEXT: No repo-level Python requirements exist; `labsetup.py` and
+`preflight_check.py` need `requests` and `pyyaml`, which a fresh
+machine lacks.
+ACTION: Create `miscellaneous/setup/requirements.in` listing
+`requests`, `pyyaml`, and `pip-tools` (so `pip-sync` does not remove
+itself), with a WHY header comment; generate
+`miscellaneous/setup/requirements.txt` with `pip-compile
+--strip-extras` from a throwaway scratchpad venv.
+CONSTRAINTS: Do not touch `projects/*/requirements.*`; no heavy
+per-project deps (gensim, jupyterlab); 2-space indent, ≤79-char lines.
+OUTPUT: `miscellaneous/setup/requirements.in` and pinned
+`miscellaneous/setup/requirements.txt`.
+VERIFY: `grep -cE '^(requests|pyyaml|pip-tools)=='
+miscellaneous/setup/requirements.txt` → `3`.
+
+---
+
+### Step 50.2: Make preflight_check.py exit non-zero on any FAIL
+
+[ ] Status
+
+CONTEXT: `preflight_check.py` `check()` prints PASS/FAIL but `main()`
+always returns normally (exit 0).
+ACTION: In `miscellaneous/setup/student/preflight_check.py`, have
+`check()` record failures in a module-level counter; at the end of
+`main()`, print `N check(s) FAILED` and `sys.exit(1)` when N > 0,
+otherwise print all-PASS and exit 0.
+CONSTRAINTS: Do not change any check's logic, labels, or order; no new
+dependencies.
+OUTPUT: `preflight_check.py` exit status reflects results.
+VERIFY: On this laptop before 50.3 (`requests` missing): `python3
+miscellaneous/setup/student/preflight_check.py; echo $?` → `1` and a
+`1 check(s) FAILED` line.
+
+---
+
+### Step 50.3: Create idempotent miscellaneous/setup/install.sh
+
+[ ] Status
+
+CONTEXT: There is no single entry point; students run `labsetup.py`
+directly with a system Python that may lack its dependencies.
+ACTION: Create executable `miscellaneous/setup/install.sh` (bash,
+`set -euo pipefail`, WHY comments): resolve `REPO_ROOT` from the
+script's location; require `python3` ≥ 3.12; if `python3 -m venv` is
+unavailable, `sudo apt-get install -y python3-venv`; create
+`$REPO_ROOT/.venv` only if absent; `.venv/bin/pip install -q
+pip-tools` if missing, then `.venv/bin/pip-sync
+miscellaneous/setup/requirements.txt`; then run `.venv/bin/python
+miscellaneous/setup/student/labsetup.py "$@"` and print a "next: run
+validate.sh" hint.
+CONSTRAINTS: Do not copy `labsetup.py` logic into the script; never
+read, write, or echo `DISCORD_WEBHOOK_URL`; no `rm -rf`; do not modify
+`labsetup.py`.
+OUTPUT: `miscellaneous/setup/install.sh` (mode 755).
+VERIFY: `bash -n miscellaneous/setup/install.sh && test -x
+miscellaneous/setup/install.sh && echo ok` → `ok`; `shellcheck` clean
+if installed.
+
+---
+
+### Step 50.4: Create miscellaneous/setup/validate.sh
+
+[ ] Status
+
+CONTEXT: `preflight_check.py` exits non-zero on failures (50.2) and
+`.venv` is built by `install.sh` (50.3).
+ACTION: Create executable `miscellaneous/setup/validate.sh` (bash,
+`set -euo pipefail`): if `$REPO_ROOT/.venv/bin/python` is missing,
+print "run miscellaneous/setup/install.sh first" and exit 2;
+otherwise `exec .venv/bin/python
+miscellaneous/setup/student/preflight_check.py "$@"`, passing its exit
+code through.
+CONSTRAINTS: Read-only (installs and changes nothing); do not copy
+check logic.
+OUTPUT: `miscellaneous/setup/validate.sh` (mode 755).
+VERIFY: `bash -n miscellaneous/setup/validate.sh && test -x
+miscellaneous/setup/validate.sh && echo ok` → `ok`; with `.venv` moved
+aside, `bash miscellaneous/setup/validate.sh; echo $?` → `2`.
+
+---
+
+### Step 50.5: Document first-time setup and fix stale invocations
+
+[ ] Status
+
+CONTEXT: `README.md` has no first-time setup section, and four docs
+call the Python scripts directly, some via the stale `setup/` path.
+ACTION: Add `## 🚀 First-Time Setup` to `README.md` between Agenda and
+Student Workflow (clone or pull, `export DISCORD_WEBHOOK_URL=…`, `bash
+miscellaneous/setup/install.sh`, `bash
+miscellaneous/setup/validate.sh` → all PASS, safe to rerun after any
+`git pull` that changes setup); add `install.sh`, `validate.sh`,
+`requirements.*` under `setup/` in README's Repository Structure
+tree; replace direct `python3 …labsetup.py` / `preflight_check.py`
+commands with the wrappers in `sessions/dev_workbench.md`,
+`miscellaneous/setup/student/README.md`,
+`miscellaneous/setup/instructor/instructor.md`, and
+`miscellaneous/tools/VM/setup.md`.
+CONSTRAINTS: Only setup-invocation text and the new section change;
+keep prose describing what `labsetup.py` does; no archive or history
+edits; ≤79-char changed lines.
+OUTPUT: README section plus four docs updated.
+VERIFY: `grep -rnE 'python3? [^ ]*(labsetup|preflight_check)\.py'
+--include=*.md . | grep -v -e software_defined_workbench -e archive`
+→ no output; `grep -c 'First-Time Setup' README.md` → ≥1.
+
+---
+
+### Step 50.6: Validate a fresh-clone install and rerun idempotency
+
+[ ] Status
+
+CONTEXT: Steps 50.1–50.5 are committed; ailabvm's asarcar account
+(`mylab-int`) has never run lab setup.
+ACTION: `git push origin 1sep26`. Laptop: `bash
+miscellaneous/setup/install.sh` twice (webhook already in the
+environment), then `bash miscellaneous/setup/validate.sh`. ailabvm as
+asarcar: `git clone -b 1sep26
+https://github.com/aiedu-lab/ai_workbench ~/aiwb-fresh`, run
+`install.sh` twice with `DISCORD_WEBHOOK_URL` unset (nothing posts to
+the class Discord), then `validate.sh`; compare the two runs and
+check `git -C ~/aiwb-fresh status --porcelain` is empty.
+CONSTRAINTS: Never send the webhook to ailabvm; do not touch
+ailabuser; no repo edits unless a check fails (then stop and report).
+Known cost: installs Ollama and apt packages into the dev VM.
+OUTPUT: Results summarized in chat and in this step's RESULT line.
+VERIFY: Laptop `validate.sh` exits 0 and the second install prints
+only OK/SKIP lines; on ailabvm both installs build `.venv` and the
+project venvs then stop at the expected `DISCORD_WEBHOOK_URL is not
+set` error, the second run installs nothing new, `validate.sh` FAILs
+only on the webhook and ailabvm-SSH items, and the fresh clone's git
+status is clean.
+
+---
+
+### Step 50.7: Mark Phase 50 complete, commit, tag, push
+
+[ ] Status
+
+CONTEXT: Steps 50.1–50.6 executed and verified.
+ACTION: Confirm every Phase 50 `[ ] Status` is `[x]`; commit `chore:
+Phase 50 - mark idempotent setup steps complete`; `git tag -a
+v50.7-idempotent-setup-step-completed -m "Completed Phase 50 Step 7:
+idempotent setup"`; `git push origin 1sep26 --tags`.
+CONSTRAINTS: No push to `main`, no PR or merge, no archive edits.
+OUTPUT: All Phase 50 statuses `[x]`; tag on remote.
+VERIFY: `grep -A2 '### Step 50\.'
+miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
+Status'` → `0`; `git ls-remote --tags origin | grep v50.7` → 1 line.
