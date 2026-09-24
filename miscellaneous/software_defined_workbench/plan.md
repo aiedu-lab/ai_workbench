@@ -6654,13 +6654,41 @@ otherwise print all-PASS and exit 0.
 CONSTRAINTS: Do not change any check's logic, labels, or order; no new
 dependencies.
 OUTPUT: `preflight_check.py` exit status reflects results.
-VERIFY: On this laptop before 50.3 (`requests` missing): `python3
+VERIFY: On this laptop before 50.4 (`requests` missing): `python3
 miscellaneous/setup/student/preflight_check.py; echo $?` → `1` and a
 `1 check(s) FAILED` line.
 
 ---
 
-### Step 50.3: Create idempotent miscellaneous/setup/install.sh
+### Step 50.3: Validate the webhook before any setup in labsetup.py
+
+[ ] Status
+
+CONTEXT: `labsetup.py` `main()` calls `_validate_secret()` only after
+the SSH block, so a first run without `DISCORD_WEBHOOK_URL` creates the
+SSH key, skips the Discord post, and every later run wrongly prints
+"key already shared with instructor".
+ACTION: In `miscellaneous/setup/student/labsetup.py`, move the
+`_validate_secret()` call to the first line of `main()` (before
+`_configure_git_hooks()`) with a WHY comment, delete the later call,
+and update the module docstring's step list to say the webhook is
+checked first.
+CONSTRAINTS: Do not change `_validate_secret()`,
+`_post_pubkey_to_discord()`, or `_generate_ssh_key()`; no new files in
+`~/.ssh`; no other reordering. An HTTP-failed post is still not
+retried (accepted residual, per instructor).
+OUTPUT: `labsetup.py` exits 1 before any side effect when the webhook
+is unset.
+VERIFY: With `DISCORD_WEBHOOK_URL` unset, `HOME` set to a scratch
+directory, and a stub `requests` module, `labsetup.main()` exits `1`
+with the `DISCORD_WEBHOOK_URL is not set` message, creates no
+`$HOME/.ssh`, and leaves `git config core.hooksPath` unchanged;
+`grep -c '_validate_secret()' miscellaneous/setup/student/labsetup.py`
+→ `2` (definition plus one call).
+
+---
+
+### Step 50.4: Create idempotent miscellaneous/setup/install.sh
 
 [ ] Status
 
@@ -6685,12 +6713,12 @@ if installed.
 
 ---
 
-### Step 50.4: Create miscellaneous/setup/validate.sh
+### Step 50.5: Create miscellaneous/setup/validate.sh
 
 [ ] Status
 
 CONTEXT: `preflight_check.py` exits non-zero on failures (50.2) and
-`.venv` is built by `install.sh` (50.3).
+`.venv` is built by `install.sh` (50.4).
 ACTION: Create executable `miscellaneous/setup/validate.sh` (bash,
 `set -euo pipefail`): if `$REPO_ROOT/.venv/bin/python` is missing,
 print "run miscellaneous/setup/install.sh first" and exit 2;
@@ -6706,7 +6734,7 @@ aside, `bash miscellaneous/setup/validate.sh; echo $?` → `2`.
 
 ---
 
-### Step 50.5: Document first-time setup and fix stale invocations
+### Step 50.6: Document first-time setup and fix stale invocations
 
 [ ] Status
 
@@ -6733,44 +6761,47 @@ VERIFY: `grep -rnE 'python3? [^ ]*(labsetup|preflight_check)\.py'
 
 ---
 
-### Step 50.6: Validate a fresh-clone install and rerun idempotency
+### Step 50.7: Validate a fresh-clone install and rerun idempotency
 
 [ ] Status
 
-CONTEXT: Steps 50.1–50.5 are committed; ailabvm's asarcar account
+CONTEXT: Steps 50.1–50.6 are committed; ailabvm's asarcar account
 (`mylab-int`) has never run lab setup.
 ACTION: `git push origin 1sep26`. Laptop: `bash
 miscellaneous/setup/install.sh` twice (webhook already in the
 environment), then `bash miscellaneous/setup/validate.sh`. ailabvm as
 asarcar: `git clone -b 1sep26
-https://github.com/aiedu-lab/ai_workbench ~/aiwb-fresh`, run
-`install.sh` twice with `DISCORD_WEBHOOK_URL` unset (nothing posts to
-the class Discord), then `validate.sh`; compare the two runs and
-check `git -C ~/aiwb-fresh status --porcelain` is empty.
-CONSTRAINTS: Never send the webhook to ailabvm; do not touch
-ailabuser; no repo edits unless a check fails (then stop and report).
-Known cost: installs Ollama and apt packages into the dev VM.
+https://github.com/aiedu-lab/ai_workbench ~/aiwb-fresh`; Run A:
+`install.sh` with the webhook unset (must stop early, no key — proves
+50.3); Runs B and C: `install.sh` with the webhook passed only as an
+env var for that command, sent over SSH stdin; then `validate.sh` and
+`git -C ~/aiwb-fresh status --porcelain`.
+CONSTRAINTS: Never write the webhook to disk or put it in argv on
+ailabvm; do not touch ailabuser; no repo edits unless a check fails
+(then stop and report). Known costs: Run B posts one key for
+asarcar@ailabvm to #meetup-notifications and installs Ollama and apt
+packages into the dev VM.
 OUTPUT: Results summarized in chat and in this step's RESULT line.
 VERIFY: Laptop `validate.sh` exits 0 and the second install prints
-only OK/SKIP lines; on ailabvm both installs build `.venv` and the
-project venvs then stop at the expected `DISCORD_WEBHOOK_URL is not
-set` error, the second run installs nothing new, `validate.sh` FAILs
-only on the webhook and ailabvm-SSH items, and the fresh clone's git
-status is clean.
-
+only OK/SKIP lines; ailabvm Run A exits 1 with the webhook error and
+no `~/.ssh/asarcar_id_ed25519_server` exists; Run B builds `.venv`
+and the project venvs and posts the key; Run C posts nothing and
+installs nothing new; `validate.sh` FAILs only on the ailabvm-SSH
+item (key not installed on ailabvm); the fresh clone's git status is
+clean.
 ---
 
-### Step 50.7: Mark Phase 50 complete, commit, tag, push
+### Step 50.8: Mark Phase 50 complete, commit, tag, push
 
 [ ] Status
 
-CONTEXT: Steps 50.1–50.6 executed and verified.
+CONTEXT: Steps 50.1–50.7 executed and verified.
 ACTION: Confirm every Phase 50 `[ ] Status` is `[x]`; commit `chore:
 Phase 50 - mark idempotent setup steps complete`; `git tag -a
-v50.7-idempotent-setup-step-completed -m "Completed Phase 50 Step 7:
+v50.8-idempotent-setup-step-completed -m "Completed Phase 50 Step 8:
 idempotent setup"`; `git push origin 1sep26 --tags`.
 CONSTRAINTS: No push to `main`, no PR or merge, no archive edits.
 OUTPUT: All Phase 50 statuses `[x]`; tag on remote.
 VERIFY: `grep -A2 '### Step 50\.'
 miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
-Status'` → `0`; `git ls-remote --tags origin | grep v50.7` → 1 line.
+Status'` → `0`; `git ls-remote --tags origin | grep v50.8` → 1 line.
