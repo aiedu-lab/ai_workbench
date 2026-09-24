@@ -515,9 +515,11 @@ def _install_ollama() -> None:
     return
   print("  INST installing ollama via official script...")
   try:
+    # pipefail: without it a failed download pipes nothing into sh,
+    # which exits 0 and hides the failure.
     subprocess.run(
       ["bash", "-c",
-       "curl -fsSL https://ollama.com/install.sh | sh"],
+       "set -o pipefail; curl -fsSL https://ollama.com/install.sh | sh"],
       check=True,
     )
     print("  OK   ollama installed")
