@@ -3956,3 +3956,21 @@ going.
 **Context:** a fresh-clone validation on a blank account failed on
 exactly these manual items (Claude CLI, gh auth, GitHub SSH, git
 identity).
+
+---
+
+## Seed lab-server host key from labenv.yaml
+[x] Status
+
+**Date:** 2026-09-24
+
+**Prompt:** Record the lab server's SSH host key in `labenv.yaml`,
+which is committed and set by the instructor, and have
+`labsetup.py` write it to `known_hosts`. This matches the
+`gh api meta` approach.
+
+**Context:** after the Phase 50 fixes, a fresh machine whose
+public key the instructor has installed still fails the
+lab-server SSH check with `Host key verification failed`,
+because the BatchMode checks in `labsetup.py` and
+`preflight_check.py` cannot accept an unknown host key.

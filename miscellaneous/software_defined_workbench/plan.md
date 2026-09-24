@@ -7107,3 +7107,106 @@ OUTPUT: All Phase 50 statuses `[x]`; tag on remote.
 VERIFY: `grep -A2 '### Step 50\.'
 miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
 Status'` → `0`; `git ls-remote --tags origin | grep v50.15` → 1 line.
+
+---
+
+## Phase 51: Seed Lab-Server Host Key
+
+<!-- AI-GENERATED [anthropic:claude-opus-5-5]: Phase 51
+     (prompt_history.md "Seed lab-server host key from labenv.yaml") -->
+
+### Step 51.1: Record the lab-server host key in labenv.yaml
+
+[ ] Status
+
+CONTEXT: `labenv.yaml` holds the lab server's addresses and user but
+not its SSH host key.
+ACTION: In `miscellaneous/setup/student/labenv.yaml` add
+`DOCKER_SERVER_HOST_KEY: "ssh-ed25519 AAAA…"` set to ailabvm's
+ed25519 public host key (type + base64, `root@ailabvm` comment
+dropped), with comments: public (not a secret), how to read it on the
+server (`cat /etc/ssh/ssh_host_ed25519_key.pub`), how to verify it
+(`ssh-keygen -lf`). In `miscellaneous/setup/instructor/instructor.md`
+Section 3, instruct copying that key into `labenv.yaml` whenever the
+server is (re)provisioned; mention it in
+`miscellaneous/setup/prerequisites.md` row 8.
+CONSTRAINTS: Public key only, never a private key; no other
+`labenv.yaml` changes; ≤79-char lines (key line and URLs exempt).
+OUTPUT: New `labenv.yaml` key plus doc updates.
+VERIFY: The `labenv.yaml` key run through `ssh-keygen -lf` prints
+`SHA256:3pSfDKCwLB82/BNUAbf3YMcz56+t6CNnKq/ir/VFPfs`; the file loads
+with `yaml.safe_load`.
+
+---
+
+### Step 51.2: Write the host key to known_hosts from labsetup.py
+
+[ ] Status
+
+CONTEXT: `labsetup.py` writes the `ailabvm-int`/`ailabvm` SSH config
+but never gives `known_hosts` the server's key, so its BatchMode check
+fails on a fresh machine.
+ACTION: Add `_ensure_lab_server_known_hosts(env)` to
+`miscellaneous/setup/student/labsetup.py`: WARN and return if
+`DOCKER_SERVER_HOST_KEY` is missing or a placeholder; for the
+internal and external `(host, port)` pairs, form the entry name
+(bare host for port 22, else `[host]:port`), then with `ssh-keygen -F
+<name> -f ~/.ssh/known_hosts`: no entry → append `<name> <key>` (mode
+600) and print `WROTE`; same key → `OK`; different key → WARN with
+`ssh-keygen -R <name>` instructions and change nothing. Call it in
+`main()` after `_write_ssh_config(env)` and before `_validate_ssh()`;
+add it to the docstring. Add `DOCKER_SERVER_HOST_KEY` to
+preflight's `NON_SECRET_VARS`.
+CONSTRAINTS: No `StrictHostKeyChecking` relaxation or `ssh-keyscan`;
+never remove or replace existing `known_hosts` entries; do not change
+the SSH checks; do not add the key to `SSH_KEYS`, so a missing key
+only WARNs and SSH setup still runs.
+OUTPUT: `labsetup.py` seeds the lab-server host key idempotently;
+preflight requires it in `labenv.yaml`.
+VERIFY: `python3 -m py_compile` passes on both scripts; with a
+scratch `HOME`, the first call writes 2 entries (`192.168.4.43`,
+`[73.202.223.27]:22439`) and a second call prints `OK` for both; a
+planted different key for `192.168.4.43` yields a WARN and leaves the
+file unchanged.
+
+---
+
+### Step 51.3: Prove it end to end
+
+[ ] Status
+
+CONTEXT: Steps 51.1–51.2 are committed; the laptop already knows
+`192.168.4.43`, asarcar@ailabvm may not.
+ACTION: `git push origin 1sep26`. Laptop: `ssh -o BatchMode=yes -o
+UserKnownHostsFile=<scratch file seeded by 51.2> -o
+GlobalKnownHostsFile=/dev/null ailabvm-int echo ok` must print `ok`
+(proves the recorded key is the real one) while an empty file fails
+(control); then `install.sh` and `validate.sh`. ailabvm (asarcar):
+`git pull` in `~/aiwb-fresh`, Run K (`install.sh`, webhook over
+stdin), then `validate.sh` in a login shell.
+CONSTRAINTS: Webhook only over stdin; do not touch ailabuser's
+`authorized_keys` (key installation is the instructor's job).
+OUTPUT: Results in chat and this step's RESULT line.
+VERIFY: Seeded-file SSH prints `ok` and the empty-file control fails;
+laptop `validate.sh` exits 0; ailabvm Run K exits 0 and prints
+`WROTE`/`OK` for the lab-server host key; the lab-server check no
+longer reports `Host key verification failed` (it passes if the
+instructor installed asarcar@ailabvm's key, else fails only with
+`Permission denied`).
+
+---
+
+### Step 51.4: Mark Phase 51 complete, commit, tag, push
+
+[ ] Status
+
+CONTEXT: Steps 51.1–51.3 executed and verified.
+ACTION: Confirm every Phase 51 `[ ] Status` is `[x]`; commit `chore:
+Phase 51 - mark lab-server host key steps complete`; `git tag -a
+v51.4-lab-server-host-key-step-completed -m "Completed Phase 51 Step
+4: lab-server host key"`; `git push origin 1sep26 --tags`.
+CONSTRAINTS: No push to `main`, no PR or merge, no archive edits.
+OUTPUT: All Phase 51 statuses `[x]`; tag on remote.
+VERIFY: `grep -A2 '### Step 51\.'
+miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
+Status'` → `0`; `git tag | grep v51.4` → 1 line.
