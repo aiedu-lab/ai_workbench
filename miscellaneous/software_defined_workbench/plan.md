@@ -6392,11 +6392,19 @@ OUTPUT: libvirt domain `ailabvm` running with autostart, 4 vCPU,
 VERIFY: `ssh server-int 'sudo virsh dominfo ailabvm'` → State
 running, CPU(s) 4, Max memory 16777216 KiB; `ssh -i
 ~/.ssh/asarcar_id_ed25519_server asarcar@<IP> hostname` → `ailabvm`.
-DEVIATION: `--os-variant ubuntu20.04` used (matches labbuddyvm; the
-server's osinfo DB has no Ubuntu 24/26 entry); `ailabuser` docker
-group deferred to 49.3 (docker not yet installed). Result: MAC
-52:54:00:1e:5d:8f, DHCP IP 192.168.4.43; seed files kept in
-server-int `~/ailabvm-seed/`.
+DEVIATION: `--os-variant ubuntu20.04` passed because server-int's
+osinfo-db (0.20200325, Ubuntu 20.04 host) ends at ubuntu-20.04;
+it is only libvirt metadata (the guest runs 26.04.1, kernel
+7.0.0-31). Per instructor, the misleading label was then rewritten
+on `labvm`, `labbuddyvm`, and `ailabvm` to
+`http://ubuntu.com/ubuntu/26.04` via `virsh metadata ... --key
+libosinfo --live --config` (no restart; explicitly approved
+exception to the labvm/labbuddyvm constraint). `ailabuser` docker
+group deferred to 49.3. Result: MAC 52:54:00:1e:5d:8f, IP
+192.168.4.43; a networkd `RequestAddress=192.168.4.23` DHCP
+attempt was answered with .43 by the router, so the drop-in was
+removed and .43 is final. Seed files kept in server-int
+`~/ailabvm-seed/`.
 
 ---
 
