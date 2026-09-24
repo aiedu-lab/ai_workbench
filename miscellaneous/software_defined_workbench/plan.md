@@ -6967,7 +6967,7 @@ install.sh gate that 50.11 adds.
 
 ### Step 50.11: Add a prerequisite gate to install.sh
 
-[ ] Status
+[x] Status
 
 CONTEXT: `install.sh` starts creating `.venv` and installing before
 knowing whether the manual prerequisites are done, so a blank account
@@ -6986,6 +6986,12 @@ VERIFY: `bash -n` passes; on the laptop all items `OK` and install
 proceeds; in a scratch clone, `env -u DISCORD_WEBHOOK_URL bash
 miscellaneous/setup/install.sh` exits 1 with `MISS` on the webhook
 line and creates no `.venv`.
+RESULT: scratch clone, no webhook: 1 MISS, exit 1, no `.venv`; empty
+HOME + no webhook + no GH_TOKEN: 3 MISS (git identity, gh auth,
+webhook), exit 1, no `.venv`; laptop: 4 OK, full install exit 0,
+nothing created. Notes: gh also honors GH_TOKEN (set on the laptop),
+so a token counts as authenticated; `gh auth status` itself writes
+`~/.local/state/gh/device-id`, not install.sh.
 
 ---
 

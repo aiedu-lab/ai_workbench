@@ -13,7 +13,9 @@
 # off to labsetup.py inside it. All real setup logic stays in
 # labsetup.py; this file only guarantees it can start.
 #
-# Every step is skipped when already satisfied, so reruns are safe.
+# It first checks the manual prerequisites in prerequisites.md and
+# stops, changing nothing, if any are missing. Every later step is
+# skipped when already satisfied, so reruns are safe.
 
 set -euo pipefail
 
@@ -30,17 +32,49 @@ say() {
   printf '  %-4s %s\n' "$1" "$2"
 }
 
-# labsetup.py uses 3.12+ syntax (list[str], X | Y); fail early with a
-# clear message instead of a SyntaxError deep inside it.
-if ! command -v python3 >/dev/null 2>&1; then
-  say "FAIL" "python3 not found — install Python 3.12+ first"
+# Prerequisite gate (AI-GENERATED: Phase 50 Step 50.11): check every
+# manual step marked "yes" in prerequisites.md before changing
+# anything, so a blank account stops here with the full list instead
+# of failing halfway through the install.
+
+# labsetup.py uses 3.12+ syntax (list[str], X | Y).
+has_python() {
+  command -v python3 &&
+    python3 -c 'import sys; sys.exit(sys.version_info < (3, 12))'
+}
+has_git_identity() {
+  command -v git &&
+    [[ -n "$(git config --global user.name)" ]] &&
+    [[ -n "$(git config --global user.email)" ]]
+}
+# labsetup.py uploads the GitHub SSH key through an authenticated gh.
+has_gh_auth() {
+  command -v gh && gh auth status
+}
+# Presence only: the webhook value is a secret and is never printed.
+has_webhook() {
+  [[ -n "${DISCORD_WEBHOOK_URL:-}" ]]
+}
+
+missing=0
+require() {
+  # Usage: require LABEL CHECK_FUNCTION — prints OK or MISS.
+  if "$2" >/dev/null 2>&1; then
+    say "OK" "$1"
+  else
+    say "MISS" "$1"
+    missing=$((missing + 1))
+  fi
+}
+require "Python 3.12+" has_python
+require "git with global user.name and user.email" has_git_identity
+require "gh installed and authenticated (gh auth login)" has_gh_auth
+require "DISCORD_WEBHOOK_URL exported" has_webhook
+if ((missing > 0)); then
+  say "STOP" "${missing} prerequisite(s) missing; nothing was changed."
+  say "SEE" "miscellaneous/setup/prerequisites.md"
   exit 1
 fi
-if ! python3 -c 'import sys; sys.exit(sys.version_info < (3, 12))'; then
-  say "FAIL" "Python 3.12+ required; found $(python3 -V 2>&1)"
-  exit 1
-fi
-say "OK" "$(python3 -V 2>&1)"
 
 # Ubuntu ships the venv module separately (python3-venv); `import
 # ensurepip` is what fails when it is missing.
