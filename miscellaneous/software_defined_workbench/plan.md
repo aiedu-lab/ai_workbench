@@ -6794,12 +6794,52 @@ bind-mounted repo and may need rebuilding there.
 
 ---
 
-### Step 50.7: Validate a fresh-clone install and rerun idempotency
+### Step 50.7: Fix fresh-install gaps found by the ailabvm test
 
 [ ] Status
 
-CONTEXT: Steps 50.1–50.6 are committed; ailabvm's asarcar account
-(`mylab-int`) has never run lab setup.
+CONTEXT: The first 50.8 attempt (fresh clone on ailabvm, Python 3.14)
+failed: gensim has no cp314 wheel and needs `Python.h`; `sudo -v`
+fails for NOPASSWD users whose rules also include a password entry,
+so apt/Ollama steps were skipped; `_setup_embedding_venv()` skips any
+venv whose `bin/python3` exists, so a half-built one is never
+repaired, and its `pip-compile` rewrites the committed
+`projects/embedding/requirements.txt`; student docs say Ubuntu 22.04
+(Python 3.10), which fails the 3.12+ check.
+ACTION: (1) `miscellaneous/setup/install.sh`: when `Python.h` is
+absent from `sysconfig` include dir, `sudo apt-get install -y
+python3-dev build-essential`. (2)
+`miscellaneous/setup/student/labsetup.py` `_sudo_precheck()`: try
+`sudo -n true` first, fall back to `sudo -v`. (3) `labsetup.py`
+`_setup_embedding_venv()`: treat the venv as ready only when `import
+gensim, sklearn, matplotlib` succeeds in it (the same probe as
+preflight's `check_embedding_venv`); otherwise create the venv if
+absent and `pip-sync` the committed `requirements.txt` (drop the
+`pip-compile` call), then register the kernel. (4) Replace Ubuntu
+22.04 with 24.04 in `sessions/dev_workbench.md` and
+`miscellaneous/tools/VM/setup.md`.
+CONSTRAINTS: Leave instructor.md's lab-server OS lines alone (the
+server does not run install.sh); do not touch
+`projects/embedding/requirements.*`; no other labsetup.py behavior
+changes; 2-space indent, ≤79-char lines.
+OUTPUT: Updated `install.sh`, `labsetup.py`, `dev_workbench.md`,
+`VM/setup.md`.
+VERIFY: `bash -n miscellaneous/setup/install.sh` and `python3 -m
+py_compile miscellaneous/setup/student/labsetup.py` pass; `grep -c
+pip-compile miscellaneous/setup/student/labsetup.py` → `0`; `grep
+-rn '22\.04' sessions/dev_workbench.md miscellaneous/tools/VM/setup.md`
+→ no output; laptop `bash miscellaneous/setup/install.sh` still exits
+0 with no `VENV` line; behavior on a fresh machine is proven by 50.8.
+
+---
+
+### Step 50.8: Validate a fresh-clone install and rerun idempotency
+
+[ ] Status
+
+CONTEXT: Steps 50.1–50.7 are committed; a first attempt on ailabvm
+(asarcar, `mylab-int`) exposed the gaps fixed in 50.7 and left
+`~/aiwb-fresh` half-built.
 ACTION: `git push origin 1sep26`. Laptop: `bash
 miscellaneous/setup/install.sh` twice (webhook already in the
 environment), then `bash miscellaneous/setup/validate.sh`. ailabvm as
@@ -6808,7 +6848,8 @@ https://github.com/aiedu-lab/ai_workbench ~/aiwb-fresh`; Run A:
 `install.sh` with the webhook unset (must stop early, no key — proves
 50.3); Runs B and C: `install.sh` with the webhook passed only as an
 env var for that command, sent over SSH stdin; then `validate.sh` and
-`git -C ~/aiwb-fresh status --porcelain`.
+`git -C ~/aiwb-fresh status --porcelain`. Before cloning, move the
+failed `~/aiwb-fresh` to `~/aiwb-fresh.failed-1` (no `rm -rf`).
 CONSTRAINTS: Never write the webhook to disk or put it in argv on
 ailabvm; do not touch ailabuser; no repo edits unless a check fails
 (then stop and report). Known costs: Run B posts one key for
@@ -6824,17 +6865,17 @@ item (key not installed on ailabvm); the fresh clone's git status is
 clean.
 ---
 
-### Step 50.8: Mark Phase 50 complete, commit, tag, push
+### Step 50.9: Mark Phase 50 complete, commit, tag, push
 
 [ ] Status
 
-CONTEXT: Steps 50.1–50.7 executed and verified.
+CONTEXT: Steps 50.1–50.8 executed and verified.
 ACTION: Confirm every Phase 50 `[ ] Status` is `[x]`; commit `chore:
 Phase 50 - mark idempotent setup steps complete`; `git tag -a
-v50.8-idempotent-setup-step-completed -m "Completed Phase 50 Step 8:
+v50.9-idempotent-setup-step-completed -m "Completed Phase 50 Step 9:
 idempotent setup"`; `git push origin 1sep26 --tags`.
 CONSTRAINTS: No push to `main`, no PR or merge, no archive edits.
 OUTPUT: All Phase 50 statuses `[x]`; tag on remote.
 VERIFY: `grep -A2 '### Step 50\.'
 miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
-Status'` → `0`; `git ls-remote --tags origin | grep v50.8` → 1 line.
+Status'` → `0`; `git ls-remote --tags origin | grep v50.9` → 1 line.
