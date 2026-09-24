@@ -7058,7 +7058,7 @@ check now passes `-f` for the same file it appends to.
 
 ### Step 50.14: Re-validate the gate and Claude install on ailabvm
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 50.10–50.13 are committed; asarcar@ailabvm had no git
 identity and no gh auth (a first pass found the GitHub known_hosts
@@ -7081,6 +7081,16 @@ seeds GitHub host keys; ailabvm `validate.sh` (login shell, webhook
 set) FAILs only the lab-server
 SSH item (key not yet installed for ailabuser); clean git status.
 
+RESULT: laptop installs x2 exit 0 (run 2 changes nothing), validate
+exit 0. ailabvm fresh clone: Run G (no git identity/gh auth) exit 1,
+2 MISS, no `.venv`; instructor ran `gh auth login` and set git
+identity; Run H exit 0, Claude CLI 2.1.282 installed, venvs built,
+GitHub key uploaded, but GitHub SSH failed (no known_hosts) → fixed
+in 50.13; Run I exit 0, 3 GitHub host keys written, GitHub SSH
+verified; validate.sh (login shell, webhook set) 24 PASS, only
+lab-server SSH FAILs; Run J changes nothing; clean git status;
+webhook in no log. Note: Run I rewrote ~/.ssh/config once to move
+the ailabvm blocks after the github.com block (cosmetic).
 ---
 
 ### Step 50.15: Mark Phase 50 complete, commit, tag, push
