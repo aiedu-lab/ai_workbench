@@ -55,6 +55,10 @@ SECRET_KEY = "DISCORD_WEBHOOK_URL"
 SSH_DIR = Path.home() / ".ssh"
 SSH_HOST_ALIAS = "ailabvm"
 SSH_HOST_ALIAS_INT = "ailabvm-int"
+# Aliases written by earlier labsetup.py runs for the destroyed ai-lab
+# server (renamed in Phase 49); pruned so re-runs leave no dead Host
+# blocks that point at the retired address or labuser account.
+LEGACY_SSH_HOST_ALIASES = ("ai-lab-int", "ai-lab")
 
 SSH_KEYS = (
   "DOCKER_SERVER_ID_INTERNAL",
@@ -170,13 +174,15 @@ def _write_ssh_config(env: dict[str, str]) -> None:
   Replaces any existing Host ailabvm-int / Host ailabvm blocks in
   ~/.ssh/config with fresh entries for the internal LAN and
   external WAN addresses — re-running after a labenv.yaml change
-  keeps both correct instead of preserving stale blocks.
+  keeps both correct instead of preserving stale blocks. Also
+  removes legacy Host ai-lab-int / Host ai-lab blocks.
   """
   existing = SSH_CONFIG.read_text() if SSH_CONFIG.exists() else ""
 
-  # Drop any existing "Host ailabvm-int" / "Host ailabvm" blocks
-  # (header line plus the indented option lines that follow).
-  headers = {f"Host {SSH_HOST_ALIAS_INT}", f"Host {SSH_HOST_ALIAS}"}
+  # Drop any existing current or legacy Host blocks (header line
+  # plus the indented option lines that follow).
+  aliases = (SSH_HOST_ALIAS_INT, SSH_HOST_ALIAS, *LEGACY_SSH_HOST_ALIASES)
+  headers = {f"Host {alias}" for alias in aliases}
   kept = []
   skipping = False
   for line in existing.splitlines():
