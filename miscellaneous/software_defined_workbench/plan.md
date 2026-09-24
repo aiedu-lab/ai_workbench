@@ -6561,7 +6561,7 @@ ailabvm` times out pending the router forward (instructor).
 
 ### Step 49.7: Deprovision arijit-dev and reclaim its disk
 
-[ ] Status
+[x] Status
 
 CONTEXT: arijit-dev's home is migrated (49.4) and ailabvm is
 validated (49.6); arijit-dev still runs on raw
@@ -6578,6 +6578,12 @@ OUTPUT: No `arijit-dev` domain; `ubuntu2004.img` removed; no
 VERIFY: `ssh server-int 'sudo virsh list --all | grep -c arijit-dev;
 ls /var/kvm/images/ubuntu2004.img'` → `0` and "No such file";
 `grep -c 'Host asarcar-int' ~/.ssh/config` → `0`.
+DEVIATION: the instructor replaced `Host asarcar-int` with
+`Host mylab-int` (192.168.4.43, asarcar) by hand, so
+`~/.ssh/config` was not edited here. RESULT: disk not shared by any
+other domain (checked); clean `virsh shutdown` in ~10s, no
+`destroy` needed; undefine removed `ubuntu2004.img` (21.5GB; root
+fs 145G → 129G used); `~/arijit-dev.xml` kept on server-int.
 
 ---
 
