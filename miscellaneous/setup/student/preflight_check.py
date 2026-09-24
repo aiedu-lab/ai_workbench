@@ -65,12 +65,19 @@ def _is_placeholder(value: str) -> bool:
   return stripped.startswith("<") and stripped.endswith(">")
 
 
+# Labels of failed checks, so main() can set a non-zero exit status
+# that validate.sh and CI can gate on (printing alone cannot).
+_failures: list[str] = []
+
+
 def check(label, fn):
+  """Run one check, print PASS/FAIL, and record the label on failure."""
   try:
     fn()
     print(f"PASS  {label}")
   except Exception as e:
     print(f"FAIL  {label} — {e}")
+    _failures.append(label)
 
 
 def cmd_exists(name):
@@ -273,7 +280,13 @@ def main():
   check("pdftotext (poppler-utils)", lambda: cmd_exists("pdftotext"))
   check("html2text", lambda: cmd_exists("html2text"))
   check("piper.py executable", check_piper_py)
-  print("\nAll items must show PASS before the lab begins.")
+  if _failures:
+    print(
+      f"\n{len(_failures)} check(s) FAILED: {', '.join(_failures)}\n"
+      "All items must show PASS before the lab begins."
+    )
+    sys.exit(1)
+  print("\nAll checks PASS — ready for the lab.")
 
 
 if __name__ == "__main__":

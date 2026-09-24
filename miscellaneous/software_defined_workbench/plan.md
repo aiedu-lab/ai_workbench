@@ -6643,7 +6643,7 @@ the line-length rule, so it is left as generated.
 
 ### Step 50.2: Make preflight_check.py exit non-zero on any FAIL
 
-[ ] Status
+[x] Status
 
 CONTEXT: `preflight_check.py` `check()` prints PASS/FAIL but `main()`
 always returns normally (exit 0).
@@ -6657,6 +6657,9 @@ OUTPUT: `preflight_check.py` exit status reflects results.
 VERIFY: On this laptop before 50.4 (`requests` missing): `python3
 miscellaneous/setup/student/preflight_check.py; echo $?` → `1` and a
 `1 check(s) FAILED` line.
+RESULT: laptop exits 1 with `1 check(s) FAILED: requests package`;
+the same script run from a scratch venv with requests installed
+prints `All checks PASS` and exits 0.
 
 ---
 
