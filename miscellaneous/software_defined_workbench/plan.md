@@ -6930,17 +6930,117 @@ dev account (Claude CLI, gh auth, GitHub SSH key/auth, git
 identity); addressed by the prerequisites step that follows.
 ---
 
-### Step 50.10: Mark Phase 50 complete, commit, tag, push
+### Step 50.10: Create miscellaneous/setup/prerequisites.md and link it
 
 [ ] Status
 
-CONTEXT: Steps 50.1–50.9 executed and verified.
+CONTEXT: Manual steps setup depends on (gh auth, git identity,
+webhook, platform) are scattered across `dev_workbench.md` and never
+listed in one place.
+ACTION: Create `miscellaneous/setup/prerequisites.md` with a table
+(#, prerequisite, who, how, checked by `install.sh`): Linux shell
+(WSL2 Ubuntu 24.04 or macOS Dev Container) — no; Python ≥3.12 — yes;
+sudo password — no; git + global user.name/user.email — yes; GitHub
+account, `gh` installed, `gh auth login` — yes; repo cloned —
+implicit; Discord class server joined + `export DISCORD_WEBHOOK_URL`
+— yes; instructor-only Discord server/webhook, real `labenv.yaml`,
+lab server — no; plus an "After install" note (first `claude` login,
+instructor installs your posted SSH key). Link it from README
+First-Time Setup, `sessions/dev_workbench.md` "Run Lab Setup
+Script", `instructor.md` Section 3 Phase A, and `student/README.md`
+Usage.
+CONSTRAINTS: Link to existing guides instead of duplicating them; no
+archive/history edits; ≤79-char lines (table rows and URLs exempt).
+OUTPUT: `prerequisites.md` plus links in the four docs.
+VERIFY: `test -f miscellaneous/setup/prerequisites.md`; `grep -l
+'prerequisites.md' README.md sessions/dev_workbench.md
+miscellaneous/setup/instructor/instructor.md
+miscellaneous/setup/student/README.md | wc -l` → `4`.
+
+---
+
+### Step 50.11: Add a prerequisite gate to install.sh
+
+[ ] Status
+
+CONTEXT: `install.sh` starts creating `.venv` and installing before
+knowing whether the manual prerequisites are done, so a blank account
+gets halfway and then fails `validate.sh`.
+ACTION: At the top of `miscellaneous/setup/install.sh`, after path
+resolution and before any change, check every "yes" row: Python ≥3.12
+(existing check moved in), `git` on PATH with non-empty global
+user.name and user.email, `gh` on PATH with `gh auth status` passing,
+and non-empty `DISCORD_WEBHOOK_URL` (presence only, never printed);
+print one `OK`/`MISS` line each and, if anything is missing, point to
+`prerequisites.md` and exit 1 before creating or installing anything.
+CONSTRAINTS: Gate is read-only; never print the webhook; keep
+`labsetup.py`'s own webhook check; no bypass flag.
+OUTPUT: Gated `install.sh`.
+VERIFY: `bash -n` passes; on the laptop all items `OK` and install
+proceeds; in a scratch clone, `env -u DISCORD_WEBHOOK_URL bash
+miscellaneous/setup/install.sh` exits 1 with `MISS` on the webhook
+line and creates no `.venv`.
+
+---
+
+### Step 50.12: Install the Claude CLI from labsetup.py
+
+[ ] Status
+
+CONTEXT: `labsetup.py` installs Ollama and PKM tools but not the
+Claude CLI, which sessions and preflight require.
+ACTION: Add `_install_claude_cli()` to
+`miscellaneous/setup/student/labsetup.py`: skip with `OK` if
+`shutil.which("claude")` or `~/.local/bin/claude` exists; otherwise
+run the documented `curl -fsSL https://claude.ai/install.sh | bash`
+(no sudo) and print `INST`/`OK`; WARN to open a new terminal if
+`~/.local/bin` is not on PATH. Call it in `main()` next to
+`_install_ollama()` but outside the sudo branch, and add it to the
+module docstring's step list.
+CONSTRAINTS: No change to other installers; no login attempt (Claude
+login stays manual per the 50.10 "After install" note).
+OUTPUT: `labsetup.py` installs the Claude CLI idempotently.
+VERIFY: `python3 -m py_compile` passes; laptop `install.sh` prints
+`OK   claude already installed (skipping)`; fresh install proven in
+50.13.
+
+---
+
+### Step 50.13: Re-validate the gate and Claude install on ailabvm
+
+[ ] Status
+
+CONTEXT: Steps 50.10–50.12 are committed; asarcar@ailabvm has no git
+identity and no gh auth.
+ACTION: `git push origin 1sep26`. Laptop: `install.sh` twice, then
+`validate.sh`. ailabvm: move `~/aiwb-fresh` to `~/aiwb-fresh.prev`
+(no deletion), fresh clone; Run G (webhook over stdin) must be stopped
+by the gate before any change, listing git identity and gh auth; pause
+for the instructor to run `gh auth login` (`! ssh -t mylab-int gh auth
+login`) and set git identity there; Run H (webhook over stdin) does
+the full install including the Claude CLI; then `validate.sh` and
+`git status`.
+CONSTRAINTS: Never run `gh auth login` or set the identity for the
+instructor; webhook only over stdin; do not touch ailabuser.
+OUTPUT: Results in chat and this step's RESULT line.
+VERIFY: Laptop `validate.sh` exits 0; Run G exits 1 with `MISS` for
+git identity and gh auth and creates no `.venv`; Run H exits 0 and
+installs `claude`; ailabvm `validate.sh` FAILs only the lab-server
+SSH item (key not yet installed for ailabuser); clean git status.
+
+---
+
+### Step 50.14: Mark Phase 50 complete, commit, tag, push
+
+[ ] Status
+
+CONTEXT: Steps 50.1–50.13 executed and verified.
 ACTION: Confirm every Phase 50 `[ ] Status` is `[x]`; commit `chore:
 Phase 50 - mark idempotent setup steps complete`; `git tag -a
-v50.10-idempotent-setup-step-completed -m "Completed Phase 50 Step 10:
+v50.14-idempotent-setup-step-completed -m "Completed Phase 50 Step 14:
 idempotent setup"`; `git push origin 1sep26 --tags`.
 CONSTRAINTS: No push to `main`, no PR or merge, no archive edits.
 OUTPUT: All Phase 50 statuses `[x]`; tag on remote.
 VERIFY: `grep -A2 '### Step 50\.'
 miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
-Status'` → `0`; `git ls-remote --tags origin | grep v50.10` → 1 line.
+Status'` → `0`; `git ls-remote --tags origin | grep v50.14` → 1 line.

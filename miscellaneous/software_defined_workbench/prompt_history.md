@@ -3939,3 +3939,20 @@ only the setup scripts' own dependencies, installed into a
 repo-root `.venv`, with per-project venvs still managed by
 `labsetup.py`; validate with a fresh clone on ailabvm (asarcar)
 and a rerun on an already-configured laptop.
+
+### Setup prerequisites and Claude CLI
+
+**Date:** 2026-09-24
+
+**Prompt:** Install the Claude CLI as part of `install.sh`, and add
+a check in `install.sh` that first verifies all prerequisite manual
+steps by users are complete (e.g. `gh auth login`). Create a table
+of prerequisites in `/setup/prerequisites.md` listing `gh auth
+login` and any other dependencies users must complete before
+running the install, and reference this table wherever students
+and instructors first land after `git clone` to get installation
+going.
+
+**Context:** a fresh-clone validation on a blank account failed on
+exactly these manual items (Claude CLI, gh auth, GitHub SSH, git
+identity).
