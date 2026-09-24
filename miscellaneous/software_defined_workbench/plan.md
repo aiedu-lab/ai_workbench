@@ -6839,13 +6839,52 @@ wheel, which the new python3-dev/build-essential step covers.
 
 ---
 
-### Step 50.8: Validate a fresh-clone install and rerun idempotency
+### Step 50.8: Replace gensim with a NumPy GloVe loader in projects/embedding
 
 [ ] Status
 
-CONTEXT: Steps 50.1–50.7 are committed; a first attempt on ailabvm
+CONTEXT: gensim 4.4.0 (latest) cannot build on Python 3.14 (its C code
+uses removed CPython internals and a NumPy-1 field), which breaks the
+embedding venv and aborts `labsetup.py` on Ubuntu 26.04 hosts;
+`embed.py` uses gensim only to load GloVe and for four vector ops.
+ACTION: In `projects/embedding/embed.py`, replace the gensim imports
+and loader with a `WordVectors` class (`__len__`, `__getitem__`,
+cosine `similarity`, gensim-semantics `most_similar(positive,
+negative=(), topn=10)`) and `_load_glove()` that loads
+`glove_50.npz` or downloads the gensim-data
+`glove-wiki-gigaword-50.gz` via `urllib.request`, parses it, and
+saves the `.npz`; panel code unchanged. Drop `gensim` from
+`projects/embedding/requirements.in` and regenerate
+`requirements.txt` with `pip-compile` (no `--upgrade`). Add
+`projects/embedding/*.npz` to `.gitignore`. Change the readiness
+probes in `labsetup.py` and `preflight_check.py` to `import numpy,
+sklearn, matplotlib`. Update `miscellaneous/tools/dev_workbench/venv.md`
+and `projects/embedding/README.md` for the new cache and check.
+CONSTRAINTS: No change to panel words, layout, or
+`sessions/embedding.md` exercises; stdlib + numpy only; do not delete
+old `glove_50.bin` caches; 2-space indent, ≤79-char lines.
+OUTPUT: gensim-free `embed.py`; updated `requirements.*`, `.gitignore`,
+probes, and docs.
+VERIFY: With the laptop's existing gensim venv, gensim and
+`WordVectors` return identical words in identical order and scores
+within 1e-5 for the 4 similarity pairs, 3 top-5 neighbor queries, and
+the king − man + woman analogy; `MPLBACKEND=Agg` run of `embed.py`
+from a Python 3.14 scratch venv built from the new lock exits 0 and
+writes `embedding_map.png`; `grep -rn gensim` over live files
+(excluding plan/history) → no output; `grep -cE
+'^(gensim|smart-open|wrapt)==' projects/embedding/requirements.txt`
+→ `0`.
+
+---
+
+### Step 50.9: Validate a fresh-clone install and rerun idempotency
+
+[ ] Status
+
+CONTEXT: Steps 50.1–50.8 are committed; earlier attempts on ailabvm
 (asarcar, `mylab-int`) exposed the gaps fixed in 50.7 and left
-`~/aiwb-fresh` half-built.
+`~/aiwb-fresh` half-built (a second attempt hit the gensim/3.14
+build failure fixed in 50.8).
 ACTION: `git push origin 1sep26`. Laptop: `bash
 miscellaneous/setup/install.sh` twice (webhook already in the
 environment), then `bash miscellaneous/setup/validate.sh`. ailabvm as
@@ -6855,7 +6894,7 @@ https://github.com/aiedu-lab/ai_workbench ~/aiwb-fresh`; Run A:
 50.3); Runs B and C: `install.sh` with the webhook passed only as an
 env var for that command, sent over SSH stdin; then `validate.sh` and
 `git -C ~/aiwb-fresh status --porcelain`. Before cloning, move the
-failed `~/aiwb-fresh` to `~/aiwb-fresh.failed-1` (no `rm -rf`).
+failed `~/aiwb-fresh` to `~/aiwb-fresh.failed-N` (no `rm -rf`).
 CONSTRAINTS: Never write the webhook to disk or put it in argv on
 ailabvm; do not touch ailabuser; no repo edits unless a check fails
 (then stop and report). Known costs: Run B posts one key for
@@ -6871,17 +6910,17 @@ item (key not installed on ailabvm); the fresh clone's git status is
 clean.
 ---
 
-### Step 50.9: Mark Phase 50 complete, commit, tag, push
+### Step 50.10: Mark Phase 50 complete, commit, tag, push
 
 [ ] Status
 
-CONTEXT: Steps 50.1–50.8 executed and verified.
+CONTEXT: Steps 50.1–50.9 executed and verified.
 ACTION: Confirm every Phase 50 `[ ] Status` is `[x]`; commit `chore:
 Phase 50 - mark idempotent setup steps complete`; `git tag -a
-v50.9-idempotent-setup-step-completed -m "Completed Phase 50 Step 9:
+v50.10-idempotent-setup-step-completed -m "Completed Phase 50 Step 10:
 idempotent setup"`; `git push origin 1sep26 --tags`.
 CONSTRAINTS: No push to `main`, no PR or merge, no archive edits.
 OUTPUT: All Phase 50 statuses `[x]`; tag on remote.
 VERIFY: `grep -A2 '### Step 50\.'
 miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
-Status'` → `0`; `git ls-remote --tags origin | grep v50.9` → 1 line.
+Status'` → `0`; `git ls-remote --tags origin | grep v50.10` → 1 line.
