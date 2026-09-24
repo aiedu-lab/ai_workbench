@@ -7265,7 +7265,7 @@ Nothing to change.
 
 ### Step 52.2: Register aiedulab.duckdns.org and install the updater
 
-[ ] Status
+[x] Status
 
 CONTEXT: There is no DNS name for the lab's public IP, which the ISP
 changes.
@@ -7286,6 +7286,14 @@ VERIFY: `getent hosts aiedulab.duckdns.org` → `24.4.241.243`;
 `systemctl is-active duckdns-update.timer` → `active`; last
 `duckdns-update` journal line `OK`; `sudo stat -c '%a %U'
 /etc/duckdns/token` → `600 root`.
+RESULT: instructor registered `aiedulab` and stored the token
+(600 root, 36 chars). Installed /usr/local/bin/duckdns-update
+(token via `curl -K -` on stdin) plus .service/.timer (enabled,
+active, 5-min cadence); first run logged `duckdns aiedulab: OK`;
+aiedulab.duckdns.org → 24.4.241.243 (local and 1.1.1.1); token
+appears 0 times in the journal and the script. Kept on labserver
+per instructor: students are docker-root on ailabvm and could
+read a token stored there.
 
 ---
 
