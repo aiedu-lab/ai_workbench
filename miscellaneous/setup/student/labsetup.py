@@ -4,6 +4,9 @@ import sys
 
 """Parse labenv.yaml and set up the student lab environment.
 
+DISCORD_WEBHOOK_URL is validated first; the script exits before any
+step below runs if it is unset.
+
 Steps performed:
 1. Load non-confidential env vars from labenv.yaml.
 2. Install Ollama if absent (idempotent).
@@ -21,7 +24,6 @@ Steps performed:
    prior versions of either block.
 6. Validate SSH connectivity to ailabvm-int and ailabvm (either
    succeeding is OK; ailabvm is the off-campus default).
-8. Validate that DISCORD_WEBHOOK_URL is set.
 9. If `gh auth status` exits 0: generate
    ~/.ssh/<username>_id_ed25519_github if absent, upload the
    public key to GitHub if not already registered (idempotent),
@@ -608,6 +610,10 @@ def _configure_git_hooks() -> None:
 
 
 def main() -> None:
+  # Webhook first: the public-key post only happens on the run that
+  # creates the SSH key, so a run without the webhook must stop
+  # before key generation, or the key is never posted.
+  _validate_secret()
   _configure_git_hooks()
   env = _load_env()
   _set_env(env)
@@ -639,8 +645,6 @@ def main() -> None:
       "  DOCKER_SERVER_SSH_PORT_INTERNAL/_EXTERNAL, and\n"
       "  DOCKER_SERVER_USERNAME with real values, then re-run."
     )
-
-  _validate_secret()
 
   gh_ready = _ensure_gh_installed() and subprocess.run(
     ["gh", "auth", "status"], capture_output=True, env=_gh_env(),

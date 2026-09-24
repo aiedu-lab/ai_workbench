@@ -6665,7 +6665,7 @@ prints `All checks PASS` and exits 0.
 
 ### Step 50.3: Validate the webhook before any setup in labsetup.py
 
-[ ] Status
+[x] Status
 
 CONTEXT: `labsetup.py` `main()` calls `_validate_secret()` only after
 the SSH block, so a first run without `DISCORD_WEBHOOK_URL` creates the
@@ -6688,6 +6688,10 @@ with the `DISCORD_WEBHOOK_URL is not set` message, creates no
 `$HOME/.ssh`, and leaves `git config core.hooksPath` unchanged;
 `grep -c '_validate_secret()' miscellaneous/setup/student/labsetup.py`
 → `2` (definition plus one call).
+RESULT: `SystemExit code=1` with the webhook error, no `.ssh` in the
+scratch HOME, `core.hooksPath` unset before and after (it was set
+first under the old order); docstring now states the webhook is
+checked first and drops the old step 8.
 
 ---
 
