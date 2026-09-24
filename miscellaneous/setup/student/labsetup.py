@@ -29,7 +29,8 @@ Steps performed:
 9. If `gh auth status` exits 0: generate
    ~/.ssh/<username>_id_ed25519_github if absent, upload the
    public key to GitHub if not already registered (idempotent),
-   write Host github.com config entry, and validate GitHub SSH
+   write Host github.com config entry, seed GitHub's host keys into
+   known_hosts from `gh api meta` if absent, and validate GitHub SSH
    authentication. Skipped with WARN if not authenticated — run
    `gh auth login` first (dev_workbench.md).
 10. On macOS, materialize .devcontainer/ from
@@ -349,6 +350,45 @@ def _write_github_ssh_config() -> None:
     f.write(entry)
   SSH_CONFIG.chmod(0o600)
   print(f"  WROTE ~/.ssh/config entry: Host {GITHUB_HOST_ALIAS}")
+
+
+# AI-GENERATED: Phase 50 Step 50.13 (plan.md)
+def _ensure_github_known_hosts() -> None:
+  """Seed ~/.ssh/known_hosts with GitHub's official SSH host keys.
+
+  Without an entry, the BatchMode SSH checks here and in
+  preflight_check.py fail with "Host key verification failed" on any
+  machine that never connected to GitHub. Keys come from GitHub's
+  API over HTTPS (gh api meta), not from trusting the first SSH
+  answer. Idempotent — skips when an entry already exists.
+  """
+  known_hosts = SSH_DIR / "known_hosts"
+  # -f pins the file we append to: bare `ssh-keygen -F` reads the
+  # passwd home's known_hosts, which can differ from Path.home().
+  if known_hosts.exists() and subprocess.run(
+    ["ssh-keygen", "-F", GITHUB_HOST_ALIAS, "-f", str(known_hosts)],
+    capture_output=True,
+  ).returncode == 0:
+    print("  OK   GitHub host key already in known_hosts (skipping)")
+    return
+  result = subprocess.run(
+    ["gh", "api", "meta", "--jq", ".ssh_keys[]"],
+    capture_output=True, text=True, env=_gh_env(),
+  )
+  keys = result.stdout.split("\n") if result.returncode == 0 else []
+  lines = [f"{GITHUB_HOST_ALIAS} {k.strip()}\n" for k in keys if k.strip()]
+  if not lines:
+    print(
+      "  WARN could not fetch GitHub host keys (gh api meta) — "
+      "run `ssh -T git@github.com` once and accept the host key.",
+      file=sys.stderr,
+    )
+    return
+  SSH_DIR.mkdir(mode=0o700, exist_ok=True)
+  with known_hosts.open("a") as f:
+    f.writelines(lines)
+  known_hosts.chmod(0o600)
+  print(f"  WROTE {len(lines)} GitHub host key(s) to ~/.ssh/known_hosts")
 
 
 def _validate_github_ssh() -> None:
@@ -712,6 +752,7 @@ def main() -> None:
     _generate_github_ssh_key(github_username)
     _upload_github_ssh_key(github_username)
     _write_github_ssh_config()
+    _ensure_github_known_hosts()
     _validate_github_ssh()
   else:
     print(

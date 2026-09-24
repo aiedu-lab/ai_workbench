@@ -7025,7 +7025,7 @@ unguarded pipe; left unchanged per CONSTRAINTS (follow-up).
 
 ### Step 50.13: Seed GitHub host keys from gh api meta in labsetup.py
 
-[ ] Status
+[x] Status
 
 CONTEXT: The first 50.14 pass showed that on a machine that never
 connected to GitHub, `_validate_github_ssh()` (and preflight's check)
@@ -7046,6 +7046,13 @@ VERIFY: `python3 -m py_compile` passes; with a scratch `HOME` holding
 no known_hosts, the function writes 3 `github.com` lines and a second
 call prints `OK`; laptop `install.sh` prints the `OK` skip line; a
 fresh machine is proven in 50.14.
+RESULT: scratch HOME (gh config via GH_CONFIG_DIR, since
+`_gh_env()` drops GH_TOKEN): first call WROTE 3 keys (600 file,
+700 dir), second call OK; BatchMode `ssh -T git@github.com` with
+only that file authenticates, with an empty file fails; laptop
+install exit 0 with the OK skip line. Fixed during the step: bare
+`ssh-keygen -F` reads the passwd home, not Path.home(), so the
+check now passes `-f` for the same file it appends to.
 
 ---
 
