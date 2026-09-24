@@ -6463,7 +6463,7 @@ RESULT: Docker Compose 2.40.3, Python 3.14.4, gh 2.46.0; clone at
 
 ### Step 49.4: Migrate asarcar home from arijit-dev to ailabvm
 
-[ ] Status
+[x] Status
 
 CONTEXT: arijit-dev (`asarcar-int`, Ubuntu 20.04) `/home/asarcar`
 (~112K) holds dotfiles, `.ssh`, `.docker`, `.config`, `.local`,
@@ -6482,6 +6482,11 @@ VERIFY: `diff <(ssh asarcar-int 'cd ~ && find . -path ./.cache -prune
 -o -path ./.ssh/authorized_keys -prune -o -type f -print | sort')
 <(ssh -l asarcar ailabvm-int 'cd ~/migrated-arijit-dev && find .
 -type f | sort')` → no output.
+RESULT: 12 files migrated into asarcar (the separate dev account,
+uid 1000, sudo) only; `.bashrc`/`.profile`/`.bash_logout` were
+byte-identical, so no `*.arijit-dev` copies were needed; 1 new
+authorized_keys line appended; ailabuser left untouched per
+instructor.
 
 ---
 
