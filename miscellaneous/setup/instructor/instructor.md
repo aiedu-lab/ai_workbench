@@ -247,11 +247,11 @@ real values (not placeholders) for:
 | `DOCKER_SERVER_USERNAME` | shared account name (e.g. `ailabuser`) |
 | `DOCKER_SERVER_SSH_PORT` | SSH port (default `22439`) |
 
-Students run:
+Students run (`install.sh` builds `.venv`, then runs `labsetup.py`):
 
 ```bash
 export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
-python3 setup/labsetup.py
+bash miscellaneous/setup/install.sh
 ```
 
 `labsetup.py` will:
@@ -292,7 +292,7 @@ After all keys are installed, notify students to run Phase C.
 > server. SSH connectivity will FAIL until that step is complete.
 
 ```bash
-python3 setup/preflight_check.py
+bash miscellaneous/setup/validate.sh   # runs preflight_check.py
 ```
 
 `preflight_check.py` reads `labenv.yaml` directly for non-secret
@@ -321,7 +321,7 @@ ssh ailabvm docker ps   # must return empty table header
 **Instructor validation — confirm all students show PASS:**
 
 ```bash
-python3 setup/preflight_check.py
+bash miscellaneous/setup/validate.sh   # exit 0 = all PASS
 ```
 
 Every item must show `PASS` before the lab begins.
@@ -382,7 +382,7 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/REPLACE_ME
 
 ```bash
 export DISCORD_WEBHOOK_URL="<paste URL from #meetup-notifications>"
-python3 setup/labsetup.py
+bash miscellaneous/setup/install.sh
 ```
 
 ---

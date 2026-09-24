@@ -17,7 +17,10 @@ or submitted.
   in `projects/client_multiagent/` and `projects/server_multiagent/`
 
 ## Usage
+Run from the repo root; the wrappers in `miscellaneous/setup/` build
+the `.venv` these scripts need and then run them:
 ```bash
-python3 setup/labsetup.py
-python3 setup/preflight_check.py
+export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
+bash miscellaneous/setup/install.sh    # runs labsetup.py
+bash miscellaneous/setup/validate.sh   # runs preflight_check.py
 ```

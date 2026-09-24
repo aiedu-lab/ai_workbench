@@ -194,19 +194,19 @@ fully operational.
 ## Run Lab Setup Script
 
 Retrieve the Discord webhook URL from `#meetup-notifications`,
-then run both scripts from inside Ubuntu:
+then run both scripts from the repo root inside Ubuntu:
 
 ```bash
 export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
-python3 miscellaneous/setup/student/labsetup.py
-python3 miscellaneous/setup/student/preflight_check.py
+bash miscellaneous/setup/install.sh
+bash miscellaneous/setup/validate.sh
 ```
 
-`labsetup.py` generates your SSH key pair, posts your public key
-to Discord, writes the `ailabvm` SSH config entry, and installs
-CLI tools required by optional sessions (poppler-utils,
-html2text).
-Every item in `preflight_check.py` output must show **PASS**.
+`install.sh` prepares a Python `.venv` and runs `labsetup.py`, which
+generates your SSH key pair, posts your public key to Discord,
+writes the `ailabvm` SSH config entry, and installs CLI tools
+required by optional sessions (poppler-utils, html2text).
+Every item in `validate.sh` output must show **PASS**.
 
 ---
 ## Additional Setups

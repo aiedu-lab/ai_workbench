@@ -149,8 +149,15 @@ git clone https://github.com/aiedu-lab/ai_workbench.git
 cd ai_workbench
 ```
 
-4. Run `python3 miscellaneous/setup/student/labsetup.py` once —
-on macOS it copies
+4. Export the webhook and run the installer once (it stops at once
+if `DISCORD_WEBHOOK_URL` is unset):
+
+```bash
+export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
+bash miscellaneous/setup/install.sh
+```
+
+On macOS, the `labsetup.py` step it runs copies
 [devcontainer.json](devcontainer/devcontainer.json) and
 [Dockerfile](devcontainer/Dockerfile) from
 `miscellaneous/tools/VM/devcontainer/`

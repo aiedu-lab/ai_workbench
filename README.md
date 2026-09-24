@@ -49,6 +49,36 @@ specific tool or concept.
 
 ---
 
+<!-- AI-GENERATED [anthropic:claude-opus-5-5]: Phase 50 Step 50.6
+     (plan.md) -->
+## 🚀 First-Time Setup
+
+Run this once after cloning, and again after any `git pull` that
+changes `miscellaneous/setup/`. Every step is idempotent, so reruns
+are safe. Students and instructors run the same commands.
+
+```bash
+git clone https://github.com/aiedu-lab/ai_workbench.git  # or git pull
+cd ai_workbench
+export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
+bash miscellaneous/setup/install.sh    # install and configure
+bash miscellaneous/setup/validate.sh   # every check must PASS
+```
+
+* `install.sh` builds a repo-root `.venv` from
+  `miscellaneous/setup/requirements.txt`, then runs `labsetup.py`
+  (Ollama, project venvs, lab-server SSH key and config, GitHub key).
+* It stops immediately if `DISCORD_WEBHOOK_URL` is unset, because
+  your SSH public key is posted to Discord on the run that creates it.
+* `validate.sh` exits 0 only when every check passes; the lab-server
+  SSH check passes once the instructor installs your key.
+* Platform prerequisites (WSL2 or Dev Container, GitHub, Claude) are
+  in [Development Workbench Setup](sessions/dev_workbench.md);
+  instructors also provision the lab server per
+  [Instructor Preflight](miscellaneous/setup/instructor/instructor.md).
+
+---
+
 ## 🔁 Student Workflow
 
 * Go through the sessions serially — do not jump ahead.
@@ -138,6 +168,9 @@ ai_workbench/
 └── miscellaneous/
     ├── software_defined_workbench/  # SDW plan + history
     ├── setup/
+    │   ├── install.sh            # One-command idempotent setup
+    │   ├── validate.sh           # Read-only readiness check
+    │   ├── requirements.*        # Setup-script Python deps
     │   ├── student/              # Student lab setup scripts
     │   └── instructor/           # Instructor preflight/roster
     ├── tools/                    # Setup guides and guardrails

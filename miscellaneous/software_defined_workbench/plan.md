@@ -6761,7 +6761,7 @@ run from another directory.
 
 ### Step 50.6: Document first-time setup and fix stale invocations
 
-[ ] Status
+[x] Status
 
 CONTEXT: `README.md` has no first-time setup section, and four docs
 call the Python scripts directly, some via the stale `setup/` path.
@@ -6783,6 +6783,14 @@ OUTPUT: README section plus four docs updated.
 VERIFY: `grep -rnE 'python3? [^ ]*(labsetup|preflight_check)\.py'
 --include=*.md . | grep -v -e software_defined_workbench -e archive`
 → no output; `grep -c 'First-Time Setup' README.md` → ≥1.
+RESULT: README gains `## 🚀 First-Time Setup` plus tree entries;
+7 invocations replaced (instructor.md 4, student/README.md 2 —
+both on the stale `setup/` path — dev_workbench.md 1 block,
+VM/setup.md 1). VM/setup.md step 4 now exports the webhook first,
+since 50.3 makes a webhook-less run stop before the macOS
+.devcontainer copy. Follow-up (untested, no Mac): a `.venv` built
+on the macOS host is reused inside the Linux dev container via the
+bind-mounted repo and may need rebuilding there.
 
 ---
 
