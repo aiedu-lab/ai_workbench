@@ -6691,7 +6691,9 @@ with the `DISCORD_WEBHOOK_URL is not set` message, creates no
 RESULT: `SystemExit code=1` with the webhook error, no `.ssh` in the
 scratch HOME, `core.hooksPath` unset before and after (it was set
 first under the old order); docstring now states the webhook is
-checked first and drops the old step 8.
+checked first and drops the old step 8. Pass-through check (added
+per instructor): with a dummy webhook and `_configure_git_hooks`
+stubbed to raise, `main()` reached the stub and wrote nothing.
 
 ---
 
@@ -6709,14 +6711,18 @@ unavailable, `sudo apt-get install -y python3-venv`; create
 pip-tools` if missing, then `.venv/bin/pip-sync
 miscellaneous/setup/requirements.txt`; then run `.venv/bin/python
 miscellaneous/setup/student/labsetup.py "$@"` and print a "next: run
-validate.sh" hint.
+validate.sh" hint. Smoke run (added per instructor): back up
+`~/.ssh/config` to the scratchpad, then run `bash
+miscellaneous/setup/install.sh` once on this laptop with the real
+webhook (existing key, so nothing is posted).
 CONSTRAINTS: Do not copy `labsetup.py` logic into the script; never
 read, write, or echo `DISCORD_WEBHOOK_URL`; no `rm -rf`; do not modify
 `labsetup.py`.
 OUTPUT: `miscellaneous/setup/install.sh` (mode 755).
 VERIFY: `bash -n miscellaneous/setup/install.sh && test -x
 miscellaneous/setup/install.sh && echo ok` → `ok`; `shellcheck` clean
-if installed.
+if installed; the smoke run exits 0, builds `.venv` with the pinned
+packages, prints `SKIP Discord post`, and posts nothing.
 
 ---
 
