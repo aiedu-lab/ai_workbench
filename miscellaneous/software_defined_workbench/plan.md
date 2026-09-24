@@ -6736,7 +6736,7 @@ scratchpad. Runs labsetup.py (not exec) so the NEXT hint prints.
 
 ### Step 50.5: Create miscellaneous/setup/validate.sh
 
-[ ] Status
+[x] Status
 
 CONTEXT: `preflight_check.py` exits non-zero on failures (50.2) and
 `.venv` is built by `install.sh` (50.4).
@@ -6752,6 +6752,10 @@ OUTPUT: `miscellaneous/setup/validate.sh` (mode 755).
 VERIFY: `bash -n miscellaneous/setup/validate.sh && test -x
 miscellaneous/setup/validate.sh && echo ok` → `ok`; with `.venv` moved
 aside, `bash miscellaneous/setup/validate.sh; echo $?` → `2`.
+RESULT: `bash -n` + mode 755 ok; `.venv` moved aside → exit 2 with
+the install.sh hint (restored after); normal run on the laptop →
+exit 0, 25/25 PASS (the `requests` FAIL is gone); also exit 0 when
+run from another directory.
 
 ---
 
