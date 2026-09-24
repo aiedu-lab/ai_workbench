@@ -9,7 +9,8 @@ step below runs if it is unset.
 
 Steps performed:
 1. Load non-confidential env vars from labenv.yaml.
-2. Install Ollama if absent (idempotent).
+2. Install Ollama and the Claude Code CLI if absent (idempotent;
+   Claude installs per-user without sudo and is never logged in).
 3. Create or repair projects/embedding/.venv from its committed
    requirements.txt lock and register the Jupyter kernel, unless
    its packages already import (idempotent).
@@ -427,6 +428,44 @@ def _install_ollama() -> None:
     )
 
 
+# AI-GENERATED: Phase 50 Step 50.12 (plan.md)
+_CLAUDE_BIN = Path.home() / ".local" / "bin" / "claude"
+
+
+def _install_claude_cli() -> None:
+  """Install the Claude Code CLI via the official script if absent.
+
+  Required by most sessions. Installs per-user into ~/.local/bin (no
+  sudo). Idempotent — skips when claude is on PATH or already in
+  ~/.local/bin. Never logs in; the first `claude` run does that.
+  """
+  if shutil.which("claude") or _CLAUDE_BIN.exists():
+    print("  OK   claude already installed (skipping)")
+    return
+  print("  INST installing Claude Code CLI via official script...")
+  try:
+    # pipefail: without it a failed download pipes nothing into bash,
+    # which exits 0 and hides the failure.
+    subprocess.run(
+      ["bash", "-c",
+       "set -o pipefail; curl -fsSL https://claude.ai/install.sh | bash"],
+      check=True,
+    )
+    print("  OK   claude installed")
+  except subprocess.CalledProcessError:
+    print(
+      "  WARN claude install failed — install manually:\n"
+      "       curl -fsSL https://claude.ai/install.sh | bash",
+      file=sys.stderr,
+    )
+    return
+  if str(_CLAUDE_BIN.parent) not in os.environ.get("PATH", "").split(":"):
+    print(
+      "  WARN ~/.local/bin is not on PATH — open a new terminal so "
+      "`claude` is found."
+    )
+
+
 def _setup_embedding_venv() -> None:
   """Create the embedding Python venv and install dependencies.
 
@@ -635,6 +674,7 @@ def main() -> None:
   if sudo_ok:
     _install_pkm_tools()  # installs zstd — required by ollama installer
     _install_ollama()
+  _install_claude_cli()    # per-user ~/.local/bin — no sudo needed
   _setup_embedding_venv()  # pure Python venv — no sudo needed
   _setup_piper_venv()     # speed-reading venv — no sudo needed
   _setup_devcontainer()   # macOS only — no sudo needed

@@ -6997,7 +6997,7 @@ so a token counts as authenticated; `gh auth status` itself writes
 
 ### Step 50.12: Install the Claude CLI from labsetup.py
 
-[ ] Status
+[x] Status
 
 CONTEXT: `labsetup.py` installs Ollama and PKM tools but not the
 Claude CLI, which sessions and preflight require.
@@ -7015,6 +7015,11 @@ OUTPUT: `labsetup.py` installs the Claude CLI idempotently.
 VERIFY: `python3 -m py_compile` passes; laptop `install.sh` prints
 `OK   claude already installed (skipping)`; fresh install proven in
 50.13.
+RESULT: py_compile ok; laptop install exit 0 with `OK   claude
+already installed (skipping)`; simulated failed download (fake curl
+exit 22, scratch HOME) → WARN and no binary, because the installer
+pipe runs under `set -o pipefail`. `_install_ollama()` has the same
+unguarded pipe; left unchanged per CONSTRAINTS (follow-up).
 
 ---
 
