@@ -7241,7 +7241,7 @@ Status'` → `0`; `git tag | grep v51.4` → 1 line.
 
 ### Step 52.1: Verify the server → labserver alias rename is safe
 
-[ ] Status
+[x] Status
 
 CONTEXT: The instructor renamed the `~/.ssh/config` aliases `server` →
 `labserver` and `server-int` → `labserver-int`.
@@ -7255,6 +7255,11 @@ CONSTRAINTS: Do not edit history files (`plan.md`,
 OUTPUT: RESULT line listing any references found (none expected).
 VERIFY: The repo search prints nothing; `ssh -o BatchMode=yes
 labserver-int hostname` → `dev-1`.
+RESULT: no live repo file uses `server`/`server-int` as an SSH
+alias (only historical plan.md/prompt_history.md entries, left
+as-is); `~/.ssh/config` has no Host/ProxyJump/ProxyCommand/Match
+line using the old names; `ssh labserver-int hostname` → `dev-1`.
+Nothing to change.
 
 ---
 
