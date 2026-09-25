@@ -7456,7 +7456,7 @@ blocks; no other hits.
 
 ### Step 52.7: Clean up the personal SSH aliases
 
-[ ] Status
+[x] Status
 
 CONTEXT: `~/.ssh/config` still has `ailabvm-int` (`.43`, now dead) and
 `mylab-int` on the stale `.43`.
@@ -7472,6 +7472,19 @@ OUTPUT: No `ailabvm-int` alias; `mylab-int` usable.
 VERIFY: `grep -c '^Host ailabvm-int' ~/.ssh/config` → `0`; BatchMode
 `ssh mylab-int whoami` → `asarcar`, `ssh ailabvm whoami` →
 `ailabuser`.
+DEVIATION: the instructor had already removed `ailabvm-int` and
+`mylab-int` by hand (keeping the LAN IP as a comment on `mylab`),
+so `mylab-int` was not recreated and no .21 known_hosts entry was
+needed. While verifying, labbuddyvm was found moved by DHCP from
+.42 to .35 (MAC 52:54:00:67:3b:68, found by LAN ping sweep); its
+host key at .35 matched the trusted .42 key (SHA256:+9Pr6qgy…), so
+`labbuddyvm` and `labbuddyvm-int` HostName were updated to .35 (an
+.35 entry already existed). RESULT: 0 `ailabvm-int`/`mylab-int`
+blocks; labserver-int/labvm-int/labbuddyvm-int kept; BatchMode:
+mylab → asarcar, ailabvm → ailabuser, labserver → dev-1, labvm →
+labvm, labbuddyvm → labbuddyvm. The stale `# LAN IP Address:
+192.168.4.43` comment on `ailabvm` is replaced when install.sh
+rewrites that block in 52.8.
 
 ---
 
