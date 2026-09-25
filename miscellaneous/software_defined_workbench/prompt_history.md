@@ -3997,3 +3997,21 @@ address in `labenv.yaml`.
 
 **Clarifications:** DuckDNS; `ailab` is taken on DuckDNS and
 dedyn.io, so the hostname is `aiedulab.duckdns.org`.
+
+### Public-only lab server address
+
+**Date:** 2026-09-24
+
+**Prompt:** A DHCP reservation for ailabvm cannot be made on the
+router, so its LAN IP may change (it moved from `.43` to `.21`).
+The router supports hairpin NAT, so keep only the public address:
+remove the duplicated `ailabvm-int` (private) and `ailabvm`
+(public) references from all YAML, documentation, and SSH aliases,
+and seed the server's public host key for the public name. Keep
+the other `*-int` aliases (`labserver-int`, `mylab-int`,
+`labvm-int`, `labbuddyvm-int`) for now; they will be removed in a
+later step.
+
+**Clarifications:** collapse the `labenv.yaml` keys to
+`DOCKER_SERVER_ID` / `DOCKER_SERVER_SSH_PORT`; the host key is
+seeded for `[aiedulab.duckdns.org]:22439` only.

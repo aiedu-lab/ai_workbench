@@ -7372,60 +7372,122 @@ asarcar_id_ed25519_server.
 
 ---
 
-### Step 52.5: Switch labenv.yaml and the docs to the hostname
+### Step 52.5: Collapse labenv.yaml and setup scripts to one public address
 
 [ ] Status
 
-CONTEXT: `labenv.yaml` and `instructor.md` still name the old external
-IP; `instructor.md`'s table uses pre-Phase-36 key names.
-ACTION: `miscellaneous/setup/student/labenv.yaml`:
-`DOCKER_SERVER_ID_EXTERNAL: "aiedulab.duckdns.org"` with a comment
-that `labserver`'s DuckDNS timer keeps it current.
-`miscellaneous/setup/instructor/instructor.md`: replace the stale
-`DOCKER_SERVER_ID`/`DOCKER_SERVER_SSH_PORT` rows and "default
-73.202.223.27" with the current `_INTERNAL`/`_EXTERNAL` keys and
-values; add a short "Dynamic DNS" note (provider, hostname, updater
-and token location, `systemctl status duckdns-update.timer`).
-CONSTRAINTS: No labsetup/preflight code changes; no history or
-archive edits; ≤79-char lines.
-OUTPUT: Updated `labenv.yaml` and `instructor.md`.
-VERIFY: Searching live files for `73\.202\.223\.27|24\.4\.241\.243`
-prints nothing; `labenv.yaml` loads; line-length rule passes on
-changed lines.
+CONTEXT: `labenv.yaml`, `labsetup.py`, and `preflight_check.py` carry a
+private/public server pair and an `ailabvm-int` alias that breaks
+whenever ailabvm's DHCP address moves (it moved from `.43` to `.21`).
+ACTION: `miscellaneous/setup/student/labenv.yaml`: replace the four
+`_INTERNAL`/`_EXTERNAL` keys with `DOCKER_SERVER_ID:
+"aiedulab.duckdns.org"` and `DOCKER_SERVER_SSH_PORT: 22439`; rewrite
+the comment (DuckDNS name kept current by `labserver`'s timer, works
+inside the lab via the router's hairpin NAT, one `Host ailabvm`).
+`miscellaneous/setup/student/labsetup.py`: drop `SSH_HOST_ALIAS_INT`,
+add `"ailabvm-int"` to `LEGACY_SSH_HOST_ALIASES`, set `SSH_KEYS` to
+the new keys plus `DOCKER_SERVER_USERNAME`; `_write_ssh_config()`
+writes only `Host ailabvm` (still pruning legacy blocks);
+`_validate_ssh()` tests only `ailabvm`;
+`_ensure_lab_server_known_hosts()` seeds only
+`[DOCKER_SERVER_ID]:DOCKER_SERVER_SSH_PORT`; `_post_pubkey_to_discord()`
+and the placeholder hint use the new keys; docstring steps updated.
+`miscellaneous/setup/student/preflight_check.py`: drop
+`SSH_HOST_ALIAS_INT`, update `NON_SECRET_VARS`, `check_ssh()` tests
+only `ailabvm`, label `SSH to ailabvm`, docstring updated.
+CONSTRAINTS: Keep `DOCKER_SERVER_USERNAME`, `DOCKER_SERVER_HOST_KEY`,
+and the host-key safety rules (never replace a conflicting entry); no
+`StrictHostKeyChecking` relaxation; no doc edits here; 2-space
+indent, ≤79-char lines (host-key line exempt).
+OUTPUT: One server address in YAML and code; `ailabvm-int` pruned as
+a legacy alias.
+VERIFY: `grep -rnE
+'DOCKER_SERVER_(ID|SSH_PORT)_(INTERNAL|EXTERNAL)|SSH_HOST_ALIAS_INT'
+miscellaneous/setup` → no output; `py_compile` passes on both
+scripts; a scratch-HOME test of `_write_ssh_config` +
+`_ensure_lab_server_known_hosts` on a config containing an old
+`ailabvm-int` block leaves only `Host ailabvm` (`HostName
+aiedulab.duckdns.org`, `Port 22439`), removes the stale block, and
+writes exactly one `[aiedulab.duckdns.org]:22439` known_hosts entry.
 
 ---
 
-### Step 52.6: Validate the durable setup end to end
+### Step 52.6: Update the documentation to the single public address
 
 [ ] Status
 
-CONTEXT: Steps 52.1–52.5 are committed; `labsetup.py` now writes the
-hostname-based alias and `known_hosts` entry.
-ACTION: `git push origin 1sep26`. Laptop: `install.sh` (rewrites the
-`ailabvm` block with the hostname, adds
-`[aiedulab.duckdns.org]:22439`), then `validate.sh`. ailabvm: `git
-pull` in `~/aiwb-fresh`, Run L (`install.sh`, webhook over stdin),
-`validate.sh`. Optional (instructor): `ssh ailabvm whoami` from a
-network outside the lab, e.g. a phone hotspot.
-CONSTRAINTS: Webhook only over stdin; no router changes.
+CONTEXT: `instructor.md` still describes a two-address setup with
+pre-Phase-36 key names and the stale `73.202.223.27`.
+ACTION: In `miscellaneous/setup/instructor/instructor.md`, rewrite the
+`labenv.yaml` note and the Phase A table to list `DOCKER_SERVER_ID`
+(`aiedulab.duckdns.org`), `DOCKER_SERVER_SSH_PORT` (`22439`),
+`DOCKER_SERVER_USERNAME`, `DOCKER_SERVER_HOST_KEY`; add a short
+"Dynamic DNS and hairpin" note (DuckDNS, hostname, `labserver`
+updater and token location, `systemctl status duckdns-update.timer`,
+and that the router's 22439 forward must follow ailabvm's DHCP address
+since no reservation is possible). Scan every live `.md` for
+`ailabvm-int`, `_INTERNAL`, `_EXTERNAL`, `73.202.223.27`,
+`24.4.241.243` and fix any hit.
+CONSTRAINTS: No history or archive edits; ≤79-char changed lines.
+OUTPUT: Docs describe one public address.
+VERIFY: `grep -rnE
+'ailabvm-int|_(INTERNAL|EXTERNAL)\b|73\.202\.223\.27|24\.4\.241\.243'
+--include=*.md --include=*.yaml --include=*.py .` (excluding history
+and archive) → no output.
+
+---
+
+### Step 52.7: Clean up the personal SSH aliases
+
+[ ] Status
+
+CONTEXT: `~/.ssh/config` still has `ailabvm-int` (`.43`, now dead) and
+`mylab-int` on the stale `.43`.
+ACTION: Back up `~/.ssh/config` to the scratchpad; delete the `Host
+ailabvm-int` block; point `mylab-int` at ailabvm's current LAN IP
+(`192.168.4.21`), noting it can drift again; leave `labserver-int`,
+`labvm-int`, `labbuddyvm-int` unchanged; add a `192.168.4.21`
+known_hosts entry copied from the trusted `.43` key (never newly
+accepted).
+CONSTRAINTS: Keep the other `-int` aliases (per instructor); no
+`ssh-keyscan`; no other hosts touched.
+OUTPUT: No `ailabvm-int` alias; `mylab-int` usable.
+VERIFY: `grep -c '^Host ailabvm-int' ~/.ssh/config` → `0`; BatchMode
+`ssh mylab-int whoami` → `asarcar`, `ssh ailabvm whoami` →
+`ailabuser`.
+
+---
+
+### Step 52.8: Validate the public-only setup end to end
+
+[ ] Status
+
+CONTEXT: Steps 52.5–52.7 are committed.
+ACTION: `git push origin 1sep26`. Laptop: `install.sh` (legacy pruning
+leaves no `ailabvm-int`; `ailabvm` uses the FQDN), `validate.sh`, and
+BatchMode `ssh ailabvm`, `ssh mylab`, `ssh labserver`, `ssh labvm`,
+`ssh labbuddyvm`. ailabvm is not rerun: asarcar there deliberately has
+no gh login, so the prerequisite gate would stop it; the student path
+is covered by the laptop run.
+CONSTRAINTS: No credentials back onto ailabvm; no router changes.
 OUTPUT: Results in chat and this step's RESULT line.
-VERIFY: Laptop and ailabvm `validate.sh` exit 0; both known_hosts
-have `[aiedulab.duckdns.org]:22439` with fingerprint
-`SHA256:3pSfDKCw…`; `ssh -G ailabvm` shows the hostname.
+VERIFY: Laptop `validate.sh` exits 0 with the check labelled `SSH to
+ailabvm`; `grep -c '^Host ailabvm-int' ~/.ssh/config` → `0`; all five
+aliases connect.
 
 ---
 
-### Step 52.7: Mark Phase 52 complete, commit, tag, push
+### Step 52.9: Mark Phase 52 complete, commit, tag, push
 
 [ ] Status
 
-CONTEXT: Steps 52.1–52.6 executed and verified.
+CONTEXT: Steps 52.1–52.8 executed and verified.
 ACTION: Flip every Phase 52 `[ ] Status` to `[x]`; commit `chore:
 Phase 52 - mark durable hostname steps complete`; `git tag -a
-v52.7-durable-lab-hostname-step-completed -m "Completed Phase 52 Step
-7: durable lab hostname"`; `git push origin 1sep26 --tags`.
+v52.9-durable-lab-hostname-step-completed -m "Completed Phase 52 Step
+9: durable lab hostname"`; `git push origin 1sep26 --tags`.
 CONSTRAINTS: No push to `main`, no PR or merge.
 OUTPUT: All statuses `[x]`; tag on remote.
 VERIFY: `grep -A2 '### Step 52\.'
 miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
-Status'` → `0`; `git tag | grep v52.7` → 1 line.
+Status'` → `0`; `git tag | grep v52.9` → 1 line.
