@@ -7374,7 +7374,7 @@ asarcar_id_ed25519_server.
 
 ### Step 52.5: Collapse labenv.yaml and setup scripts to one public address
 
-[ ] Status
+[x] Status
 
 CONTEXT: `labenv.yaml`, `labsetup.py`, and `preflight_check.py` carry a
 private/public server pair and an `ailabvm-int` alias that breaks
@@ -7409,6 +7409,14 @@ scripts; a scratch-HOME test of `_write_ssh_config` +
 `ailabvm-int` block leaves only `Host ailabvm` (`HostName
 aiedulab.duckdns.org`, `Port 22439`), removes the stale block, and
 writes exactly one `[aiedulab.duckdns.org]:22439` known_hosts entry.
+RESULT: grep clean; both scripts compile; labenv.yaml loads with
+DOCKER_SERVER_ID/SSH_PORT/USERNAME/HOST_KEY. Scratch HOME with an
+old `ailabvm-int` + IP-based `ailabvm` + unrelated github.com block:
+first run WROTE one `Host ailabvm` (aiedulab.duckdns.org:22439),
+pruned `ailabvm-int`, kept github.com, seeded one
+`[aiedulab.duckdns.org]:22439` entry; second run OK/skip for both.
+`_validate_ssh()`/`check_ssh()` now test only `ailabvm`; the
+known_hosts seeding became straight-line code (no one-item loop).
 
 ---
 

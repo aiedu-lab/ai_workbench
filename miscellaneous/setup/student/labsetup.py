@@ -21,13 +21,12 @@ Steps performed:
 4. Post the public key to #meetup-notifications so the instructor
    can install it on the Docker server (instructor.md Section 3) —
    only when a new key was generated in step 5 (idempotent).
-5. Write ~/.ssh/config entries (Host ailabvm-int and Host ailabvm)
-   for the internal/external lab server addresses, replacing any
-   prior versions of either block, and seed known_hosts with
-   the server host key from labenv.yaml (never replacing a
-   conflicting entry).
-6. Validate SSH connectivity to ailabvm-int and ailabvm (either
-   succeeding is OK; ailabvm is the off-campus default).
+5. Write the ~/.ssh/config entry Host ailabvm for the lab server's
+   public name (it works inside the lab too, via the router's
+   hairpin NAT), replacing any prior version and pruning legacy
+   blocks, and seed known_hosts with the server host key from
+   labenv.yaml (never replacing a conflicting entry).
+6. Validate SSH connectivity to ailabvm.
 9. If `gh auth status` exits 0: generate
    ~/.ssh/<username>_id_ed25519_github if absent, upload the
    public key to GitHub if not already registered (idempotent),
@@ -61,17 +60,16 @@ LABENV = Path(__file__).parent / "labenv.yaml"
 SECRET_KEY = "DISCORD_WEBHOOK_URL"
 SSH_DIR = Path.home() / ".ssh"
 SSH_HOST_ALIAS = "ailabvm"
-SSH_HOST_ALIAS_INT = "ailabvm-int"
-# Aliases written by earlier labsetup.py runs for the destroyed ai-lab
-# server (renamed in Phase 49); pruned so re-runs leave no dead Host
-# blocks that point at the retired address or labuser account.
-LEGACY_SSH_HOST_ALIASES = ("ai-lab-int", "ai-lab")
+# Aliases written by earlier labsetup.py runs, pruned so re-runs leave
+# no dead Host blocks: ai-lab/ai-lab-int named the destroyed ai-lab
+# server (renamed in Phase 49); ailabvm-int named ailabvm's LAN IP,
+# dropped in Phase 52 because that DHCP address can change while the
+# public name (reachable in-lab via hairpin NAT) stays valid.
+LEGACY_SSH_HOST_ALIASES = ("ai-lab-int", "ai-lab", "ailabvm-int")
 
 SSH_KEYS = (
-  "DOCKER_SERVER_ID_INTERNAL",
-  "DOCKER_SERVER_SSH_PORT_INTERNAL",
-  "DOCKER_SERVER_ID_EXTERNAL",
-  "DOCKER_SERVER_SSH_PORT_EXTERNAL",
+  "DOCKER_SERVER_ID",
+  "DOCKER_SERVER_SSH_PORT",
   "DOCKER_SERVER_USERNAME",
 )
 
@@ -135,43 +133,38 @@ def _ensure_lab_server_known_hosts(env: dict[str, str]) -> None:
     return
   key_type, key_blob = host_key.split()[:2]
   known_hosts = SSH_DIR / "known_hosts"
-  targets = (
-    ("DOCKER_SERVER_ID_INTERNAL", "DOCKER_SERVER_SSH_PORT_INTERNAL"),
-    ("DOCKER_SERVER_ID_EXTERNAL", "DOCKER_SERVER_SSH_PORT_EXTERNAL"),
-  )
-  for host_var, port_var in targets:
-    host, port = env[host_var], str(env[port_var])
-    # known_hosts names a non-22 port as "[host]:port".
-    name = host if port == "22" else f"[{host}]:{port}"
-    found = []
-    if known_hosts.exists():
-      out = subprocess.run(
-        ["ssh-keygen", "-F", name, "-f", str(known_hosts)],
-        capture_output=True, text=True,
-      ).stdout
-      # Lines are "<host-or-hash> <type> <base64>"; '#' lines are
-      # ssh-keygen's own "Host ... found" annotations.
-      found = [
-        tuple(line.split()[1:3]) for line in out.splitlines()
-        if line and not line.startswith("#")
-      ]
-    if (key_type, key_blob) in found:
-      print(f"  OK   lab server host key for {name} known (skipping)")
-    elif any(t == key_type for t, _ in found):
-      print(
-        f"  WARN known_hosts has a DIFFERENT {key_type} key for "
-        f"{name} than labenv.yaml — not changed. If the instructor "
-        f"re-provisioned the server, run: ssh-keygen -R '{name}' and "
-        "re-run install.sh.",
-        file=sys.stderr,
-      )
-    else:
-      SSH_DIR.mkdir(mode=0o700, exist_ok=True)
-      with known_hosts.open("a") as f:
-        f.write(f"{name} {key_type} {key_blob}\n")
-      known_hosts.chmod(0o600)
-      print(f"  WROTE lab server host key for {name} to known_hosts")
-
+  host = env["DOCKER_SERVER_ID"]
+  port = str(env["DOCKER_SERVER_SSH_PORT"])
+  # known_hosts names a non-22 port as "[host]:port".
+  name = host if port == "22" else f"[{host}]:{port}"
+  found = []
+  if known_hosts.exists():
+    out = subprocess.run(
+      ["ssh-keygen", "-F", name, "-f", str(known_hosts)],
+      capture_output=True, text=True,
+    ).stdout
+    # Lines are "<host-or-hash> <type> <base64>"; '#' lines are
+    # ssh-keygen's own "Host ... found" annotations.
+    found = [
+      tuple(line.split()[1:3]) for line in out.splitlines()
+      if line and not line.startswith("#")
+    ]
+  if (key_type, key_blob) in found:
+    print(f"  OK   lab server host key for {name} known (skipping)")
+  elif any(t == key_type for t, _ in found):
+    print(
+      f"  WARN known_hosts has a DIFFERENT {key_type} key for "
+      f"{name} than labenv.yaml — not changed. If the instructor "
+      f"re-provisioned the server, run: ssh-keygen -R '{name}' and "
+      "re-run install.sh.",
+      file=sys.stderr,
+    )
+  else:
+    SSH_DIR.mkdir(mode=0o700, exist_ok=True)
+    with known_hosts.open("a") as f:
+      f.write(f"{name} {key_type} {key_blob}\n")
+    known_hosts.chmod(0o600)
+    print(f"  WROTE lab server host key for {name} to known_hosts")
 
 def _generate_ssh_key() -> bool:
   """Generate ed25519 key pair if absent; return True if generated."""
@@ -209,7 +202,7 @@ def _post_pubkey_to_discord(env: dict[str, str]) -> None:
     return
 
   pubkey = SSH_KEY.with_suffix(".pub").read_text().strip()
-  server = env.get("DOCKER_SERVER_ID_INTERNAL", "<server>")
+  server = env.get("DOCKER_SERVER_ID", "<server>")
   user = env.get("DOCKER_SERVER_USERNAME", "<user>")
 
   msg = (
@@ -235,19 +228,18 @@ def _post_pubkey_to_discord(env: dict[str, str]) -> None:
 
 
 def _write_ssh_config(env: dict[str, str]) -> None:
-  """Write or refresh the ailabvm-int/ailabvm Host blocks.
+  """Write or refresh the Host ailabvm block.
 
-  Replaces any existing Host ailabvm-int / Host ailabvm blocks in
-  ~/.ssh/config with fresh entries for the internal LAN and
-  external WAN addresses — re-running after a labenv.yaml change
-  keeps both correct instead of preserving stale blocks. Also
-  removes legacy Host ai-lab-int / Host ai-lab blocks.
+  Replaces any existing Host ailabvm block in ~/.ssh/config with a
+  fresh entry for the lab server's public name — re-running after a
+  labenv.yaml change keeps it correct instead of preserving a stale
+  block. Also removes legacy blocks (LEGACY_SSH_HOST_ALIASES).
   """
   existing = SSH_CONFIG.read_text() if SSH_CONFIG.exists() else ""
 
   # Drop any existing current or legacy Host blocks (header line
   # plus the indented option lines that follow).
-  aliases = (SSH_HOST_ALIAS_INT, SSH_HOST_ALIAS, *LEGACY_SSH_HOST_ALIASES)
+  aliases = (SSH_HOST_ALIAS, *LEGACY_SSH_HOST_ALIASES)
   headers = {f"Host {alias}" for alias in aliases}
   kept = []
   skipping = False
@@ -261,67 +253,47 @@ def _write_ssh_config(env: dict[str, str]) -> None:
     kept.append(line)
 
   SSH_DIR.mkdir(mode=0o700, exist_ok=True)
-  targets = (
-    (SSH_HOST_ALIAS_INT, "DOCKER_SERVER_ID_INTERNAL",
-     "DOCKER_SERVER_SSH_PORT_INTERNAL"),
-    (SSH_HOST_ALIAS, "DOCKER_SERVER_ID_EXTERNAL",
-     "DOCKER_SERVER_SSH_PORT_EXTERNAL"),
-  )
-  entries = "".join(
-    f"Host {alias}\n"
-    f"  HostName {env[host_key]}\n"
+  entries = (
+    f"Host {SSH_HOST_ALIAS}\n"
+    f"  HostName {env['DOCKER_SERVER_ID']}\n"
     f"  User     {env['DOCKER_SERVER_USERNAME']}\n"
-    f"  Port     {env[port_key]}\n"
+    f"  Port     {env['DOCKER_SERVER_SSH_PORT']}\n"
     f"  IdentityFile {SSH_KEY}\n"
-    for alias, host_key, port_key in targets
   )
   body = "\n".join(kept).rstrip("\n")
   text = (body + "\n\n" if body else "") + entries
   if text == existing:
     print(
-      f"  OK   ~/.ssh/config Host {SSH_HOST_ALIAS_INT}, "
-      f"Host {SSH_HOST_ALIAS} up to date (skipping)"
+      f"  OK   ~/.ssh/config Host {SSH_HOST_ALIAS} up to date (skipping)"
     )
     return
   SSH_CONFIG.write_text(text)
   SSH_CONFIG.chmod(0o600)
-  print(
-    f"  WROTE ~/.ssh/config: Host {SSH_HOST_ALIAS_INT}, "
-    f"Host {SSH_HOST_ALIAS}"
-  )
+  print(f"  WROTE ~/.ssh/config: Host {SSH_HOST_ALIAS}")
 
 
 def _validate_ssh() -> None:
-  reachable = []
-  last_stderr = ""
-  for alias in (SSH_HOST_ALIAS_INT, SSH_HOST_ALIAS):
-    result = subprocess.run(
-      [
-        "ssh", "-o", "BatchMode=yes",
-        "-o", "ConnectTimeout=10",
-        alias, "echo", "ok",
-      ],
-      capture_output=True,
-      text=True,
-    )
-    if result.returncode == 0 and result.stdout.strip() == "ok":
-      print(f"  OK   SSH {alias} → connection verified")
-      reachable.append(alias)
-    else:
-      last_stderr = result.stderr.strip()
-
-  if not reachable:
-    print(
-      f"\n  WARN SSH to {SSH_HOST_ALIAS_INT!r} and "
-      f"{SSH_HOST_ALIAS!r} not yet available.\n"
-      "  Your public key was posted to #meetup-notifications.\n"
-      "  Once the instructor confirms it is installed, re-run "
-      "this script to validate the connection. Use "
-      f"{SSH_HOST_ALIAS_INT!r} on the lab LAN, or "
-      f"{SSH_HOST_ALIAS!r} (default) from off-campus.\n"
-      f"  (stderr: {last_stderr!r})"
-    )
-
+  """Warn (not exit) if SSH to the lab server alias fails."""
+  result = subprocess.run(
+    [
+      "ssh", "-o", "BatchMode=yes",
+      "-o", "ConnectTimeout=10",
+      SSH_HOST_ALIAS, "echo", "ok",
+    ],
+    capture_output=True,
+    text=True,
+  )
+  if result.returncode == 0 and result.stdout.strip() == "ok":
+    print(f"  OK   SSH {SSH_HOST_ALIAS} → connection verified")
+    return
+  print(
+    f"\n  WARN SSH to {SSH_HOST_ALIAS!r} not yet available.\n"
+    "  Your public key was posted to #meetup-notifications.\n"
+    "  Once the instructor confirms it is installed, re-run "
+    "this script to validate the connection. The same alias works "
+    "inside the lab and off-campus.\n"
+    f"  (stderr: {result.stderr.strip()!r})"
+  )
 
 def _generate_github_ssh_key(github_username: str) -> bool:
   """Generate GitHub SSH key pair if absent; return True if
@@ -799,8 +771,7 @@ def main() -> None:
   else:
     print(
       "  SKIP SSH setup — labenv.yaml still has placeholder values.\n"
-      "  Fill in DOCKER_SERVER_ID_INTERNAL/_EXTERNAL,\n"
-      "  DOCKER_SERVER_SSH_PORT_INTERNAL/_EXTERNAL, and\n"
+      "  Fill in DOCKER_SERVER_ID, DOCKER_SERVER_SSH_PORT, and\n"
       "  DOCKER_SERVER_USERNAME with real values, then re-run."
     )
 

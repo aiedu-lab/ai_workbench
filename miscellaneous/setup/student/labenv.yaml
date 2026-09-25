@@ -12,21 +12,17 @@
 DISCORD_SERVER: "meetup-lab-2026-spring"
 
 
-# Lab server reachable from student laptops, either directly on
-# the lab LAN (internal) or via port-forwarded WAN (external).
-# Must resolve to an IP with a DOCKER_SERVER_USERNAME
-# account and Docker installed
-# as provisioned in instructor.md Section 3
-# labsetup.py writes two ~/.ssh/config entries: ailabvm-int (the
-# internal address/port below) and ailabvm (the external
-# address/port below, the default for students connecting via
-# the Internet).
-# Format: <hostname/ip> (e.g. labserver.example.com or 70.10.5.10)
-DOCKER_SERVER_ID_INTERNAL: "192.168.4.43"
-DOCKER_SERVER_SSH_PORT_INTERNAL: 22
-
-DOCKER_SERVER_ID_EXTERNAL: "73.202.223.27"
-DOCKER_SERVER_SSH_PORT_EXTERNAL: 22439
+# Lab server (ailabvm) reachable from student laptops at ONE public
+# address: a DuckDNS name kept pointed at the lab's public IP by a
+# timer on labserver (instructor.md Section 3). It also works inside
+# the lab through the router's hairpin NAT, so there is no separate
+# LAN address — ailabvm's LAN IP comes from DHCP and can change.
+# The host must have a DOCKER_SERVER_USERNAME account with Docker,
+# as provisioned in instructor.md Section 3. labsetup.py writes one
+# ~/.ssh/config entry, Host ailabvm, from these values.
+# Format: <hostname> (e.g. aiedulab.duckdns.org)
+DOCKER_SERVER_ID: "aiedulab.duckdns.org"
+DOCKER_SERVER_SSH_PORT: 22439
 
 # username for SSH on the lab server.
 # Foramt: <username> (e.g. ailabuser)
@@ -34,7 +30,7 @@ DOCKER_SERVER_USERNAME: "ailabuser"
 
 # AI-GENERATED: Phase 51 Step 51.1 (plan.md)
 # Lab server's PUBLIC SSH host key (not a secret). labsetup.py
-# writes it to ~/.ssh/known_hosts for both addresses above, so the
+# writes it to ~/.ssh/known_hosts for the address above, so the
 # BatchMode SSH checks trust the server on a fresh machine without
 # an interactive "trust this host?" prompt. Update it whenever the
 # server is (re)provisioned. On the server, read it with:

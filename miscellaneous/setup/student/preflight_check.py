@@ -9,7 +9,8 @@ Checks for:
 - Non-confidential vars present in labenv.yaml with real values
 - DISCORD_WEBHOOK_URL set in the shell environment (secret)
 - SSH key exists at ~/.ssh/<username>_id_ed25519_server
-- SSH connectivity to ailabvm-int or ailabvm (~/.ssh/config)
+- SSH connectivity to ailabvm (~/.ssh/config; same alias in-lab
+  and off-campus via the router's hairpin NAT)
 - gh CLI installed and authenticated (gh auth status)
 - GitHub SSH key exists at ~/.ssh/<username>_id_ed25519_github
 - GitHub SSH authentication (ssh git@github.com)
@@ -40,14 +41,11 @@ GITHUB_SSH_KEY = (
   Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_github"
 )
 SSH_HOST_ALIAS = "ailabvm"
-SSH_HOST_ALIAS_INT = "ailabvm-int"
 
 NON_SECRET_VARS = (
   "DISCORD_SERVER",
-  "DOCKER_SERVER_ID_INTERNAL",
-  "DOCKER_SERVER_SSH_PORT_INTERNAL",
-  "DOCKER_SERVER_ID_EXTERNAL",
-  "DOCKER_SERVER_SSH_PORT_EXTERNAL",
+  "DOCKER_SERVER_ID",
+  "DOCKER_SERVER_SSH_PORT",
   "DOCKER_SERVER_USERNAME",
   "DOCKER_SERVER_HOST_KEY",
 )
@@ -123,30 +121,23 @@ def check_ssh_key():
 
 
 def check_ssh():
-  errors = {}
-  for alias in (SSH_HOST_ALIAS_INT, SSH_HOST_ALIAS):
-    result = subprocess.run(
-      [
-        "ssh", "-o", "BatchMode=yes",
-        "-o", "ConnectTimeout=10",
-        alias, "echo", "ok",
-      ],
-      capture_output=True,
-      text=True,
-    )
-    if result.returncode == 0 and result.stdout.strip() == "ok":
-      return
-    errors[alias] = result.stderr.strip()
-
-  raise RuntimeError(
-    f"SSH to {SSH_HOST_ALIAS_INT} and {SSH_HOST_ALIAS} both "
-    "failed — run labsetup.py, then ask the instructor to "
-    f"install your public key on the server ({SSH_HOST_ALIAS} "
-    "is the default for off-campus access)\n"
-    f"  {SSH_HOST_ALIAS_INT}: {errors[SSH_HOST_ALIAS_INT]!r}\n"
-    f"  {SSH_HOST_ALIAS}: {errors[SSH_HOST_ALIAS]!r}"
+  """Check BatchMode SSH to the lab server alias succeeds."""
+  result = subprocess.run(
+    [
+      "ssh", "-o", "BatchMode=yes",
+      "-o", "ConnectTimeout=10",
+      SSH_HOST_ALIAS, "echo", "ok",
+    ],
+    capture_output=True,
+    text=True,
   )
-
+  if result.returncode == 0 and result.stdout.strip() == "ok":
+    return
+  raise RuntimeError(
+    f"SSH to {SSH_HOST_ALIAS} failed — run install.sh, then ask the "
+    "instructor to install your public key on the server\n"
+    f"  {SSH_HOST_ALIAS}: {result.stderr.strip()!r}"
+  )
 
 def check_gh_install():
   result = subprocess.run(
@@ -270,7 +261,7 @@ def main():
     check(f"{var} in labenv.yaml", lambda v=var: check_labenv_var(env, v))
   check("DISCORD_WEBHOOK_URL set", check_discord_webhook)
   check(f"SSH key {SSH_KEY.name}", check_ssh_key)
-  check("SSH to ailabvm-int or ailabvm", check_ssh)
+  check(f"SSH to {SSH_HOST_ALIAS}", check_ssh)
   check("gh installed", check_gh_install)
   check("gh authenticated", check_gh_auth)
   check(f"GitHub SSH key {GITHUB_SSH_KEY.name}", check_github_ssh_key)
