@@ -24,7 +24,7 @@ plugin experience, and the same SSH access to the shared lab server.
 |-------|-------|-------|
 | Frontend | VSCode native | VSCode native |
 | Dev environment | WSL2 Ubuntu | Dev Container Ubuntu |
-| Server access | SSH → `ai-lab` | SSH → `ai-lab` (identical) |
+| Server access | SSH → `ailabvm` | SSH → `ailabvm` (identical) |
 
 > Both paths produce an identical Ubuntu shell. Every command in
 > this session works on both platforms unless noted otherwise.
@@ -42,7 +42,7 @@ guide for that tool — no content is duplicated here.
 
 [VM Setup Guide](../miscellaneous/tools/VM/setup.md)
 
-- **Win11:** install WSL2 + Ubuntu 22.04; verify with `wsl --status`
+- **Win11:** install WSL2 + Ubuntu 24.04; verify with `wsl --status`
 - **macOS:** install Docker Desktop + Dev Containers extension;
   open repo in VSCode → "Reopen in Container"
 
@@ -193,20 +193,24 @@ fully operational.
 
 ## Run Lab Setup Script
 
+Confirm every row of the [Setup
+Prerequisites](../miscellaneous/setup/prerequisites.md) table is done
+— `install.sh` checks them and stops until they are.
+
 Retrieve the Discord webhook URL from `#meetup-notifications`,
-then run both scripts from inside Ubuntu:
+then run both scripts from the repo root inside Ubuntu:
 
 ```bash
 export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
-python3 miscellaneous/setup/student/labsetup.py
-python3 miscellaneous/setup/student/preflight_check.py
+bash miscellaneous/setup/install.sh
+bash miscellaneous/setup/validate.sh
 ```
 
-`labsetup.py` generates your SSH key pair, posts your public key
-to Discord, writes the `ai-lab` SSH config entry, and installs
-CLI tools required by optional sessions (poppler-utils,
-html2text).
-Every item in `preflight_check.py` output must show **PASS**.
+`install.sh` prepares a Python `.venv` and runs `labsetup.py`, which
+generates your SSH key pair, posts your public key to Discord,
+writes the `ailabvm` SSH config entry, and installs CLI tools
+required by optional sessions (poppler-utils, html2text).
+Every item in `validate.sh` output must show **PASS**.
 
 ---
 ## Additional Setups

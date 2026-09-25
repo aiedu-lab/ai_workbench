@@ -8,7 +8,7 @@ direction, similarity, and nearest-neighbor exercises.
 
 ## Artifacts
 * `embed.py` / `embed.ipynb` — embedding exploration script/notebook
-* `glove_50.bin` — pretrained word vectors used by the exercises
+* `glove_50.npz` — GloVe word-vector cache, downloaded on first run
 * `requirements.txt` / `requirements.in` — Python dependencies
 
 ## Operating Protocol

@@ -6354,3 +6354,1178 @@ VERIFY: `grep -A2 "### Step 48\."
 miscellaneous/software_defined_workbench/plan.md | grep "\[ \]
 Status"` → 0 matches; `git tag | grep "v48\."` →
 `v48.3-update-local-step-completed`.
+
+---
+
+## Phase 49: Provision ailabvm
+
+<!-- AI-GENERATED [anthropic:claude-opus-5-5]: Phase 49
+     (prompt_history.md "Provision ailabvm") -->
+
+### Step 49.1: Create ailabvm domain on server-int
+
+[x] Status
+
+CONTEXT: server-int runs libvirt with `labvm`/`labbuddyvm` as qcow2
+overlays on
+`/var/kvm/images/master/ubuntu-26.04-20260919-master.qcow2` plus
+cloud-init seed ISOs, bridged on `br0`; no `ailabvm` domain exists.
+ACTION: On server-int via `ssh server-int sudo ...`: `qemu-img create
+-f qcow2 -F qcow2 -b <master> /var/kvm/images/ailabvm.qcow2 40G`;
+write cloud-init `user-data` (hostname `ailabvm`; users `asarcar`
+(sudo NOPASSWD) and `ailabuser` (group docker), both authorizing
+`~/.ssh/asarcar_id_ed25519_server.pub`; packages qemu-guest-agent,
+openssh-server) and `meta-data`; build
+`/var/kvm/images/ailabvm-seed.iso` with `genisoimage -V cidata -J
+-r`; `virt-install --name ailabvm --vcpus 4 --memory 16384 --import
+--disk /var/kvm/images/ailabvm.qcow2 --disk
+/var/kvm/images/ailabvm-seed.iso,device=cdrom --network
+bridge=br0,model=virtio --os-variant ubuntu24.04 --noautoconsole`;
+`virsh autostart ailabvm`; read IP via `virsh domifaddr ailabvm
+--source agent`. Report MAC + IP and pause so the instructor can
+attempt a router DHCP reservation of 192.168.4.23.
+CONSTRAINTS: Do not touch `labvm`, `labbuddyvm`, `arijit-dev`,
+`sivaram-dev`, `win2022-gold`, or the master image; no router changes
+(manual, instructor); no repo edits.
+OUTPUT: libvirt domain `ailabvm` running with autostart, 4 vCPU,
+16 GiB RAM, 40G qcow2 overlay; MAC and IP recorded in chat.
+VERIFY: `ssh server-int 'sudo virsh dominfo ailabvm'` → State
+running, CPU(s) 4, Max memory 16777216 KiB; `ssh -i
+~/.ssh/asarcar_id_ed25519_server asarcar@<IP> hostname` → `ailabvm`.
+DEVIATION: `--os-variant ubuntu20.04` passed because server-int's
+osinfo-db (0.20200325, Ubuntu 20.04 host) ends at ubuntu-20.04;
+it is only libvirt metadata (the guest runs 26.04.1, kernel
+7.0.0-31). Per instructor, the misleading label was then rewritten
+on `labvm`, `labbuddyvm`, and `ailabvm` to
+`http://ubuntu.com/ubuntu/26.04` via `virsh metadata ... --key
+libosinfo --live --config` (no restart; explicitly approved
+exception to the labvm/labbuddyvm constraint). `ailabuser` docker
+group deferred to 49.3. Result: MAC 52:54:00:1e:5d:8f, IP
+192.168.4.43; a networkd `RequestAddress=192.168.4.23` DHCP
+attempt was answered with .43 by the router, so the drop-in was
+removed and .43 is final. Seed files kept in server-int
+`~/ailabvm-seed/`.
+
+---
+
+### Step 49.2: Rename local SSH aliases to ailabvm-int / ailabvm
+
+[x] Status
+
+CONTEXT: `~/.ssh/config` has `Host ai-lab-int` (192.168.4.23,
+labuser) and `Host ai-lab` (73.202.223.27:22439, labuser), both
+pointing at the destroyed VM; ailabvm's IP is known from 49.1.
+ACTION: Back up `~/.ssh/config` to `~/.ssh/config.bak-49.2`; rename
+`Host ai-lab-int` → `Host ailabvm-int` with HostName = ailabvm's
+final IP (confirmed by instructor after 49.1) and User `ailabuser`;
+rename `Host ai-lab` → `Host ailabvm` with User `ailabuser`, keeping
+73.202.223.27:22439 (works once the router forward is re-pointed).
+CONSTRAINTS: Only these two Host blocks change; `labvm*`,
+`labbuddyvm-int`, `server-int`, `asarcar-int` untouched; no repo
+edits.
+OUTPUT: `~/.ssh/config` with `ailabvm-int` and `ailabvm` blocks and no
+`ai-lab` blocks.
+VERIFY: `ssh ailabvm-int whoami` → `ailabuser`; `grep -c 'Host
+ai-lab' ~/.ssh/config` → `0`.
+RESULT: `ailabvm-int` → 192.168.4.43 (ailabuser), verified;
+`ailabvm` (73.202.223.27:22439) times out until the router forward
+is re-pointed to .43:22 (instructor, manual).
+
+---
+
+### Step 49.3: Provision ailabuser lab facilities on ailabvm
+
+[x] Status
+
+CONTEXT: ailabvm has base Ubuntu 26.04 with accounts asarcar and
+ailabuser; `instructor.md` Section 3 defines the shared-account
+facilities (docker, compose, git, python3, pip, repo clone, student
+authorized_keys, ports 22/8080/8088).
+ACTION: As asarcar on ailabvm: `sudo apt-get install -y docker.io
+docker-compose-v2 git python3 python3-pip gh`; `sudo usermod -aG
+docker ailabuser`; `sudo -u ailabuser git clone
+https://github.com/aiedu-lab/ai_workbench
+/home/ailabuser/ai_workbench`; ensure `/home/ailabuser/.ssh` is 700
+and `authorized_keys` 600, owned by ailabuser; if `ufw` is active,
+allow 22, 8080, 8088.
+CONSTRAINTS: Do not fabricate student keys — old keys were lost with
+ai-lab and are re-collected via instructor.md Phase A/B (manual); no
+secrets or `.env` written; no repo edits.
+OUTPUT: ailabuser in the docker group with a repo clone and working
+Docker/compose on ailabvm.
+VERIFY: `ssh ailabvm-int 'docker ps && docker compose version &&
+python3 -V && test -d ai_workbench/.git && echo ok'` → empty table
+header, compose version, Python ≥3.12, `ok`.
+RESULT: Docker Compose 2.40.3, Python 3.14.4, gh 2.46.0; clone at
+`main` a3175d0; ufw inactive, so no rules added.
+
+---
+
+### Step 49.4: Migrate asarcar home from arijit-dev to ailabvm
+
+[x] Status
+
+CONTEXT: arijit-dev (`asarcar-int`, Ubuntu 20.04) `/home/asarcar`
+(~112K) holds dotfiles, `.ssh`, `.docker`, `.config`, `.local`,
+`.bash_history`, `.viminfo`; k3s and the registry are out of scope.
+ACTION: `ssh asarcar-int 'tar -C /home/asarcar --exclude=.cache
+--exclude=.ssh/authorized_keys -czf - .' | ssh -l asarcar ailabvm-int
+'mkdir -p ~/migrated-arijit-dev && tar -C ~/migrated-arijit-dev -xzf
+-'`; copy the files into `~` without clobbering ailabvm's `.bashrc`/
+`.profile` (keep arijit-dev's as `*.arijit-dev`); append unique lines
+from arijit-dev's `authorized_keys` to ailabvm's.
+CONSTRAINTS: Do not modify arijit-dev; do not migrate k3s, docker
+images, or registry data; no repo edits.
+OUTPUT: `/home/asarcar` on ailabvm contains arijit-dev's files;
+`~/migrated-arijit-dev/` holds the pristine copy.
+VERIFY: `diff <(ssh asarcar-int 'cd ~ && find . -path ./.cache -prune
+-o -path ./.ssh/authorized_keys -prune -o -type f -print | sort')
+<(ssh -l asarcar ailabvm-int 'cd ~/migrated-arijit-dev && find .
+-type f | sort')` → no output.
+RESULT: 12 files migrated into asarcar (the separate dev account,
+uid 1000, sudo) only; `.bashrc`/`.profile`/`.bash_logout` were
+byte-identical, so no `*.arijit-dev` copies were needed; 1 new
+authorized_keys line appended; ailabuser left untouched per
+instructor.
+
+---
+
+### Step 49.5: Rename ai-lab/labuser references in repo docs & scripts
+
+[x] Status
+
+CONTEXT: Seven live files still reference `ai-lab`, `ai-lab-int`,
+`labuser`, and 192.168.4.23.
+ACTION: In `miscellaneous/setup/student/labenv.yaml` set
+`DOCKER_SERVER_ID_INTERNAL` to ailabvm's final IP and
+`DOCKER_SERVER_USERNAME: "ailabuser"`, comments `ai-lab(-int)` →
+`ailabvm(-int)`; in `miscellaneous/setup/student/labsetup.py` and
+`preflight_check.py` set `SSH_HOST_ALIAS = "ailabvm"` and
+`SSH_HOST_ALIAS_INT = "ailabvm-int"` plus docstrings/comments; in
+`miscellaneous/setup/instructor/instructor.md`,
+`sessions/dev_workbench.md`, `sessions/server_multiagent.md`, and
+`miscellaneous/tools/claude/cloud.md` replace `ai-lab-int` →
+`ailabvm-int`, `ai-lab` → `ailabvm`, `labuser` → `ailabuser`
+(`ai-lab-key` → `ailabvm-key`).
+CONSTRAINTS: Do not edit `plan.md`/`prompt_history.md` history,
+`miscellaneous/docs/archive/`, or unrelated words (e.g. "available");
+external IP/port unchanged; ≤79-char lines, 2-space indent.
+OUTPUT: Seven files updated; no live `ai-lab`/`labuser` references.
+VERIFY: `grep -rnP '\bai-lab\b|ai-lab-int|(?<!ai)labuser'
+--exclude-dir=.git --exclude-dir=archive --exclude=plan.md
+--exclude=prompt_history.md .` → no output; `python3 -m py_compile
+miscellaneous/setup/student/{labsetup,preflight_check}.py` → exit 0;
+line-length check from `.agent/rules/always-line-length.md` → PASS.
+RESULT: 37 lines changed across the seven files; internal IP now
+192.168.4.43. The rule's whole-file line-length command reports 11
+long lines in instructor.md, dev_workbench.md, server_multiagent.md;
+all predate this step (per-file counts identical at HEAD) and none
+are in the diff. Follow-ups, not done here: `labsetup.py` no longer
+prunes a student's stale `Host ai-lab`/`ai-lab-int` blocks
+(harmless); instructor.md still cites pre-Phase-36 key names
+`DOCKER_SERVER_ID`/`DOCKER_SERVER_SSH_PORT`.
+
+---
+
+### Step 49.6: End-to-end validation of ailabvm for students
+
+[x] Status
+
+CONTEXT: ailabvm is provisioned (49.1–49.4) and the repo points to
+`ailabvm-int`/`ailabvm`/`ailabuser` (49.5).
+ACTION: From this laptop run `python3
+miscellaneous/setup/student/preflight_check.py`; run `ssh ailabvm-int
+docker ps`; replay `sessions/server_multiagent.md` Step 0 readiness
+as ailabuser: `ssh ailabvm-int 'cd ai_workbench && git pull && docker
+run --rm hello-world && docker pull temporalio/auto-setup && docker
+pull mongo:7'`; try `ssh ailabvm docker ps` (expected to fail until
+the router forward 22439 → ailabvm:22 is re-pointed).
+CONSTRAINTS: Do not run `labsetup.py` (posts to Discord and rewrites
+ssh config); no repo edits unless a check fails (then stop and
+report).
+OUTPUT: Validation results summarized in chat, including
+external-path status.
+VERIFY: preflight shows `PASS` for `SSH to ailabvm-int or ailabvm`
+(Discord-webhook item may FAIL if unset — reported, not blocking);
+`hello-world` prints "Hello from Docker!"; both image pulls succeed.
+RESULT: preflight `SSH to ailabvm-int or ailabvm` PASS (21 of 24
+PASS); `ssh ailabvm-int docker ps` → empty table; as ailabuser,
+`git pull` at a3175d0, hello-world OK, `temporalio/auto-setup`
+(788MB) and `mongo:7` (1.18GB) pulled. The 3 FAILs are laptop-only,
+not ailabvm: `requests` missing, `projects/embedding/.venv`
+absent, and piper.py looked up at `miscellaneous/setup/llm_wiki/`
+(likely a pre-existing path bug in `_PIPER_PY`). External `ssh
+ailabvm` times out pending the router forward (instructor).
+
+---
+
+### Step 49.7: Deprovision arijit-dev and reclaim its disk
+
+[x] Status
+
+CONTEXT: arijit-dev's home is migrated (49.4) and ailabvm is
+validated (49.6); arijit-dev still runs on raw
+`/var/kvm/images/ubuntu2004.img`.
+ACTION: Only after explicit instructor confirmation in that turn:
+`ssh server-int 'sudo virsh shutdown arijit-dev'` (wait for shut off;
+`virsh destroy` only if it hangs), then `sudo virsh undefine
+arijit-dev --remove-all-storage --nvram`; remove the `Host
+asarcar-int` block from `~/.ssh/config`.
+CONSTRAINTS: Never touch other domains, `master/`, or
+`~/arijit-dev.xml` on server-int (kept as a record); no repo edits.
+OUTPUT: No `arijit-dev` domain; `ubuntu2004.img` removed; no
+`asarcar-int` alias.
+VERIFY: `ssh server-int 'sudo virsh list --all | grep -c arijit-dev;
+ls /var/kvm/images/ubuntu2004.img'` → `0` and "No such file";
+`grep -c 'Host asarcar-int' ~/.ssh/config` → `0`.
+DEVIATION: the instructor replaced `Host asarcar-int` with
+`Host mylab-int` (192.168.4.43, asarcar) by hand, so
+`~/.ssh/config` was not edited here. RESULT: disk not shared by any
+other domain (checked); clean `virsh shutdown` in ~10s, no
+`destroy` needed; undefine removed `ubuntu2004.img` (21.5GB; root
+fs 145G → 129G used); `~/arijit-dev.xml` kept on server-int.
+
+---
+
+### Step 49.8: Mark Phase 49 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 49.1–49.7 executed and verified; Phase 49 `[ ]
+Status` lines in `miscellaneous/software_defined_workbench/plan.md`
+still read `[ ]`.
+ACTION: Flip every `[ ] Status` in the Phase 49 block to `[x]
+Status`; commit `chore: Phase 49 - mark provision ailabvm steps
+complete`; `git tag -a v49.8-provision-ailabvm-step-completed -m
+"Completed Phase 49 Step 8: provision ailabvm"`; `git push origin
+1sep26 --tags`.
+CONSTRAINTS: Do not modify `miscellaneous/docs/archive/`; do not push
+to `main`; no PR or merge.
+OUTPUT: All Phase 49 statuses `[x]`; tag
+`v49.8-provision-ailabvm-step-completed` on remote.
+VERIFY: `grep -A2 '### Step 49\.'
+miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
+Status'` → `0`; `git ls-remote --tags origin | grep v49.8` → 1 line.
+
+---
+
+## Phase 50: Idempotent Environment Setup
+
+<!-- AI-GENERATED [anthropic:claude-opus-5-5]: Phase 50
+     (prompt_history.md "Provision ailabvm" → "Idempotent
+     environment setup") -->
+
+### Step 50.1: Add setup requirements.in and locked requirements.txt
+
+[x] Status
+
+CONTEXT: No repo-level Python requirements exist; `labsetup.py` and
+`preflight_check.py` need `requests` and `pyyaml`, which a fresh
+machine lacks.
+ACTION: Create `miscellaneous/setup/requirements.in` listing
+`requests`, `pyyaml`, and `pip-tools` (so `pip-sync` does not remove
+itself), with a WHY header comment; generate
+`miscellaneous/setup/requirements.txt` with `pip-compile
+--strip-extras` from a throwaway scratchpad venv.
+CONSTRAINTS: Do not touch `projects/*/requirements.*`; no heavy
+per-project deps (gensim, jupyterlab); 2-space indent, ≤79-char lines.
+OUTPUT: `miscellaneous/setup/requirements.in` and pinned
+`miscellaneous/setup/requirements.txt`.
+VERIFY: `grep -cE '^(requests|pyyaml|pip-tools)=='
+miscellaneous/setup/requirements.txt` → `3`.
+RESULT: locked with pip-compile 7.6.1 on Python 3.14.7: requests
+2.34.2, pyyaml 6.0.3, pip-tools 7.6.1 plus 9 transitive pins. The
+pip-compile command header line in requirements.txt exceeds 79
+chars; it is regenerated on every compile and `.txt` is outside
+the line-length rule, so it is left as generated.
+
+---
+
+### Step 50.2: Make preflight_check.py exit non-zero on any FAIL
+
+[x] Status
+
+CONTEXT: `preflight_check.py` `check()` prints PASS/FAIL but `main()`
+always returns normally (exit 0).
+ACTION: In `miscellaneous/setup/student/preflight_check.py`, have
+`check()` record failures in a module-level counter; at the end of
+`main()`, print `N check(s) FAILED` and `sys.exit(1)` when N > 0,
+otherwise print all-PASS and exit 0.
+CONSTRAINTS: Do not change any check's logic, labels, or order; no new
+dependencies.
+OUTPUT: `preflight_check.py` exit status reflects results.
+VERIFY: On this laptop before 50.4 (`requests` missing): `python3
+miscellaneous/setup/student/preflight_check.py; echo $?` → `1` and a
+`1 check(s) FAILED` line.
+RESULT: laptop exits 1 with `1 check(s) FAILED: requests package`;
+the same script run from a scratch venv with requests installed
+prints `All checks PASS` and exits 0.
+
+---
+
+### Step 50.3: Validate the webhook before any setup in labsetup.py
+
+[x] Status
+
+CONTEXT: `labsetup.py` `main()` calls `_validate_secret()` only after
+the SSH block, so a first run without `DISCORD_WEBHOOK_URL` creates the
+SSH key, skips the Discord post, and every later run wrongly prints
+"key already shared with instructor".
+ACTION: In `miscellaneous/setup/student/labsetup.py`, move the
+`_validate_secret()` call to the first line of `main()` (before
+`_configure_git_hooks()`) with a WHY comment, delete the later call,
+and update the module docstring's step list to say the webhook is
+checked first.
+CONSTRAINTS: Do not change `_validate_secret()`,
+`_post_pubkey_to_discord()`, or `_generate_ssh_key()`; no new files in
+`~/.ssh`; no other reordering. An HTTP-failed post is still not
+retried (accepted residual, per instructor).
+OUTPUT: `labsetup.py` exits 1 before any side effect when the webhook
+is unset.
+VERIFY: With `DISCORD_WEBHOOK_URL` unset, `HOME` set to a scratch
+directory, and a stub `requests` module, `labsetup.main()` exits `1`
+with the `DISCORD_WEBHOOK_URL is not set` message, creates no
+`$HOME/.ssh`, and leaves `git config core.hooksPath` unchanged;
+`grep -c '_validate_secret()' miscellaneous/setup/student/labsetup.py`
+→ `2` (definition plus one call).
+RESULT: `SystemExit code=1` with the webhook error, no `.ssh` in the
+scratch HOME, `core.hooksPath` unset before and after (it was set
+first under the old order); docstring now states the webhook is
+checked first and drops the old step 8. Pass-through check (added
+per instructor): with a dummy webhook and `_configure_git_hooks`
+stubbed to raise, `main()` reached the stub and wrote nothing.
+
+---
+
+### Step 50.4: Create idempotent miscellaneous/setup/install.sh
+
+[x] Status
+
+CONTEXT: There is no single entry point; students run `labsetup.py`
+directly with a system Python that may lack its dependencies.
+ACTION: Create executable `miscellaneous/setup/install.sh` (bash,
+`set -euo pipefail`, WHY comments): resolve `REPO_ROOT` from the
+script's location; require `python3` ≥ 3.12; if `python3 -m venv` is
+unavailable, `sudo apt-get install -y python3-venv`; create
+`$REPO_ROOT/.venv` only if absent; `.venv/bin/pip install -q
+pip-tools` if missing, then `.venv/bin/pip-sync
+miscellaneous/setup/requirements.txt`; then run `.venv/bin/python
+miscellaneous/setup/student/labsetup.py "$@"` and print a "next: run
+validate.sh" hint. Smoke run (added per instructor): back up
+`~/.ssh/config` to the scratchpad, then run `bash
+miscellaneous/setup/install.sh` once on this laptop with the real
+webhook (existing key, so nothing is posted).
+CONSTRAINTS: Do not copy `labsetup.py` logic into the script; never
+read, write, or echo `DISCORD_WEBHOOK_URL`; no `rm -rf`; do not modify
+`labsetup.py`.
+OUTPUT: `miscellaneous/setup/install.sh` (mode 755).
+VERIFY: `bash -n miscellaneous/setup/install.sh && test -x
+miscellaneous/setup/install.sh && echo ok` → `ok`; `shellcheck` clean
+if installed; the smoke run exits 0, builds `.venv` with the pinned
+packages, prints `SKIP Discord post`, and posts nothing.
+RESULT: `bash -n` + mode 755 ok; shellcheck not installed (skipped).
+Smoke run exit 0: `.venv` created and `pip freeze` equals the lock
+exactly; sudo non-interactive so apt steps WARN-skipped (packages
+already present); `SKIP Discord post`, nothing posted; SSH to
+ailabvm-int verified; `core.hooksPath` set to `.githooks`.
+`~/.ssh/config` content unchanged but reordered (ailabvm blocks
+re-appended at end, one extra blank line); backup kept in the
+scratchpad. Runs labsetup.py (not exec) so the NEXT hint prints.
+
+---
+
+### Step 50.5: Create miscellaneous/setup/validate.sh
+
+[x] Status
+
+CONTEXT: `preflight_check.py` exits non-zero on failures (50.2) and
+`.venv` is built by `install.sh` (50.4).
+ACTION: Create executable `miscellaneous/setup/validate.sh` (bash,
+`set -euo pipefail`): if `$REPO_ROOT/.venv/bin/python` is missing,
+print "run miscellaneous/setup/install.sh first" and exit 2;
+otherwise `exec .venv/bin/python
+miscellaneous/setup/student/preflight_check.py "$@"`, passing its exit
+code through.
+CONSTRAINTS: Read-only (installs and changes nothing); do not copy
+check logic.
+OUTPUT: `miscellaneous/setup/validate.sh` (mode 755).
+VERIFY: `bash -n miscellaneous/setup/validate.sh && test -x
+miscellaneous/setup/validate.sh && echo ok` → `ok`; with `.venv` moved
+aside, `bash miscellaneous/setup/validate.sh; echo $?` → `2`.
+RESULT: `bash -n` + mode 755 ok; `.venv` moved aside → exit 2 with
+the install.sh hint (restored after); normal run on the laptop →
+exit 0, 25/25 PASS (the `requests` FAIL is gone); also exit 0 when
+run from another directory.
+
+---
+
+### Step 50.6: Document first-time setup and fix stale invocations
+
+[x] Status
+
+CONTEXT: `README.md` has no first-time setup section, and four docs
+call the Python scripts directly, some via the stale `setup/` path.
+ACTION: Add `## 🚀 First-Time Setup` to `README.md` between Agenda and
+Student Workflow (clone or pull, `export DISCORD_WEBHOOK_URL=…`, `bash
+miscellaneous/setup/install.sh`, `bash
+miscellaneous/setup/validate.sh` → all PASS, safe to rerun after any
+`git pull` that changes setup); add `install.sh`, `validate.sh`,
+`requirements.*` under `setup/` in README's Repository Structure
+tree; replace direct `python3 …labsetup.py` / `preflight_check.py`
+commands with the wrappers in `sessions/dev_workbench.md`,
+`miscellaneous/setup/student/README.md`,
+`miscellaneous/setup/instructor/instructor.md`, and
+`miscellaneous/tools/VM/setup.md`.
+CONSTRAINTS: Only setup-invocation text and the new section change;
+keep prose describing what `labsetup.py` does; no archive or history
+edits; ≤79-char changed lines.
+OUTPUT: README section plus four docs updated.
+VERIFY: `grep -rnE 'python3? [^ ]*(labsetup|preflight_check)\.py'
+--include=*.md . | grep -v -e software_defined_workbench -e archive`
+→ no output; `grep -c 'First-Time Setup' README.md` → ≥1.
+RESULT: README gains `## 🚀 First-Time Setup` plus tree entries;
+7 invocations replaced (instructor.md 4, student/README.md 2 —
+both on the stale `setup/` path — dev_workbench.md 1 block,
+VM/setup.md 1). VM/setup.md step 4 now exports the webhook first,
+since 50.3 makes a webhook-less run stop before the macOS
+.devcontainer copy. Follow-up (untested, no Mac): a `.venv` built
+on the macOS host is reused inside the Linux dev container via the
+bind-mounted repo and may need rebuilding there.
+
+---
+
+### Step 50.7: Fix fresh-install gaps found by the ailabvm test
+
+[x] Status
+
+CONTEXT: The first 50.8 attempt (fresh clone on ailabvm, Python 3.14)
+failed: gensim has no cp314 wheel and needs `Python.h`; `sudo -v`
+fails for NOPASSWD users whose rules also include a password entry,
+so apt/Ollama steps were skipped; `_setup_embedding_venv()` skips any
+venv whose `bin/python3` exists, so a half-built one is never
+repaired, and its `pip-compile` rewrites the committed
+`projects/embedding/requirements.txt`; student docs say Ubuntu 22.04
+(Python 3.10), which fails the 3.12+ check.
+ACTION: (1) `miscellaneous/setup/install.sh`: when `Python.h` is
+absent from `sysconfig` include dir, `sudo apt-get install -y
+python3-dev build-essential`. (2)
+`miscellaneous/setup/student/labsetup.py` `_sudo_precheck()`: try
+`sudo -n true` first, fall back to `sudo -v`. (3) `labsetup.py`
+`_setup_embedding_venv()`: treat the venv as ready only when `import
+gensim, sklearn, matplotlib` succeeds in it (the same probe as
+preflight's `check_embedding_venv`); otherwise create the venv if
+absent and `pip-sync` the committed `requirements.txt` (drop the
+`pip-compile` call), then register the kernel. (4) Replace Ubuntu
+22.04 with 24.04 in `sessions/dev_workbench.md` and
+`miscellaneous/tools/VM/setup.md`.
+CONSTRAINTS: Leave instructor.md's lab-server OS lines alone (the
+server does not run install.sh); do not touch
+`projects/embedding/requirements.*`; no other labsetup.py behavior
+changes; 2-space indent, ≤79-char lines.
+OUTPUT: Updated `install.sh`, `labsetup.py`, `dev_workbench.md`,
+`VM/setup.md`.
+VERIFY: `bash -n miscellaneous/setup/install.sh` and `python3 -m
+py_compile miscellaneous/setup/student/labsetup.py` pass; `grep -c
+pip-compile miscellaneous/setup/student/labsetup.py` → `0`; `grep
+-rn '22\.04' sessions/dev_workbench.md miscellaneous/tools/VM/setup.md`
+→ no output; laptop `bash miscellaneous/setup/install.sh` still exits
+0 with no `VENV` line; behavior on a fresh machine is proven by 50.8.
+RESULT: static checks pass; `pip-compile` refs 0 (module docstring
+step 3 rewritten to match); no `22.04` left in the two docs; laptop
+install exit 0, no VENV/APT lines, embedding venv skipped by the
+new import probe, `sudo -n true` fell back to `sudo -v` silently.
+Of the 107 committed embedding pins only gensim 4.4.0 lacks a cp314
+wheel, which the new python3-dev/build-essential step covers.
+
+---
+
+### Step 50.8: Replace gensim with a NumPy GloVe loader in projects/embedding
+
+[x] Status
+
+CONTEXT: gensim 4.4.0 (latest) cannot build on Python 3.14 (its C code
+uses removed CPython internals and a NumPy-1 field), which breaks the
+embedding venv and aborts `labsetup.py` on Ubuntu 26.04 hosts;
+`embed.py` uses gensim only to load GloVe and for four vector ops.
+ACTION: In `projects/embedding/embed.py`, replace the gensim imports
+and loader with a `WordVectors` class (`__len__`, `__getitem__`,
+cosine `similarity`, gensim-semantics `most_similar(positive,
+negative=(), topn=10)`) and `_load_glove()` that loads
+`glove_50.npz` or downloads the gensim-data
+`glove-wiki-gigaword-50.gz` via `urllib.request`, parses it, and
+saves the `.npz`; panel code unchanged. Drop `gensim` from
+`projects/embedding/requirements.in` and regenerate
+`requirements.txt` with `pip-compile` (no `--upgrade`). Add
+`projects/embedding/*.npz` to `.gitignore`. Change the readiness
+probes in `labsetup.py` and `preflight_check.py` to `import numpy,
+sklearn, matplotlib`. Update `miscellaneous/tools/dev_workbench/venv.md`
+and `projects/embedding/README.md` for the new cache and check.
+CONSTRAINTS: No change to panel words, layout, or
+`sessions/embedding.md` exercises; stdlib + numpy only; do not delete
+old `glove_50.bin` caches; 2-space indent, ≤79-char lines.
+OUTPUT: gensim-free `embed.py`; updated `requirements.*`, `.gitignore`,
+probes, and docs.
+VERIFY: With the laptop's existing gensim venv, gensim and
+`WordVectors` return identical words in identical order and scores
+within 1e-5 for the 4 similarity pairs, 3 top-5 neighbor queries, and
+the king − man + woman analogy; `MPLBACKEND=Agg` run of `embed.py`
+from a Python 3.14 scratch venv built from the new lock exits 0 and
+writes `embedding_map.png`; `grep -rn gensim` over live files
+(excluding plan/history) → no output; `grep -cE
+'^(gensim|smart-open|wrapt)==' projects/embedding/requirements.txt`
+→ `0`.
+RESULT: equivalence vs gensim 0 mismatches (4 pairs, 3 neighbor
+queries, analogy; max score diff < 1e-5); first download+parse
+17 s (streamed), cached reload 2 s. Lock regenerated on Python 3.12
+without --upgrade: only gensim, smart-open, wrapt removed. Python
+3.14.7 scratch venv from the new lock installs cleanly and
+`embed.py` (tornado hidden to force the documented Agg fallback)
+exits 0 and writes all six panels. DEVIATION: `grep gensim` still
+matches embed.py's WHY comments and the gensim-data URL (kept on
+purpose); no gensim import remains. install.sh's build-deps
+comment made generic; the build-deps step itself is kept.
+
+---
+
+### Step 50.9: Validate a fresh-clone install and rerun idempotency
+
+[x] Status
+
+CONTEXT: Steps 50.1–50.8 are committed; earlier attempts on ailabvm
+(asarcar, `mylab-int`) exposed the gaps fixed in 50.7 and left
+`~/aiwb-fresh` half-built (a second attempt hit the gensim/3.14
+build failure fixed in 50.8).
+ACTION: `git push origin 1sep26`. Laptop: `bash
+miscellaneous/setup/install.sh` twice (webhook already in the
+environment), then `bash miscellaneous/setup/validate.sh`. ailabvm as
+asarcar: `git clone -b 1sep26
+https://github.com/aiedu-lab/ai_workbench ~/aiwb-fresh`; Run A:
+`install.sh` with the webhook unset (must stop early, no key — proves
+50.3); Runs B and C: `install.sh` with the webhook passed only as an
+env var for that command, sent over SSH stdin; then `validate.sh` and
+`git -C ~/aiwb-fresh status --porcelain`. Before cloning, move the
+failed `~/aiwb-fresh` to `~/aiwb-fresh.failed-N` (no `rm -rf`).
+CONSTRAINTS: Never write the webhook to disk or put it in argv on
+ailabvm; do not touch ailabuser; no repo edits unless a check fails
+(then stop and report). Known costs: Run B posts one key for
+asarcar@ailabvm to #meetup-notifications and installs Ollama and apt
+packages into the dev VM.
+OUTPUT: Results summarized in chat and in this step's RESULT line.
+VERIFY: Laptop `validate.sh` exits 0 and the second install prints
+only OK/SKIP lines; ailabvm Run A exits 1 with the webhook error and
+no `~/.ssh/asarcar_id_ed25519_server` exists; Run B builds `.venv`
+and the project venvs and posts the key; Run C posts nothing and
+installs nothing new; `validate.sh` FAILs only on the ailabvm-SSH
+item (key not installed on ailabvm); the fresh clone's git status is
+clean.
+RESULT: laptop installs x2 exit 0 (run 2: no VENV/GEN/POST/WROTE),
+validate exit 0. ailabvm fresh clone (Python 3.14): Run A exit 1,
+no key, hooks untouched; Run B exit 0 — all venvs built, key
+generated and POSTed; Run C exit 0, nothing created or posted;
+clean git status; webhook in no log. Earlier attempts kept in
+`~/aiwb-fresh.failed-1` and `-2`. DEVIATION (accepted by
+instructor): validate.sh FAILs 6, not 1 — lab-server SSH (key not
+yet installed) plus 5 manual prerequisites never run on this bare
+dev account (Claude CLI, gh auth, GitHub SSH key/auth, git
+identity); addressed by the prerequisites step that follows.
+---
+
+### Step 50.10: Create miscellaneous/setup/prerequisites.md and link it
+
+[x] Status
+
+CONTEXT: Manual steps setup depends on (gh auth, git identity,
+webhook, platform) are scattered across `dev_workbench.md` and never
+listed in one place.
+ACTION: Create `miscellaneous/setup/prerequisites.md` with a table
+(#, prerequisite, who, how, checked by `install.sh`): Linux shell
+(WSL2 Ubuntu 24.04 or macOS Dev Container) — no; Python ≥3.12 — yes;
+sudo password — no; git + global user.name/user.email — yes; GitHub
+account, `gh` installed, `gh auth login` — yes; repo cloned —
+implicit; Discord class server joined + `export DISCORD_WEBHOOK_URL`
+— yes; instructor-only Discord server/webhook, real `labenv.yaml`,
+lab server — no; plus an "After install" note (first `claude` login,
+instructor installs your posted SSH key). Link it from README
+First-Time Setup, `sessions/dev_workbench.md` "Run Lab Setup
+Script", `instructor.md` Section 3 Phase A, and `student/README.md`
+Usage.
+CONSTRAINTS: Link to existing guides instead of duplicating them; no
+archive/history edits; ≤79-char lines (table rows and URLs exempt).
+OUTPUT: `prerequisites.md` plus links in the four docs.
+VERIFY: `test -f miscellaneous/setup/prerequisites.md`; `grep -l
+'prerequisites.md' README.md sessions/dev_workbench.md
+miscellaneous/setup/instructor/instructor.md
+miscellaneous/setup/student/README.md | wc -l` → `4`.
+RESULT: table with 8 rows (4 gated by install.sh) plus an "After
+install" note (Claude login, instructor installs SSH key); row 5
+uses `gh auth login -s admin:public_key` per github_and_git.md;
+linked from the 4 docs (count 4) and added to README's tree; all
+relative links and anchors resolve. The table describes the
+install.sh gate that 50.11 adds.
+
+---
+
+### Step 50.11: Add a prerequisite gate to install.sh
+
+[x] Status
+
+CONTEXT: `install.sh` starts creating `.venv` and installing before
+knowing whether the manual prerequisites are done, so a blank account
+gets halfway and then fails `validate.sh`.
+ACTION: At the top of `miscellaneous/setup/install.sh`, after path
+resolution and before any change, check every "yes" row: Python ≥3.12
+(existing check moved in), `git` on PATH with non-empty global
+user.name and user.email, `gh` on PATH with `gh auth status` passing,
+and non-empty `DISCORD_WEBHOOK_URL` (presence only, never printed);
+print one `OK`/`MISS` line each and, if anything is missing, point to
+`prerequisites.md` and exit 1 before creating or installing anything.
+CONSTRAINTS: Gate is read-only; never print the webhook; keep
+`labsetup.py`'s own webhook check; no bypass flag.
+OUTPUT: Gated `install.sh`.
+VERIFY: `bash -n` passes; on the laptop all items `OK` and install
+proceeds; in a scratch clone, `env -u DISCORD_WEBHOOK_URL bash
+miscellaneous/setup/install.sh` exits 1 with `MISS` on the webhook
+line and creates no `.venv`.
+RESULT: scratch clone, no webhook: 1 MISS, exit 1, no `.venv`; empty
+HOME + no webhook + no GH_TOKEN: 3 MISS (git identity, gh auth,
+webhook), exit 1, no `.venv`; laptop: 4 OK, full install exit 0,
+nothing created. Notes: gh also honors GH_TOKEN (set on the laptop),
+so a token counts as authenticated; `gh auth status` itself writes
+`~/.local/state/gh/device-id`, not install.sh.
+
+---
+
+### Step 50.12: Install the Claude CLI from labsetup.py
+
+[x] Status
+
+CONTEXT: `labsetup.py` installs Ollama and PKM tools but not the
+Claude CLI, which sessions and preflight require.
+ACTION: Add `_install_claude_cli()` to
+`miscellaneous/setup/student/labsetup.py`: skip with `OK` if
+`shutil.which("claude")` or `~/.local/bin/claude` exists; otherwise
+run the documented `curl -fsSL https://claude.ai/install.sh | bash`
+(no sudo) and print `INST`/`OK`; WARN to open a new terminal if
+`~/.local/bin` is not on PATH. Call it in `main()` next to
+`_install_ollama()` but outside the sudo branch, and add it to the
+module docstring's step list.
+CONSTRAINTS: No change to other installers; no login attempt (Claude
+login stays manual per the 50.10 "After install" note).
+OUTPUT: `labsetup.py` installs the Claude CLI idempotently.
+VERIFY: `python3 -m py_compile` passes; laptop `install.sh` prints
+`OK   claude already installed (skipping)`; fresh install proven in
+50.13.
+RESULT: py_compile ok; laptop install exit 0 with `OK   claude
+already installed (skipping)`; simulated failed download (fake curl
+exit 22, scratch HOME) → WARN and no binary, because the installer
+pipe runs under `set -o pipefail`. `_install_ollama()` has the same
+unguarded pipe; left unchanged per CONSTRAINTS (follow-up).
+
+---
+
+### Step 50.13: Seed GitHub host keys from gh api meta in labsetup.py
+
+[x] Status
+
+CONTEXT: The first 50.14 pass showed that on a machine that never
+connected to GitHub, `_validate_github_ssh()` (and preflight's check)
+fails with `Host key verification failed`: `ssh -o BatchMode=yes`
+cannot answer the unknown-host prompt, although the key was uploaded.
+ACTION: Add `_ensure_github_known_hosts()` to
+`miscellaneous/setup/student/labsetup.py`: skip with `OK` if
+`ssh-keygen -F github.com` finds an entry; otherwise read GitHub's
+official host keys with `gh api meta --jq '.ssh_keys[]'` (HTTPS via
+the authenticated gh, `_gh_env()`), append `github.com <type> <key>`
+lines to `~/.ssh/known_hosts` (mode 600), and print `WROTE`; WARN if
+the API call fails. Call it in `main()` right before
+`_validate_github_ssh()` and add it to the docstring step list.
+CONSTRAINTS: No `StrictHostKeyChecking` relaxation; no ssh-keyscan
+(unauthenticated TOFU); do not change either script's SSH test.
+OUTPUT: `labsetup.py` seeds GitHub host keys idempotently.
+VERIFY: `python3 -m py_compile` passes; with a scratch `HOME` holding
+no known_hosts, the function writes 3 `github.com` lines and a second
+call prints `OK`; laptop `install.sh` prints the `OK` skip line; a
+fresh machine is proven in 50.14.
+RESULT: scratch HOME (gh config via GH_CONFIG_DIR, since
+`_gh_env()` drops GH_TOKEN): first call WROTE 3 keys (600 file,
+700 dir), second call OK; BatchMode `ssh -T git@github.com` with
+only that file authenticates, with an empty file fails; laptop
+install exit 0 with the OK skip line. Fixed during the step: bare
+`ssh-keygen -F` reads the passwd home, not Path.home(), so the
+check now passes `-f` for the same file it appends to.
+
+---
+
+### Step 50.14: Re-validate the gate and Claude install on ailabvm
+
+[x] Status
+
+CONTEXT: Steps 50.10–50.13 are committed; asarcar@ailabvm had no git
+identity and no gh auth (a first pass found the GitHub known_hosts
+gap fixed in 50.13).
+ACTION: `git push origin 1sep26`. Laptop: `install.sh` twice, then
+`validate.sh`. ailabvm: move `~/aiwb-fresh` to `~/aiwb-fresh.prev`
+(no deletion), fresh clone; Run G (webhook over stdin) must be stopped
+by the gate before any change, listing git identity and gh auth; pause
+for the instructor to run `gh auth login` (`! ssh -t mylab-int gh auth
+login`) and set git identity there; Run H (webhook over stdin) does
+the full install including the Claude CLI; then `validate.sh` and
+`git status`.
+CONSTRAINTS: Never run `gh auth login` or set the identity for the
+instructor; webhook only over stdin; do not touch ailabuser.
+OUTPUT: Results in chat and this step's RESULT line.
+VERIFY: Laptop `validate.sh` exits 0; Run G exits 1 with `MISS` for
+git identity and gh auth and creates no `.venv`; Run H exits 0 and
+installs `claude`; after 50.13, Run I (rerun, webhook over stdin)
+seeds GitHub host keys; ailabvm `validate.sh` (login shell, webhook
+set) FAILs only the lab-server
+SSH item (key not yet installed for ailabuser); clean git status.
+
+RESULT: laptop installs x2 exit 0 (run 2 changes nothing), validate
+exit 0. ailabvm fresh clone: Run G (no git identity/gh auth) exit 1,
+2 MISS, no `.venv`; instructor ran `gh auth login` and set git
+identity; Run H exit 0, Claude CLI 2.1.282 installed, venvs built,
+GitHub key uploaded, but GitHub SSH failed (no known_hosts) → fixed
+in 50.13; Run I exit 0, 3 GitHub host keys written, GitHub SSH
+verified; validate.sh (login shell, webhook set) 24 PASS, only
+lab-server SSH FAILs; Run J changes nothing; clean git status;
+webhook in no log. Note: Run I rewrote ~/.ssh/config once to move
+the ailabvm blocks after the github.com block (cosmetic).
+---
+
+### Step 50.15: Mark Phase 50 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 50.1–50.14 executed and verified.
+ACTION: Confirm every Phase 50 `[ ] Status` is `[x]`; commit `chore:
+Phase 50 - mark idempotent setup steps complete`; `git tag -a
+v50.15-idempotent-setup-step-completed -m "Completed Phase 50 Step 15:
+idempotent setup"`; `git push origin 1sep26 --tags`.
+CONSTRAINTS: No push to `main`, no PR or merge, no archive edits.
+OUTPUT: All Phase 50 statuses `[x]`; tag on remote.
+VERIFY: `grep -A2 '### Step 50\.'
+miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
+Status'` → `0`; `git ls-remote --tags origin | grep v50.15` → 1 line.
+
+---
+
+## Phase 51: Seed Lab-Server Host Key
+
+<!-- AI-GENERATED [anthropic:claude-opus-5-5]: Phase 51
+     (prompt_history.md "Seed lab-server host key from labenv.yaml") -->
+
+### Step 51.1: Record the lab-server host key in labenv.yaml
+
+[x] Status
+
+CONTEXT: `labenv.yaml` holds the lab server's addresses and user but
+not its SSH host key.
+ACTION: In `miscellaneous/setup/student/labenv.yaml` add
+`DOCKER_SERVER_HOST_KEY: "ssh-ed25519 AAAA…"` set to ailabvm's
+ed25519 public host key (type + base64, `root@ailabvm` comment
+dropped), with comments: public (not a secret), how to read it on the
+server (`cat /etc/ssh/ssh_host_ed25519_key.pub`), how to verify it
+(`ssh-keygen -lf`). In `miscellaneous/setup/instructor/instructor.md`
+Section 3, instruct copying that key into `labenv.yaml` whenever the
+server is (re)provisioned; mention it in
+`miscellaneous/setup/prerequisites.md` row 8.
+CONSTRAINTS: Public key only, never a private key; no other
+`labenv.yaml` changes; ≤79-char lines (key line and URLs exempt).
+OUTPUT: New `labenv.yaml` key plus doc updates.
+VERIFY: The `labenv.yaml` key run through `ssh-keygen -lf` prints
+`SHA256:3pSfDKCwLB82/BNUAbf3YMcz56+t6CNnKq/ir/VFPfs`; the file loads
+with `yaml.safe_load`.
+RESULT: key read from ailabvm's /etc/ssh/ssh_host_ed25519_key.pub,
+comment dropped; `ssh-keygen -lf` on the labenv.yaml value prints
+the expected SHA256:3pSfDKCw… fingerprint; YAML loads (8 keys).
+instructor.md Section 3 gains a "Server host key" note with the
+exact server commands; prerequisites.md row 8 names the key.
+
+---
+
+### Step 51.2: Write the host key to known_hosts from labsetup.py
+
+[x] Status
+
+CONTEXT: `labsetup.py` writes the `ailabvm-int`/`ailabvm` SSH config
+but never gives `known_hosts` the server's key, so its BatchMode check
+fails on a fresh machine.
+ACTION: Add `_ensure_lab_server_known_hosts(env)` to
+`miscellaneous/setup/student/labsetup.py`: WARN and return if
+`DOCKER_SERVER_HOST_KEY` is missing or a placeholder; for the
+internal and external `(host, port)` pairs, form the entry name
+(bare host for port 22, else `[host]:port`), then with `ssh-keygen -F
+<name> -f ~/.ssh/known_hosts`: no entry → append `<name> <key>` (mode
+600) and print `WROTE`; same key → `OK`; different key → WARN with
+`ssh-keygen -R <name>` instructions and change nothing. Call it in
+`main()` after `_write_ssh_config(env)` and before `_validate_ssh()`;
+add it to the docstring. Add `DOCKER_SERVER_HOST_KEY` to
+preflight's `NON_SECRET_VARS`.
+CONSTRAINTS: No `StrictHostKeyChecking` relaxation or `ssh-keyscan`;
+never remove or replace existing `known_hosts` entries; do not change
+the SSH checks; do not add the key to `SSH_KEYS`, so a missing key
+only WARNs and SSH setup still runs.
+OUTPUT: `labsetup.py` seeds the lab-server host key idempotently;
+preflight requires it in `labenv.yaml`.
+VERIFY: `python3 -m py_compile` passes on both scripts; with a
+scratch `HOME`, the first call writes 2 entries (`192.168.4.43`,
+`[73.202.223.27]:22439`) and a second call prints `OK` for both; a
+planted different key for `192.168.4.43` yields a WARN and leaves the
+file unchanged.
+RESULT: py_compile ok (both); scratch HOME: fresh → 2 WROTE (mode
+600), rerun → 2 OK; planted different ed25519 key for .43 → WARN
+with `ssh-keygen -R` hint and that line untouched (the missing
+external entry is still added, so only the conflicting host is
+left unchanged); hashed known_hosts (`ssh-keygen -H`) → 2 OK; an
+RSA-only .43 entry → ed25519 added alongside (not a conflict).
+
+---
+
+### Step 51.3: Prove it end to end
+
+[x] Status
+
+CONTEXT: Steps 51.1–51.2 are committed; the laptop already knows
+`192.168.4.43`, asarcar@ailabvm may not.
+ACTION: `git push origin 1sep26`. Laptop: `ssh -o BatchMode=yes -o
+UserKnownHostsFile=<scratch file seeded by 51.2> -o
+GlobalKnownHostsFile=/dev/null ailabvm-int echo ok` must print `ok`
+(proves the recorded key is the real one) while an empty file fails
+(control); then `install.sh` and `validate.sh`. ailabvm (asarcar):
+`git pull` in `~/aiwb-fresh`, Run K (`install.sh`, webhook over
+stdin), then `validate.sh` in a login shell.
+CONSTRAINTS: Webhook only over stdin; do not touch ailabuser's
+`authorized_keys` (key installation is the instructor's job).
+OUTPUT: Results in chat and this step's RESULT line.
+VERIFY: Seeded-file SSH prints `ok` and the empty-file control fails;
+laptop `validate.sh` exits 0; ailabvm Run K exits 0 and prints
+`WROTE`/`OK` for the lab-server host key; the lab-server check no
+longer reports `Host key verification failed` (it passes if the
+instructor installed asarcar@ailabvm's key, else fails only with
+`Permission denied`).
+
+RESULT: laptop BatchMode `ssh ailabvm-int echo ok` with ONLY the
+file seeded by `_ensure_lab_server_known_hosts` → `ok`; empty-file
+control → `Host key verification failed` (the recorded key is the
+real one). Laptop install exit 0 (.43 OK, external entry WROTE, the
+only known_hosts change), validate exit 0 incl. the new
+DOCKER_SERVER_HOST_KEY check. ailabvm Run K exit 0 (.43 OK — already
+trusted after the instructor's manual accept-new, so the no-entry
+path is proven by the laptop scratch-file test — external WROTE);
+validate 26/26 PASS now that the instructor installed
+asarcar@ailabvm's key; clean git status; webhook in no log.
+---
+
+### Step 51.4: Mark Phase 51 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 51.1–51.3 executed and verified.
+ACTION: Confirm every Phase 51 `[ ] Status` is `[x]`; commit `chore:
+Phase 51 - mark lab-server host key steps complete`; `git tag -a
+v51.4-lab-server-host-key-step-completed -m "Completed Phase 51 Step
+4: lab-server host key"`; `git push origin 1sep26 --tags`.
+CONSTRAINTS: No push to `main`, no PR or merge, no archive edits.
+OUTPUT: All Phase 51 statuses `[x]`; tag on remote.
+VERIFY: `grep -A2 '### Step 51\.'
+miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
+Status'` → `0`; `git tag | grep v51.4` → 1 line.
+
+---
+
+## Phase 52: Durable Lab Hostname and SSH Aliases
+
+<!-- AI-GENERATED [anthropic:claude-opus-5-5]: Phase 52
+     (prompt_history.md "Durable lab hostname and SSH aliases") -->
+
+### Step 52.1: Verify the server → labserver alias rename is safe
+
+[x] Status
+
+CONTEXT: The instructor renamed the `~/.ssh/config` aliases `server` →
+`labserver` and `server-int` → `labserver-int`.
+ACTION: Read-only audit: search the repo (excluding `.git`, archive,
+and history files) for the old aliases as whole words; search
+`~/.ssh/config` for old aliases in `ProxyJump`/`ProxyCommand`/`Match`
+lines; confirm `ssh labserver-int` works. Record the result; edit
+nothing unless a live reference turns up (then stop and report).
+CONSTRAINTS: Do not edit history files (`plan.md`,
+`prompt_history.md`) or archives.
+OUTPUT: RESULT line listing any references found (none expected).
+VERIFY: The repo search prints nothing; `ssh -o BatchMode=yes
+labserver-int hostname` → `dev-1`.
+RESULT: no live repo file uses `server`/`server-int` as an SSH
+alias (only historical plan.md/prompt_history.md entries, left
+as-is); `~/.ssh/config` has no Host/ProxyJump/ProxyCommand/Match
+line using the old names; `ssh labserver-int hostname` → `dev-1`.
+Nothing to change.
+
+---
+
+### Step 52.2: Register aiedulab.duckdns.org and install the updater
+
+[x] Status
+
+CONTEXT: There is no DNS name for the lab's public IP, which the ISP
+changes.
+ACTION: Instructor (manual): sign in at duckdns.org, add subdomain
+`aiedulab`, and pipe the token over stdin into root-only
+`/etc/duckdns/token` on `labserver` (it never lands on the laptop).
+Then on `labserver`: create `/usr/local/bin/duckdns-update` (reads the
+token, calls `https://www.duckdns.org/update?domains=aiedulab&token=…&ip=`
+via `curl -sK -` so the URL is on stdin, logs `OK`/`KO` without the
+token), `duckdns-update.service`, and `duckdns-update.timer`
+(`OnBootSec=1min`, `OnUnitActiveSec=5min`); `systemctl enable --now
+duckdns-update.timer`.
+CONSTRAINTS: Token never in the repo, argv, logs, or chat; no other
+`labserver` changes; no router changes.
+OUTPUT: `aiedulab.duckdns.org` resolves to the lab's public IP; timer
+active on `labserver`.
+VERIFY: `getent hosts aiedulab.duckdns.org` → `24.4.241.243`;
+`systemctl is-active duckdns-update.timer` → `active`; last
+`duckdns-update` journal line `OK`; `sudo stat -c '%a %U'
+/etc/duckdns/token` → `600 root`.
+RESULT: instructor registered `aiedulab` and stored the token
+(600 root, 36 chars). Installed /usr/local/bin/duckdns-update
+(token via `curl -K -` on stdin) plus .service/.timer (enabled,
+active, 5-min cadence); first run logged `duckdns aiedulab: OK`;
+aiedulab.duckdns.org → 24.4.241.243 (local and 1.1.1.1); token
+appears 0 times in the journal and the script. Kept on labserver
+per instructor: students are docker-root on ailabvm and could
+read a token stored there.
+
+---
+
+### Step 52.3: Rebuild the external SSH aliases on the durable name
+
+[x] Status
+
+CONTEXT: External aliases hard-code public IPs (`ailabvm`:
+`24.4.241.243`:22439; `mylab`: `73.202.223.27`:22438, a stale port);
+the instructor removed the 22436 forward, so only ailabvm (22439) is
+Internet-facing, and chose to keep alias names while other lab hosts
+are reached by jumping through ailabvm.
+ACTION: Back up `~/.ssh/config` and `~/.ssh/known_hosts` to the
+scratchpad. Set `ailabvm` (ailabuser) and `mylab` (asarcar) to
+`HostName aiedulab.duckdns.org`, `Port 22439`. Make `labserver`
+(asarcar@192.168.4.29), `labvm` (labuser@192.168.4.90) and
+`labbuddyvm` (labuser@192.168.4.42) use `ProxyJump mylab` with their
+LAN `HostName`, same user and key. Add one `known_hosts` entry
+`[aiedulab.duckdns.org]:22439` holding ailabvm's already-trusted key
+(from its internal entry via `ssh-keygen -F`); jumped hosts reuse
+their existing LAN entries.
+CONSTRAINTS: `*-int` aliases unchanged; no `StrictHostKeyChecking`
+relaxation or `ssh-keyscan`; no router changes; jump host holds no
+keys (the laptop authenticates end to end).
+OUTPUT: `ailabvm`/`mylab` on the FQDN; `labserver`/`labvm`/
+`labbuddyvm` jump via `mylab`; one new `known_hosts` entry.
+VERIFY: `ssh -G ailabvm` and `ssh -G mylab` show `hostname
+aiedulab.duckdns.org` and `port 22439`; BatchMode `ssh ailabvm
+whoami` → `ailabuser`, `ssh mylab whoami` → `asarcar`, `ssh labserver
+hostname` → `dev-1`, `ssh labvm hostname` and `ssh labbuddyvm
+hostname` return their names.
+RESULT: backups in the scratchpad; `ailabvm`/`mylab` →
+aiedulab.duckdns.org:22439 (`mylab` was on stale port 22438);
+`labserver` (was 22436, now closed), new `labvm` and `labbuddyvm`
+→ ProxyJump mylab to LAN IPs; one known_hosts entry
+`[aiedulab.duckdns.org]:22439` copied from the trusted 192.168.4.43
+ed25519 key (SHA256:3pSfDKCw…). BatchMode tests: ailabvm →
+ailabuser, mylab → asarcar, labserver → dev-1, labvm → labvm,
+labbuddyvm → labbuddyvm.
+---
+
+### Step 52.4: Remove credentials from asarcar@ailabvm
+
+[x] Status
+
+CONTEXT: ailabvm is Internet-facing and every student (`ailabuser`,
+docker group) is effectively root there, yet asarcar@ailabvm holds a
+gh token (`repo`, `admin:public_key`), a GitHub SSH key uploaded to
+the instructor's account, `kahuna_id`, ghcr.io and ngrok logins, and
+a `~/.ssh/config` map of other hosts.
+ACTION: With the instructor confirming each deletion first: `gh auth
+logout` on ailabvm; instructor revokes that account's GitHub SSH key
+at github.com/settings/keys; copy `kahuna_id`, `.docker/config.json`,
+`.config/ngrok/ngrok.yml` and `.ssh/config` to a laptop location the
+instructor names (mode 600), then delete them and
+`asarcar_id_ed25519_github*` on ailabvm; also remove the copies under
+`~/migrated-arijit-dev/`.
+CONSTRAINTS: Never print credential contents; nothing deleted before
+its copy is verified (checksum) and the instructor confirms; do not
+touch ailabuser; keep `asarcar_id_ed25519_server` (lab-only key).
+OUTPUT: asarcar@ailabvm holds no private keys except the lab key and
+no gh/ghcr/ngrok credentials.
+VERIFY: On ailabvm, a scan of `~` finds only
+`.ssh/asarcar_id_ed25519_server` as a private key; `gh auth status`
+reports not logged in; no `.docker/config.json`, ngrok config, or
+`.config/gh/hosts.yml`; laptop copies' checksums match.
+DEVIATION: instructor chose delete-without-copy, so no laptop
+copies were made. RESULT: instructor revoked the ailabvm GitHub key
+(confirmed: `ssh -T git@github.com` with it → Permission denied);
+`gh auth logout` done (`gh auth status`: not logged in;
+`.config/gh/hosts.yml` left by gh as `{}`, no token); deleted by
+name: kahuna_id(.pub), asarcar_id_ed25519_github(.pub), .ssh/config,
+.docker/config.json, ngrok.yml, and their migrated-arijit-dev
+copies; the only private key left under ~ is the lab key
+asarcar_id_ed25519_server.
+
+---
+
+### Step 52.5: Collapse labenv.yaml and setup scripts to one public address
+
+[x] Status
+
+CONTEXT: `labenv.yaml`, `labsetup.py`, and `preflight_check.py` carry a
+private/public server pair and an `ailabvm-int` alias that breaks
+whenever ailabvm's DHCP address moves (it moved from `.43` to `.21`).
+ACTION: `miscellaneous/setup/student/labenv.yaml`: replace the four
+`_INTERNAL`/`_EXTERNAL` keys with `DOCKER_SERVER_ID:
+"aiedulab.duckdns.org"` and `DOCKER_SERVER_SSH_PORT: 22439`; rewrite
+the comment (DuckDNS name kept current by `labserver`'s timer, works
+inside the lab via the router's hairpin NAT, one `Host ailabvm`).
+`miscellaneous/setup/student/labsetup.py`: drop `SSH_HOST_ALIAS_INT`,
+add `"ailabvm-int"` to `LEGACY_SSH_HOST_ALIASES`, set `SSH_KEYS` to
+the new keys plus `DOCKER_SERVER_USERNAME`; `_write_ssh_config()`
+writes only `Host ailabvm` (still pruning legacy blocks);
+`_validate_ssh()` tests only `ailabvm`;
+`_ensure_lab_server_known_hosts()` seeds only
+`[DOCKER_SERVER_ID]:DOCKER_SERVER_SSH_PORT`; `_post_pubkey_to_discord()`
+and the placeholder hint use the new keys; docstring steps updated.
+`miscellaneous/setup/student/preflight_check.py`: drop
+`SSH_HOST_ALIAS_INT`, update `NON_SECRET_VARS`, `check_ssh()` tests
+only `ailabvm`, label `SSH to ailabvm`, docstring updated.
+CONSTRAINTS: Keep `DOCKER_SERVER_USERNAME`, `DOCKER_SERVER_HOST_KEY`,
+and the host-key safety rules (never replace a conflicting entry); no
+`StrictHostKeyChecking` relaxation; no doc edits here; 2-space
+indent, ≤79-char lines (host-key line exempt).
+OUTPUT: One server address in YAML and code; `ailabvm-int` pruned as
+a legacy alias.
+VERIFY: `grep -rnE
+'DOCKER_SERVER_(ID|SSH_PORT)_(INTERNAL|EXTERNAL)|SSH_HOST_ALIAS_INT'
+miscellaneous/setup` → no output; `py_compile` passes on both
+scripts; a scratch-HOME test of `_write_ssh_config` +
+`_ensure_lab_server_known_hosts` on a config containing an old
+`ailabvm-int` block leaves only `Host ailabvm` (`HostName
+aiedulab.duckdns.org`, `Port 22439`), removes the stale block, and
+writes exactly one `[aiedulab.duckdns.org]:22439` known_hosts entry.
+RESULT: grep clean; both scripts compile; labenv.yaml loads with
+DOCKER_SERVER_ID/SSH_PORT/USERNAME/HOST_KEY. Scratch HOME with an
+old `ailabvm-int` + IP-based `ailabvm` + unrelated github.com block:
+first run WROTE one `Host ailabvm` (aiedulab.duckdns.org:22439),
+pruned `ailabvm-int`, kept github.com, seeded one
+`[aiedulab.duckdns.org]:22439` entry; second run OK/skip for both.
+`_validate_ssh()`/`check_ssh()` now test only `ailabvm`; the
+known_hosts seeding became straight-line code (no one-item loop).
+
+---
+
+### Step 52.6: Update the documentation to the single public address
+
+[x] Status
+
+CONTEXT: `instructor.md` still describes a two-address setup with
+pre-Phase-36 key names and the stale `73.202.223.27`.
+ACTION: In `miscellaneous/setup/instructor/instructor.md`, rewrite the
+`labenv.yaml` note and the Phase A table to list `DOCKER_SERVER_ID`
+(`aiedulab.duckdns.org`), `DOCKER_SERVER_SSH_PORT` (`22439`),
+`DOCKER_SERVER_USERNAME`, `DOCKER_SERVER_HOST_KEY`; add a short
+"Dynamic DNS and hairpin" note (DuckDNS, hostname, `labserver`
+updater and token location, `systemctl status duckdns-update.timer`,
+and that the router's 22439 forward must follow ailabvm's DHCP address
+since no reservation is possible). Scan every live `.md` for
+`ailabvm-int`, `_INTERNAL`, `_EXTERNAL`, `73.202.223.27`,
+`24.4.241.243` and fix any hit.
+CONSTRAINTS: No history or archive edits; ≤79-char changed lines.
+OUTPUT: Docs describe one public address.
+VERIFY: `grep -rnE
+'ailabvm-int|_(INTERNAL|EXTERNAL)\b|73\.202\.223\.27|24\.4\.241\.243'
+--include=*.md --include=*.yaml --include=*.py .` (excluding history
+and archive) → no output.
+RESULT: instructor.md Section 3 note and Phase A table now list
+DOCKER_SERVER_ID (aiedulab.duckdns.org), DOCKER_SERVER_SSH_PORT
+(22439), DOCKER_SERVER_USERNAME, DOCKER_SERVER_HOST_KEY with the
+full labenv.yaml path; new "Dynamic DNS and hairpin" note (updater
+on labserver, root-only token, check commands, re-point the 22439
+forward if DHCP moves ailabvm). DEVIATION: the scan still matches
+`ailabvm-int` twice in labsetup.py — intentionally, in
+LEGACY_SSH_HOST_ALIASES and its comment, which prune students' old
+blocks; no other hits.
+
+---
+
+### Step 52.7: Clean up the personal SSH aliases
+
+[x] Status
+
+CONTEXT: `~/.ssh/config` still has `ailabvm-int` (`.43`, now dead) and
+`mylab-int` on the stale `.43`.
+ACTION: Back up `~/.ssh/config` to the scratchpad; delete the `Host
+ailabvm-int` block; point `mylab-int` at ailabvm's current LAN IP
+(`192.168.4.21`), noting it can drift again; leave `labserver-int`,
+`labvm-int`, `labbuddyvm-int` unchanged; add a `192.168.4.21`
+known_hosts entry copied from the trusted `.43` key (never newly
+accepted).
+CONSTRAINTS: Keep the other `-int` aliases (per instructor); no
+`ssh-keyscan`; no other hosts touched.
+OUTPUT: No `ailabvm-int` alias; `mylab-int` usable.
+VERIFY: `grep -c '^Host ailabvm-int' ~/.ssh/config` → `0`; BatchMode
+`ssh mylab-int whoami` → `asarcar`, `ssh ailabvm whoami` →
+`ailabuser`.
+DEVIATION: the instructor had already removed `ailabvm-int` and
+`mylab-int` by hand (keeping the LAN IP as a comment on `mylab`),
+so `mylab-int` was not recreated and no .21 known_hosts entry was
+needed. While verifying, labbuddyvm was found moved by DHCP from
+.42 to .35 (MAC 52:54:00:67:3b:68, found by LAN ping sweep); its
+host key at .35 matched the trusted .42 key (SHA256:+9Pr6qgy…), so
+`labbuddyvm` and `labbuddyvm-int` HostName were updated to .35 (an
+.35 entry already existed). RESULT: 0 `ailabvm-int`/`mylab-int`
+blocks; labserver-int/labvm-int/labbuddyvm-int kept; BatchMode:
+mylab → asarcar, ailabvm → ailabuser, labserver → dev-1, labvm →
+labvm, labbuddyvm → labbuddyvm. The stale `# LAN IP Address:
+192.168.4.43` comment on `ailabvm` is replaced when install.sh
+rewrites that block in 52.8.
+
+---
+
+### Step 52.8: Validate the public-only setup end to end
+
+[x] Status
+
+CONTEXT: Steps 52.5–52.7 are committed.
+ACTION: `git push origin 1sep26`. Laptop: `install.sh` (legacy pruning
+leaves no `ailabvm-int`; `ailabvm` uses the FQDN), `validate.sh`, and
+BatchMode `ssh ailabvm`, `ssh mylab`, `ssh labserver`, `ssh labvm`,
+`ssh labbuddyvm`. ailabvm is not rerun: asarcar there deliberately has
+no gh login, so the prerequisite gate would stop it; the student path
+is covered by the laptop run.
+CONSTRAINTS: No credentials back onto ailabvm; no router changes.
+OUTPUT: Results in chat and this step's RESULT line.
+VERIFY: Laptop `validate.sh` exits 0 with the check labelled `SSH to
+ailabvm`; `grep -c '^Host ailabvm-int' ~/.ssh/config` → `0`; all five
+aliases connect.
+RESULT: pushed 22f3104. Laptop install exit 0: rewrote `Host
+ailabvm` (aiedulab.duckdns.org:22439; only diff was dropping the
+stale `.43` comment), host key OK, `SSH ailabvm` verified; validate
+exit 0 with DOCKER_SERVER_ID/SSH_PORT/USERNAME/HOST_KEY and `SSH to
+ailabvm` all PASS; 0 `ailabvm-int` blocks. BatchMode: ailabvm →
+ailabuser, mylab → asarcar, labserver → dev-1, labvm → labvm,
+labbuddyvm → labbuddyvm. ailabvm not rerun (asarcar has no gh
+login by design).
+
+---
+
+### Step 52.9: Mark Phase 52 complete, commit, tag, push
+
+[x] Status
+
+CONTEXT: Steps 52.1–52.8 executed and verified.
+ACTION: Flip every Phase 52 `[ ] Status` to `[x]`; commit `chore:
+Phase 52 - mark durable hostname steps complete`; `git tag -a
+v52.9-durable-lab-hostname-step-completed -m "Completed Phase 52 Step
+9: durable lab hostname"`; `git push origin 1sep26 --tags`.
+CONSTRAINTS: No push to `main`, no PR or merge.
+OUTPUT: All statuses `[x]`; tag on remote.
+VERIFY: `grep -A2 '### Step 52\.'
+miscellaneous/software_defined_workbench/plan.md | grep -c '\[ \]
+Status'` → `0`; `git tag | grep v52.9` → 1 line.

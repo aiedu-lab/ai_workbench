@@ -3883,3 +3883,135 @@ merge.
   -- --help` directly.
 
 ---
+
+## Provision ailabvm
+
+[x] Status
+
+### Context
+Accidentally destroyed the LAB VM that was accessible via SSH 
+alias ai-lab. We are provisioning a VM with the user account
+and facilities that revives the facilities that server 
+account was providing. 
+
+### Provision VM
+* All machines referenced are VMs on a server referenced via SSH alias
+  server-int and has sudo access for my account 'asarcar'.
+* Provision ailabvm with SSH alias ailabvm-int on server-int.
+* The server ailabvm-int can reference the COW of labvm and needs only 
+  4 CPU, 16 GB RAM, and 40 GB Disk - similar profile as labbuddyvm.
+* Bring over the contents of VM arijit-dev referenced by SSH alias asarcar-int. 
+  arijit-dev has an older Ubuntu LTS and asarcar user account.
+* Deprovision and destroy arijit-dev and reclaim it disk (COW) etc. 
+  once ailabvm is fully provisioned and arijit-dev is migrated.
+
+### Provision Account
+Reference /sessions/dev_workbench.md and cross linked files 
+to understand what all we had expected from the account that
+was formerly reachable via SSH alias 'ai-lab' - review the 
+requirements of the account.
+
+* Provision the associated account and add all the facilities
+  that are expected on ailabvm.
+* Rename the SSH alias ai-lab-int to ailabvm-int and ensure
+  it does SSH to the expected account on ailabvm. note the
+  user account provisioned should be renamed ailabuser.
+* Redo all documentation and references where they are
+  expecting ai-lab to ailabvm and user to ailabuser.
+* Run any validation that ensures the account is fully restored
+  and students can continue their exercises as below.
+
+### Idempotent environment setup
+
+**Date:** 2026-09-24
+
+**Prompt:** Create an idempotent construct to ensure setup is
+correct: a `requirements.in` (Python setup) and `install.sh` /
+`validate.sh` scripts in an appropriate folder (is `/tools/setup/`
+sensible?) so that a fresh `git pull` followed by an install sets
+up the entire environment correctly for a student or instructor.
+Document the first-time setup after a `git pull` in an
+appropriately placed section of `/README.md`.
+
+**Clarifications:** place the files in `miscellaneous/setup/` (not
+`/tools/`, which holds Bazel/PR tooling); `requirements.in` covers
+only the setup scripts' own dependencies, installed into a
+repo-root `.venv`, with per-project venvs still managed by
+`labsetup.py`; validate with a fresh clone on ailabvm (asarcar)
+and a rerun on an already-configured laptop.
+
+### Setup prerequisites and Claude CLI
+
+**Date:** 2026-09-24
+
+**Prompt:** Install the Claude CLI as part of `install.sh`, and add
+a check in `install.sh` that first verifies all prerequisite manual
+steps by users are complete (e.g. `gh auth login`). Create a table
+of prerequisites in `/setup/prerequisites.md` listing `gh auth
+login` and any other dependencies users must complete before
+running the install, and reference this table wherever students
+and instructors first land after `git clone` to get installation
+going.
+
+**Context:** a fresh-clone validation on a blank account failed on
+exactly these manual items (Claude CLI, gh auth, GitHub SSH, git
+identity).
+
+---
+
+## Seed lab-server host key from labenv.yaml
+[x] Status
+
+**Date:** 2026-09-24
+
+**Prompt:** Record the lab server's SSH host key in `labenv.yaml`,
+which is committed and set by the instructor, and have
+`labsetup.py` write it to `known_hosts`. This matches the
+`gh api meta` approach.
+
+**Context:** after the Phase 50 fixes, a fresh machine whose
+public key the instructor has installed still fails the
+lab-server SSH check with `Host key verification failed`,
+because the BatchMode checks in `labsetup.py` and
+`preflight_check.py` cannot accept an unknown host key.
+
+---
+
+## Durable lab hostname and SSH aliases
+[x] Status
+
+**Date:** 2026-09-24
+
+**Prompt:**
+* The SSH alias `server` was renamed to `labserver` and `server-int`
+  to `labserver-int`; ensure no references will be broken.
+* Set up a free dynamic-DNS hostname for the lab (`ailab` was
+  requested).
+* Redo the SSH aliases using those durable names.
+* Then update all scripts and documentation to use the names, such
+  as the Docker-server references in `labenv.yaml`.
+
+**Context:** the lab's public IP changed from `73.202.223.27` to
+`24.4.241.243`, silently breaking `ssh ailabvm` and the external
+address in `labenv.yaml`.
+
+**Clarifications:** DuckDNS; `ailab` is taken on DuckDNS and
+dedyn.io, so the hostname is `aiedulab.duckdns.org`.
+
+### Public-only lab server address
+
+**Date:** 2026-09-24
+
+**Prompt:** A DHCP reservation for ailabvm cannot be made on the
+router, so its LAN IP may change (it moved from `.43` to `.21`).
+The router supports hairpin NAT, so keep only the public address:
+remove the duplicated `ailabvm-int` (private) and `ailabvm`
+(public) references from all YAML, documentation, and SSH aliases,
+and seed the server's public host key for the public name. Keep
+the other `*-int` aliases (`labserver-int`, `mylab-int`,
+`labvm-int`, `labbuddyvm-int`) for now; they will be removed in a
+later step.
+
+**Clarifications:** collapse the `labenv.yaml` keys to
+`DOCKER_SERVER_ID` / `DOCKER_SERVER_SSH_PORT`; the host key is
+seeded for `[aiedulab.duckdns.org]:22439` only.

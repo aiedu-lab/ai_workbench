@@ -185,44 +185,79 @@ before the lab — students cannot do this themselves.
 - Inbound ports open: 22 (SSH), 8080 (Temporal UI), 8088 (app)
 - Outbound internet access (to pull Docker images, reach Discord)
 
-> **labenv.yaml:** Record `DOCKER_SERVER_ID`, `DOCKER_SERVER_USERNAME`,
-> and `DOCKER_SERVER_SSH_PORT` in `setup/labenv.yaml`.
-> `labsetup.py` reads these and writes a student `.ssh/config` entry
+> **labenv.yaml:** Record `DOCKER_SERVER_ID` (the lab's public DNS
+> name, `aiedulab.duckdns.org`), `DOCKER_SERVER_SSH_PORT` (the router's
+> forwarded port, `22439`), and `DOCKER_SERVER_USERNAME` in
+> `miscellaneous/setup/student/labenv.yaml`. `labsetup.py` reads these
+> and writes one student `.ssh/config` entry, `Host ailabvm`,
 > automatically (see SSH Convenience Setup below and Section 6).
+> There is no separate LAN alias: the same name works in the lab.
+>
+> **Server host key:** whenever the server is (re)provisioned, copy
+> its public host key into `DOCKER_SERVER_HOST_KEY` in
+> `miscellaneous/setup/student/labenv.yaml` and commit it.
+> `labsetup.py` writes it to each student's `~/.ssh/known_hosts`, so
+> the BatchMode SSH checks trust the server without a prompt:
+>
+> ```bash
+> # On the server: print "<type> <base64>" (drops the comment)
+> awk '{print $1" "$2}' /etc/ssh/ssh_host_ed25519_key.pub
+> ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub   # fingerprint
+> ```
+>
+> **Dynamic DNS and hairpin:** <!-- AI-GENERATED: Phase 52 Step 52.6 -->
+> the ISP changes the lab's public IP, so students use the DuckDNS
+> name `aiedulab.duckdns.org`. A systemd timer on `labserver` (the
+> physical host, not a VM, so students who are root on ailabvm cannot
+> read the token) refreshes it every 5 minutes:
+> `/usr/local/bin/duckdns-update` reads the root-only token
+> `/etc/duckdns/token`. Check it with:
+>
+> ```bash
+> systemctl status duckdns-update.timer
+> sudo journalctl -u duckdns-update.service -n 3 -o cat   # "OK"
+> getent hosts aiedulab.duckdns.org    # lab's current public IP
+> ```
+>
+> The router forwards port `22439` to ailabvm's port 22 and supports
+> hairpin NAT, so the DuckDNS name also works from inside the lab.
+> The router cannot reserve ailabvm's LAN address, so if DHCP moves
+> the VM (`sudo virsh domifaddr ailabvm --source agent` on
+> `labserver`), re-point the router's 22439 forward to the new address.
 
 **Provision the shared account:**
 
 ```bash
 # On the server (as root or a user with sudo)
-sudo useradd -m -s /bin/bash labuser
-sudo usermod -aG docker labuser
+sudo useradd -m -s /bin/bash ailabuser
+sudo usermod -aG docker ailabuser
 
 # Pre-install required tools
 sudo apt-get update
 sudo apt-get install -y docker.io docker-compose-v2 git python3 pip
 
 # Pre-clone the lab repo
-sudo -u labuser git clone \
+sudo -u ailabuser git clone \
   https://github.com/aiedu-lab/ai_workbench \
-  /home/labuser/ai_workbench
+  /home/ailabuser/ai_workbench
 ```
 
 **Add each student's SSH public key:**
 
 ```bash
-sudo -u labuser mkdir -p /home/labuser/.ssh
+sudo -u ailabuser mkdir -p /home/ailabuser/.ssh
 # Repeat for each student's public key:
 echo "ssh-ed25519 AAAA... alice@laptop" \
-  | sudo tee -a /home/labuser/.ssh/authorized_keys
-sudo chmod 700 /home/labuser/.ssh
-sudo chmod 600 /home/labuser/.ssh/authorized_keys
-sudo chown -R labuser:labuser /home/labuser/.ssh
+  | sudo tee -a /home/ailabuser/.ssh/authorized_keys
+sudo chmod 700 /home/ailabuser/.ssh
+sudo chmod 600 /home/ailabuser/.ssh/authorized_keys
+sudo chown -R ailabuser:ailabuser /home/ailabuser/.ssh
 ```
 
 **Validation — basic SSH (run from each student laptop):**
 
 ```bash
-ssh labuser@<SERVER_IP> docker ps
+ssh ailabuser@<SERVER_IP> docker ps
 ```
 
 Expected: empty table header (no error). If any student gets
@@ -238,20 +273,23 @@ Complete **Phase A** before **Phase B**.
 
 #### Phase A — Student runs `labsetup.py` (before instructor installs keys)
 
-Before the lab, ensure `setup/labenv.yaml` has
+Before the lab, ensure `miscellaneous/setup/student/labenv.yaml` has
 real values (not placeholders) for:
 
 | Variable | Value |
 |---|---|
-| `DOCKER_SERVER_ID` | server hostname or IP (default 73.202.223.27) |
-| `DOCKER_SERVER_USERNAME` | shared account name (e.g. `labuser`) |
-| `DOCKER_SERVER_SSH_PORT` | SSH port (default `22439`) |
+| `DOCKER_SERVER_ID` | public DNS name (default `aiedulab.duckdns.org`) |
+| `DOCKER_SERVER_SSH_PORT` | forwarded SSH port (default `22439`) |
+| `DOCKER_SERVER_USERNAME` | shared account name (e.g. `ailabuser`) |
+| `DOCKER_SERVER_HOST_KEY` | server's public ed25519 host key |
 
-Students run:
+Students first complete the [Setup Prerequisites](../prerequisites.md)
+(`install.sh` checks them), then run (`install.sh` builds `.venv`,
+then runs `labsetup.py`):
 
 ```bash
 export DISCORD_WEBHOOK_URL="<paste from #meetup-notifications>"
-python3 setup/labsetup.py
+bash miscellaneous/setup/install.sh
 ```
 
 `labsetup.py` will:
@@ -259,7 +297,7 @@ python3 setup/labsetup.py
    already exists)
 2. Post the public key to `#meetup-notifications` so the instructor
    can install it
-3. Write a `Host ai-lab` entry to `~/.ssh/config` (skipped if
+3. Write a `Host ailabvm` entry to `~/.ssh/config` (skipped if
    already present)
 4. Attempt SSH validation (will WARN — expected at this stage
    because the key is not yet installed on the server)
@@ -280,7 +318,7 @@ Check `#meetup-notifications` for each student's public key message
 ```bash
 # On the server, for each student key posted to the channel:
 echo "<paste student public key>" \
-  | sudo tee -a /home/labuser/.ssh/authorized_keys
+  | sudo tee -a /home/ailabuser/.ssh/authorized_keys
 ```
 
 After all keys are installed, notify students to run Phase C.
@@ -292,17 +330,17 @@ After all keys are installed, notify students to run Phase C.
 > server. SSH connectivity will FAIL until that step is complete.
 
 ```bash
-python3 setup/preflight_check.py
+bash miscellaneous/setup/validate.sh   # runs preflight_check.py
 ```
 
 `preflight_check.py` reads `labenv.yaml` directly for non-secret
-vars and checks SSH connectivity to `ai-lab`. Every item must show
+vars and checks SSH connectivity to `ailabvm`. Every item must show
 `PASS` before the lab begins.
 
 **Validation:**
 
 ```bash
-ssh ai-lab docker ps   # must return empty table header
+ssh ailabvm docker ps   # must return empty table header
 ```
 
 ---
@@ -321,7 +359,7 @@ ssh ai-lab docker ps   # must return empty table header
 **Instructor validation — confirm all students show PASS:**
 
 ```bash
-python3 setup/preflight_check.py
+bash miscellaneous/setup/validate.sh   # exit 0 = all PASS
 ```
 
 Every item must show `PASS` before the lab begins.
@@ -382,7 +420,7 @@ DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/REPLACE_ME
 
 ```bash
 export DISCORD_WEBHOOK_URL="<paste URL from #meetup-notifications>"
-python3 setup/labsetup.py
+bash miscellaneous/setup/install.sh
 ```
 
 ---
@@ -437,7 +475,7 @@ from both.
 |-------|-------|-------|
 | Frontend | VSCode native | VSCode native |
 | Dev environment | WSL2 Ubuntu | Dev Container Ubuntu |
-| Server access | SSH → `ai-lab` | SSH → `ai-lab` (identical) |
+| Server access | SSH → `ailabvm` | SSH → `ailabvm` (identical) |
 
 Validate student platform before the lab:
 

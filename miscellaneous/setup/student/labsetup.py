@@ -4,11 +4,16 @@ import sys
 
 """Parse labenv.yaml and set up the student lab environment.
 
+DISCORD_WEBHOOK_URL is validated first; the script exits before any
+step below runs if it is unset.
+
 Steps performed:
 1. Load non-confidential env vars from labenv.yaml.
-2. Install Ollama if absent (idempotent).
-3. Create projects/embedding/.venv, pip-compile, pip-sync,
-   and register Jupyter kernel if venv absent (idempotent).
+2. Install Ollama and the Claude Code CLI if absent (idempotent;
+   Claude installs per-user without sudo and is never logged in).
+3. Create or repair projects/embedding/.venv from its committed
+   requirements.txt lock and register the Jupyter kernel, unless
+   its packages already import (idempotent).
 4. Install PKM CLI tools (poppler-utils, html2text) if absent
    (idempotent — skipped if both are already on PATH).
 5. Generate ~/.ssh/<username>_id_ed25519_server key pair if it does not
@@ -16,16 +21,17 @@ Steps performed:
 4. Post the public key to #meetup-notifications so the instructor
    can install it on the Docker server (instructor.md Section 3) —
    only when a new key was generated in step 5 (idempotent).
-5. Write ~/.ssh/config entries (Host ai-lab-int and Host ai-lab)
-   for the internal/external lab server addresses, replacing any
-   prior versions of either block.
-6. Validate SSH connectivity to ai-lab-int and ai-lab (either
-   succeeding is OK; ai-lab is the off-campus default).
-8. Validate that DISCORD_WEBHOOK_URL is set.
+5. Write the ~/.ssh/config entry Host ailabvm for the lab server's
+   public name (it works inside the lab too, via the router's
+   hairpin NAT), replacing any prior version and pruning legacy
+   blocks, and seed known_hosts with the server host key from
+   labenv.yaml (never replacing a conflicting entry).
+6. Validate SSH connectivity to ailabvm.
 9. If `gh auth status` exits 0: generate
    ~/.ssh/<username>_id_ed25519_github if absent, upload the
    public key to GitHub if not already registered (idempotent),
-   write Host github.com config entry, and validate GitHub SSH
+   write Host github.com config entry, seed GitHub's host keys into
+   known_hosts from `gh api meta` if absent, and validate GitHub SSH
    authentication. Skipped with WARN if not authenticated — run
    `gh auth login` first (dev_workbench.md).
 10. On macOS, materialize .devcontainer/ from
@@ -53,14 +59,17 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 LABENV = Path(__file__).parent / "labenv.yaml"
 SECRET_KEY = "DISCORD_WEBHOOK_URL"
 SSH_DIR = Path.home() / ".ssh"
-SSH_HOST_ALIAS = "ai-lab"
-SSH_HOST_ALIAS_INT = "ai-lab-int"
+SSH_HOST_ALIAS = "ailabvm"
+# Aliases written by earlier labsetup.py runs, pruned so re-runs leave
+# no dead Host blocks: ai-lab/ai-lab-int named the destroyed ai-lab
+# server (renamed in Phase 49); ailabvm-int named ailabvm's LAN IP,
+# dropped in Phase 52 because that DHCP address can change while the
+# public name (reachable in-lab via hairpin NAT) stays valid.
+LEGACY_SSH_HOST_ALIASES = ("ai-lab-int", "ai-lab", "ailabvm-int")
 
 SSH_KEYS = (
-  "DOCKER_SERVER_ID_INTERNAL",
-  "DOCKER_SERVER_SSH_PORT_INTERNAL",
-  "DOCKER_SERVER_ID_EXTERNAL",
-  "DOCKER_SERVER_SSH_PORT_EXTERNAL",
+  "DOCKER_SERVER_ID",
+  "DOCKER_SERVER_SSH_PORT",
   "DOCKER_SERVER_USERNAME",
 )
 
@@ -103,6 +112,60 @@ def _is_placeholder(value: str) -> bool:
   return stripped.startswith("<") and stripped.endswith(">")
 
 
+# AI-GENERATED: Phase 51 Step 51.2 (plan.md)
+def _ensure_lab_server_known_hosts(env: dict[str, str]) -> None:
+  """Seed ~/.ssh/known_hosts with the lab server's host key.
+
+  The BatchMode SSH checks here and in preflight_check.py cannot
+  answer an unknown-host prompt, so on a fresh machine they fail
+  with "Host key verification failed" even after the instructor
+  installs the student's key. The key comes from the committed,
+  instructor-set labenv.yaml (DOCKER_SERVER_HOST_KEY), mirroring the
+  gh api meta trust used for GitHub. Existing entries are never
+  replaced: a conflicting key is reported, not overwritten.
+  """
+  host_key = env.get("DOCKER_SERVER_HOST_KEY", "").strip()
+  if not host_key or _is_placeholder(host_key):
+    print(
+      "  WARN DOCKER_SERVER_HOST_KEY missing in labenv.yaml — lab "
+      "server host key not seeded; ask the instructor."
+    )
+    return
+  key_type, key_blob = host_key.split()[:2]
+  known_hosts = SSH_DIR / "known_hosts"
+  host = env["DOCKER_SERVER_ID"]
+  port = str(env["DOCKER_SERVER_SSH_PORT"])
+  # known_hosts names a non-22 port as "[host]:port".
+  name = host if port == "22" else f"[{host}]:{port}"
+  found = []
+  if known_hosts.exists():
+    out = subprocess.run(
+      ["ssh-keygen", "-F", name, "-f", str(known_hosts)],
+      capture_output=True, text=True,
+    ).stdout
+    # Lines are "<host-or-hash> <type> <base64>"; '#' lines are
+    # ssh-keygen's own "Host ... found" annotations.
+    found = [
+      tuple(line.split()[1:3]) for line in out.splitlines()
+      if line and not line.startswith("#")
+    ]
+  if (key_type, key_blob) in found:
+    print(f"  OK   lab server host key for {name} known (skipping)")
+  elif any(t == key_type for t, _ in found):
+    print(
+      f"  WARN known_hosts has a DIFFERENT {key_type} key for "
+      f"{name} than labenv.yaml — not changed. If the instructor "
+      f"re-provisioned the server, run: ssh-keygen -R '{name}' and "
+      "re-run install.sh.",
+      file=sys.stderr,
+    )
+  else:
+    SSH_DIR.mkdir(mode=0o700, exist_ok=True)
+    with known_hosts.open("a") as f:
+      f.write(f"{name} {key_type} {key_blob}\n")
+    known_hosts.chmod(0o600)
+    print(f"  WROTE lab server host key for {name} to known_hosts")
+
 def _generate_ssh_key() -> bool:
   """Generate ed25519 key pair if absent; return True if generated."""
   SSH_DIR.mkdir(mode=0o700, exist_ok=True)
@@ -139,7 +202,7 @@ def _post_pubkey_to_discord(env: dict[str, str]) -> None:
     return
 
   pubkey = SSH_KEY.with_suffix(".pub").read_text().strip()
-  server = env.get("DOCKER_SERVER_ID_INTERNAL", "<server>")
+  server = env.get("DOCKER_SERVER_ID", "<server>")
   user = env.get("DOCKER_SERVER_USERNAME", "<user>")
 
   msg = (
@@ -165,18 +228,19 @@ def _post_pubkey_to_discord(env: dict[str, str]) -> None:
 
 
 def _write_ssh_config(env: dict[str, str]) -> None:
-  """Write or refresh the ai-lab-int/ai-lab Host blocks.
+  """Write or refresh the Host ailabvm block.
 
-  Replaces any existing Host ai-lab-int / Host ai-lab blocks in
-  ~/.ssh/config with fresh entries for the internal LAN and
-  external WAN addresses — re-running after a labenv.yaml change
-  keeps both correct instead of preserving stale blocks.
+  Replaces any existing Host ailabvm block in ~/.ssh/config with a
+  fresh entry for the lab server's public name — re-running after a
+  labenv.yaml change keeps it correct instead of preserving a stale
+  block. Also removes legacy blocks (LEGACY_SSH_HOST_ALIASES).
   """
   existing = SSH_CONFIG.read_text() if SSH_CONFIG.exists() else ""
 
-  # Drop any existing "Host ai-lab-int" / "Host ai-lab" blocks
-  # (header line plus the indented option lines that follow).
-  headers = {f"Host {SSH_HOST_ALIAS_INT}", f"Host {SSH_HOST_ALIAS}"}
+  # Drop any existing current or legacy Host blocks (header line
+  # plus the indented option lines that follow).
+  aliases = (SSH_HOST_ALIAS, *LEGACY_SSH_HOST_ALIASES)
+  headers = {f"Host {alias}" for alias in aliases}
   kept = []
   skipping = False
   for line in existing.splitlines():
@@ -189,67 +253,47 @@ def _write_ssh_config(env: dict[str, str]) -> None:
     kept.append(line)
 
   SSH_DIR.mkdir(mode=0o700, exist_ok=True)
-  targets = (
-    (SSH_HOST_ALIAS_INT, "DOCKER_SERVER_ID_INTERNAL",
-     "DOCKER_SERVER_SSH_PORT_INTERNAL"),
-    (SSH_HOST_ALIAS, "DOCKER_SERVER_ID_EXTERNAL",
-     "DOCKER_SERVER_SSH_PORT_EXTERNAL"),
-  )
-  entries = "".join(
-    f"Host {alias}\n"
-    f"  HostName {env[host_key]}\n"
+  entries = (
+    f"Host {SSH_HOST_ALIAS}\n"
+    f"  HostName {env['DOCKER_SERVER_ID']}\n"
     f"  User     {env['DOCKER_SERVER_USERNAME']}\n"
-    f"  Port     {env[port_key]}\n"
+    f"  Port     {env['DOCKER_SERVER_SSH_PORT']}\n"
     f"  IdentityFile {SSH_KEY}\n"
-    for alias, host_key, port_key in targets
   )
   body = "\n".join(kept).rstrip("\n")
   text = (body + "\n\n" if body else "") + entries
   if text == existing:
     print(
-      f"  OK   ~/.ssh/config Host {SSH_HOST_ALIAS_INT}, "
-      f"Host {SSH_HOST_ALIAS} up to date (skipping)"
+      f"  OK   ~/.ssh/config Host {SSH_HOST_ALIAS} up to date (skipping)"
     )
     return
   SSH_CONFIG.write_text(text)
   SSH_CONFIG.chmod(0o600)
-  print(
-    f"  WROTE ~/.ssh/config: Host {SSH_HOST_ALIAS_INT}, "
-    f"Host {SSH_HOST_ALIAS}"
-  )
+  print(f"  WROTE ~/.ssh/config: Host {SSH_HOST_ALIAS}")
 
 
 def _validate_ssh() -> None:
-  reachable = []
-  last_stderr = ""
-  for alias in (SSH_HOST_ALIAS_INT, SSH_HOST_ALIAS):
-    result = subprocess.run(
-      [
-        "ssh", "-o", "BatchMode=yes",
-        "-o", "ConnectTimeout=10",
-        alias, "echo", "ok",
-      ],
-      capture_output=True,
-      text=True,
-    )
-    if result.returncode == 0 and result.stdout.strip() == "ok":
-      print(f"  OK   SSH {alias} → connection verified")
-      reachable.append(alias)
-    else:
-      last_stderr = result.stderr.strip()
-
-  if not reachable:
-    print(
-      f"\n  WARN SSH to {SSH_HOST_ALIAS_INT!r} and "
-      f"{SSH_HOST_ALIAS!r} not yet available.\n"
-      "  Your public key was posted to #meetup-notifications.\n"
-      "  Once the instructor confirms it is installed, re-run "
-      "this script to validate the connection. Use "
-      f"{SSH_HOST_ALIAS_INT!r} on the lab LAN, or "
-      f"{SSH_HOST_ALIAS!r} (default) from off-campus.\n"
-      f"  (stderr: {last_stderr!r})"
-    )
-
+  """Warn (not exit) if SSH to the lab server alias fails."""
+  result = subprocess.run(
+    [
+      "ssh", "-o", "BatchMode=yes",
+      "-o", "ConnectTimeout=10",
+      SSH_HOST_ALIAS, "echo", "ok",
+    ],
+    capture_output=True,
+    text=True,
+  )
+  if result.returncode == 0 and result.stdout.strip() == "ok":
+    print(f"  OK   SSH {SSH_HOST_ALIAS} → connection verified")
+    return
+  print(
+    f"\n  WARN SSH to {SSH_HOST_ALIAS!r} not yet available.\n"
+    "  Your public key was posted to #meetup-notifications.\n"
+    "  Once the instructor confirms it is installed, re-run "
+    "this script to validate the connection. The same alias works "
+    "inside the lab and off-campus.\n"
+    f"  (stderr: {result.stderr.strip()!r})"
+  )
 
 def _generate_github_ssh_key(github_username: str) -> bool:
   """Generate GitHub SSH key pair if absent; return True if
@@ -341,6 +385,45 @@ def _write_github_ssh_config() -> None:
   print(f"  WROTE ~/.ssh/config entry: Host {GITHUB_HOST_ALIAS}")
 
 
+# AI-GENERATED: Phase 50 Step 50.13 (plan.md)
+def _ensure_github_known_hosts() -> None:
+  """Seed ~/.ssh/known_hosts with GitHub's official SSH host keys.
+
+  Without an entry, the BatchMode SSH checks here and in
+  preflight_check.py fail with "Host key verification failed" on any
+  machine that never connected to GitHub. Keys come from GitHub's
+  API over HTTPS (gh api meta), not from trusting the first SSH
+  answer. Idempotent — skips when an entry already exists.
+  """
+  known_hosts = SSH_DIR / "known_hosts"
+  # -f pins the file we append to: bare `ssh-keygen -F` reads the
+  # passwd home's known_hosts, which can differ from Path.home().
+  if known_hosts.exists() and subprocess.run(
+    ["ssh-keygen", "-F", GITHUB_HOST_ALIAS, "-f", str(known_hosts)],
+    capture_output=True,
+  ).returncode == 0:
+    print("  OK   GitHub host key already in known_hosts (skipping)")
+    return
+  result = subprocess.run(
+    ["gh", "api", "meta", "--jq", ".ssh_keys[]"],
+    capture_output=True, text=True, env=_gh_env(),
+  )
+  keys = result.stdout.split("\n") if result.returncode == 0 else []
+  lines = [f"{GITHUB_HOST_ALIAS} {k.strip()}\n" for k in keys if k.strip()]
+  if not lines:
+    print(
+      "  WARN could not fetch GitHub host keys (gh api meta) — "
+      "run `ssh -T git@github.com` once and accept the host key.",
+      file=sys.stderr,
+    )
+    return
+  SSH_DIR.mkdir(mode=0o700, exist_ok=True)
+  with known_hosts.open("a") as f:
+    f.writelines(lines)
+  known_hosts.chmod(0o600)
+  print(f"  WROTE {len(lines)} GitHub host key(s) to ~/.ssh/known_hosts")
+
+
 def _validate_github_ssh() -> None:
   """Warn (not exit) if GitHub SSH authentication fails.
 
@@ -380,14 +463,14 @@ def _validate_secret() -> None:
   print(f"  OK   {SECRET_KEY} is set (value hidden)")
 
 
-_EMBEDDING_DIR = (
-  Path(__file__).parent.parent / "embedding"
-)
+# Anchored on REPO_ROOT, not Path(__file__).parent.parent: that
+# resolved to projects/ only while this script lived in
+# projects/group_meetup/, so every later move broke it.
+_EMBEDDING_DIR = REPO_ROOT / "projects" / "embedding"
 _EMBEDDING_VENV = _EMBEDDING_DIR / ".venv"
 
 _SPEED_READING_DIR = (
-  Path(__file__).parent.parent
-  / "llm_wiki" / "speed-reading"
+  REPO_ROOT / "projects" / "llm_wiki" / "speed-reading"
 )
 _PIPER_VENV = _SPEED_READING_DIR / ".venv"
 
@@ -404,9 +487,11 @@ def _install_ollama() -> None:
     return
   print("  INST installing ollama via official script...")
   try:
+    # pipefail: without it a failed download pipes nothing into sh,
+    # which exits 0 and hides the failure.
     subprocess.run(
       ["bash", "-c",
-       "curl -fsSL https://ollama.com/install.sh | sh"],
+       "set -o pipefail; curl -fsSL https://ollama.com/install.sh | sh"],
       check=True,
     )
     print("  OK   ollama installed")
@@ -418,31 +503,74 @@ def _install_ollama() -> None:
     )
 
 
+# AI-GENERATED: Phase 50 Step 50.12 (plan.md)
+_CLAUDE_BIN = Path.home() / ".local" / "bin" / "claude"
+
+
+def _install_claude_cli() -> None:
+  """Install the Claude Code CLI via the official script if absent.
+
+  Required by most sessions. Installs per-user into ~/.local/bin (no
+  sudo). Idempotent — skips when claude is on PATH or already in
+  ~/.local/bin. Never logs in; the first `claude` run does that.
+  """
+  if shutil.which("claude") or _CLAUDE_BIN.exists():
+    print("  OK   claude already installed (skipping)")
+    return
+  print("  INST installing Claude Code CLI via official script...")
+  try:
+    # pipefail: without it a failed download pipes nothing into bash,
+    # which exits 0 and hides the failure.
+    subprocess.run(
+      ["bash", "-c",
+       "set -o pipefail; curl -fsSL https://claude.ai/install.sh | bash"],
+      check=True,
+    )
+    print("  OK   claude installed")
+  except subprocess.CalledProcessError:
+    print(
+      "  WARN claude install failed — install manually:\n"
+      "       curl -fsSL https://claude.ai/install.sh | bash",
+      file=sys.stderr,
+    )
+    return
+  if str(_CLAUDE_BIN.parent) not in os.environ.get("PATH", "").split(":"):
+    print(
+      "  WARN ~/.local/bin is not on PATH — open a new terminal so "
+      "`claude` is found."
+    )
+
+
 def _setup_embedding_venv() -> None:
   """Create the embedding Python venv and install dependencies.
 
   Required by the Embeddings Visualization session. Creates
-  projects/embedding/.venv, runs pip-compile + pip-sync, and
-  registers the Jupyter kernel. Idempotent — skips when the
-  venv Python binary already exists.
+  projects/embedding/.venv if absent, pip-syncs the committed
+  requirements.txt lock, and registers the Jupyter kernel.
+  Idempotent — skips only when the session's packages import.
   """
   venv_py = _EMBEDDING_VENV / "bin" / "python3"
-  if venv_py.exists():
+  # Readiness = packages import (same probe as preflight_check.py),
+  # not just bin/python3 existing, so a venv left half-built by an
+  # interrupted or failed run is repaired on the next run.
+  if venv_py.exists() and subprocess.run(
+    [str(venv_py), "-c", "import numpy, sklearn, matplotlib"],
+    capture_output=True,
+  ).returncode == 0:
     print("  OK   embedding venv already exists (skipping)")
     return
-  print("  VENV creating projects/embedding/.venv …")
-  subprocess.run(
-    ["python3", "-m", "venv", str(_EMBEDDING_VENV)],
-    check=True,
-  )
+  if not venv_py.exists():
+    print("  VENV creating projects/embedding/.venv …")
+    subprocess.run(
+      ["python3", "-m", "venv", str(_EMBEDDING_VENV)],
+      check=True,
+    )
+  else:
+    print("  VENV repairing projects/embedding/.venv …")
   pip = str(_EMBEDDING_VENV / "bin" / "pip")
   subprocess.run([pip, "install", "pip-tools"], check=True)
-  subprocess.run(
-    [str(_EMBEDDING_VENV / "bin" / "pip-compile"),
-     "requirements.in"],
-    check=True,
-    cwd=str(_EMBEDDING_DIR),
-  )
+  # Sync the committed lock rather than recompiling it, which would
+  # rewrite the tracked requirements.txt on every fresh setup.
   subprocess.run(
     [str(_EMBEDDING_VENV / "bin" / "pip-sync"),
      "requirements.txt"],
@@ -525,6 +653,14 @@ def _sudo_precheck() -> bool:
   passwordless sudo not configured — apt steps are skipped with
   manual-install instructions).
   """
+  # Try non-interactive sudo first: `sudo -v` demands a password when
+  # any matching sudoers rule requires one, even if a NOPASSWD rule
+  # also applies, which fails on VMs/CI with locked passwords.
+  if subprocess.run(
+    ["sudo", "-n", "true"], capture_output=True
+  ).returncode == 0:
+    print("  OK   sudo available without a password")
+    return True
   print(
     "  SUDO this script installs system packages via sudo.\n"
     "       Enter your password if prompted."
@@ -602,6 +738,10 @@ def _configure_git_hooks() -> None:
 
 
 def main() -> None:
+  # Webhook first: the public-key post only happens on the run that
+  # creates the SSH key, so a run without the webhook must stop
+  # before key generation, or the key is never posted.
+  _validate_secret()
   _configure_git_hooks()
   env = _load_env()
   _set_env(env)
@@ -609,6 +749,7 @@ def main() -> None:
   if sudo_ok:
     _install_pkm_tools()  # installs zstd — required by ollama installer
     _install_ollama()
+  _install_claude_cli()    # per-user ~/.local/bin — no sudo needed
   _setup_embedding_venv()  # pure Python venv — no sudo needed
   _setup_piper_venv()     # speed-reading venv — no sudo needed
   _setup_devcontainer()   # macOS only — no sudo needed
@@ -625,16 +766,14 @@ def main() -> None:
         "  SKIP Discord post — key already shared with instructor"
       )
     _write_ssh_config(env)
+    _ensure_lab_server_known_hosts(env)
     _validate_ssh()
   else:
     print(
       "  SKIP SSH setup — labenv.yaml still has placeholder values.\n"
-      "  Fill in DOCKER_SERVER_ID_INTERNAL/_EXTERNAL,\n"
-      "  DOCKER_SERVER_SSH_PORT_INTERNAL/_EXTERNAL, and\n"
+      "  Fill in DOCKER_SERVER_ID, DOCKER_SERVER_SSH_PORT, and\n"
       "  DOCKER_SERVER_USERNAME with real values, then re-run."
     )
-
-  _validate_secret()
 
   gh_ready = _ensure_gh_installed() and subprocess.run(
     ["gh", "auth", "status"], capture_output=True, env=_gh_env(),
@@ -648,6 +787,7 @@ def main() -> None:
     _generate_github_ssh_key(github_username)
     _upload_github_ssh_key(github_username)
     _write_github_ssh_config()
+    _ensure_github_known_hosts()
     _validate_github_ssh()
   else:
     print(

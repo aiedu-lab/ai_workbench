@@ -9,13 +9,14 @@ Checks for:
 - Non-confidential vars present in labenv.yaml with real values
 - DISCORD_WEBHOOK_URL set in the shell environment (secret)
 - SSH key exists at ~/.ssh/<username>_id_ed25519_server
-- SSH connectivity to ai-lab-int or ai-lab (~/.ssh/config)
+- SSH connectivity to ailabvm (~/.ssh/config; same alias in-lab
+  and off-campus via the router's hairpin NAT)
 - gh CLI installed and authenticated (gh auth status)
 - GitHub SSH key exists at ~/.ssh/<username>_id_ed25519_github
 - GitHub SSH authentication (ssh git@github.com)
 - git global user.name and user.email configured
 - ollama CLI in PATH (AI Local session)
-- projects/embedding/.venv with gensim/sklearn/matplotlib
+- projects/embedding/.venv with numpy/sklearn/matplotlib
   (Embeddings Visualization session)
 - pdftotext (poppler-utils) and html2text CLIs in PATH (PKM)
 
@@ -33,21 +34,20 @@ import sys
 import yaml
 from pathlib import Path
 
+REPO_ROOT = Path(__file__).resolve().parents[3]
 LABENV = Path(__file__).parent / "labenv.yaml"
 SSH_KEY = Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_server"
 GITHUB_SSH_KEY = (
   Path.home() / ".ssh" / f"{getpass.getuser()}_id_ed25519_github"
 )
-SSH_HOST_ALIAS = "ai-lab"
-SSH_HOST_ALIAS_INT = "ai-lab-int"
+SSH_HOST_ALIAS = "ailabvm"
 
 NON_SECRET_VARS = (
   "DISCORD_SERVER",
-  "DOCKER_SERVER_ID_INTERNAL",
-  "DOCKER_SERVER_SSH_PORT_INTERNAL",
-  "DOCKER_SERVER_ID_EXTERNAL",
-  "DOCKER_SERVER_SSH_PORT_EXTERNAL",
+  "DOCKER_SERVER_ID",
+  "DOCKER_SERVER_SSH_PORT",
   "DOCKER_SERVER_USERNAME",
+  "DOCKER_SERVER_HOST_KEY",
 )
 
 
@@ -64,12 +64,19 @@ def _is_placeholder(value: str) -> bool:
   return stripped.startswith("<") and stripped.endswith(">")
 
 
+# Labels of failed checks, so main() can set a non-zero exit status
+# that validate.sh and CI can gate on (printing alone cannot).
+_failures: list[str] = []
+
+
 def check(label, fn):
+  """Run one check, print PASS/FAIL, and record the label on failure."""
   try:
     fn()
     print(f"PASS  {label}")
   except Exception as e:
     print(f"FAIL  {label} — {e}")
+    _failures.append(label)
 
 
 def cmd_exists(name):
@@ -114,30 +121,23 @@ def check_ssh_key():
 
 
 def check_ssh():
-  errors = {}
-  for alias in (SSH_HOST_ALIAS_INT, SSH_HOST_ALIAS):
-    result = subprocess.run(
-      [
-        "ssh", "-o", "BatchMode=yes",
-        "-o", "ConnectTimeout=10",
-        alias, "echo", "ok",
-      ],
-      capture_output=True,
-      text=True,
-    )
-    if result.returncode == 0 and result.stdout.strip() == "ok":
-      return
-    errors[alias] = result.stderr.strip()
-
-  raise RuntimeError(
-    f"SSH to {SSH_HOST_ALIAS_INT} and {SSH_HOST_ALIAS} both "
-    "failed — run labsetup.py, then ask the instructor to "
-    f"install your public key on the server ({SSH_HOST_ALIAS} "
-    "is the default for off-campus access)\n"
-    f"  {SSH_HOST_ALIAS_INT}: {errors[SSH_HOST_ALIAS_INT]!r}\n"
-    f"  {SSH_HOST_ALIAS}: {errors[SSH_HOST_ALIAS]!r}"
+  """Check BatchMode SSH to the lab server alias succeeds."""
+  result = subprocess.run(
+    [
+      "ssh", "-o", "BatchMode=yes",
+      "-o", "ConnectTimeout=10",
+      SSH_HOST_ALIAS, "echo", "ok",
+    ],
+    capture_output=True,
+    text=True,
   )
-
+  if result.returncode == 0 and result.stdout.strip() == "ok":
+    return
+  raise RuntimeError(
+    f"SSH to {SSH_HOST_ALIAS} failed — run install.sh, then ask the "
+    "instructor to install your public key on the server\n"
+    f"  {SSH_HOST_ALIAS}: {result.stderr.strip()!r}"
+  )
 
 def check_gh_install():
   result = subprocess.run(
@@ -204,33 +204,34 @@ def check_git_identity():
     )
 
 
+# Anchored on REPO_ROOT, not Path(__file__).parent.parent: that
+# resolved to projects/ only while this script lived in
+# projects/group_meetup/, so every later move broke it.
 _EMBEDDING_VENV_PY = (
-  Path(__file__).parent.parent
-  / "embedding" / ".venv" / "bin" / "python3"
+  REPO_ROOT / "projects" / "embedding" / ".venv" / "bin" / "python3"
 )
 
 
 def check_embedding_venv():
-  """Check that the embedding venv has gensim/sklearn/matplotlib."""
+  """Check that the embedding venv has numpy/sklearn/matplotlib."""
   if not _EMBEDDING_VENV_PY.exists():
     raise RuntimeError(
       "projects/embedding/.venv not found — run labsetup.py"
     )
   result = subprocess.run(
     [str(_EMBEDDING_VENV_PY), "-c",
-     "import gensim, sklearn, matplotlib"],
+     "import numpy, sklearn, matplotlib"],
     capture_output=True,
   )
   if result.returncode != 0:
     raise RuntimeError(
-      "gensim/sklearn/matplotlib missing in embedding venv"
+      "numpy/sklearn/matplotlib missing in embedding venv"
     )
 
 
 _PIPER_PY = (
-  Path(__file__).parent.parent
-  / "llm_wiki" / "speed-reading"
-  / "src" / "piper.py"
+  REPO_ROOT / "projects" / "llm_wiki" / "speed-reading"
+  / "static" / "src" / "piper.py"
 )
 
 
@@ -260,7 +261,7 @@ def main():
     check(f"{var} in labenv.yaml", lambda v=var: check_labenv_var(env, v))
   check("DISCORD_WEBHOOK_URL set", check_discord_webhook)
   check(f"SSH key {SSH_KEY.name}", check_ssh_key)
-  check("SSH to ai-lab-int or ai-lab", check_ssh)
+  check(f"SSH to {SSH_HOST_ALIAS}", check_ssh)
   check("gh installed", check_gh_install)
   check("gh authenticated", check_gh_auth)
   check(f"GitHub SSH key {GITHUB_SSH_KEY.name}", check_github_ssh_key)
@@ -271,7 +272,13 @@ def main():
   check("pdftotext (poppler-utils)", lambda: cmd_exists("pdftotext"))
   check("html2text", lambda: cmd_exists("html2text"))
   check("piper.py executable", check_piper_py)
-  print("\nAll items must show PASS before the lab begins.")
+  if _failures:
+    print(
+      f"\n{len(_failures)} check(s) FAILED: {', '.join(_failures)}\n"
+      "All items must show PASS before the lab begins."
+    )
+    sys.exit(1)
+  print("\nAll checks PASS — ready for the lab.")
 
 
 if __name__ == "__main__":
