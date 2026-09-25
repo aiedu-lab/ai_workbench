@@ -7517,7 +7517,7 @@ login by design).
 
 ### Step 52.9: Mark Phase 52 complete, commit, tag, push
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 52.1–52.8 executed and verified.
 ACTION: Flip every Phase 52 `[ ] Status` to `[x]`; commit `chore:
