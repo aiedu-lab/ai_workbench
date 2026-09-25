@@ -185,10 +185,13 @@ before the lab — students cannot do this themselves.
 - Inbound ports open: 22 (SSH), 8080 (Temporal UI), 8088 (app)
 - Outbound internet access (to pull Docker images, reach Discord)
 
-> **labenv.yaml:** Record `DOCKER_SERVER_ID`, `DOCKER_SERVER_USERNAME`,
-> and `DOCKER_SERVER_SSH_PORT` in `setup/labenv.yaml`.
-> `labsetup.py` reads these and writes a student `.ssh/config` entry
+> **labenv.yaml:** Record `DOCKER_SERVER_ID` (the lab's public DNS
+> name, `aiedulab.duckdns.org`), `DOCKER_SERVER_SSH_PORT` (the router's
+> forwarded port, `22439`), and `DOCKER_SERVER_USERNAME` in
+> `miscellaneous/setup/student/labenv.yaml`. `labsetup.py` reads these
+> and writes one student `.ssh/config` entry, `Host ailabvm`,
 > automatically (see SSH Convenience Setup below and Section 6).
+> There is no separate LAN alias: the same name works in the lab.
 >
 > **Server host key:** whenever the server is (re)provisioned, copy
 > its public host key into `DOCKER_SERVER_HOST_KEY` in
@@ -201,6 +204,26 @@ before the lab — students cannot do this themselves.
 > awk '{print $1" "$2}' /etc/ssh/ssh_host_ed25519_key.pub
 > ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub   # fingerprint
 > ```
+>
+> **Dynamic DNS and hairpin:** <!-- AI-GENERATED: Phase 52 Step 52.6 -->
+> the ISP changes the lab's public IP, so students use the DuckDNS
+> name `aiedulab.duckdns.org`. A systemd timer on `labserver` (the
+> physical host, not a VM, so students who are root on ailabvm cannot
+> read the token) refreshes it every 5 minutes:
+> `/usr/local/bin/duckdns-update` reads the root-only token
+> `/etc/duckdns/token`. Check it with:
+>
+> ```bash
+> systemctl status duckdns-update.timer
+> sudo journalctl -u duckdns-update.service -n 3 -o cat   # "OK"
+> getent hosts aiedulab.duckdns.org    # lab's current public IP
+> ```
+>
+> The router forwards port `22439` to ailabvm's port 22 and supports
+> hairpin NAT, so the DuckDNS name also works from inside the lab.
+> The router cannot reserve ailabvm's LAN address, so if DHCP moves
+> the VM (`sudo virsh domifaddr ailabvm --source agent` on
+> `labserver`), re-point the router's 22439 forward to the new address.
 
 **Provision the shared account:**
 
@@ -250,14 +273,15 @@ Complete **Phase A** before **Phase B**.
 
 #### Phase A — Student runs `labsetup.py` (before instructor installs keys)
 
-Before the lab, ensure `setup/labenv.yaml` has
+Before the lab, ensure `miscellaneous/setup/student/labenv.yaml` has
 real values (not placeholders) for:
 
 | Variable | Value |
 |---|---|
-| `DOCKER_SERVER_ID` | server hostname or IP (default 73.202.223.27) |
+| `DOCKER_SERVER_ID` | public DNS name (default `aiedulab.duckdns.org`) |
+| `DOCKER_SERVER_SSH_PORT` | forwarded SSH port (default `22439`) |
 | `DOCKER_SERVER_USERNAME` | shared account name (e.g. `ailabuser`) |
-| `DOCKER_SERVER_SSH_PORT` | SSH port (default `22439`) |
+| `DOCKER_SERVER_HOST_KEY` | server's public ed25519 host key |
 
 Students first complete the [Setup Prerequisites](../prerequisites.md)
 (`install.sh` checks them), then run (`install.sh` builds `.venv`,

@@ -7422,7 +7422,7 @@ known_hosts seeding became straight-line code (no one-item loop).
 
 ### Step 52.6: Update the documentation to the single public address
 
-[ ] Status
+[x] Status
 
 CONTEXT: `instructor.md` still describes a two-address setup with
 pre-Phase-36 key names and the stale `73.202.223.27`.
@@ -7442,6 +7442,15 @@ VERIFY: `grep -rnE
 'ailabvm-int|_(INTERNAL|EXTERNAL)\b|73\.202\.223\.27|24\.4\.241\.243'
 --include=*.md --include=*.yaml --include=*.py .` (excluding history
 and archive) → no output.
+RESULT: instructor.md Section 3 note and Phase A table now list
+DOCKER_SERVER_ID (aiedulab.duckdns.org), DOCKER_SERVER_SSH_PORT
+(22439), DOCKER_SERVER_USERNAME, DOCKER_SERVER_HOST_KEY with the
+full labenv.yaml path; new "Dynamic DNS and hairpin" note (updater
+on labserver, root-only token, check commands, re-point the 22439
+forward if DHCP moves ailabvm). DEVIATION: the scan still matches
+`ailabvm-int` twice in labsetup.py — intentionally, in
+LEGACY_SSH_HOST_ALIASES and its comment, which prune students' old
+blocks; no other hits.
 
 ---
 
