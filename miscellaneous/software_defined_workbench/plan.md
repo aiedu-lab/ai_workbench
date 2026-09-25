@@ -7490,7 +7490,7 @@ rewrites that block in 52.8.
 
 ### Step 52.8: Validate the public-only setup end to end
 
-[ ] Status
+[x] Status
 
 CONTEXT: Steps 52.5–52.7 are committed.
 ACTION: `git push origin 1sep26`. Laptop: `install.sh` (legacy pruning
@@ -7504,6 +7504,14 @@ OUTPUT: Results in chat and this step's RESULT line.
 VERIFY: Laptop `validate.sh` exits 0 with the check labelled `SSH to
 ailabvm`; `grep -c '^Host ailabvm-int' ~/.ssh/config` → `0`; all five
 aliases connect.
+RESULT: pushed 22f3104. Laptop install exit 0: rewrote `Host
+ailabvm` (aiedulab.duckdns.org:22439; only diff was dropping the
+stale `.43` comment), host key OK, `SSH ailabvm` verified; validate
+exit 0 with DOCKER_SERVER_ID/SSH_PORT/USERNAME/HOST_KEY and `SSH to
+ailabvm` all PASS; 0 `ailabvm-int` blocks. BatchMode: ailabvm →
+ailabuser, mylab → asarcar, labserver → dev-1, labvm → labvm,
+labbuddyvm → labbuddyvm. ailabvm not rerun (asarcar has no gh
+login by design).
 
 ---
 
